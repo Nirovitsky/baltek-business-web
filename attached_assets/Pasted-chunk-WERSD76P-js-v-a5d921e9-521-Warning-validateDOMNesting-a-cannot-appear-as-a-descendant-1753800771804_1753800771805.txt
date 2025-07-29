@@ -1,0 +1,48 @@
+chunk-WERSD76P.js?v=a5d921e9:521 Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>.
+    at a
+    at a
+    at https://053c5682-7195-45a2-ae70-f9c07ee968e3-00-13c09gw2nihyx.worf.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=a5d921e9:337:18
+    at nav
+    at div
+    at Sidebar (https://053c5682-7195-45a2-ae70-f9c07ee968e3-00-13c09gw2nihyx.worf.replit.dev/src/components/layout/Sidebar.tsx:58:22)
+    at div
+    at ProtectedRoute (https://053c5682-7195-45a2-ae70-f9c07ee968e3-00-13c09gw2nihyx.worf.replit.dev/src/App.tsx?v=uvSwzDBQPhX-lHsRcd5wm:33:27)
+    at Route (https://053c5682-7195-45a2-ae70-f9c07ee968e3-00-13c09gw2nihyx.worf.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=a5d921e9:323:16)
+    at Switch (https://053c5682-7195-45a2-ae70-f9c07ee968e3-00-13c09gw2nihyx.worf.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=a5d921e9:379:17)
+    at Router (https://053c5682-7195-45a2-ae70-f9c07ee968e3-00-13c09gw2nihyx.worf.replit.dev/src/App.tsx?v=uvSwzDBQPhX-lHsRcd5wm:69:31)
+    at Provider (https://053c5682-7195-45a2-ae70-f9c07ee968e3-00-13c09gw2nihyx.worf.replit.d…unner/workspace/node_modules/.vite/deps/chunk-RPGI7GEH.js?v=a5d921e9:48:15)
+    at TooltipProvider (https://053c5682-7195-45a2-ae70-f9c07ee968e3-00-13c09gw2nihyx.worf.replit.d…rkspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=a5d921e9:58:5)
+    at QueryClientProvider (https://053c5682-7195-45a2-ae70-f9c07ee968e3-00-13c09gw2nihyx.worf.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=a5d921e9:2805:3)
+    at App
+RecentJobs.tsx:95 Uncaught TypeError: Cannot read properties of undefined (reading 'charAt')
+    at RecentJobs.tsx:95:37
+    at Array.map (<anonymous>)
+    at RecentJobs (RecentJobs.tsx:74:19)
+RecentJobs.tsx:95 Uncaught TypeError: Cannot read properties of undefined (reading 'charAt')
+    at RecentJobs.tsx:95:37
+    at Array.map (<anonymous>)
+    at RecentJobs (RecentJobs.tsx:74:19)
+chunk-WERSD76P.js?v=a5d921e9:14032 The above error occurred in the <RecentJobs> component:
+
+    at RecentJobs (https://053c5682-7195-45a2-ae70-f9c07ee968e3-00-13c09gw2nihyx.worf.replit.dev/src/components/dashboard/RecentJobs.tsx:32:31)
+    at div
+    at main
+    at div
+    at Dashboard (https://053c5682-7195-45a2-ae70-f9c07ee968e3-00-13c09gw2nihyx.worf.replit.dev/src/pages/Dashboard.tsx:31:27)
+    at div
+    at div
+    at ProtectedRoute (https://053c5682-7195-45a2-ae70-f9c07ee968e3-00-13c09gw2nihyx.worf.replit.dev/src/App.tsx?v=uvSwzDBQPhX-lHsRcd5wm:33:27)
+    at Route (https://053c5682-7195-45a2-ae70-f9c07ee968e3-00-13c09gw2nihyx.worf.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=a5d921e9:323:16)
+    at Switch (https://053c5682-7195-45a2-ae70-f9c07ee968e3-00-13c09gw2nihyx.worf.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=a5d921e9:379:17)
+    at Router (https://053c5682-7195-45a2-ae70-f9c07ee968e3-00-13c09gw2nihyx.worf.replit.dev/src/App.tsx?v=uvSwzDBQPhX-lHsRcd5wm:69:31)
+    at Provider (https://053c5682-7195-45a2-ae70-f9c07ee968e3-00-13c09gw2nihyx.worf.replit.d…unner/workspace/node_modules/.vite/deps/chunk-RPGI7GEH.js?v=a5d921e9:48:15)
+    at TooltipProvider (https://053c5682-7195-45a2-ae70-f9c07ee968e3-00-13c09gw2nihyx.worf.replit.d…rkspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=a5d921e9:58:5)
+    at QueryClientProvider (https://053c5682-7195-45a2-ae70-f9c07ee968e3-00-13c09gw2nihyx.worf.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=a5d921e9:2805:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+chunk-WERSD76P.js?v=a5d921e9:9129 Uncaught TypeError: Cannot read properties of undefined (reading 'charAt')
+    at RecentJobs.tsx:95:37
+    at Array.map (<anonymous>)
+    at RecentJobs (RecentJobs.tsx:74:19)

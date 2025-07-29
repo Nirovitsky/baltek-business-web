@@ -92,7 +92,7 @@ export default function RecentJobs() {
                     </p>
                     <div className="flex items-center mt-2 space-x-4">
                       <Badge variant="secondary" className={statusColor}>
-                        {job.status.charAt(0).toUpperCase() + job.status.slice(1)}
+                        {job.status ? job.status.charAt(0).toUpperCase() + job.status.slice(1) : 'Unknown'}
                       </Badge>
                       <span className="text-xs text-gray-500">
                         {job.applications_count || 0} applications
