@@ -2,7 +2,7 @@ import { z } from "zod";
 
 // Authentication schemas
 export const loginSchema = z.object({
-  username: z.string().min(1, "Username is required"),
+  phone: z.string().min(1, "Phone is required"),
   password: z.string().min(1, "Password is required"),
 });
 
@@ -14,7 +14,7 @@ export const tokenSchema = z.object({
 // User schemas
 export const userSchema = z.object({
   id: z.string(),
-  username: z.string(),
+  phone: z.string(),
   email: z.string().email().optional(),
   first_name: z.string().optional(),
   last_name: z.string().optional(),
@@ -72,10 +72,14 @@ export const jobSchema = z.object({
   location: z.number(),
   job_type: z.enum(["full_time", "part_time", "contract"]),
   workplace_type: z.enum(["remote", "on_site", "hybrid"]),
-  min_education_level: z.enum(["secondary", "undergraduate", "bachelor", "master", "doctorate"]).optional(),
+  min_education_level: z
+    .enum(["secondary", "undergraduate", "bachelor", "master", "doctorate"])
+    .optional(),
   salary_from: z.number().optional(),
   salary_to: z.number().optional(),
-  salary_payment_type: z.enum(["yearly", "monthly", "weekly", "daily", "hourly"]).optional(),
+  salary_payment_type: z
+    .enum(["yearly", "monthly", "weekly", "daily", "hourly"])
+    .optional(),
   required_languages: z.array(z.number()).optional(),
   status: z.enum(["open", "archived", "expired"]),
   created_at: z.string(),
@@ -83,15 +87,17 @@ export const jobSchema = z.object({
   applications_count: z.number().optional(),
 });
 
-export const createJobSchema = jobSchema.omit({
-  id: true,
-  created_at: true,
-  updated_at: true,
-  applications_count: true,
-  status: true,
-}).extend({
-  status: z.enum(["open", "archived", "expired"]).optional(),
-});
+export const createJobSchema = jobSchema
+  .omit({
+    id: true,
+    created_at: true,
+    updated_at: true,
+    applications_count: true,
+    status: true,
+  })
+  .extend({
+    status: z.enum(["open", "archived", "expired"]).optional(),
+  });
 
 // Job Application schemas
 export const jobApplicationSchema = z.object({
@@ -161,12 +167,13 @@ export const savedFilterSchema = z.object({
 });
 
 // Pagination schemas
-export const paginatedSchema = <T extends z.ZodType<any>>(itemSchema: T) => z.object({
-  count: z.number(),
-  next: z.string().nullable(),
-  previous: z.string().nullable(),
-  results: z.array(itemSchema),
-});
+export const paginatedSchema = <T extends z.ZodType<any>>(itemSchema: T) =>
+  z.object({
+    count: z.number(),
+    next: z.string().nullable(),
+    previous: z.string().nullable(),
+    results: z.array(itemSchema),
+  });
 
 // Type exports
 export type LoginRequest = z.infer<typeof loginSchema>;
@@ -195,7 +202,7 @@ export type PaginatedResponse<T> = {
 };
 
 // Insert types for compatibility
-export type InsertUser = Omit<User, 'id'>;
+export type InsertUser = Omit<User, "id">;
 
 // Insert types for compatibility
-export type InsertUser = Omit<User, 'id'>;
+export type InsertUser = Omit<User, "id">;

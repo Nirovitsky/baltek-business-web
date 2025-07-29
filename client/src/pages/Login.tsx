@@ -1,11 +1,23 @@
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Redirect } from "wouter";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { loginSchema, type LoginRequest } from "@shared/schema";
@@ -18,7 +30,7 @@ export default function Login() {
   const form = useForm<LoginRequest>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: "",
+      phone: "",
       password: "",
     },
   });
@@ -32,7 +44,7 @@ export default function Login() {
       await login(data);
       toast({
         title: "Login successful",
-        description: "Welcome to Baltek Karyera Business Dashboard",
+        description: "Welcome to baltek business dashboard",
       });
     } catch (error: any) {
       toast({
@@ -50,10 +62,8 @@ export default function Login() {
           <div className="mx-auto w-16 h-16 bg-primary rounded-xl flex items-center justify-center mb-4">
             <Building2 className="w-8 h-8 text-white" />
           </div>
-          <CardTitle className="text-2xl font-bold">Baltek Karyera</CardTitle>
-          <CardDescription>
-            Sign in to your business dashboard
-          </CardDescription>
+          <CardTitle className="text-2xl font-bold">baltek business</CardTitle>
+          <CardDescription>Sign in to your dashboard</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -61,13 +71,13 @@ export default function Login() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="username"
+                name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>Phone</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="Enter your username" 
+                      <Input
+                        placeholder="Enter your phone"
                         {...field}
                         disabled={isLoading}
                       />
@@ -84,9 +94,9 @@ export default function Login() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="password" 
-                        placeholder="Enter your password" 
+                      <Input
+                        type="password"
+                        placeholder="Enter your password"
                         {...field}
                         disabled={isLoading}
                       />
@@ -96,11 +106,7 @@ export default function Login() {
                 )}
               />
 
-              <Button 
-                type="submit" 
-                className="w-full" 
-                disabled={isLoading}
-              >
+              <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Signing in..." : "Sign In"}
               </Button>
             </form>

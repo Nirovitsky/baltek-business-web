@@ -51,8 +51,8 @@ export default function Sidebar() {
             <Building2 className="text-white text-lg" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Baltek Karyera</h1>
-            <p className="text-sm text-gray-500">Business Dashboard</p>
+            <h1 className="text-xl font-bold text-gray-900">baltek business</h1>
+            <p className="text-sm text-gray-500">Dashboard</p>
           </div>
         </div>
       </div>

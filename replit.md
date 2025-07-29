@@ -6,7 +6,11 @@ This is a modern business dashboard for the Baltek Karyera platform built with R
 
 ## User Preferences
 
-Preferred communication style: Simple, everyday language.
+- Preferred communication style: Simple, everyday language
+- Application name: "baltek business" (lowercase "business")
+- Primary color: #1877F2 (Facebook blue)
+- Backend URL: http://116.203.92.15/api/
+- Authentication: Phone number + password (not username)
 
 ## System Architecture
 

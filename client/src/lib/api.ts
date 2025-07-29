@@ -1,6 +1,6 @@
 import { queryClient } from "./queryClient";
 
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'http://116.203.92.15/api';
 
 export interface ApiError {
   message: string;
@@ -52,7 +52,7 @@ export class ApiService {
     return this.handleResponse<T>(response);
   }
 
-  async login(credentials: { username: string; password: string }) {
+  async login(credentials: { phone: string; password: string }) {
     const response = await fetch(`${API_BASE_URL}/token/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
