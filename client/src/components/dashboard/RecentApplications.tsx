@@ -97,7 +97,7 @@ export default function RecentApplications() {
                 </div>
                 <div className="flex items-center space-x-2">
                   <Badge variant="secondary" className={getStatusColor(application.status)}>
-                    {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
+                    {application.status ? application.status.charAt(0).toUpperCase() + application.status.slice(1) : 'Unknown'}
                   </Badge>
                   <ChevronRight className="text-gray-400 w-4 h-4" />
                 </div>

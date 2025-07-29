@@ -207,7 +207,7 @@ export default function Jobs() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
                           <Badge variant="secondary" className={getStatusColor(job.status)}>
-                            {job.status.charAt(0).toUpperCase() + job.status.slice(1)}
+                            {job.status ? job.status.charAt(0).toUpperCase() + job.status.slice(1) : 'Unknown'}
                           </Badge>
                           <span className="text-sm text-gray-500">
                             {job.applications_count || 0} applications

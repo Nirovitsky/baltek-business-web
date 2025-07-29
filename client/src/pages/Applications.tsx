@@ -240,7 +240,7 @@ export default function Applications() {
                       
                       <div className="flex items-center justify-between">
                         <Badge variant="secondary" className={getStatusColor(application.status)}>
-                          {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
+                          {application.status ? application.status.charAt(0).toUpperCase() + application.status.slice(1) : 'Unknown'}
                         </Badge>
                         
                         {application.candidate_email && (
