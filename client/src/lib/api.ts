@@ -1,6 +1,6 @@
 import { queryClient } from "./queryClient";
 
-const API_BASE_URL = 'http://116.203.92.15/api';
+const API_BASE_URL = '/api';
 
 export interface ApiError {
   message: string;
