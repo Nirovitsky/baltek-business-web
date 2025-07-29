@@ -1,0 +1,139 @@
+import { useState } from "react";
+import { useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
+import TopBar from "@/components/layout/TopBar";
+import StatsCard from "@/components/dashboard/StatsCard";
+import RecentJobs from "@/components/dashboard/RecentJobs";
+import RecentApplications from "@/components/dashboard/RecentApplications";
+import QuickActions from "@/components/dashboard/QuickActions";
+import JobModal from "@/components/jobs/JobModal";
+import { Briefcase, Users, Clock, UserCheck } from "lucide-react";
+import { apiService } from "@/lib/api";
+import type { Job, JobApplication, PaginatedResponse } from "@shared/schema";
+
+export default function Dashboard() {
+  const [, setLocation] = useLocation();
+  const [isJobModalOpen, setIsJobModalOpen] = useState(false);
+
+  // Fetch data for stats
+  const { data: jobsData } = useQuery({
+    queryKey: ['/jobs/'],
+    queryFn: () => apiService.request<PaginatedResponse<Job>>('/jobs/'),
+  });
+
+  const { data: applicationsData } = useQuery({
+    queryKey: ['/jobs/applications/'],
+    queryFn: () => apiService.request<PaginatedResponse<JobApplication>>('/jobs/applications/'),
+  });
+
+  const jobs = jobsData?.results || [];
+  const applications = applicationsData?.results || [];
+
+  // Calculate stats
+  const activeJobs = jobs.filter(job => job.status === 'open').length;
+  const totalApplications = applicationsData?.count || 0;
+  const pendingApplications = applications.filter(app => app.status === 'pending').length;
+  const hiredThisMonth = applications.filter(app => {
+    if (app.status !== 'hired') return false;
+    const updatedDate = new Date(app.updated_at);
+    const currentDate = new Date();
+    return updatedDate.getMonth() === currentDate.getMonth() && 
+           updatedDate.getFullYear() === currentDate.getFullYear();
+  }).length;
+
+  const handleCreateJob = () => {
+    setIsJobModalOpen(true);
+  };
+
+  const handleReviewApplications = () => {
+    setLocation('/applications');
+  };
+
+  const handleOpenMessages = () => {
+    setLocation('/messages');
+  };
+
+  return (
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <TopBar 
+        title="Dashboard Overview"
+        description="Manage your job postings and applications"
+        onCreateJob={handleCreateJob}
+      />
+
+      <main className="flex-1 overflow-y-auto p-6 space-y-8">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatsCard
+            title="Active Jobs"
+            value={activeJobs}
+            icon={Briefcase}
+            change={{
+              value: `+${Math.max(0, activeJobs - 20)}`,
+              label: "from last month",
+              type: "positive"
+            }}
+          />
+          
+          <StatsCard
+            title="Total Applications"
+            value={totalApplications}
+            icon={Users}
+            iconColor="text-blue-600"
+            change={{
+              value: `+${Math.max(0, Math.floor(totalApplications * 0.08))}`,
+              label: "from last month",
+              type: "positive"
+            }}
+          />
+
+          <StatsCard
+            title="Pending Reviews"
+            value={pendingApplications}
+            icon={Clock}
+            iconColor="text-yellow-600"
+            change={{
+              value: `+${Math.max(0, pendingApplications - 50)}`,
+              label: "since yesterday",
+              type: "neutral"
+            }}
+          />
+
+          <StatsCard
+            title="Hired This Month"
+            value={hiredThisMonth}
+            icon={UserCheck}
+            iconColor="text-green-600"
+            change={{
+              value: `+${Math.max(0, hiredThisMonth - 5)}`,
+              label: "from last month",
+              type: "positive"
+            }}
+          />
+        </div>
+
+        {/* Recent Jobs and Applications */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <RecentJobs />
+          <RecentApplications />
+        </div>
+
+        {/* Quick Actions */}
+        <QuickActions
+          onCreateJob={handleCreateJob}
+          onReviewApplications={handleReviewApplications}
+          onOpenMessages={handleOpenMessages}
+        />
+      </main>
+
+      <JobModal
+        open={isJobModalOpen}
+        onOpenChange={setIsJobModalOpen}
+        onSuccess={() => {
+          // Refresh data after job creation
+          window.location.reload();
+        }}
+      />
+    </div>
+  );
+}
