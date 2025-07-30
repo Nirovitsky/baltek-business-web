@@ -24,10 +24,22 @@ export const userSchema = z.object({
 export const organizationSchema = z.object({
   id: z.number(),
   name: z.string(),
+  display_name: z.string().optional(),
   description: z.string().optional(),
+  about_us: z.string().optional(),
   website: z.string().url().optional(),
-  location: z.string().optional(),
+  location: z.object({
+    id: z.number(),
+    name: z.string()
+  }).optional(),
   logo: z.string().optional(),
+  is_public: z.boolean().optional(),
+  email: z.string().email().optional(),
+  phone: z.string().optional(),
+  category: z.object({
+    id: z.number(),
+    name: z.string()
+  }).optional(),
   created_at: z.string(),
   updated_at: z.string(),
 });

@@ -1,15 +1,19 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import TopBar from "@/components/layout/TopBar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
 import { Building2, Globe, MapPin } from "lucide-react";
 import { z } from "zod";
@@ -17,22 +21,47 @@ import type { Organization } from "@shared/schema";
 
 const organizationUpdateSchema = z.object({
   name: z.string().min(1, "Organization name is required"),
+  display_name: z.string().optional(),
   description: z.string().optional(),
+  about_us: z.string().optional(),
   website: z.string().url().optional().or(z.literal("")),
-  location: z.string().optional(),
+  location_id: z.number().optional(),
+  category_id: z.number().optional(),
+  is_public: z.boolean().optional(),
+  email: z.string().email().optional().or(z.literal("")),
+  phone: z.string().optional(),
+  logo: z.string().optional(),
 });
 
 type OrganizationUpdate = z.infer<typeof organizationUpdateSchema>;
 
 export default function Organization() {
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { selectedOrganization, fetchOrganizations } = useAuth();
 
-  const { data: organization, isLoading } = useQuery({
-    queryKey: ['/organizations/my/'],
-    queryFn: () => apiService.request<Organization>('/organizations/my/'),
-  });
+  // Ensure we have the latest organization data
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      try {
+        await fetchOrganizations();
+      } catch (error) {
+        console.error('Failed to fetch organization data:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load organization data",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, [fetchOrganizations, toast]);
 
   const form = useForm<OrganizationUpdate>({
     resolver: zodResolver(organizationUpdateSchema),
@@ -44,26 +73,39 @@ export default function Organization() {
     },
   });
 
-  // Update form when organization data loads
+  // Update form when selectedOrganization changes
   useEffect(() => {
-    if (organization) {
+    if (selectedOrganization) {
       form.reset({
-        name: organization.name,
-        description: organization.description || "",
-        website: organization.website || "",
-        location: organization.location || "",
+        name: selectedOrganization.name,
+        display_name: selectedOrganization.display_name || "",
+        description: selectedOrganization.description || "",
+        about_us: selectedOrganization.about_us || "",
+        website: selectedOrganization.website || "",
+        location_id: selectedOrganization.location?.id,
+        category_id: selectedOrganization.category?.id,
+        is_public: selectedOrganization.is_public || false,
+        email: selectedOrganization.email || "",
+        phone: selectedOrganization.phone || "",
+        logo: selectedOrganization.logo || "",
       });
     }
-  }, [organization, form]);
+  }, [selectedOrganization, form]);
 
   const updateMutation = useMutation({
-    mutationFn: (data: OrganizationUpdate) => 
-      apiService.request<Organization>(`/organizations/${organization!.id}/`, {
+    mutationFn: (data: OrganizationUpdate) => {
+      if (!selectedOrganization) {
+        throw new Error('No organization selected');
+      }
+      return apiService.request<Organization>(`/organizations/${selectedOrganization.id}/`, {
         method: 'PATCH',
         body: JSON.stringify(data),
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/organizations/my/'] });
+      });
+    },
+    onSuccess: (updatedOrg) => {
+      // Update the organization in the auth store
+      const { updateSelectedOrganization } = useAuth.getState();
+      updateSelectedOrganization(updatedOrg);
       toast({
         title: "Success",
         description: "Organization updated successfully",
@@ -84,12 +126,19 @@ export default function Organization() {
   };
 
   const handleCancel = () => {
-    if (organization) {
+    if (selectedOrganization) {
       form.reset({
-        name: organization.name,
-        description: organization.description || "",
-        website: organization.website || "",
-        location: organization.location || "",
+        name: selectedOrganization.name,
+        display_name: selectedOrganization.display_name || "",
+        description: selectedOrganization.description || "",
+        about_us: selectedOrganization.about_us || "",
+        website: selectedOrganization.website || "",
+        location_id: selectedOrganization.location?.id,
+        category_id: selectedOrganization.category?.id,
+        is_public: selectedOrganization.is_public || false,
+        email: selectedOrganization.email || "",
+        phone: selectedOrganization.phone || "",
+        logo: selectedOrganization.logo || "",
       });
     }
     setIsEditing(false);
@@ -146,7 +195,7 @@ export default function Organization() {
                     <Skeleton className="h-24 w-full" />
                   </div>
                 </div>
-              ) : !organization ? (
+              ) : !selectedOrganization ? (
                 <div className="text-center py-8">
                   <p className="text-gray-500">No organization found</p>
                   <p className="text-sm text-gray-400 mt-2">
@@ -156,88 +205,270 @@ export default function Organization() {
               ) : (
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Organization Name</FormLabel>
-                            <FormControl>
-                              <Input 
-                                {...field} 
-                                disabled={!isEditing}
-                                placeholder="Enter organization name"
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                      {/* Logo Upload Section */}
+                      <div className="md:col-span-1 border rounded-lg p-4">
+                        <FormLabel className="block mb-2">Organization Logo</FormLabel>
+                        <div className="w-full mb-4">
+                          <AspectRatio ratio={1 / 1} className="overflow-hidden rounded-lg bg-gray-100 border">
+                            {selectedOrganization?.logo ? (
+                              <img 
+                                src={selectedOrganization.logo} 
+                                alt={selectedOrganization.name} 
+                                className="object-contain w-full h-full"
                               />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="location"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Location</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                                <Input 
-                                  {...field} 
-                                  disabled={!isEditing}
-                                  placeholder="City, Country"
-                                  className="pl-10"
-                                />
+                            ) : (
+                              <div className="flex items-center justify-center h-full w-full bg-gray-100">
+                                <Building2 className="h-12 w-12 text-gray-400" />
                               </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
+                            )}
+                          </AspectRatio>
+                        </div>
+                        {isEditing && (
+                          <div className="text-center">
+                            <Button variant="outline" type="button" size="sm">
+                              Upload Logo
+                            </Button>
+                            <p className="text-xs text-gray-500 mt-2">Recommended: 400x400px</p>
+                          </div>
                         )}
-                      />
-                    </div>
+                      </div>
 
-                    <FormField
-                      control={form.control}
-                      name="website"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Website</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                              <Input 
-                                {...field} 
-                                disabled={!isEditing}
-                                placeholder="https://www.example.com"
-                                className="pl-10"
+                      {/* Organization Details */}
+                      <div className="md:col-span-3">
+                        <Tabs defaultValue="general" className="w-full">
+                          <TabsList className="w-full">
+                            <TabsTrigger value="general" className="flex-1">General</TabsTrigger>
+                            <TabsTrigger value="contact" className="flex-1">Contact Info</TabsTrigger>
+                            <TabsTrigger value="about" className="flex-1">About</TabsTrigger>
+                          </TabsList>
+
+                          {/* General Tab */}
+                          <TabsContent value="general" className="space-y-4 mt-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                              <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Organization Name*</FormLabel>
+                                    <FormControl>
+                                      <Input 
+                                        {...field} 
+                                        disabled={!isEditing}
+                                        placeholder="Enter organization name"
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+
+                              <FormField
+                                control={form.control}
+                                name="display_name"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Display Name</FormLabel>
+                                    <FormControl>
+                                      <Input 
+                                        {...field} 
+                                        disabled={!isEditing}
+                                        placeholder="Display name (optional)"
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
                               />
                             </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
 
-                    <FormField
-                      control={form.control}
-                      name="description"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Description</FormLabel>
-                          <FormControl>
-                            <Textarea 
-                              {...field} 
-                              disabled={!isEditing}
-                              placeholder="Describe your organization..."
-                              rows={4}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                              <FormField
+                                control={form.control}
+                                name="category_id"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Category</FormLabel>
+                                    <FormControl>
+                                      <Input 
+                                        {...field}
+                                        type="text"
+                                        value={selectedOrganization?.category?.name || ""}
+                                        onChange={(e) => {
+                                          // Keep the field's onChange to maintain form state
+                                          field.onChange(selectedOrganization?.category?.id);
+                                        }}
+                                        disabled={!isEditing}
+                                        placeholder="Organization category"
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+
+                              <FormField
+                                control={form.control}
+                                name="location_id"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Location</FormLabel>
+                                    <FormControl>
+                                      <div className="relative">
+                                        <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                        <Input 
+                                          {...field}
+                                          type="text"
+                                          value={selectedOrganization?.location?.name || ""}
+                                          onChange={(e) => {
+                                            // Keep the field's onChange to maintain form state
+                                            field.onChange(selectedOrganization?.location?.id);
+                                          }}
+                                          disabled={!isEditing}
+                                          placeholder="Location"
+                                          className="pl-10"
+                                        />
+                                      </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+
+                            <FormField
+                              control={form.control}
+                              name="is_public"
+                              render={({ field }) => (
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                  <div className="space-y-0.5">
+                                    <FormLabel className="text-base">Public Profile</FormLabel>
+                                    <FormDescription>
+                                      Make your organization visible to the public
+                                    </FormDescription>
+                                  </div>
+                                  <FormControl>
+                                    <Switch
+                                      checked={field.value}
+                                      onCheckedChange={field.onChange}
+                                      disabled={!isEditing}
+                                    />
+                                  </FormControl>
+                                </FormItem>
+                              )}
                             />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                          </TabsContent>
+
+                          {/* Contact Tab */}
+                          <TabsContent value="contact" className="space-y-4 mt-4">
+                            <FormField
+                              control={form.control}
+                              name="email"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Business Email</FormLabel>
+                                  <FormControl>
+                                    <div className="relative">
+                                      <Input 
+                                        {...field} 
+                                        disabled={!isEditing}
+                                        placeholder="contact@yourcompany.com"
+                                        type="email"
+                                      />
+                                    </div>
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={form.control}
+                              name="phone"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Business Phone</FormLabel>
+                                  <FormControl>
+                                    <div className="relative">
+                                      <Input 
+                                        {...field} 
+                                        disabled={!isEditing}
+                                        placeholder="+1 (555) 123-4567"
+                                      />
+                                    </div>
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={form.control}
+                              name="website"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Website</FormLabel>
+                                  <FormControl>
+                                    <div className="relative">
+                                      <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                      <Input 
+                                        {...field} 
+                                        disabled={!isEditing}
+                                        placeholder="https://www.example.com"
+                                        className="pl-10"
+                                      />
+                                    </div>
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </TabsContent>
+
+                          {/* About Tab */}
+                          <TabsContent value="about" className="space-y-4 mt-4">
+                            <FormField
+                              control={form.control}
+                              name="description"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Short Description</FormLabel>
+                                  <FormControl>
+                                    <Textarea 
+                                      {...field} 
+                                      disabled={!isEditing}
+                                      placeholder="A brief description of your organization"
+                                      rows={2}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={form.control}
+                              name="about_us"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>About Us</FormLabel>
+                                  <FormControl>
+                                    <Textarea 
+                                      {...field} 
+                                      disabled={!isEditing}
+                                      placeholder="Detailed information about your organization, history, mission, values, etc."
+                                      rows={6}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </TabsContent>
+                        </Tabs>
+                      </div>
+                    </div>
 
                     {isEditing && (
                       <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
@@ -264,7 +495,7 @@ export default function Organization() {
           </Card>
 
           {/* Organization Stats */}
-          {organization && !isEditing && (
+          {selectedOrganization && !isEditing && (
             <Card>
               <CardHeader>
                 <CardTitle>Organization Details</CardTitle>
@@ -273,19 +504,19 @@ export default function Organization() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="text-center p-4 bg-gray-50 rounded-lg">
                     <p className="text-2xl font-bold text-gray-900">
-                      {new Date(organization.created_at).getFullYear()}
+                      {new Date(selectedOrganization.created_at).getFullYear()}
                     </p>
                     <p className="text-sm text-gray-600">Founded</p>
                   </div>
-                  
+
                   <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <p className="text-2xl font-bold text-gray-900">ID #{organization.id}</p>
+                    <p className="text-2xl font-bold text-gray-900">ID #{selectedOrganization.id}</p>
                     <p className="text-sm text-gray-600">Organization ID</p>
                   </div>
-                  
+
                   <div className="text-center p-4 bg-gray-50 rounded-lg">
                     <p className="text-2xl font-bold text-gray-900">
-                      {new Date(organization.updated_at).toLocaleDateString()}
+                      {new Date(selectedOrganization.updated_at).toLocaleDateString()}
                     </p>
                     <p className="text-sm text-gray-600">Last Updated</p>
                   </div>

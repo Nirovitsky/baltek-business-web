@@ -1,11 +1,11 @@
 import { Link, useLocation } from "wouter";
-import { 
+import {
   BarChart3,
   Briefcase,
   Users,
   MessageCircle,
   Building2,
-  Settings
+  Settings, UserCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -48,12 +48,20 @@ export default function Sidebar() {
       {/* Logo and Company */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center space-x-3 mb-4">
-          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-            <Building2 className="text-white text-lg" />
+          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center overflow-hidden">
+            {selectedOrganization?.logo ? (
+              <img 
+                src={selectedOrganization.logo} 
+                alt={selectedOrganization.name} 
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <Building2 className="text-white text-lg" />
+            )}
           </div>
           <div>
             <h1 className="text-xl font-bold text-gray-900">
-              {selectedOrganization?.name || 'baltek business'}
+              {selectedOrganization?.display_name || selectedOrganization?.name || 'baltek business'}
             </h1>
             <p className="text-sm text-gray-500">Dashboard</p>
           </div>
@@ -89,21 +97,26 @@ export default function Sidebar() {
 
       {/* User Profile */}
       <div className="p-4 border-t border-gray-200">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-            <Users className="text-gray-600 w-5 h-5" />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-medium text-gray-900">Business User</p>
-            <p className="text-xs text-gray-500">HR Manager</p>
-          </div>
-          <button
-            onClick={logout}
-            className="text-gray-400 hover:text-gray-600"
-            title="Logout"
-          >
-            <Settings className="w-4 h-4" />
-          </button>
+        <div className="flex items-center justify-between">
+          <Link href="/profile">
+            <div className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg">
+              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                <UserCircle className="text-primary w-5 h-5" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-900">Profile</p>
+                <p className="text-xs text-gray-500">Manage your account</p>
+              </div>
+            </div>
+          </Link>
+          <Link href="/settings">
+            <button
+              className="text-gray-400 hover:text-gray-600 p-2"
+              title="Settings"
+            >
+              <Settings className="w-4 h-4" />
+            </button>
+          </Link>
         </div>
       </div>
     </div>

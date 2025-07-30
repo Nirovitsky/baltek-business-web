@@ -53,9 +53,19 @@ export default function BusinessSwitcher() {
           className="w-full justify-between"
         >
           <div className="flex items-center">
-            <Building2 className="mr-2 h-4 w-4" />
+            <div className="w-5 h-5 mr-2 overflow-hidden rounded-sm flex-shrink-0">
+              {selectedOrganization?.logo ? (
+                <img 
+                  src={selectedOrganization.logo} 
+                  alt={selectedOrganization.name} 
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <Building2 className="h-4 w-4" />
+              )}
+            </div>
             <span className="truncate">
-              {selectedOrganization?.name || "Select business..."}
+              {selectedOrganization?.display_name || selectedOrganization?.name || "Select business..."}
             </span>
           </div>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -75,21 +85,36 @@ export default function BusinessSwitcher() {
                   setOpen(false);
                 }}
               >
-                <Check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    selectedOrganization?.id === org.id
-                      ? "opacity-100"
-                      : "opacity-0"
-                  )}
-                />
-                <div className="flex flex-col">
-                  <span className="font-medium">{org.name}</span>
-                  {org.description && (
-                    <span className="text-sm text-gray-500 truncate">
-                      {org.description}
-                    </span>
-                  )}
+                <div className="flex items-center">
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      selectedOrganization?.id === org.id
+                        ? "opacity-100"
+                        : "opacity-0"
+                    )}
+                  />
+                  <div className="w-6 h-6 mr-2 overflow-hidden rounded-sm flex-shrink-0">
+                    {org.logo ? (
+                      <img 
+                        src={org.logo} 
+                        alt={org.name} 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-primary/10 flex items-center justify-center">
+                        <Building2 className="h-3 w-3 text-primary" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-medium">{org.display_name || org.name}</span>
+                    {org.description && (
+                      <span className="text-xs text-gray-500 truncate">
+                        {org.description}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </CommandItem>
             ))}

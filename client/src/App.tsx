@@ -16,20 +16,26 @@ import Jobs from "@/pages/Jobs";
 import Applications from "@/pages/Applications";
 import Messages from "@/pages/Messages";
 import Organization from "@/pages/Organization";
+import Profile from "@/pages/Profile";
+import Settings from "@/pages/Settings";
 import NotFound from "@/pages/not-found";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, checkAuth, fetchOrganizations } = useAuth();
+  const { isAuthenticated, checkAuth, fetchOrganizations, refreshProfile } = useAuth();
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
-  
+
   useEffect(() => {
     if (isAuthenticated) {
-      fetchOrganizations();
+      // Fetch both user profile and organizations when authenticated
+      Promise.all([
+        refreshProfile(),
+        fetchOrganizations()
+      ]).catch(error => console.error('Error fetching initial data:', error));
     }
-  }, [isAuthenticated, fetchOrganizations]);
+  }, [isAuthenticated, fetchOrganizations, refreshProfile]);
 
   if (!isAuthenticated) {
     return <Redirect to="/login" />;
@@ -84,6 +90,24 @@ function Router() {
         </ProtectedRoute>
       </Route>
       
+      <Route path="/profile">
+        <ProtectedRoute>
+          <Profile />
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/settings">
+        <ProtectedRoute>
+          <Settings />
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/settings">
+        <ProtectedRoute>
+          <Settings />
+        </ProtectedRoute>
+      </Route>
+
       <Route component={NotFound} />
     </Switch>
   );

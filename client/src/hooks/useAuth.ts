@@ -1,17 +1,20 @@
 import { create } from 'zustand';
 import { apiService } from '@/lib/api';
-import type { LoginRequest, Organization } from '@shared/schema';
+import type { LoginRequest, Organization, User } from '@shared/schema';
 
 interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   selectedOrganization: Organization | null;
   organizations: Organization[];
+  user: User | null;
   login: (credentials: LoginRequest) => Promise<void>;
   logout: () => void;
   checkAuth: () => void;
   switchOrganization: (organization: Organization) => void;
   fetchOrganizations: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
+  updateSelectedOrganization: (updatedOrg: Organization) => void;
 }
 
 export const useAuth = create<AuthState>((set, get) => ({
@@ -19,6 +22,7 @@ export const useAuth = create<AuthState>((set, get) => ({
   isLoading: false,
   selectedOrganization: null,
   organizations: [],
+  user: null,
 
   login: async (credentials: LoginRequest) => {
     set({ isLoading: true });
@@ -94,5 +98,25 @@ export const useAuth = create<AuthState>((set, get) => ({
     } catch (error) {
       console.error('Failed to fetch organizations:', error);
     }
+  },
+
+  refreshProfile: async () => {
+    try {
+      const user = await apiService.request<User>('/users/me/');
+      set({ user });
+      // Don't return the user to match the Promise<void> return type
+    } catch (error) {
+      console.error('Failed to fetch user profile:', error);
+      throw error;
+    }
+  },
+
+  updateSelectedOrganization: (updatedOrg: Organization) => {
+    const { organizations } = get();
+    const updatedOrgs = organizations.map(org => 
+      org.id === updatedOrg.id ? updatedOrg : org
+    );
+    localStorage.setItem('selected_organization', JSON.stringify(updatedOrg));
+    set({ organizations: updatedOrgs, selectedOrganization: updatedOrg });
   },
 }));
