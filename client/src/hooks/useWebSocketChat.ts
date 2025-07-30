@@ -53,10 +53,8 @@ export function useWebSocketChat() {
 
           if (message.type === "message_received") {
             setMessages((prev) => [...prev, message.data]);
-          } else if (message.type === "authenticated") {
-            console.log("WebSocket authenticated successfully");
-          } else if (message.type === "error" || message.type === "auth_error") {
-            console.error("WebSocket error:", message.data || message.message);
+          } else if (message.type === "error") {
+            console.error("WebSocket error:", message.data);
           }
         } catch (error) {
           console.error("Failed to parse WebSocket message:", error, event.data);
@@ -108,7 +106,7 @@ export function useWebSocketChat() {
     setConnected(false);
   };
 
-  const sendMessage = (roomId: number, text: string) => {
+  const sendMessage = (roomId: number, text: string, attachment?: { url: string; name: string; type: string; size: number }) => {
     if (!socket || socket.readyState !== WebSocket.OPEN) {
       console.error("WebSocket is not connected");
       return false;
@@ -120,7 +118,13 @@ export function useWebSocketChat() {
         type: "send_message",
         data: {
           room: roomId,
-          text: text.trim(),
+          text: text?.trim() || '',
+          ...(attachment && {
+            attachment_url: attachment.url,
+            attachment_name: attachment.name,
+            attachment_type: attachment.type,
+            attachment_size: attachment.size,
+          }),
         },
       };
 

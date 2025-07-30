@@ -35,7 +35,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               if (response.ok) {
                 const userData = await response.json();
                 authenticatedUserId = userData.id?.toString() || 'unknown';
-                connections.set(authenticatedUserId, ws);
+                connections.set(authenticatedUserId!, ws);
                 ws.send(
                   JSON.stringify({ type: "authenticated", userId: authenticatedUserId, user: userData }),
                 );
@@ -162,6 +162,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Token refresh error:", error);
       res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // File upload endpoint (simulated for now)
+  app.post("/api/chat/upload", async (req, res) => {
+    try {
+      // For now, we'll simulate the response since we don't have actual file storage
+      const mockFile = {
+        url: `https://example.com/files/${Date.now()}-sample-file.jpg`,
+        name: req.body.name || "uploaded-file.jpg",
+        type: req.body.type || "image/jpeg",
+        size: req.body.size || 1024000,
+      };
+      
+      res.json(mockFile);
+    } catch (error) {
+      console.error("Upload error:", error);
+      res.status(500).json({ message: "Upload failed" });
     }
   });
 

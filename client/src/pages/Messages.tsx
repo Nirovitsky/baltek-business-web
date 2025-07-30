@@ -5,17 +5,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { MessageCircle, Send, Search, Phone, User } from "lucide-react";
+import { MessageCircle, Send, Search, Phone, User, Paperclip, Image, FileText } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useWebSocketChat } from "@/hooks/useWebSocketChat";
 import { apiService } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import FileUpload from "@/components/chat/FileUpload";
+import AttachmentPreview from "@/components/chat/AttachmentPreview";
 import type { Room, Message, PaginatedResponse } from "@shared/schema";
 
 export default function Messages() {
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [newMessage, setNewMessage] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [showFileUpload, setShowFileUpload] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
   const { toast } = useToast();
@@ -56,19 +61,63 @@ export default function Messages() {
       ? [...apiMessages, ...wsMessages]
       : apiMessages;
 
-  const handleSendMessage = () => {
-    if (!newMessage.trim() || !selectedRoom) return;
+  // File upload mutation
+  const uploadFileMutation = useMutation({
+    mutationFn: async (file: File) => {
+      // For now, simulate the upload since we don't have actual file storage
+      return {
+        url: `https://example.com/files/${Date.now()}-${file.name}`,
+        name: file.name,
+        type: file.type,
+        size: file.size,
+      };
+    },
+  });
 
-    const success = sendMessage(selectedRoom.id, newMessage);
-    if (success) {
-      setNewMessage("");
-    } else {
-      toast({
-        title: "Error",
-        description: "Failed to send message. Please check your connection.",
-        variant: "destructive",
+  const handleSendMessage = () => {
+    if (!selectedRoom || (!newMessage.trim() && !selectedFile)) return;
+
+    if (selectedFile) {
+      // Send file
+      uploadFileMutation.mutate(selectedFile, {
+        onSuccess: (uploadResult) => {
+          // Send message with attachment
+          const success = sendMessage(selectedRoom.id, newMessage || '', uploadResult);
+          if (success) {
+            setNewMessage("");
+            setSelectedFile(null);
+            setShowFileUpload(false);
+          }
+        },
+        onError: () => {
+          toast({
+            title: "Upload failed",
+            description: "Failed to upload file. Please try again.",
+            variant: "destructive",
+          });
+        },
       });
+    } else {
+      // Send text message
+      const success = sendMessage(selectedRoom.id, newMessage);
+      if (success) {
+        setNewMessage("");
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to send message. Please check your connection.",
+          variant: "destructive",
+        });
+      }
     }
+  };
+
+  const handleFileSelect = (file: File) => {
+    setSelectedFile(file);
+  };
+
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
   };
 
   const handleRoomSelect = (room: Room) => {
@@ -298,7 +347,25 @@ export default function Messages() {
                               {message.owner.last_name}
                             </p>
                           )}
-                          <p className="text-sm">{message.text}</p>
+                          
+                          {/* Show attachment if present */}
+                          {message.attachment_url && (
+                            <div className="mb-2">
+                              <AttachmentPreview
+                                attachment={{
+                                  url: message.attachment_url,
+                                  name: message.attachment_name || 'Attachment',
+                                  type: message.attachment_type || 'file',
+                                  size: message.attachment_size || 0,
+                                }}
+                              />
+                            </div>
+                          )}
+                          
+                          {/* Show text if present */}
+                          {message.text && (
+                            <p className="text-sm">{message.text}</p>
+                          )}
                           <p
                             className={`text-xs mt-1 ${
                               isOwn ? "text-blue-100" : "text-gray-500"
@@ -320,7 +387,46 @@ export default function Messages() {
 
             {/* Message Input */}
             <div className="bg-white border-t border-gray-200 p-4 shadow-lg">
-              <div className="flex space-x-4">
+              {/* File upload area */}
+              {selectedFile && (
+                <div className="mb-3">
+                  <AttachmentPreview
+                    attachment={{
+                      url: URL.createObjectURL(selectedFile),
+                      name: selectedFile.name,
+                      type: selectedFile.type,
+                      size: selectedFile.size,
+                    }}
+                    onRemove={handleRemoveFile}
+                    showRemove={true}
+                  />
+                </div>
+              )}
+
+              <div className="flex space-x-2">
+                <div className="flex space-x-1">
+                  <input
+                    type="file"
+                    id="file-upload"
+                    className="hidden"
+                    accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleFileSelect(file);
+                    }}
+                  />
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => document.getElementById('file-upload')?.click()}
+                    disabled={!connected}
+                    className="h-10 w-10 p-0"
+                    title="Attach file"
+                  >
+                    <Paperclip className="w-4 h-4" />
+                  </Button>
+                </div>
+                
                 <Input
                   placeholder="Type your message..."
                   value={newMessage}
@@ -331,10 +437,14 @@ export default function Messages() {
                 />
                 <Button
                   onClick={handleSendMessage}
-                  disabled={!newMessage.trim() || !connected}
+                  disabled={(!newMessage.trim() && !selectedFile) || !connected || uploadFileMutation.isPending}
                   className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-md"
                 >
-                  <Send className="w-4 h-4" />
+                  {uploadFileMutation.isPending ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
                 </Button>
               </div>
               {!connected && (

@@ -179,13 +179,21 @@ export const messageSchema = z.object({
     first_name: z.string(),
     last_name: z.string(),
   }),
-  text: z.string(),
+  text: z.string().optional(),
+  attachment_url: z.string().optional(),
+  attachment_name: z.string().optional(),
+  attachment_type: z.string().optional(),
+  attachment_size: z.number().optional(),
   date_created: z.string(),
 });
 
 export const createMessageSchema = z.object({
   room: z.number(),
-  text: z.string(),
+  text: z.string().optional(),
+  attachment_url: z.string().optional(),
+  attachment_name: z.string().optional(),
+  attachment_type: z.string().optional(),
+  attachment_size: z.number().optional(),
 });
 
 // Bookmark and Filter schemas
@@ -297,7 +305,11 @@ export const messages = pgTable("messages", {
   id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
   room_id: integer("room_id").references(() => rooms.id).notNull(),
   user_id: integer("user_id").references(() => users.id).notNull(),
-  text: text("text").notNull(),
+  text: text("text"),
+  attachment_url: varchar("attachment_url"),
+  attachment_name: varchar("attachment_name"),
+  attachment_type: varchar("attachment_type"), // 'image', 'document', 'video', etc.
+  attachment_size: integer("attachment_size"), // in bytes
   created_at: timestamp("created_at").defaultNow(),
 });
 
