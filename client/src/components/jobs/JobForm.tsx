@@ -7,8 +7,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
-import { createJobSchema, type CreateJob, type Job, type Category, type Location } from "@shared/schema";
+import { createJobSchema, type CreateJob, type Job, type Category, type Location, type PaginatedResponse } from "@shared/schema";
 
 interface JobFormProps {
   job?: Job;
@@ -18,6 +19,7 @@ interface JobFormProps {
 
 export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
   const { toast } = useToast();
+  const { selectedOrganization } = useAuth();
   const queryClient = useQueryClient();
 
   const form = useForm<CreateJob>({
@@ -26,6 +28,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       title: job.title,
       description: job.description,
       category: job.category,
+      organization: job.organization,
       location: job.location,
       job_type: job.job_type,
       workplace_type: job.workplace_type,
@@ -38,6 +41,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       job_type: "full_time",
       workplace_type: "remote",
       status: "open",
+      organization: selectedOrganization?.id || 0,
     },
   });
 
@@ -47,10 +51,12 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
     queryFn: () => apiService.request<Category[]>('/categories/'),
   });
 
-  const { data: locations } = useQuery({
+  const { data: locationsData } = useQuery({
     queryKey: ['/locations/'],
-    queryFn: () => apiService.request<Location[]>('/locations/'),
+    queryFn: () => apiService.request<PaginatedResponse<Location>>('/locations/'),
   });
+
+  const locations = locationsData?.results || [];
 
   const createMutation = useMutation({
     mutationFn: (data: CreateJob) => apiService.request<Job>('/jobs/', {

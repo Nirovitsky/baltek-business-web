@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import TopBar from "@/components/layout/TopBar";
 import JobModal from "@/components/modals/JobModal";
+import JobDetailDialog from "@/components/jobs/JobDetailDialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +17,9 @@ import type { Job, PaginatedResponse } from "@shared/schema";
 
 export default function Jobs() {
   const [isJobModalOpen, setIsJobModalOpen] = useState(false);
+  const [isJobDetailOpen, setIsJobDetailOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<Job | undefined>();
+  const [selectedJobId, setSelectedJobId] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   
@@ -65,11 +68,18 @@ export default function Jobs() {
   const handleEditJob = (job: Job) => {
     setSelectedJob(job);
     setIsJobModalOpen(true);
+    setIsJobDetailOpen(false);
+  };
+
+  const handleViewJob = (jobId: number) => {
+    setSelectedJobId(jobId);
+    setIsJobDetailOpen(true);
   };
 
   const handleDeleteJob = (jobId: number) => {
     if (confirm('Are you sure you want to delete this job posting?')) {
       deleteJobMutation.mutate(jobId);
+      setIsJobDetailOpen(false);
     }
   };
 
@@ -189,6 +199,13 @@ export default function Jobs() {
                           <Button
                             size="sm"
                             variant="outline"
+                            onClick={() => handleViewJob(job.id)}
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
                             onClick={() => handleEditJob(job)}
                           >
                             <Edit className="w-4 h-4" />
@@ -242,6 +259,14 @@ export default function Jobs() {
         onSuccess={() => {
           queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
         }}
+      />
+
+      <JobDetailDialog
+        jobId={selectedJobId}
+        open={isJobDetailOpen}
+        onOpenChange={setIsJobDetailOpen}
+        onEdit={handleEditJob}
+        onDelete={handleDeleteJob}
       />
     </div>
   );
