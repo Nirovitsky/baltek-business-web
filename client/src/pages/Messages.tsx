@@ -366,16 +366,23 @@ export default function Messages() {
                           {message.text && (
                             <p className="text-sm">{message.text}</p>
                           )}
-                          <p
-                            className={`text-xs mt-1 ${
+                          <div className={`text-xs mt-1 space-y-1 ${
                               isOwn ? "text-blue-100" : "text-gray-500"
-                            }`}
-                          >
-                            {new Date(message.date_created).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </p>
+                            }`}>
+                            <p>
+                              {new Date(message.date_created).toLocaleDateString([], {
+                                month: "short",
+                                day: "numeric",
+                                year: new Date(message.date_created).getFullYear() !== new Date().getFullYear() ? "numeric" : undefined,
+                              })}
+                            </p>
+                            <p>
+                              {new Date(message.date_created).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -416,14 +423,15 @@ export default function Messages() {
                     }}
                   />
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="sm"
                     onClick={() => document.getElementById('file-upload')?.click()}
                     disabled={!connected}
-                    className="h-10 w-10 p-0"
+                    className="h-10 px-3 border-2 border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50"
                     title="Attach file"
                   >
-                    <Paperclip className="w-4 h-4" />
+                    <Paperclip className="w-4 h-4 mr-1" />
+                    <span className="text-xs">File</span>
                   </Button>
                 </div>
                 
