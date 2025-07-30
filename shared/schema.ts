@@ -28,18 +28,22 @@ export const organizationSchema = z.object({
   description: z.string().optional(),
   about_us: z.string().optional(),
   website: z.string().url().optional(),
-  location: z.object({
-    id: z.number(),
-    name: z.string()
-  }).optional(),
+  location: z
+    .object({
+      id: z.number(),
+      name: z.string(),
+    })
+    .optional(),
   logo: z.string().optional(),
   is_public: z.boolean().optional(),
   email: z.string().email().optional(),
   phone: z.string().optional(),
-  category: z.object({
-    id: z.number(),
-    name: z.string()
-  }).optional(),
+  category: z
+    .object({
+      id: z.number(),
+      name: z.string(),
+    })
+    .optional(),
   created_at: z.string(),
   updated_at: z.string(),
 });
@@ -142,38 +146,46 @@ export const jobApplicationSchema = z.object({
   room_id: z.number().nullable().optional(),
 });
 
-export const createJobApplicationSchema = jobApplicationSchema.omit({
-  id: true,
-  owner: true,
-  room_id: true,
-}).extend({
-  job: z.number(),
-});
+export const createJobApplicationSchema = jobApplicationSchema
+  .omit({
+    id: true,
+    owner: true,
+    room_id: true,
+  })
+  .extend({
+    job: z.number(),
+  });
 
 // Chat schemas
 export const roomSchema = z.object({
   id: z.number(),
-  name: z.string(),
-  participants: z.array(z.number()),
-  created_at: z.string(),
-  updated_at: z.string(),
-  last_message: z.string().optional(),
-  unread_count: z.number().optional(),
+  name: z.string().optional(),
+  members: z.array(
+    z.object({
+      id: z.number(),
+      first_name: z.string(),
+      last_name: z.string(),
+    }),
+  ),
+  last_message_text: z.string().optional(),
+  last_message_date_created: z.string().optional(),
 });
 
 export const messageSchema = z.object({
   id: z.number(),
   room: z.number(),
-  sender: z.number(),
-  content: z.string(),
-  created_at: z.string(),
-  sender_name: z.string().optional(),
+  owner: z.object({
+    id: z.number(),
+    first_name: z.string(),
+    last_name: z.string(),
+  }),
+  text: z.string(),
+  date_created: z.string(),
 });
 
-export const createMessageSchema = messageSchema.omit({
-  id: true,
-  created_at: true,
-  sender_name: true,
+export const createMessageSchema = z.object({
+  room: z.number(),
+  text: z.string(),
 });
 
 // Bookmark and Filter schemas
