@@ -19,11 +19,14 @@ import Organization from "@/pages/Organization";
 import NotFound from "@/pages/not-found";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, checkAuth } = useAuth();
+  const { isAuthenticated, checkAuth, fetchOrganizations } = useAuth();
 
   useEffect(() => {
     checkAuth();
-  }, [checkAuth]);
+    if (isAuthenticated) {
+      fetchOrganizations();
+    }
+  }, [checkAuth, fetchOrganizations, isAuthenticated]);
 
   if (!isAuthenticated) {
     return <Redirect to="/login" />;

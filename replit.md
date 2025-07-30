@@ -116,6 +116,15 @@ This is a modern business dashboard for the Baltek Karyera platform built with R
 - **WebSocket**: Integrated WebSocket server on same port as HTTP server
 
 ### Environment Configuration
-- **Development**: Local development with in-memory storage
-- **Production**: PostgreSQL database with connection pooling
+- **Development**: Local development with API proxy to backend server
+- **Production**: Express server with API proxy and static asset serving
 - **Replit Integration**: Special handling for Replit environment detection and tooling
+
+## Recent Changes (July 30, 2025)
+✓ Implemented business switching functionality with dropdown selector
+✓ Cleaned up unnecessary database and auth service files since backend handles everything
+✓ Added organization filtering to jobs and applications queries  
+✓ Updated authentication to fetch and manage multiple organizations
+✓ Created comprehensive JobModal component with category/location support
+✓ Removed unused storage.ts, auth.ts, and drizzle.config.ts files
+✓ Fixed all LSP diagnostics and console errors

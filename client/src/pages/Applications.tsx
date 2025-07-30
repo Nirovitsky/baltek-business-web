@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
 import { User, Search, MessageCircle } from "lucide-react";
 import type { JobApplication, PaginatedResponse } from "@shared/schema";
@@ -17,18 +18,19 @@ export default function Applications() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   
   const { toast } = useToast();
+  const { selectedOrganization } = useAuth();
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['/jobs/applications/', statusFilter],
+    queryKey: ['/jobs/applications/', selectedOrganization?.id, statusFilter],
     queryFn: () => {
       const params = new URLSearchParams();
-      if (statusFilter !== 'all') {
-        params.append('status', statusFilter);
-      }
+      if (selectedOrganization) params.append('organization', selectedOrganization.id.toString());
+      if (statusFilter !== 'all') params.append('status', statusFilter);
       
       return apiService.request<PaginatedResponse<JobApplication>>(`/jobs/applications/?${params.toString()}`);
     },
+    enabled: !!selectedOrganization,
   });
 
   const updateApplicationMutation = useMutation({

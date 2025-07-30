@@ -17,15 +17,9 @@ export class ApiService {
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       const error: ApiError = {
-        message: errorData.message || response.statusText,
+        message: errorData.message || errorData.detail || response.statusText,
         status: response.status,
       };
-      
-      if (response.status === 401) {
-        // Token expired, try to refresh
-        await this.refreshToken();
-        throw error;
-      }
       
       throw error;
     }
@@ -35,7 +29,8 @@ export class ApiService {
 
   async request<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    retryWithRefresh = true
   ): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
     const headers = {
@@ -44,12 +39,28 @@ export class ApiService {
       ...options.headers,
     };
 
-    const response = await fetch(url, {
-      ...options,
-      headers,
-    });
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers,
+      });
 
-    return this.handleResponse<T>(response);
+      return await this.handleResponse<T>(response);
+    } catch (error: any) {
+      // If it's a 401 error and we haven't already retried with refresh
+      if (error.status === 401 && retryWithRefresh && localStorage.getItem('refresh_token')) {
+        try {
+          await this.refreshToken();
+          // Retry the request with new token, but don't retry again
+          return this.request<T>(endpoint, options, false);
+        } catch (refreshError) {
+          // Refresh failed, logout user
+          this.logout();
+          throw refreshError;
+        }
+      }
+      throw error;
+    }
   }
 
   async login(credentials: { phone: string; password: string }) {
@@ -79,7 +90,7 @@ export class ApiService {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/token/refresh/`, {
+      const response = await fetch(`${API_BASE_URL}/token/refresh`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refresh: refreshToken }),

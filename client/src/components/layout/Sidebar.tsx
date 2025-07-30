@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
+import BusinessSwitcher from "./BusinessSwitcher";
 
 const navigationItems = [
   {
@@ -40,21 +41,26 @@ const navigationItems = [
 
 export default function Sidebar() {
   const [location] = useLocation();
-  const { logout } = useAuth();
+  const { logout, selectedOrganization } = useAuth();
 
   return (
     <div className="w-64 bg-white shadow-lg border-r border-gray-200 flex flex-col">
       {/* Logo and Company */}
       <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-3 mb-4">
           <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
             <Building2 className="text-white text-lg" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">baltek business</h1>
+            <h1 className="text-xl font-bold text-gray-900">
+              {selectedOrganization?.name || 'baltek business'}
+            </h1>
             <p className="text-sm text-gray-500">Dashboard</p>
           </div>
         </div>
+        
+        {/* Business Switcher */}
+        <BusinessSwitcher />
       </div>
 
       {/* Navigation Menu */}

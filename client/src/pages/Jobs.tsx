@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import TopBar from "@/components/layout/TopBar";
-import JobModal from "@/components/jobs/JobModal";
+import JobModal from "@/components/modals/JobModal";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
 import { Edit, Trash2, Search, Eye, Briefcase } from "lucide-react";
 import type { Job, PaginatedResponse } from "@shared/schema";
@@ -20,17 +21,20 @@ export default function Jobs() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   
   const { toast } = useToast();
+  const { selectedOrganization } = useAuth();
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['/jobs/', searchTerm, statusFilter],
+    queryKey: ['/jobs/', selectedOrganization?.id, searchTerm, statusFilter],
     queryFn: () => {
       const params = new URLSearchParams();
+      if (selectedOrganization) params.append('organization', selectedOrganization.id.toString());
       if (searchTerm) params.append('search', searchTerm);
       if (statusFilter !== 'all') params.append('status', statusFilter);
       
       return apiService.request<PaginatedResponse<Job>>(`/jobs/?${params.toString()}`);
     },
+    enabled: !!selectedOrganization,
   });
 
   const deleteJobMutation = useMutation({

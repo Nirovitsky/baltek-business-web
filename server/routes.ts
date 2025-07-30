@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
-import { storage } from "./storage";
+
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
@@ -79,9 +79,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/token/refresh/', async (req, res) => {
+  app.post('/api/token/refresh', async (req, res) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/token/refresh/`, {
+      const response = await fetch(`${API_BASE_URL}/api/token/refresh`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
