@@ -240,5 +240,99 @@ export type PaginatedResponse<T> = {
   results: T[];
 };
 
+// Database schemas for PostgreSQL implementation
+import { sql } from 'drizzle-orm';
+import {
+  index,
+  jsonb,
+  pgTable,
+  timestamp,
+  varchar,
+  integer,
+  text,
+  boolean,
+} from "drizzle-orm/pg-core";
+
+// Session storage table.
+export const sessions = pgTable(
+  "sessions",
+  {
+    sid: varchar("sid").primaryKey(),
+    sess: jsonb("sess").notNull(),
+    expire: timestamp("expire").notNull(),
+  },
+  (table) => [index("IDX_session_expire").on(table.expire)],
+);
+
+// Users table
+export const users = pgTable("users", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  phone: varchar("phone").unique().notNull(),
+  email: varchar("email"),
+  first_name: varchar("first_name"),
+  last_name: varchar("last_name"),
+  is_active: boolean("is_active").default(true),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
+});
+
+// Chat rooms table
+export const rooms = pgTable("rooms", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  name: varchar("name"),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
+});
+
+// Room members table
+export const roomMembers = pgTable("room_members", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  room_id: integer("room_id").references(() => rooms.id).notNull(),
+  user_id: integer("user_id").references(() => users.id).notNull(),
+  joined_at: timestamp("joined_at").defaultNow(),
+});
+
+// Messages table
+export const messages = pgTable("messages", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  room_id: integer("room_id").references(() => rooms.id).notNull(),
+  user_id: integer("user_id").references(() => users.id).notNull(),
+  text: text("text").notNull(),
+  created_at: timestamp("created_at").defaultNow(),
+});
+
+// Drizzle relations
+import { relations } from "drizzle-orm";
+
+export const roomsRelations = relations(rooms, ({ many }) => ({
+  members: many(roomMembers),
+  messages: many(messages),
+}));
+
+export const roomMembersRelations = relations(roomMembers, ({ one }) => ({
+  room: one(rooms, {
+    fields: [roomMembers.room_id],
+    references: [rooms.id],
+  }),
+  user: one(users, {
+    fields: [roomMembers.user_id],
+    references: [users.id],
+  }),
+}));
+
+export const messagesRelations = relations(messages, ({ one }) => ({
+  room: one(rooms, {
+    fields: [messages.room_id],
+    references: [rooms.id],
+  }),
+  user: one(users, {
+    fields: [messages.user_id],
+    references: [users.id],
+  }),
+}));
+
 // Insert types for compatibility
 export type InsertUser = Omit<User, "id">;
+export type DbUser = typeof users.$inferSelect;
+export type DbRoom = typeof rooms.$inferSelect;
+export type DbMessage = typeof messages.$inferSelect;

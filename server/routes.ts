@@ -6,51 +6,109 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
 
   // WebSocket server for real-time chat
-  // const wss = new WebSocketServer({ server: httpServer, path: "/ws" });
+  const wss = new WebSocketServer({ server: httpServer, path: "/ws" });
 
-  // // Store WebSocket connections by user ID
-  // const connections = new Map<string, WebSocket>();
+  // Store WebSocket connections by user ID
+  const connections = new Map<string, WebSocket>();
 
-  // wss.on("connection", (ws, req) => {
-  //   console.log("WebSocket connection established");
+  wss.on("connection", (ws, req) => {
+    console.log("WebSocket connection established");
+    let authenticatedUserId: string | null = null;
 
-  //   ws.on("message", (data) => {
-  //     try {
-  //       const message = JSON.parse(data.toString());
+    ws.on("message", async (data) => {
+      try {
+        const message = JSON.parse(data.toString());
 
-  //       if (message.type === "authenticate") {
-  //         // Store connection with user ID
-  //         connections.set(message.userId, ws);
-  //         ws.send(
-  //           JSON.stringify({ type: "authenticated", userId: message.userId }),
-  //         );
-  //       } else if (message.type === "chat_message") {
-  //         // Broadcast message to room participants
-  //         const roomConnections = Array.from(connections.entries())
-  //           .map(([, conn]) => conn)
-  //           .filter((conn) => conn.readyState === WebSocket.OPEN);
+        if (message.type === "authenticate") {
+          // Verify the token with the backend API
+          const token = message.token;
+          if (token) {
+            // Verify token by making a request to the backend
+            try {
+              const response = await fetch(`${API_BASE_URL}/api/users/me/`, {
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json',
+                },
+              });
+              
+              if (response.ok) {
+                const userData = await response.json();
+                authenticatedUserId = userData.id?.toString() || 'unknown';
+                connections.set(authenticatedUserId, ws);
+                ws.send(
+                  JSON.stringify({ type: "authenticated", userId: authenticatedUserId, user: userData }),
+                );
+                console.log(`User ${userData.first_name} ${userData.last_name} authenticated via WebSocket`);
+              } else {
+                ws.send(JSON.stringify({ type: "auth_error", message: "Invalid token" }));
+                ws.close();
+              }
+            } catch (error) {
+              console.error('Token verification error:', error);
+              ws.send(JSON.stringify({ type: "auth_error", message: "Authentication failed" }));
+              ws.close();
+            }
+          }
+        } else if (message.type === "send_message") {
+          if (!authenticatedUserId) {
+            ws.send(JSON.stringify({ type: "error", message: "Not authenticated" }));
+            return;
+          }
 
-  //         roomConnections.forEach((conn) => {
-  //           if (conn !== ws) {
-  //             conn.send(JSON.stringify(message));
-  //           }
-  //         });
-  //       }
-  //     } catch (error) {
-  //       console.error("WebSocket message error:", error);
-  //     }
-  //   });
+          // Save message to backend via API
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/chat/messages/`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${message.token || ''}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                room: message.data.room,
+                text: message.data.text,
+              }),
+            });
 
-  //   ws.on("close", () => {
-  //     // Remove connection from map
-  //     for (const [userId, connection] of Array.from(connections.entries())) {
-  //       if (connection === ws) {
-  //         connections.delete(userId);
-  //         break;
-  //       }
-  //     }
-  //   });
-  // });
+            if (response.ok) {
+              const savedMessage = await response.json();
+              
+              // Broadcast message to all connected clients in the room
+              const messageToSend = {
+                type: "message_received",
+                data: savedMessage
+              };
+
+              // Send to all connections (simplified room logic)
+              Array.from(connections.values()).forEach((conn) => {
+                if (conn.readyState === WebSocket.OPEN) {
+                  conn.send(JSON.stringify(messageToSend));
+                }
+              });
+            } else {
+              ws.send(JSON.stringify({ type: "error", message: "Failed to save message" }));
+            }
+          } catch (error) {
+            console.error('Message save error:', error);
+            ws.send(JSON.stringify({ type: "error", message: "Failed to send message" }));
+          }
+        }
+      } catch (error) {
+        console.error("WebSocket message error:", error);
+      }
+    });
+
+    ws.on("close", () => {
+      // Remove connection from map
+      if (authenticatedUserId) {
+        connections.delete(authenticatedUserId);
+      }
+    });
+
+    ws.on("error", (error) => {
+      console.error("WebSocket error:", error);
+    });
+  });
 
   // API proxy endpoints to backend
   const API_BASE_URL = process.env.API_BASE_URL || "http://116.203.92.15";

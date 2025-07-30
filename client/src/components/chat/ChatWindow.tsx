@@ -90,7 +90,7 @@ export default function ChatWindow({ roomId }: ChatWindowProps) {
               {room?.name || `Chat Room #${roomId}`}
             </h3>
             <p className="text-sm text-gray-500">
-              {room?.participants.length || 0} participants
+              {room?.members.length || 0} participants
             </p>
           </div>
         </div>
@@ -119,13 +119,13 @@ export default function ChatWindow({ roomId }: ChatWindowProps) {
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-1">
                       <span className="text-sm font-medium text-gray-900">
-                        {message.sender_name || `User #${message.sender}`}
+                        {`${message.owner.first_name} ${message.owner.last_name}`}
                       </span>
                       <span className="text-xs text-gray-500">
-                        {new Date(message.created_at).toLocaleTimeString()}
+                        {new Date(message.date_created).toLocaleTimeString()}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-700">{message.content}</p>
+                    <p className="text-sm text-gray-700">{message.text}</p>
                   </div>
                 </div>
               ))}

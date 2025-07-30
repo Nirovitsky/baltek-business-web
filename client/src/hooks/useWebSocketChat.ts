@@ -7,31 +7,45 @@ interface WebSocketMessage {
   data: any;
 }
 
-const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUzODg3NzcxLCJpYXQiOjE3NTM4ODU5NzEsImp0aSI6IjMxYjJhZDYwMTRiZjRkYTliZDM5NGQ5MTE4ZDMwNGY5IiwidXNlcl9pZCI6Mn0.zbd84QHSzmh4e10Tsx8lZLOTqOtt5w51OmwajEFtroA";
+// Remove hardcoded token - will use the actual auth token
 
 export function useWebSocketChat() {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [connected, setConnected] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentRoom, setCurrentRoom] = useState<number | null>(null);
-  // const { token } = useAuth();
+  const { isAuthenticated } = useAuth();
+  
+  // Get token from localStorage
+  const getToken = () => localStorage.getItem('access_token');
   const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
   const reconnectAttemptsRef = useRef(0);
   const maxReconnectAttempts = 5;
 
   const connect = () => {
-    // if (!token) return;
+    const token = getToken();
+    if (!token || !isAuthenticated) return;
 
     try {
-      const wsUrl = `ws://116.203.92.15/ws/chat/?token=${token}`;
+      // Use local WebSocket server instead of hardcoded external URL
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const wsUrl = `${protocol}//${window.location.host}/ws`;
       const ws = new WebSocket(wsUrl);
 
+      // Send authentication after connection
       ws.onopen = () => {
         console.log("WebSocket connected");
         setConnected(true);
         reconnectAttemptsRef.current = 0;
+        
+        // Authenticate with the server
+        ws.send(JSON.stringify({
+          type: 'authenticate',
+          token: token
+        }));
       };
+
+
 
       ws.onmessage = (event) => {
         try {
@@ -99,6 +113,7 @@ export function useWebSocketChat() {
     }
 
     try {
+      const token = getToken();
       const message: WebSocketMessage = {
         type: "send_message",
         data: {
@@ -107,7 +122,9 @@ export function useWebSocketChat() {
         },
       };
 
-      socket.send(JSON.stringify(message));
+      // Add token to message for authentication
+      const messageWithToken = { ...message, token };
+      socket.send(JSON.stringify(messageWithToken));
       return true;
     } catch (error) {
       console.error("Failed to send message:", error);
@@ -121,7 +138,7 @@ export function useWebSocketChat() {
   };
 
   useEffect(() => {
-    if (token) {
+    if (isAuthenticated) {
       connect();
     } else {
       disconnect();
@@ -130,7 +147,7 @@ export function useWebSocketChat() {
     return () => {
       disconnect();
     };
-  }, [token]);
+  }, [isAuthenticated]);
 
   return {
     connected,

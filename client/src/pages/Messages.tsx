@@ -305,7 +305,7 @@ export default function Messages() {
                               isOwn ? "text-blue-100" : "text-gray-500"
                             }`}
                           >
-                            {new Date(message.created).toLocaleTimeString([], {
+                            {new Date(message.date_created).toLocaleTimeString([], {
                               hour: "2-digit",
                               minute: "2-digit",
                             })}
