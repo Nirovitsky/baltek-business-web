@@ -6,7 +6,7 @@ import StatsCard from "@/components/dashboard/StatsCard";
 import RecentJobs from "@/components/dashboard/RecentJobs";
 import RecentApplications from "@/components/dashboard/RecentApplications";
 import QuickActions from "@/components/dashboard/QuickActions";
-import JobModal from "@/components/jobs/JobModal";
+import JobModal from "@/components/modals/JobModal";
 import { Briefcase, Users, Clock, UserCheck } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
@@ -45,13 +45,7 @@ export default function Dashboard() {
   const activeJobs = jobs.filter(job => job.status === 'open').length;
   const totalApplications = applicationsData?.count || 0;
   const pendingApplications = applications.filter(app => app.status === 'pending').length;
-  const hiredThisMonth = applications.filter(app => {
-    if (app.status !== 'hired') return false;
-    const updatedDate = new Date(app.updated_at);
-    const currentDate = new Date();
-    return updatedDate.getMonth() === currentDate.getMonth() && 
-           updatedDate.getFullYear() === currentDate.getFullYear();
-  }).length;
+  const hiredThisMonth = applications.filter(app => app.status === 'hired').length;
 
   const handleCreateJob = () => {
     setIsJobModalOpen(true);

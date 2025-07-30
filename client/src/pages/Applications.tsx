@@ -103,8 +103,8 @@ export default function Applications() {
   const applications = data?.results || [];
   const filteredApplications = applications.filter(app => 
     searchTerm === "" || 
-    (app.candidate_name?.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (app.job_title?.toLowerCase().includes(searchTerm.toLowerCase()))
+    (`${app.owner.first_name} ${app.owner.last_name}`.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (app.job.title.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   return (
@@ -193,13 +193,16 @@ export default function Applications() {
                       <div className="flex items-start justify-between mb-3">
                         <div>
                           <h3 className="font-semibold text-gray-900">
-                            {application.candidate_name || `Candidate #${application.candidate}`}
+                            {`${application.owner.first_name} ${application.owner.last_name}`}
                           </h3>
                           <p className="text-sm text-gray-600 mb-1">
-                            Applied for {application.job_title || `Job #${application.job}`}
+                            {application.owner.email}
+                          </p>
+                          <p className="text-sm text-gray-600 mb-1">
+                            Applied for {application.job.title}
                           </p>
                           <p className="text-xs text-gray-500">
-                            Applied on {new Date(application.created_at).toLocaleDateString()}
+                            Location: {application.job.location.name}
                           </p>
                         </div>
                         
@@ -245,14 +248,12 @@ export default function Applications() {
                           {application.status ? application.status.charAt(0).toUpperCase() + application.status.slice(1) : 'Unknown'}
                         </Badge>
                         
-                        {application.candidate_email && (
-                          <a 
-                            href={`mailto:${application.candidate_email}`}
-                            className="text-sm text-primary hover:underline"
-                          >
-                            {application.candidate_email}
-                          </a>
-                        )}
+                        <a 
+                          href={`mailto:${application.owner.email}`}
+                          className="text-sm text-primary hover:underline"
+                        >
+                          {application.owner.email}
+                        </a>
                       </div>
                     </div>
                   </div>

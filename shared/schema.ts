@@ -99,28 +99,43 @@ export const createJobSchema = jobSchema
     status: z.enum(["open", "archived", "expired"]).optional(),
   });
 
+// User info schema for nested objects
+export const userInfoSchema = z.object({
+  id: z.number(),
+  first_name: z.string(),
+  last_name: z.string(),
+  email: z.string().email(),
+  phone: z.string(),
+});
+
+// Job list schema for nested objects
+export const jobListSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  organization: z.object({
+    id: z.number(),
+    name: z.string(),
+  }),
+  location: locationSchema,
+});
+
 // Job Application schemas
 export const jobApplicationSchema = z.object({
   id: z.number(),
-  job: z.number(),
-  candidate: z.number(),
+  job: jobListSchema,
+  owner: userInfoSchema,
   status: z.enum(["pending", "invited", "rejected", "hired", "expired"]),
   cover_letter: z.string().optional(),
   resume: z.string().optional(),
-  created_at: z.string(),
-  updated_at: z.string(),
-  candidate_name: z.string().optional(),
-  candidate_email: z.string().optional(),
-  job_title: z.string().optional(),
+  room_id: z.number().nullable().optional(),
 });
 
 export const createJobApplicationSchema = jobApplicationSchema.omit({
   id: true,
-  created_at: true,
-  updated_at: true,
-  candidate_name: true,
-  candidate_email: true,
-  job_title: true,
+  owner: true,
+  room_id: true,
+}).extend({
+  job: z.number(),
 });
 
 // Chat schemas
@@ -200,9 +215,6 @@ export type PaginatedResponse<T> = {
   previous: string | null;
   results: T[];
 };
-
-// Insert types for compatibility
-export type InsertUser = Omit<User, "id">;
 
 // Insert types for compatibility
 export type InsertUser = Omit<User, "id">;
