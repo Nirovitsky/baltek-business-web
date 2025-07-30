@@ -67,12 +67,18 @@ export default function Messages() {
 
   const uploadFileMutation = useMutation({
     mutationFn: async (file: File) => {
-      // Simulate upload progress
+      // Simulate upload progress with more realistic intervals
       setUploadProgress(0);
-      for (let i = 0; i <= 100; i += 10) {
-        setUploadProgress(i);
-        await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Simulate upload chunks
+      const chunks = [0, 15, 35, 60, 80, 100];
+      for (const progress of chunks) {
+        setUploadProgress(progress);
+        await new Promise(resolve => setTimeout(resolve, 300));
       }
+      
+      // Simulate final processing
+      await new Promise(resolve => setTimeout(resolve, 200));
       
       // For now, simulate the upload since we don't have actual file storage
       return {

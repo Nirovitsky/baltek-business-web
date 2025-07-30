@@ -8,26 +8,16 @@ import { Badge } from "@/components/ui/badge";
 import { apiService } from "@/lib/api";
 import { Link } from "wouter";
 
-interface UserProfile {
-  id: number;
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone?: string;
-  bio?: string;
-  position?: string;
-  location?: string;
-  joined_date: string;
-  profile_picture?: string;
-}
+// Use the existing User type from schema
+import type { User } from "@shared/schema";
 
 export default function UserProfile() {
   const [match, params] = useRoute("/profile/:userId");
   const userId = params?.userId;
 
-  const { data: userProfile, isLoading } = useQuery({
-    queryKey: ["/users/profile/", userId],
-    queryFn: () => apiService.request<UserProfile>(`/users/${userId}/`),
+  const { data: userProfile, isLoading, error } = useQuery({
+    queryKey: ["/users/", userId],
+    queryFn: () => apiService.request<User>(`/users/${userId}/`),
     enabled: !!userId,
   });
 
@@ -90,15 +80,9 @@ export default function UserProfile() {
                       <h1 className="text-3xl font-bold text-gray-900 mb-2">
                         {userProfile.first_name} {userProfile.last_name}
                       </h1>
-                      {userProfile.position && (
-                        <p className="text-lg text-gray-600 mb-2">{userProfile.position}</p>
-                      )}
-                      {userProfile.location && (
-                        <div className="flex items-center text-gray-500 mb-4">
-                          <MapPin className="w-4 h-4 mr-1" />
-                          <span>{userProfile.location}</span>
-                        </div>
-                      )}
+                      <p className="text-lg text-gray-600 mb-2">
+                        User ID: {userProfile.id}
+                      </p>
                     </div>
                     
                     <div className="flex space-x-2">
@@ -111,11 +95,6 @@ export default function UserProfile() {
                 </div>
               </div>
               
-              {userProfile.bio && (
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <p className="text-gray-700 leading-relaxed">{userProfile.bio}</p>
-                </div>
-              )}
             </CardContent>
           </Card>
 
@@ -131,7 +110,7 @@ export default function UserProfile() {
               <CardContent className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <Mail className="w-4 h-4 text-gray-400" />
-                  <span className="text-gray-900">{userProfile.email}</span>
+                  <span className="text-gray-900">{userProfile.email || 'No email provided'}</span>
                 </div>
                 {userProfile.phone && (
                   <div className="flex items-center space-x-3">
@@ -142,7 +121,7 @@ export default function UserProfile() {
                 <div className="flex items-center space-x-3">
                   <Calendar className="w-4 h-4 text-gray-400" />
                   <span className="text-gray-900">
-                    Joined {new Date(userProfile.joined_date).toLocaleDateString([], {
+                    Member since {new Date(userProfile.dateJoined || userProfile.createdAt || Date.now()).toLocaleDateString([], {
                       month: "long",
                       year: "numeric"
                     })}
@@ -159,12 +138,10 @@ export default function UserProfile() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {userProfile.position && (
-                  <div>
-                    <h4 className="font-medium text-gray-900 mb-1">Position</h4>
-                    <p className="text-gray-600">{userProfile.position}</p>
-                  </div>
-                )}
+                <div>
+                  <h4 className="font-medium text-gray-900 mb-1">Full Name</h4>
+                  <p className="text-gray-600">{userProfile.first_name} {userProfile.last_name}</p>
+                </div>
                 <div>
                   <h4 className="font-medium text-gray-900 mb-2">Status</h4>
                   <Badge variant="secondary" className="bg-green-100 text-green-800">
