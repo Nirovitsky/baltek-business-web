@@ -11,6 +11,7 @@ import { useWebSocketChat } from "@/hooks/useWebSocketChat";
 import { apiService } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { Link } from "wouter";
 import FileUpload from "@/components/chat/FileUpload";
 import AttachmentPreview from "@/components/chat/AttachmentPreview";
 import type { Room, Message, PaginatedResponse } from "@shared/schema";
@@ -62,8 +63,17 @@ export default function Messages() {
       : apiMessages;
 
   // File upload mutation
+  const [uploadProgress, setUploadProgress] = useState(0);
+
   const uploadFileMutation = useMutation({
     mutationFn: async (file: File) => {
+      // Simulate upload progress
+      setUploadProgress(0);
+      for (let i = 0; i <= 100; i += 10) {
+        setUploadProgress(i);
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      
       // For now, simulate the upload since we don't have actual file storage
       return {
         url: `https://example.com/files/${Date.now()}-${file.name}`,
@@ -87,6 +97,7 @@ export default function Messages() {
             setNewMessage("");
             setSelectedFile(null);
             setShowFileUpload(false);
+            setUploadProgress(0);
           }
         },
         onError: () => {
@@ -95,6 +106,7 @@ export default function Messages() {
             description: "Failed to upload file. Please try again.",
             variant: "destructive",
           });
+          setUploadProgress(0);
         },
       });
     } else {
@@ -235,11 +247,13 @@ export default function Messages() {
               }`}
             >
               <div className="flex items-start space-x-3">
-                <Avatar className="w-10 h-10 shadow-md">
-                  <AvatarFallback className="bg-gradient-to-br from-blue-400 to-indigo-500 text-white font-semibold">
-                    {getRoomAvatar(room)}
-                  </AvatarFallback>
-                </Avatar>
+                <Link href={`/profile/${room.members.find(p => p.id.toString() !== user?.id)?.id}`}>
+                  <Avatar className="w-10 h-10 shadow-md cursor-pointer hover:shadow-lg transition-shadow">
+                    <AvatarFallback className="bg-gradient-to-br from-blue-400 to-indigo-500 text-white font-semibold">
+                      {getRoomAvatar(room)}
+                    </AvatarFallback>
+                  </Avatar>
+                </Link>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-medium text-gray-900 truncate">
@@ -274,11 +288,13 @@ export default function Messages() {
             <div className="bg-white border-b border-gray-200 p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <Avatar className="w-10 h-10 shadow-md">
-                    <AvatarFallback className="bg-gradient-to-br from-blue-400 to-indigo-500 text-white font-semibold">
-                      {getRoomAvatar(selectedRoom)}
-                    </AvatarFallback>
-                  </Avatar>
+                  <Link href={`/profile/${selectedRoom.members.find(p => p.id.toString() !== user?.id)?.id}`}>
+                    <Avatar className="w-10 h-10 shadow-md cursor-pointer hover:shadow-lg transition-shadow">
+                      <AvatarFallback className="bg-gradient-to-br from-blue-400 to-indigo-500 text-white font-semibold">
+                        {getRoomAvatar(selectedRoom)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Link>
                   <div>
                     <h2 className="text-lg font-medium text-gray-900">
                       {getRoomDisplayName(selectedRoom)}
@@ -328,11 +344,13 @@ export default function Messages() {
                     >
                       <div className="flex items-end space-x-2 max-w-xs lg:max-w-md">
                         {!isOwn && (
-                          <Avatar className="w-6 h-6 shadow-sm">
-                            <AvatarFallback className="bg-gradient-to-br from-gray-300 to-gray-400 text-gray-700 text-xs font-medium">
-                              {message.owner.first_name[0]}{message.owner.last_name[0]}
-                            </AvatarFallback>
-                          </Avatar>
+                          <Link href={`/profile/${message.owner.id}`}>
+                            <Avatar className="w-6 h-6 shadow-sm cursor-pointer hover:shadow-md transition-shadow">
+                              <AvatarFallback className="bg-gradient-to-br from-gray-300 to-gray-400 text-gray-700 text-xs font-medium">
+                                {message.owner.first_name[0]}{message.owner.last_name[0]}
+                              </AvatarFallback>
+                            </Avatar>
+                          </Link>
                         )}
                         <div
                           className={`px-4 py-2 rounded-lg shadow-sm ${
@@ -341,12 +359,7 @@ export default function Messages() {
                               : "bg-white border border-gray-200 text-gray-900"
                           }`}
                         >
-                          {!isOwn && (
-                            <p className="text-xs font-medium mb-1 text-gray-600">
-                              {message.owner.first_name}{" "}
-                              {message.owner.last_name}
-                            </p>
-                          )}
+
                           
                           {/* Show attachment if present */}
                           {message.attachment_url && (
@@ -366,23 +379,37 @@ export default function Messages() {
                           {message.text && (
                             <p className="text-sm">{message.text}</p>
                           )}
-                          <div className={`text-xs mt-1 space-y-1 ${
+                          <p className={`text-xs mt-1 ${
                               isOwn ? "text-blue-100" : "text-gray-500"
                             }`}>
-                            <p>
-                              {new Date(message.date_created).toLocaleDateString([], {
-                                month: "short",
-                                day: "numeric",
-                                year: new Date(message.date_created).getFullYear() !== new Date().getFullYear() ? "numeric" : undefined,
-                              })}
-                            </p>
-                            <p>
-                              {new Date(message.date_created).toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </p>
-                          </div>
+                            {(() => {
+                              const messageDate = new Date(message.date_created);
+                              const today = new Date();
+                              const yesterday = new Date(today);
+                              yesterday.setDate(yesterday.getDate() - 1);
+
+                              if (messageDate.toDateString() === today.toDateString()) {
+                                return messageDate.toLocaleTimeString([], {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                });
+                              } else if (messageDate.toDateString() === yesterday.toDateString()) {
+                                return `Yesterday ${messageDate.toLocaleTimeString([], {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })}`;
+                              } else {
+                                return `${messageDate.toLocaleDateString([], {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: messageDate.getFullYear() !== today.getFullYear() ? "numeric" : undefined,
+                                })} ${messageDate.toLocaleTimeString([], {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })}`;
+                              }
+                            })()}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -407,6 +434,20 @@ export default function Messages() {
                     onRemove={handleRemoveFile}
                     showRemove={true}
                   />
+                  {uploadFileMutation.isPending && (
+                    <div className="mt-2">
+                      <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+                        <span>Uploading...</span>
+                        <span>{uploadProgress}%</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className="bg-blue-500 h-2 rounded-full transition-all duration-200" 
+                          style={{ width: `${uploadProgress}%` }}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
