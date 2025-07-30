@@ -42,7 +42,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     ws.on('close', () => {
       // Remove connection from map
-      for (const [userId, connection] of connections.entries()) {
+      for (const [userId, connection] of Array.from(connections.entries())) {
         if (connection === ws) {
           connections.delete(userId);
           break;
