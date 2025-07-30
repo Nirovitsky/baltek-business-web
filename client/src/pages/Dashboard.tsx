@@ -8,22 +8,34 @@ import RecentApplications from "@/components/dashboard/RecentApplications";
 import QuickActions from "@/components/dashboard/QuickActions";
 import JobModal from "@/components/jobs/JobModal";
 import { Briefcase, Users, Clock, UserCheck } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
 import type { Job, JobApplication, PaginatedResponse } from "@shared/schema";
 
 export default function Dashboard() {
   const [, setLocation] = useLocation();
   const [isJobModalOpen, setIsJobModalOpen] = useState(false);
+  const { selectedOrganization } = useAuth();
 
-  // Fetch data for stats
+  // Fetch data for stats filtered by organization
   const { data: jobsData } = useQuery({
-    queryKey: ['/jobs/'],
-    queryFn: () => apiService.request<PaginatedResponse<Job>>('/jobs/'),
+    queryKey: ['/jobs/', selectedOrganization?.id],
+    queryFn: () => {
+      const params = new URLSearchParams();
+      if (selectedOrganization) params.append('organization', selectedOrganization.id.toString());
+      return apiService.request<PaginatedResponse<Job>>(`/jobs/?${params.toString()}`);
+    },
+    enabled: !!selectedOrganization,
   });
 
   const { data: applicationsData } = useQuery({
-    queryKey: ['/jobs/applications/'],
-    queryFn: () => apiService.request<PaginatedResponse<JobApplication>>('/jobs/applications/'),
+    queryKey: ['/jobs/applications/', selectedOrganization?.id],
+    queryFn: () => {
+      const params = new URLSearchParams();
+      if (selectedOrganization) params.append('organization', selectedOrganization.id.toString());
+      return apiService.request<PaginatedResponse<JobApplication>>(`/jobs/applications/?${params.toString()}`);
+    },
+    enabled: !!selectedOrganization,
   });
 
   const jobs = jobsData?.results || [];

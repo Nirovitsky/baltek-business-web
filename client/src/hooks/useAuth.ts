@@ -57,17 +57,39 @@ export const useAuth = create<AuthState>((set, get) => ({
       const response = await apiService.request<Organization[]>('/organizations/my/');
       const organizations = Array.isArray(response) ? response : [];
       
+      console.log('Fetched organizations:', organizations); // Debug log
+      
+      // Don't update if we already have the same organizations
+      const currentOrgs = get().organizations;
+      const sameOrgs = currentOrgs.length === organizations.length && 
+        currentOrgs.every(org => organizations.find(o => o.id === org.id));
+      
+      if (sameOrgs) {
+        console.log('Organizations unchanged, skipping update');
+        return;
+      }
+      
       // Set first organization as selected if none is selected
       let selectedOrganization = get().selectedOrganization;
       const savedOrg = localStorage.getItem('selected_organization');
       
       if (savedOrg) {
-        selectedOrganization = JSON.parse(savedOrg);
+        try {
+          const parsedOrg = JSON.parse(savedOrg);
+          // Verify the saved org still exists in the fetched organizations
+          selectedOrganization = organizations.find(org => org.id === parsedOrg.id) || organizations[0];
+        } catch {
+          selectedOrganization = organizations[0];
+        }
       } else if (organizations.length > 0) {
         selectedOrganization = organizations[0];
+      }
+      
+      if (selectedOrganization) {
         localStorage.setItem('selected_organization', JSON.stringify(selectedOrganization));
       }
       
+      console.log('Setting organizations:', organizations, 'Selected:', selectedOrganization); // Debug log
       set({ organizations, selectedOrganization });
     } catch (error) {
       console.error('Failed to fetch organizations:', error);

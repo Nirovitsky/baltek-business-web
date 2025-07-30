@@ -23,10 +23,13 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     checkAuth();
+  }, [checkAuth]);
+  
+  useEffect(() => {
     if (isAuthenticated) {
       fetchOrganizations();
     }
-  }, [checkAuth, fetchOrganizations, isAuthenticated]);
+  }, [isAuthenticated, fetchOrganizations]);
 
   if (!isAuthenticated) {
     return <Redirect to="/login" />;
