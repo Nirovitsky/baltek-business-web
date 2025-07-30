@@ -32,16 +32,17 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       location: job.location,
       job_type: job.job_type,
       workplace_type: job.workplace_type,
-      min_education_level: job.min_education_level,
-      salary_from: job.salary_from,
-      salary_to: job.salary_to,
-      salary_payment_type: job.salary_payment_type,
-      required_languages: job.required_languages,
+      min_education_level: job.min_education_level || undefined,
+      salary_from: job.salary_from || undefined,
+      salary_to: job.salary_to || undefined,
+      salary_payment_type: job.salary_payment_type || "monthly",
+      required_languages: job.required_languages || [],
     } : {
       job_type: "full_time",
       workplace_type: "remote",
       status: "open",
       organization: selectedOrganization?.id || 0,
+      salary_payment_type: "monthly",
     },
   });
 

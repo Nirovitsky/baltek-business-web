@@ -86,13 +86,15 @@ export default function RecentApplications() {
                 </div>
                 <div className="flex-1">
                   <h4 className="font-medium text-gray-900">
-                    {application.candidate_name || `Candidate #${application.candidate}`}
+                    {application.owner?.first_name && application.owner?.last_name 
+                      ? `${application.owner.first_name} ${application.owner.last_name}`
+                      : `Candidate #${application.id}`}
                   </h4>
                   <p className="text-sm text-gray-500">
-                    Applied for {application.job_title || `Job #${application.job}`}
+                    Applied for {application.job?.title || `Job #${application.job.id}`}
                   </p>
                   <p className="text-xs text-gray-400">
-                    Applied {new Date(application.created_at).toLocaleDateString()}
+                    Applied {new Date(application.created).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="flex items-center space-x-2">

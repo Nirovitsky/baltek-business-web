@@ -179,7 +179,11 @@ export default function Jobs() {
         ) : (
           <div className="space-y-4">
             {jobs.map((job) => (
-              <Card key={job.id} className="hover:shadow-md transition-shadow">
+              <Card 
+                key={job.id} 
+                className="hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => handleViewJob(job.id)}
+              >
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -195,14 +199,7 @@ export default function Jobs() {
                              job.job_type === 'part_time' ? 'Part Time' : 'Contract'}
                           </p>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleViewJob(job.id)}
-                          >
-                            <Eye className="w-4 h-4" />
-                          </Button>
+                        <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
                           <Button
                             size="sm"
                             variant="outline"
