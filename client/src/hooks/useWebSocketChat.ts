@@ -53,11 +53,13 @@ export function useWebSocketChat() {
 
           if (message.type === "message_received") {
             setMessages((prev) => [...prev, message.data]);
-          } else if (message.type === "error") {
-            console.error("WebSocket error:", message.data);
+          } else if (message.type === "authenticated") {
+            console.log("WebSocket authenticated successfully");
+          } else if (message.type === "error" || message.type === "auth_error") {
+            console.error("WebSocket error:", message.data || message.message);
           }
         } catch (error) {
-          console.error("Failed to parse WebSocket message:", error);
+          console.error("Failed to parse WebSocket message:", error, event.data);
         }
       };
 

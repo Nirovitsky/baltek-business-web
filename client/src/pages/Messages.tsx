@@ -150,17 +150,17 @@ export default function Messages() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Sidebar */}
-      <div className="w-1/3 bg-white border-r border-gray-200 flex flex-col">
-        <div className="p-4 border-b border-gray-200">
+      <div className="w-1/3 bg-white shadow-lg border-r border-gray-200 flex flex-col">
+        <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-xl font-semibold text-gray-900">Messages</h1>
-            <div className="flex items-center space-x-2">
+            <h1 className="text-xl font-bold text-gray-900">Messages</h1>
+            <div className="flex items-center space-x-2 bg-white px-3 py-1 rounded-full shadow-sm">
               <div
-                className={`w-2 h-2 rounded-full ${connected ? "bg-green-500" : "bg-red-500"}`}
+                className={`w-2 h-2 rounded-full ${connected ? "bg-green-500 animate-pulse" : "bg-red-500"}`}
               />
-              <span className="text-xs text-gray-500">
+              <span className={`text-xs font-medium ${connected ? "text-green-600" : "text-red-600"}`}>
                 {connected ? "Connected" : "Disconnected"}
               </span>
             </div>
@@ -171,7 +171,7 @@ export default function Messages() {
               placeholder="Search conversations..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
+              className="pl-10 bg-white shadow-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500"
             />
           </div>
         </div>
@@ -181,13 +181,13 @@ export default function Messages() {
             <div
               key={room.id}
               onClick={() => handleRoomSelect(room)}
-              className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
-                selectedRoom?.id === room.id ? "bg-blue-50 border-blue-200" : ""
+              className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200 ${
+                selectedRoom?.id === room.id ? "bg-gradient-to-r from-blue-100 to-indigo-100 border-blue-300 shadow-md" : ""
               }`}
             >
               <div className="flex items-start space-x-3">
-                <Avatar className="w-10 h-10">
-                  <AvatarFallback className="bg-blue-100 text-blue-600">
+                <Avatar className="w-10 h-10 shadow-md">
+                  <AvatarFallback className="bg-gradient-to-br from-blue-400 to-indigo-500 text-white font-semibold">
                     {getRoomAvatar(room)}
                   </AvatarFallback>
                 </Avatar>
@@ -222,11 +222,11 @@ export default function Messages() {
         {selectedRoom ? (
           <>
             {/* Chat Header */}
-            <div className="bg-white border-b border-gray-200 p-4">
+            <div className="bg-white border-b border-gray-200 p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <Avatar className="w-10 h-10">
-                    <AvatarFallback className="bg-blue-100 text-blue-600">
+                  <Avatar className="w-10 h-10 shadow-md">
+                    <AvatarFallback className="bg-gradient-to-br from-blue-400 to-indigo-500 text-white font-semibold">
                       {getRoomAvatar(selectedRoom)}
                     </AvatarFallback>
                   </Avatar>
@@ -255,7 +255,7 @@ export default function Messages() {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-gray-50/50 to-white/50">
               {messagesLoading ? (
                 <div className="flex items-center justify-center h-full">
                   <p className="text-gray-500">Loading messages...</p>
@@ -279,18 +279,17 @@ export default function Messages() {
                     >
                       <div className="flex items-end space-x-2 max-w-xs lg:max-w-md">
                         {!isOwn && (
-                          <Avatar className="w-6 h-6">
-                            <AvatarFallback className="bg-gray-100 text-gray-600 text-xs">
-                              {message.owner.first_name}
-                              {message.owner.last_name}
+                          <Avatar className="w-6 h-6 shadow-sm">
+                            <AvatarFallback className="bg-gradient-to-br from-gray-300 to-gray-400 text-gray-700 text-xs font-medium">
+                              {message.owner.first_name[0]}{message.owner.last_name[0]}
                             </AvatarFallback>
                           </Avatar>
                         )}
                         <div
-                          className={`px-4 py-2 rounded-lg ${
+                          className={`px-4 py-2 rounded-lg shadow-sm ${
                             isOwn
-                              ? "bg-blue-600 text-white"
-                              : "bg-gray-200 text-gray-900"
+                              ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
+                              : "bg-white border border-gray-200 text-gray-900"
                           }`}
                         >
                           {!isOwn && (
@@ -320,27 +319,31 @@ export default function Messages() {
             </div>
 
             {/* Message Input */}
-            <div className="bg-white border-t border-gray-200 p-4">
+            <div className="bg-white border-t border-gray-200 p-4 shadow-lg">
               <div className="flex space-x-4">
                 <Input
                   placeholder="Type your message..."
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-                  className="flex-1"
+                  className="flex-1 bg-gray-50 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                   disabled={!connected}
                 />
                 <Button
                   onClick={handleSendMessage}
                   disabled={!newMessage.trim() || !connected}
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-md"
                 >
                   <Send className="w-4 h-4" />
                 </Button>
               </div>
               {!connected && (
-                <p className="text-xs text-red-500 mt-2">
-                  Disconnected from chat server. Trying to reconnect...
-                </p>
+                <div className="flex items-center space-x-2 mt-2 p-2 bg-red-50 border border-red-200 rounded-md">
+                  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                  <p className="text-xs text-red-600 font-medium">
+                    Disconnected from chat server. Trying to reconnect...
+                  </p>
+                </div>
               )}
             </div>
           </>
