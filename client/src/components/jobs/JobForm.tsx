@@ -28,6 +28,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
     defaultValues: job ? {
       title: job.title,
       description: job.description,
+      requirements: job.requirements || undefined,
       category: job.category,
       organization: job.organization,
       location: job.location,
@@ -38,6 +39,8 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       salary_to: job.salary_to || undefined,
       salary_payment_type: job.salary_payment_type || "monthly",
       required_languages: job.required_languages || [],
+      date_started: job.date_started,
+      date_ended: job.date_ended || undefined,
     } : {
       job_type: "full_time",
       workplace_type: "remote",
@@ -45,6 +48,8 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       organization: selectedOrganization?.id || 0,
       salary_payment_type: "monthly",
       required_languages: [],
+      date_started: new Date().toISOString().split('T')[0], // Today's date
+      date_ended: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
     },
   });
 
@@ -113,10 +118,17 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
   });
 
   const onSubmit = (data: CreateJob) => {
+    // Ensure date fields are properly formatted for backend
+    const formattedData = {
+      ...data,
+      date_started: data.date_started || new Date().toISOString().split('T')[0],
+      date_ended: data.date_ended || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    };
+    
     if (job) {
-      updateMutation.mutate(data);
+      updateMutation.mutate(formattedData);
     } else {
-      createMutation.mutate(data);
+      createMutation.mutate(formattedData);
     }
   };
 
@@ -377,8 +389,26 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
               <FormLabel>Job Description</FormLabel>
               <FormControl>
                 <Textarea 
-                  rows={6}
-                  placeholder="Describe the job role, responsibilities, and requirements..."
+                  rows={4}
+                  placeholder="Describe the job role and responsibilities..."
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="requirements"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Requirements (Optional)</FormLabel>
+              <FormControl>
+                <Textarea 
+                  rows={4}
+                  placeholder="List specific requirements, skills, or qualifications..."
                   {...field}
                 />
               </FormControl>
