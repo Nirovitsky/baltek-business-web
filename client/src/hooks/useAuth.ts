@@ -58,39 +58,37 @@ export const useAuth = create<AuthState>((set, get) => ({
 
   fetchOrganizations: async () => {
     try {
-      const response = await apiService.request<Organization>('/organizations/my/');
-      console.log('Fetched organization:', response); // Debug log
+      const response = await apiService.request<Organization[]>('/organizations/my/');
+      console.log('Fetched organizations:', response); // Debug log
       
-      // According to API spec, /api/organizations/my/ returns a single organization object
-      if (response && response.id) {
-        const organization = response;
-        const organizations = [organization]; // Wrap in array for consistency
-        
-        // Set this organization as selected
-        let selectedOrganization = organization;
+      // Handle both array and single object responses
+      const organizations = Array.isArray(response) ? response : (response ? [response] : []);
+      
+      if (organizations.length > 0) {
+        // Set first organization as selected
+        let selectedOrganization = organizations[0];
         const savedOrg = localStorage.getItem('selected_organization');
         
         if (savedOrg) {
           try {
             const parsedOrg = JSON.parse(savedOrg);
-            // Use saved org if it matches the fetched one, otherwise use fetched org
-            selectedOrganization = parsedOrg.id === organization.id ? parsedOrg : organization;
+            // Use saved org if it matches one of the fetched organizations
+            selectedOrganization = organizations.find(org => org.id === parsedOrg.id) || organizations[0];
           } catch {
-            selectedOrganization = organization;
+            selectedOrganization = organizations[0];
           }
         }
         
         localStorage.setItem('selected_organization', JSON.stringify(selectedOrganization));
         
-        console.log('Setting organization:', organization, 'Selected:', selectedOrganization); // Debug log
+        console.log('Setting organizations:', organizations, 'Selected:', selectedOrganization); // Debug log
         set({ organizations, selectedOrganization });
       } else {
-        console.log('No organization found for user');
+        console.log('No organizations found for user');
         set({ organizations: [], selectedOrganization: null });
       }
     } catch (error) {
-      console.error('Failed to fetch organization:', error);
-      // If user doesn't have an organization, set empty state
+      console.error('Failed to fetch organizations:', error);
       set({ organizations: [], selectedOrganization: null });
     }
   },
