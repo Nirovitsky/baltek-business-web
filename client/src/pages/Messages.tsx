@@ -307,30 +307,29 @@ export default function Messages() {
 
   // Helper function to get the other participant's numeric ID
   const getOtherParticipantId = (room: Room): number | null => {
-    console.log('getOtherParticipantId called with room:', {
-      id: room.id,
-      members: room.members,
-      userId: user?.id,
-      membersTypes: room.members.map(m => typeof m)
-    });
+    if (!room.members || room.members.length === 0) {
+      console.log('Room has no members:', room.id);
+      return null;
+    }
+    
+    console.log('getOtherParticipantId - Room:', room.id, 'Members:', room.members, 'User ID:', user?.id);
     
     const otherMemberId = room.members.find(memberId => {
       const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
       const isValid = !isNaN(numericMemberId) && numericMemberId !== user?.id;
-      console.log('Checking member:', memberId, 'numeric:', numericMemberId, 'valid:', isValid);
+      console.log('  Checking member:', memberId, '→', numericMemberId, 'valid:', isValid);
       return isValid;
     });
     
-    console.log('Found otherMemberId:', otherMemberId);
-    
     if (otherMemberId !== undefined) {
       const numericId = typeof otherMemberId === 'number' ? otherMemberId : parseInt(String(otherMemberId));
-      const result = !isNaN(numericId) ? numericId : null;
-      console.log('Returning numeric ID:', result);
-      return result;
+      if (!isNaN(numericId)) {
+        console.log('  → Returning participant ID:', numericId);
+        return numericId;
+      }
     }
     
-    console.log('No valid member found, returning null');
+    console.log('  → No valid participant found');
     return null;
   };
 

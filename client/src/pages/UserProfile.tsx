@@ -179,9 +179,20 @@ export default function UserProfile() {
                       try {
                         // Find existing chat room with this user
                         const response = await apiService.request<{results: Room[]}>('/chat/rooms/');
-                        const existingRoom = response.results.find((room: Room) => 
-                          room.members.some((member: any) => member.id === userProfile.id)
-                        );
+                        console.log('Checking rooms for user:', userProfile.id);
+                        console.log('Available rooms:', response.results);
+                        
+                        const existingRoom = response.results.find((room: Room) => {
+                          console.log(`Room ${room.id} members:`, room.members);
+                          // Members are stored as numeric IDs, not objects
+                          return room.members.some((memberId: number) => {
+                            const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
+                            console.log(`Comparing member ${numericMemberId} with user ${userProfile.id}`);
+                            return numericMemberId === userProfile.id;
+                          });
+                        });
+                        
+                        console.log('Found existing room:', existingRoom);
                         
                         if (existingRoom) {
                           // Navigate to existing room
