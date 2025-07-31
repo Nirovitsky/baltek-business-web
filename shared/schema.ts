@@ -25,7 +25,17 @@ export const userExperienceSchema = z.object({
 // User Education schema
 export const userEducationSchema = z.object({
   id: z.number(),
-  university: z.number(),
+  university: z.union([
+    z.number(),
+    z.object({
+      id: z.number(),
+      name: z.string(),
+      location: z.object({
+        id: z.number(),
+        name: z.string(),
+      }).optional(),
+    }),
+  ]),
   level: z.enum(["secondary", "undergraduate", "bachelor", "master", "doctorate"]),
   date_started: z.string().nullable().optional(),
   date_finished: z.string().nullable().optional(),

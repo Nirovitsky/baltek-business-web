@@ -300,7 +300,16 @@ export default function UserProfile() {
                   {userProfile.educations.map((education) => (
                     <div key={education.id} className="border-l-2 border-green-200 pl-4">
                       <h4 className="font-semibold text-gray-900 capitalize">{education.level}</h4>
-                      <p className="text-green-600 font-medium">University ID: {education.university}</p>
+                      <p className="text-green-600 font-medium">
+                        {typeof education.university === 'object' && education.university?.name
+                          ? education.university.name
+                          : `University ID: ${education.university}`}
+                      </p>
+                      {typeof education.university === 'object' && education.university?.location?.name && (
+                        <p className="text-sm text-gray-500">
+                          Location: {education.university.location.name}
+                        </p>
+                      )}
                       <p className="text-sm text-gray-600 mt-1">
                         {education.date_started && new Date(education.date_started).toLocaleDateString()} - {
                           education.date_finished 
