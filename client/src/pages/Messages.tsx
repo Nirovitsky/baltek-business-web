@@ -178,10 +178,63 @@ export default function Messages() {
     queryClient.invalidateQueries({ queryKey: ["/chat/messages/", room.id] });
   };
 
+  // Store user data for room members (we'll need to fetch this separately)
+  const [roomMemberData, setRoomMemberData] = useState<Record<number, {id: number, first_name: string, last_name: string}>>({});
+
+  // Fetch user data for room members
+  useEffect(() => {
+    const fetchMemberData = async () => {
+      const allMemberIds = new Set<number>();
+      rooms.forEach(room => {
+        room.members.forEach(memberId => {
+          if (memberId !== user?.id) {
+            allMemberIds.add(memberId);
+          }
+        });
+      });
+
+      // Fetch user data for each unique member
+      const memberDataPromises = Array.from(allMemberIds).map(async (userId) => {
+        if (roomMemberData[userId]) return; // Already have this data
+        
+        try {
+          const userData = await apiService.request<any>(`/users/${userId}/`);
+          setRoomMemberData(prev => ({
+            ...prev,
+            [userId]: {
+              id: userData.id,
+              first_name: userData.first_name || 'Unknown',
+              last_name: userData.last_name || 'User'
+            }
+          }));
+        } catch (error) {
+          console.error(`Failed to fetch user data for ${userId}:`, error);
+          setRoomMemberData(prev => ({
+            ...prev,
+            [userId]: {
+              id: userId,
+              first_name: 'Unknown',
+              last_name: 'User'
+            }
+          }));
+        }
+      });
+
+      await Promise.all(memberDataPromises);
+    };
+
+    if (rooms.length > 0) {
+      fetchMemberData();
+    }
+  }, [rooms, user?.id, roomMemberData, apiService]);
+
   const filteredRooms = rooms.filter((room) => {
     const participantNames = room.members
-      .filter((p) => p.id !== user?.id)
-      .map((p) => `${p.first_name} ${p.last_name}`)
+      .filter((memberId) => memberId !== user?.id)
+      .map((memberId) => {
+        const memberData = roomMemberData[memberId];
+        return memberData ? `${memberData.first_name} ${memberData.last_name}` : `User ${memberId}`;
+      })
       .join(" ");
 
     return participantNames.toLowerCase().includes(searchQuery.toLowerCase());
@@ -194,13 +247,14 @@ export default function Messages() {
   const getRoomDisplayName = (room: Room) => {
     if (room.name) return room.name;
 
-    // Find the other participant (not the current user)
-    const otherParticipant = room.members.find(
-      (p) => p.id !== user?.id,
+    // Find the other participant ID (not the current user)
+    const otherParticipantId = room.members.find(
+      (memberId) => memberId !== user?.id,
     );
     
-    if (otherParticipant && otherParticipant.first_name && otherParticipant.last_name) {
-      return `${otherParticipant.first_name} ${otherParticipant.last_name}`;
+    if (otherParticipantId && roomMemberData[otherParticipantId]) {
+      const memberData = roomMemberData[otherParticipantId];
+      return `${memberData.first_name} ${memberData.last_name}`;
     }
     
     // Fallback: show the room ID or participant count
@@ -208,13 +262,14 @@ export default function Messages() {
   };
 
   const getRoomAvatar = (room: Room) => {
-    const otherParticipant = room.members.find(
-      (p) => p.id !== user?.id,
+    const otherParticipantId = room.members.find(
+      (memberId) => memberId !== user?.id,
     );
     
-    if (otherParticipant && otherParticipant.first_name && otherParticipant.last_name) {
-      const firstInitial = otherParticipant.first_name[0]?.toUpperCase() || '';
-      const lastInitial = otherParticipant.last_name[0]?.toUpperCase() || '';
+    if (otherParticipantId && roomMemberData[otherParticipantId]) {
+      const memberData = roomMemberData[otherParticipantId];
+      const firstInitial = memberData.first_name[0]?.toUpperCase() || '';
+      const lastInitial = memberData.last_name[0]?.toUpperCase() || '';
       return firstInitial + lastInitial;
     }
     
@@ -298,7 +353,7 @@ export default function Messages() {
               }`}
             >
               <div className="flex items-start space-x-3">
-                <Link href={`/profile/${room.members.find(p => p.id !== user?.id)?.id}`}>
+                <Link href={`/profile/${room.members.find(memberId => memberId !== user?.id)}`}>
                   <Avatar className="w-10 h-10 shadow-md cursor-pointer hover:shadow-lg transition-shadow">
                     <AvatarFallback className="bg-gradient-to-br from-blue-400 to-indigo-500 text-white font-semibold">
                       {getRoomAvatar(room)}
@@ -339,7 +394,7 @@ export default function Messages() {
             <div className="bg-white border-b border-gray-200 p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <Link href={`/profile/${selectedRoom.members.find(p => p.id !== user?.id)?.id}`}>
+                  <Link href={`/profile/${selectedRoom.members.find(memberId => memberId !== user?.id)}`}>
                     <Avatar className="w-10 h-10 shadow-md cursor-pointer hover:shadow-lg transition-shadow">
                       <AvatarFallback className="bg-gradient-to-br from-blue-400 to-indigo-500 text-white font-semibold">
                         {getRoomAvatar(selectedRoom)}
@@ -359,10 +414,10 @@ export default function Messages() {
 
                 <div className="flex items-center space-x-2">
                   {selectedRoom.members
-                    .filter((p) => p.id !== user?.id)
-                    .map((member) => (
+                    .filter((memberId) => memberId !== user?.id)
+                    .map((memberId) => (
                       <div
-                        key={member.id}
+                        key={memberId}
                         className="flex items-center space-x-1 text-sm text-gray-500"
                       ></div>
                     ))}

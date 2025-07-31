@@ -222,19 +222,16 @@ export const createJobApplicationSchema = jobApplicationSchema
     job: z.number(),
   });
 
-// Chat schemas
+// Chat schemas - corrected to match actual API response
 export const roomSchema = z.object({
   id: z.number(),
   name: z.string().optional(),
-  members: z.array(
-    z.object({
-      id: z.number(),
-      first_name: z.string(),
-      last_name: z.string(),
-    }),
-  ),
+  members: z.array(z.number()), // API returns array of user IDs, not user objects
   last_message_text: z.string().optional(),
   last_message_date_created: z.string().optional(),
+  unread_message_count: z.number().optional(),
+  content_type: z.number().optional(),
+  object_id: z.number().optional(),
 });
 
 export const messageSchema = z.object({
