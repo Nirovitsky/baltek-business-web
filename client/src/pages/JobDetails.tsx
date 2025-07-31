@@ -18,7 +18,8 @@ import {
   Calendar,
   Clock,
   Languages,
-  Building2
+  Building2,
+  Trash2
 } from "lucide-react";
 import type { Job } from "@shared/schema";
 
@@ -56,6 +57,27 @@ export default function JobDetails() {
       toast({
         title: "Error",
         description: error.message || "Failed to update job status",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => apiService.request(`/jobs/${id}/`, {
+      method: 'DELETE',
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
+      toast({
+        title: "Success",
+        description: "Job deleted successfully",
+      });
+      setLocation('/jobs');
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete job",
         variant: "destructive",
       });
     },
@@ -215,6 +237,15 @@ export default function JobDetails() {
                 <Archive className="h-4 w-4 mr-2" />
                 {job.status === 'archived' ? 'Unarchive' : 'Archive'}
               </Button>
+              <Button
+                variant="outline"
+                onClick={() => deleteMutation.mutate()}
+                disabled={deleteMutation.isPending}
+                className="text-red-600 border-red-300 hover:bg-red-50"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete
+              </Button>
             </div>
           </div>
         </div>
@@ -224,30 +255,7 @@ export default function JobDetails() {
       <div className="flex-1 overflow-y-auto scrollbar-hide">
         <div className="max-w-4xl mx-auto px-6 py-8 space-y-6">
           
-          {/* Job Description */}
-          <Card className="shadow-sm border border-gray-200">
-            <CardHeader className="border-b border-gray-200 bg-white">
-              <CardTitle className="flex items-center text-lg font-semibold text-gray-900">
-                <Briefcase className="h-5 w-5 mr-3 text-[#1877F2]" />
-                Job Description
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 bg-white">
-              <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
-                {job.description}
-              </p>
-              {job.requirements && (
-                <div className="mt-6">
-                  <h4 className="font-medium text-gray-900 mb-3">Requirements</h4>
-                  <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
-                    {job.requirements}
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Job Details & Compensation */}
+          {/* Job Information Card - First */}
           <Card className="shadow-sm border border-gray-200">
             <CardHeader className="border-b border-gray-200 bg-white">
               <CardTitle className="flex items-center text-lg font-semibold text-gray-900">
@@ -257,7 +265,30 @@ export default function JobDetails() {
             </CardHeader>
             <CardContent className="p-6 bg-white space-y-8">
               
-              {/* Compensation First */}
+              {/* Organization Information */}
+              {job.organization && (
+                <div>
+                  <h4 className="flex items-center text-base font-semibold text-gray-900 mb-4">
+                    <Building2 className="h-4 w-4 mr-2 text-[#1877F2]" />
+                    Organization
+                  </h4>
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-[#1877F2] rounded-lg flex items-center justify-center">
+                      <span className="text-white font-semibold text-lg">
+                        {job.organization.official_name?.charAt(0) || 'O'}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="text-gray-900 font-medium">{job.organization.official_name}</p>
+                      {job.organization.display_name && job.organization.display_name !== job.organization.official_name && (
+                        <p className="text-gray-600 text-sm">{job.organization.display_name}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Compensation */}
               {(job.salary_from || job.salary_to) && (
                 <div>
                   <h4 className="flex items-center text-base font-semibold text-gray-900 mb-4">
@@ -357,7 +388,28 @@ export default function JobDetails() {
             </CardContent>
           </Card>
 
-
+          {/* Job Description - Second */}
+          <Card className="shadow-sm border border-gray-200">
+            <CardHeader className="border-b border-gray-200 bg-white">
+              <CardTitle className="flex items-center text-lg font-semibold text-gray-900">
+                <Briefcase className="h-5 w-5 mr-3 text-[#1877F2]" />
+                Job Description
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 bg-white">
+              <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+                {job.description}
+              </p>
+              {job.requirements && (
+                <div className="mt-6">
+                  <h4 className="font-medium text-gray-900 mb-3">Requirements</h4>
+                  <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+                    {job.requirements}
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
         </div>
       </div>
