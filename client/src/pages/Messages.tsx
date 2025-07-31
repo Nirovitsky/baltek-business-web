@@ -145,7 +145,7 @@ export default function Messages() {
 
   const filteredRooms = rooms.filter((room) => {
     const participantNames = room.members
-      .filter((p) => p.id.toString() !== user?.id)
+      .filter((p) => p.id !== user?.id)
       .map((p) => `${p.first_name} ${p.last_name}`)
       .join(" ");
 
@@ -161,7 +161,7 @@ export default function Messages() {
 
     // Find the other participant (not the current user)
     const otherParticipant = room.members.find(
-      (p) => p.id.toString() !== user?.id,
+      (p) => p.id !== user?.id,
     );
     return otherParticipant
       ? `${otherParticipant.first_name} ${otherParticipant.last_name}`
@@ -170,7 +170,7 @@ export default function Messages() {
 
   const getRoomAvatar = (room: Room) => {
     const otherParticipant = room.members.find(
-      (p) => p.id.toString() !== user?.id,
+      (p) => p.id !== user?.id,
     );
     return otherParticipant
       ? `${otherParticipant.first_name[0]}${otherParticipant.last_name[0]}`
@@ -253,7 +253,7 @@ export default function Messages() {
               }`}
             >
               <div className="flex items-start space-x-3">
-                <Link href={`/profile/${room.members.find(p => p.id.toString() !== user?.id)?.id}`}>
+                <Link href={`/profile/${room.members.find(p => p.id !== user?.id)?.id}`}>
                   <Avatar className="w-10 h-10 shadow-md cursor-pointer hover:shadow-lg transition-shadow">
                     <AvatarFallback className="bg-gradient-to-br from-blue-400 to-indigo-500 text-white font-semibold">
                       {getRoomAvatar(room)}
@@ -294,7 +294,7 @@ export default function Messages() {
             <div className="bg-white border-b border-gray-200 p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <Link href={`/profile/${selectedRoom.members.find(p => p.id.toString() !== user?.id)?.id}`}>
+                  <Link href={`/profile/${selectedRoom.members.find(p => p.id !== user?.id)?.id}`}>
                     <Avatar className="w-10 h-10 shadow-md cursor-pointer hover:shadow-lg transition-shadow">
                       <AvatarFallback className="bg-gradient-to-br from-blue-400 to-indigo-500 text-white font-semibold">
                         {getRoomAvatar(selectedRoom)}
@@ -314,7 +314,7 @@ export default function Messages() {
 
                 <div className="flex items-center space-x-2">
                   {selectedRoom.members
-                    .filter((p) => p.id.toString() !== user?.id)
+                    .filter((p) => p.id !== user?.id)
                     .map((member) => (
                       <div
                         key={member.id}
@@ -342,7 +342,7 @@ export default function Messages() {
                 </div>
               ) : (
                 allMessages.map((message) => {
-                  const isOwn = message.owner.id.toString() === user?.id;
+                  const isOwn = message.owner.id === user?.id;
                   return (
                     <div
                       key={message.id}

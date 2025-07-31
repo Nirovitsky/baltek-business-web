@@ -221,3 +221,5 @@ This is a modern business dashboard for the Baltek Karyera platform built with R
 ✓ Updated server configuration in routes.ts to use new secure endpoint
 ✓ Updated documentation to reflect new backend URL
 ✓ Ensured all API proxy requests now route to the updated backend service
+✓ Fixed WebSocket connection issues and authentication endpoint errors
+✓ Resolved 405 Method Not Allowed error for login API endpoint
