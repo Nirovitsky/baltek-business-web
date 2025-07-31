@@ -19,6 +19,7 @@ export default function RecentApplications() {
       const params = new URLSearchParams();
       if (selectedOrganization) params.append('organization', selectedOrganization.id.toString());
       params.append('limit', '4');
+      params.append('ordering', '-created_at'); // Get most recent first
       return apiService.request<PaginatedResponse<JobApplication>>(`/jobs/applications/?${params.toString()}`);
     },
     enabled: !!selectedOrganization,
@@ -56,6 +57,17 @@ export default function RecentApplications() {
   }
 
   const applications = data?.results || [];
+  
+  // Additional client-side filtering to ensure we only show applications 
+  // for jobs that belong to the selected organization
+  const filteredApplications = applications.filter(app => {
+    // If the application has job organization info, check it matches
+    if (app.job?.organization && selectedOrganization) {
+      return app.job.organization.id === selectedOrganization.id;
+    }
+    // Otherwise rely on backend filtering
+    return true;
+  });
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -83,14 +95,14 @@ export default function RecentApplications() {
         </div>
       </CardHeader>
       <CardContent className="p-6">
-        {applications.length === 0 ? (
+        {filteredApplications.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-gray-500">No applications yet</p>
             <p className="text-sm text-gray-400 mt-2">Applications will appear here when candidates apply</p>
           </div>
         ) : (
           <div className="space-y-4">
-            {applications.map((application) => (
+            {filteredApplications.map((application) => (
               <div key={application.id} className="flex items-center space-x-4 p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
                 <div 
                   className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0 cursor-pointer hover:bg-primary/10"
