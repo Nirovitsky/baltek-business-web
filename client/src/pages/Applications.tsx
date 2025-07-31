@@ -101,7 +101,20 @@ export default function Applications() {
   };
 
   const applications = data?.results || [];
-  const filteredApplications = applications.filter(app => 
+  
+  // First filter by organization to ensure we only show applications for jobs 
+  // that belong to the selected organization
+  const organizationFilteredApplications = applications.filter(app => {
+    // If the application has job organization info, check it matches
+    if (app.job?.organization && selectedOrganization) {
+      return app.job.organization.id === selectedOrganization.id;
+    }
+    // Otherwise rely on backend filtering
+    return true;
+  });
+  
+  // Then apply search filter
+  const filteredApplications = organizationFilteredApplications.filter(app => 
     searchTerm === "" || 
     (`${app.owner.first_name} ${app.owner.last_name}`.toLowerCase().includes(searchTerm.toLowerCase())) ||
     (app.job.title.toLowerCase().includes(searchTerm.toLowerCase()))

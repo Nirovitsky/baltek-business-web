@@ -176,3 +176,5 @@ This is a modern business dashboard for the Baltek Karyera platform built with R
 ✓ Fixed Recent Applications component to properly filter by selected organization
 ✓ Added client-side filtering backup to prevent cross-organization data leakage
 ✓ Enhanced applications ordering to show most recent applications first
+✓ Fixed Applications page to prevent showing applicants from other organizations
+✓ Added comprehensive organization filtering for both dashboard and main applications view
