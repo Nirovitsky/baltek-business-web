@@ -185,15 +185,32 @@ export default function Messages() {
   useEffect(() => {
     const fetchMemberData = async () => {
       const allMemberIds = new Set<number>();
-      rooms.forEach(room => {
-        room.members.forEach(memberId => {
-          // Ensure memberId is properly handled as a number
-          const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
-          if (!isNaN(numericMemberId) && numericMemberId !== user?.id) {
-            allMemberIds.add(numericMemberId);
-          }
+      
+      console.log('Processing rooms for member data:', rooms.length);
+      rooms.forEach((room, roomIndex) => {
+        console.log(`Room ${roomIndex} (ID: ${room.id}):`, {
+          name: room.name,
+          members: room.members,
+          membersType: typeof room.members,
+          membersLength: room.members?.length
         });
+        
+        if (Array.isArray(room.members)) {
+          room.members.forEach((memberId, memberIndex) => {
+            console.log(`  Member ${memberIndex}:`, memberId, 'typeof:', typeof memberId);
+            // Ensure memberId is properly handled as a number
+            const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
+            if (!isNaN(numericMemberId) && numericMemberId !== user?.id) {
+              console.log(`  Adding member ID: ${numericMemberId}`);
+              allMemberIds.add(numericMemberId);
+            }
+          });
+        } else {
+          console.warn(`Room ${room.id} has invalid members:`, room.members);
+        }
       });
+      
+      console.log('All unique member IDs to fetch:', Array.from(allMemberIds));
 
       // Fetch user data for each unique member
       const memberDataPromises = Array.from(allMemberIds).map(async (userId) => {
@@ -202,6 +219,14 @@ export default function Messages() {
         try {
           // Ensure userId is a number when making the request
           const numericUserId = typeof userId === 'number' ? userId : parseInt(String(userId));
+          
+          // Add validation to prevent [object Object] issue
+          if (isNaN(numericUserId) || numericUserId <= 0) {
+            console.error('Invalid userId detected:', userId, 'numericUserId:', numericUserId);
+            return;
+          }
+          
+          console.log(`Fetching user data for userId: ${numericUserId}`);
           const userData = await apiService.request<any>(`/users/${numericUserId}/`);
           setRoomMemberData(prev => ({
             ...prev,
@@ -214,14 +239,16 @@ export default function Messages() {
         } catch (error) {
           console.error(`Failed to fetch user data for ${userId}:`, error);
           const numericUserId = typeof userId === 'number' ? userId : parseInt(String(userId));
-          setRoomMemberData(prev => ({
-            ...prev,
-            [numericUserId]: {
-              id: numericUserId,
-              first_name: 'Unknown',
-              last_name: 'User'
-            }
-          }));
+          if (!isNaN(numericUserId) && numericUserId > 0) {
+            setRoomMemberData(prev => ({
+              ...prev,
+              [numericUserId]: {
+                id: numericUserId,
+                first_name: 'Unknown',
+                last_name: 'User'
+              }
+            }));
+          }
         }
       });
 
@@ -257,6 +284,11 @@ export default function Messages() {
   const getRoomDisplayName = (room: Room) => {
     if (room.name) return room.name;
 
+    // If this is a 1-on-1 chat and we only have the current user, show their name
+    if (room.members.length === 1 && user) {
+      return `${user.first_name} ${user.last_name}`;
+    }
+
     // Find the other participant ID (not the current user)
     const otherParticipantId = room.members.find(
       (memberId) => {
@@ -271,13 +303,22 @@ export default function Messages() {
       if (memberData) {
         return `${memberData.first_name} ${memberData.last_name}`;
       }
+      // If we don't have member data yet, show loading state
+      return `Loading user ${numericParticipantId}...`;
     }
     
     // Fallback: show the room ID or participant count
-    return room.members.length > 1 ? `Chat Room ${room.id}` : "Private Chat";
+    return room.members.length > 1 ? `Chat Room ${room.id}` : "Chat Room";
   };
 
   const getRoomAvatar = (room: Room) => {
+    // If this is a 1-on-1 chat and we only have the current user, show their initials
+    if (room.members.length === 1 && user) {
+      const firstInitial = user.first_name?.[0]?.toUpperCase() || '';
+      const lastInitial = user.last_name?.[0]?.toUpperCase() || '';
+      return firstInitial + lastInitial || 'U';
+    }
+
     const otherParticipantId = room.members.find(
       (memberId) => {
         const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
@@ -293,10 +334,12 @@ export default function Messages() {
         const lastInitial = memberData.last_name[0]?.toUpperCase() || '';
         return firstInitial + lastInitial;
       }
+      // Show numeric ID as fallback while loading
+      return `${numericParticipantId}`;
     }
     
     // Fallback avatar
-    return room.id ? `R${room.id}` : "??";
+    return room.id ? `${room.id}` : "??";
   };
 
   useEffect(() => {
