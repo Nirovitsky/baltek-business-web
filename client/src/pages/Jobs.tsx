@@ -125,7 +125,7 @@ export default function Jobs() {
 
         {/* Jobs List */}
         {isLoading ? (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <Card key={i}>
                 <CardContent className="p-6">
@@ -185,7 +185,7 @@ export default function Jobs() {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {jobs.map((job) => {
               // Extract location and organization data safely
               const location = typeof job.location === 'object' && job.location ? job.location : null;
