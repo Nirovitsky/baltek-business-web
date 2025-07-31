@@ -76,7 +76,7 @@ export default function Dashboard() {
         onCreateJob={handleCreateJob}
       />
 
-      <main className="flex-1 overflow-y-auto p-6 space-y-8">
+      <main className="flex-1 overflow-y-auto p-6 space-y-8 bg-gray-50 dark:bg-gray-900">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatsCard

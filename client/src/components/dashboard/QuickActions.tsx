@@ -40,9 +40,9 @@ export default function QuickActions({
   ];
 
   return (
-    <Card className="shadow-sm border border-gray-200">
+    <Card className="shadow-sm border border-gray-200 dark:border-gray-700">
       <CardContent className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-6">Quick Actions</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Quick Actions</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {actions.map((action, index) => {
             const Icon = action.icon;
@@ -50,14 +50,14 @@ export default function QuickActions({
               <button
                 key={index}
                 onClick={action.onClick}
-                className="flex items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-primary hover:bg-primary/5 transition-colors text-left"
+                className="flex items-center p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-primary hover:bg-primary/5 dark:hover:bg-primary/10 transition-colors text-left"
               >
                 <div className={`w-12 h-12 ${action.iconBg} rounded-lg flex items-center justify-center mr-4`}>
                   <Icon className={`${action.iconColor} w-6 h-6`} />
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900">{action.title}</h4>
-                  <p className="text-sm text-gray-500">{action.description}</p>
+                  <h4 className="font-medium text-gray-900 dark:text-white">{action.title}</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{action.description}</p>
                 </div>
               </button>
             );
