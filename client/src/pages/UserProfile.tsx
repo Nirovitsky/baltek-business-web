@@ -134,50 +134,15 @@ export default function UserProfile() {
       <main className="flex-1 overflow-y-auto p-6">
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Back Button */}
-          <Link href="/dashboard">
-            <Button variant="ghost" size="sm" className="flex items-center space-x-2 mb-4">
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back to Dashboard</span>
-            </Button>
-          </Link>
-
-          {/* Profile Header */}
-          <div className="flex items-center space-x-4 mb-6">
-            <Avatar className="w-20 h-20">
-              {userProfile.avatar ? (
-                <AvatarImage src={userProfile.avatar} alt={`${userProfile.first_name} ${userProfile.last_name}`} />
-              ) : (
-                <AvatarFallback className="text-lg bg-gradient-to-br from-blue-400 to-indigo-500 text-white">
-                  {(userProfile.first_name?.[0] || "") + (userProfile.last_name?.[0] || "")}
-                </AvatarFallback>
-              )}
-            </Avatar>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                {userProfile.first_name} {userProfile.last_name}
-              </h1>
-              {userProfile.profession && (
-                <p className="text-gray-600 text-lg">{userProfile.profession}</p>
-              )}
-              <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
-                {userProfile.email && (
-                  <div className="flex items-center space-x-1">
-                    <Mail className="w-4 h-4" />
-                    <span>{userProfile.email}</span>
-                  </div>
-                )}
-                <div className="flex items-center space-x-1">
-                  <Phone className="w-4 h-4" />
-                  <span>{userProfile.phone}</span>
-                </div>
-                {userProfile.is_online && (
-                  <Badge variant="outline" className="text-green-600 border-green-300">
-                    Online
-                  </Badge>
-                )}
-              </div>
-            </div>
-          </div>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="flex items-center space-x-2 mb-4"
+            onClick={() => window.history.back()}
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back</span>
+          </Button>
 
           {/* Personal Information Card */}
           <Card>
@@ -194,51 +159,86 @@ export default function UserProfile() {
             </CardHeader>
 
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-1">
-                  <label className="text-sm font-medium text-gray-700">First Name</label>
-                  <p className="text-gray-900">{userProfile.first_name || "Not provided"}</p>
+              <div className="space-y-6">
+                {/* Profile Header with Avatar */}
+                <div className="flex items-center space-x-4 pb-4 border-b">
+                  <Avatar className="w-16 h-16">
+                    {userProfile.avatar ? (
+                      <AvatarImage src={userProfile.avatar} alt={`${userProfile.first_name} ${userProfile.last_name}`} />
+                    ) : (
+                      <AvatarFallback className="text-lg bg-gradient-to-br from-blue-400 to-indigo-500 text-white">
+                        {(userProfile.first_name?.[0] || "") + (userProfile.last_name?.[0] || "")}
+                      </AvatarFallback>
+                    )}
+                  </Avatar>
+                  <div className="flex-1">
+                    <h1 className="text-xl font-bold text-gray-900">
+                      {userProfile.first_name} {userProfile.last_name}
+                    </h1>
+                    {userProfile.profession && (
+                      <p className="text-gray-600">{userProfile.profession}</p>
+                    )}
+                    <div className="flex items-center space-x-3 mt-1 text-sm text-gray-500">
+                      {userProfile.is_online && (
+                        <Badge variant="outline" className="text-green-600 border-green-300">
+                          Online
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                  <Button className="bg-gradient-to-r from-blue-500 to-blue-600">
+                    <Mail className="w-4 h-4 mr-2" />
+                    Send Message
+                  </Button>
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-sm font-medium text-gray-700">Last Name</label>
-                  <p className="text-gray-900">{userProfile.last_name || "Not provided"}</p>
-                </div>
+                {/* Personal Details Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700">First Name</label>
+                    <p className="text-gray-900">{userProfile.first_name || "Not provided"}</p>
+                  </div>
 
-                <div className="space-y-1">
-                  <label className="text-sm font-medium text-gray-700">Email</label>
-                  <p className="text-gray-900">{userProfile.email || "Not provided"}</p>
-                </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700">Last Name</label>
+                    <p className="text-gray-900">{userProfile.last_name || "Not provided"}</p>
+                  </div>
 
-                <div className="space-y-1">
-                  <label className="text-sm font-medium text-gray-700">Phone</label>
-                  <p className="text-gray-900">{userProfile.phone}</p>
-                </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700">Email</label>
+                    <p className="text-gray-900">{userProfile.email || "Not provided"}</p>
+                  </div>
 
-                <div className="space-y-1">
-                  <label className="text-sm font-medium text-gray-700">Profession</label>
-                  <p className="text-gray-900">{userProfile.profession || "Not provided"}</p>
-                </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700">Phone</label>
+                    <p className="text-gray-900">{userProfile.phone}</p>
+                  </div>
 
-                <div className="space-y-1">
-                  <label className="text-sm font-medium text-gray-700">Gender</label>
-                  <p className="text-gray-900">
-                    {userProfile.gender === "m" ? "Male" : userProfile.gender === "f" ? "Female" : "Not provided"}
-                  </p>
-                </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700">Profession</label>
+                    <p className="text-gray-900">{userProfile.profession || "Not provided"}</p>
+                  </div>
 
-                <div className="space-y-1">
-                  <label className="text-sm font-medium text-gray-700">Date of Birth</label>
-                  <p className="text-gray-900">
-                    {userProfile.date_of_birth ? new Date(userProfile.date_of_birth).toLocaleDateString() : "Not provided"}
-                  </p>
-                </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700">Gender</label>
+                    <p className="text-gray-900">
+                      {userProfile.gender === "m" ? "Male" : userProfile.gender === "f" ? "Female" : "Not provided"}
+                    </p>
+                  </div>
 
-                <div className="space-y-1">
-                  <label className="text-sm font-medium text-gray-700">Location</label>
-                  <p className="text-gray-900">
-                    {locationName || (userProfile.location ? `Location ID: ${userProfile.location}` : "Not provided")}
-                  </p>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700">Date of Birth</label>
+                    <p className="text-gray-900">
+                      {userProfile.date_of_birth ? new Date(userProfile.date_of_birth).toLocaleDateString() : "Not provided"}
+                    </p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700">Location</label>
+                    <p className="text-gray-900">
+                      {locationName || (userProfile.location ? `Location ID: ${userProfile.location}` : "Not provided")}
+                    </p>
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -410,24 +410,20 @@ export default function UserProfile() {
           )}
 
           {/* Contact Actions */}
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-center space-x-4">
-                <Button className="bg-gradient-to-r from-blue-500 to-blue-600">
-                  <Mail className="w-4 h-4 mr-2" />
-                  Send Message
-                </Button>
-                {userProfile.email && (
+          {userProfile.email && (
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-center">
                   <Button variant="outline" asChild>
                     <a href={`mailto:${userProfile.email}`}>
                       <Mail className="w-4 h-4 mr-2" />
                       Send Email
                     </a>
                   </Button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </main>
     </div>
