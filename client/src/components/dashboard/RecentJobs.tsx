@@ -5,6 +5,7 @@ import { Code, TrendingUp, Palette } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { apiService } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
+import { useLocation } from "wouter";
 import type { Job, PaginatedResponse } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -14,8 +15,13 @@ const jobIcons: Record<string, any> = {
   design: Palette,
 };
 
-export default function RecentJobs() {
+interface RecentJobsProps {
+  onJobClick?: (jobId: number) => void;
+}
+
+export default function RecentJobs({ onJobClick }: RecentJobsProps) {
   const { selectedOrganization } = useAuth();
+  const [, setLocation] = useLocation();
   
   const { data, isLoading } = useQuery({
     queryKey: ['/jobs/', selectedOrganization?.id],
@@ -71,7 +77,7 @@ export default function RecentJobs() {
       <CardHeader className="border-b border-gray-200">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-gray-900">Recent Job Postings</h3>
-          <Button variant="ghost" size="sm">View All</Button>
+          <Button variant="ghost" size="sm" onClick={() => setLocation('/jobs')}>View All</Button>
         </div>
       </CardHeader>
       <CardContent className="p-6">
@@ -89,7 +95,11 @@ export default function RecentJobs() {
                                 'bg-yellow-100 text-yellow-800';
 
               return (
-                <div key={job.id} className="flex items-start space-x-4 p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
+                <div 
+                  key={job.id} 
+                  className="flex items-start space-x-4 p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                  onClick={() => onJobClick?.(job.id)}
+                >
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
                     <IconComponent className="text-primary w-5 h-5" />
                   </div>
@@ -113,11 +123,11 @@ export default function RecentJobs() {
                   <div className="text-right">
                     {job.salary_from && job.salary_to && (
                       <p className="text-sm font-medium text-gray-900">
-                        ${job.salary_from.toLocaleString()} - ${job.salary_to.toLocaleString()}
+                        TMT {job.salary_from.toLocaleString()} - {job.salary_to.toLocaleString()}
                       </p>
                     )}
                     <p className="text-xs text-gray-500">
-                      {new Date(job.created_at).toLocaleDateString()}
+                      {job.date_started || 'No date'}
                     </p>
                   </div>
                 </div>

@@ -7,6 +7,7 @@ import RecentJobs from "@/components/dashboard/RecentJobs";
 import RecentApplications from "@/components/dashboard/RecentApplications";
 import QuickActions from "@/components/dashboard/QuickActions";
 import JobModal from "@/components/modals/JobModal";
+import JobDetailDialog from "@/components/jobs/JobDetailDialog";
 import { Briefcase, Users, Clock, UserCheck } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
@@ -15,6 +16,8 @@ import type { Job, JobApplication, PaginatedResponse } from "@shared/schema";
 export default function Dashboard() {
   const [, setLocation] = useLocation();
   const [isJobModalOpen, setIsJobModalOpen] = useState(false);
+  const [isJobDetailOpen, setIsJobDetailOpen] = useState(false);
+  const [selectedJobId, setSelectedJobId] = useState<number | null>(null);
   const { selectedOrganization } = useAuth();
 
   // Fetch data for stats filtered by organization
@@ -57,6 +60,11 @@ export default function Dashboard() {
 
   const handleOpenMessages = () => {
     setLocation('/messages');
+  };
+
+  const handleJobClick = (jobId: number) => {
+    setSelectedJobId(jobId);
+    setIsJobDetailOpen(true);
   };
 
   return (
@@ -120,7 +128,7 @@ export default function Dashboard() {
 
         {/* Recent Jobs and Applications */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <RecentJobs />
+          <RecentJobs onJobClick={handleJobClick} />
           <RecentApplications />
         </div>
 
@@ -139,6 +147,12 @@ export default function Dashboard() {
           // Refresh data after job creation
           window.location.reload();
         }}
+      />
+
+      <JobDetailDialog
+        jobId={selectedJobId}
+        open={isJobDetailOpen}
+        onOpenChange={setIsJobDetailOpen}
       />
     </div>
   );

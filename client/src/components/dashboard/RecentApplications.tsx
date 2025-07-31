@@ -4,13 +4,24 @@ import { Badge } from "@/components/ui/badge";
 import { User, ChevronRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { apiService } from "@/lib/api";
+import { useAuth } from "@/hooks/useAuth";
+import { useLocation } from "wouter";
 import type { JobApplication, PaginatedResponse } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function RecentApplications() {
+  const { selectedOrganization } = useAuth();
+  const [, setLocation] = useLocation();
+
   const { data, isLoading } = useQuery({
-    queryKey: ['/jobs/applications/'],
-    queryFn: () => apiService.request<PaginatedResponse<JobApplication>>('/jobs/applications/?limit=4'),
+    queryKey: ['/jobs/applications/', selectedOrganization?.id],
+    queryFn: () => {
+      const params = new URLSearchParams();
+      if (selectedOrganization) params.append('organization', selectedOrganization.id.toString());
+      params.append('limit', '4');
+      return apiService.request<PaginatedResponse<JobApplication>>(`/jobs/applications/?${params.toString()}`);
+    },
+    enabled: !!selectedOrganization,
   });
 
   if (isLoading) {
@@ -68,7 +79,7 @@ export default function RecentApplications() {
       <CardHeader className="border-b border-gray-200">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-gray-900">Recent Applications</h3>
-          <Button variant="ghost" size="sm">View All</Button>
+          <Button variant="ghost" size="sm" onClick={() => setLocation('/applications')}>View All</Button>
         </div>
       </CardHeader>
       <CardContent className="p-6">
@@ -80,28 +91,37 @@ export default function RecentApplications() {
         ) : (
           <div className="space-y-4">
             {applications.map((application) => (
-              <div key={application.id} className="flex items-center space-x-4 p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
+              <div key={application.id} className="flex items-center space-x-4 p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
+                <div 
+                  className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0 cursor-pointer hover:bg-primary/10"
+                  onClick={() => setLocation(`/users/${application.owner?.id || application.id}`)}
+                >
                   <User className="text-gray-600 w-5 h-5" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-medium text-gray-900">
+                  <h4 
+                    className="font-medium text-gray-900 cursor-pointer hover:text-primary"
+                    onClick={() => setLocation(`/users/${application.owner?.id || application.id}`)}
+                  >
                     {application.owner?.first_name && application.owner?.last_name 
                       ? `${application.owner.first_name} ${application.owner.last_name}`
                       : `Candidate #${application.id}`}
                   </h4>
                   <p className="text-sm text-gray-500">
-                    Applied for {application.job?.title || `Job #${application.job.id}`}
+                    Applied for {application.job?.title || `Job #${application.job}`}
                   </p>
                   <p className="text-xs text-gray-400">
-                    Applied {new Date(application.created).toLocaleDateString()}
+                    Applied recently
                   </p>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Badge variant="secondary" className={getStatusColor(application.status)}>
                     {application.status ? application.status.charAt(0).toUpperCase() + application.status.slice(1) : 'Unknown'}
                   </Badge>
-                  <ChevronRight className="text-gray-400 w-4 h-4" />
+                  <ChevronRight 
+                    className="text-gray-400 w-4 h-4 cursor-pointer hover:text-primary"
+                    onClick={() => setLocation('/applications')}
+                  />
                 </div>
               </div>
             ))}

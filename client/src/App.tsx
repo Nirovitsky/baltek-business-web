@@ -15,6 +15,7 @@ import Dashboard from "@/pages/Dashboard";
 import Jobs from "@/pages/Jobs";
 import Applications from "@/pages/Applications";
 import Messages from "@/pages/Messages";
+import Users from "@/pages/Users";
 import UserProfile from "@/pages/UserProfile";
 import Organization from "@/pages/Organization";
 import Profile from "@/pages/Profile";
@@ -82,6 +83,12 @@ function Router() {
       <Route path="/messages">
         <ProtectedRoute>
           <Messages />
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/users/:id">
+        <ProtectedRoute>
+          <Users />
         </ProtectedRoute>
       </Route>
 
