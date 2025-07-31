@@ -45,6 +45,7 @@ export default function Dashboard() {
   const applications = applicationsData?.results || [];
 
   // Calculate stats
+  // Count jobs that are active (only "open" status jobs are active)
   const activeJobs = jobs.filter(job => job.status === 'open').length;
   const totalApplications = applicationsData?.count || 0;
   const pendingApplications = applications.filter(app => app.status === 'pending').length;

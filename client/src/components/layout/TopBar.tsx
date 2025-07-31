@@ -1,4 +1,4 @@
-import { Bell, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface TopBarProps {
@@ -24,10 +24,6 @@ export default function TopBar({
           )}
         </div>
         <div className="flex items-center space-x-4">
-          <button className="relative p-2 text-gray-400 hover:text-gray-600">
-            <Bell className="w-6 h-6" />
-            <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white" />
-          </button>
           {showCreateButton && (
             <Button onClick={onCreateJob} className="bg-primary hover:bg-primary/90">
               <Plus className="w-4 h-4 mr-2" />
