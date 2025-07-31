@@ -48,8 +48,8 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       organization: selectedOrganization?.id || 0,
       salary_payment_type: "monthly",
       required_languages: [],
-      date_started: new Date().toISOString().split('T')[0], // Today's date
-      date_ended: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
+      date_started: new Date().toLocaleDateString('en-GB').replace(/\//g, '.'), // Today's date in DD.MM.YYYY format
+      date_ended: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-GB').replace(/\//g, '.'), // 30 days from now
     },
   });
 
@@ -118,11 +118,11 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
   });
 
   const onSubmit = (data: CreateJob) => {
-    // Ensure date fields are properly formatted for backend
+    // Ensure date fields are properly formatted for backend (DD.MM.YYYY)
     const formattedData = {
       ...data,
-      date_started: data.date_started || new Date().toISOString().split('T')[0],
-      date_ended: data.date_ended || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      date_started: data.date_started || new Date().toLocaleDateString('en-GB').replace(/\//g, '.'),
+      date_ended: data.date_ended || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-GB').replace(/\//g, '.'),
     };
     
     if (job) {
