@@ -31,9 +31,7 @@ export default function Jobs() {
       if (selectedOrganization) params.append('organization', selectedOrganization.id.toString());
       if (searchTerm) params.append('search', searchTerm);
       if (statusFilter !== 'all') {
-        // Map UI filter values to backend API values
-        const apiStatusValue = statusFilter === 'archived' ? 'closed' : statusFilter;
-        params.append('status', apiStatusValue);
+        params.append('status', statusFilter);
       }
       
       console.log('Fetching jobs with params:', params.toString(), 'for organization:', selectedOrganization?.id, 'statusFilter:', statusFilter);
@@ -89,7 +87,7 @@ export default function Jobs() {
       case 'archived':
         return 'bg-gray-100 text-gray-800';   // Archived - grey color  
       case 'expired':
-        return 'bg-red-100 text-red-800';     // Expired - red color (previous color)
+        return 'bg-red-100 text-red-800';     // Expired - red color
       case 'draft':
         return 'bg-blue-100 text-blue-800';   // Draft - blue color
       default:
@@ -125,7 +123,7 @@ export default function Jobs() {
             <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="open">Open</SelectItem>
-              <SelectItem value="closed">Archived</SelectItem>
+              <SelectItem value="archived">Archived</SelectItem>
               <SelectItem value="expired">Expired</SelectItem>
             </SelectContent>
           </Select>
