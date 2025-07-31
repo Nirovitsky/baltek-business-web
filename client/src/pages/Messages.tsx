@@ -276,25 +276,34 @@ export default function Messages() {
     }
 
     // Find the other participant ID (not the current user)
-    const otherParticipantId = room.members.find(
-      (memberId) => {
-        const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
-        return !isNaN(numericMemberId) && numericMemberId !== user?.id;
-      }
-    );
+    const otherParticipantId = getOtherParticipantId(room);
     
     if (otherParticipantId) {
-      const numericParticipantId = typeof otherParticipantId === 'number' ? otherParticipantId : parseInt(String(otherParticipantId));
-      const memberData = roomMemberData[numericParticipantId];
+      const memberData = roomMemberData[otherParticipantId];
       if (memberData) {
         return `${memberData.first_name} ${memberData.last_name}`;
       }
       // If we don't have member data yet, show loading state
-      return `Loading user ${numericParticipantId}...`;
+      return `Loading user ${otherParticipantId}...`;
     }
     
     // Fallback: show the room ID or participant count
     return room.members.length > 1 ? `Chat Room ${room.id}` : "Chat Room";
+  };
+
+  // Helper function to get the other participant's numeric ID
+  const getOtherParticipantId = (room: Room): number | null => {
+    const otherMemberId = room.members.find(memberId => {
+      const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
+      return !isNaN(numericMemberId) && numericMemberId !== user?.id;
+    });
+    
+    if (otherMemberId) {
+      const numericId = typeof otherMemberId === 'number' ? otherMemberId : parseInt(String(otherMemberId));
+      return !isNaN(numericId) ? numericId : null;
+    }
+    
+    return null;
   };
 
   const getRoomAvatar = (room: Room) => {
@@ -305,23 +314,17 @@ export default function Messages() {
       return firstInitial + lastInitial || 'U';
     }
 
-    const otherParticipantId = room.members.find(
-      (memberId) => {
-        const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
-        return !isNaN(numericMemberId) && numericMemberId !== user?.id;
-      }
-    );
+    const otherParticipantId = getOtherParticipantId(room);
     
     if (otherParticipantId) {
-      const numericParticipantId = typeof otherParticipantId === 'number' ? otherParticipantId : parseInt(String(otherParticipantId));
-      const memberData = roomMemberData[numericParticipantId];
+      const memberData = roomMemberData[otherParticipantId];
       if (memberData) {
         const firstInitial = memberData.first_name[0]?.toUpperCase() || '';
         const lastInitial = memberData.last_name[0]?.toUpperCase() || '';
         return firstInitial + lastInitial;
       }
       // Show numeric ID as fallback while loading
-      return `${numericParticipantId}`;
+      return `${otherParticipantId}`;
     }
     
     // Fallback avatar
@@ -404,7 +407,7 @@ export default function Messages() {
               }`}
             >
               <div className="flex items-start space-x-3">
-                <Link href={`/profile/${room.members.find(memberId => memberId !== user?.id)}`}>
+                <Link href={`/profile/${getOtherParticipantId(room) || 'unknown'}`}>
                   <Avatar className="w-10 h-10 shadow-md cursor-pointer hover:shadow-lg transition-shadow">
                     <AvatarFallback className="bg-gradient-to-br from-blue-400 to-indigo-500 text-white font-semibold">
                       {getRoomAvatar(room)}
@@ -445,7 +448,7 @@ export default function Messages() {
             <div className="bg-white border-b border-gray-200 p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <Link href={`/profile/${selectedRoom.members.find(memberId => memberId !== user?.id)}`}>
+                  <Link href={`/profile/${getOtherParticipantId(selectedRoom) || 'unknown'}`}>
                     <Avatar className="w-10 h-10 shadow-md cursor-pointer hover:shadow-lg transition-shadow">
                       <AvatarFallback className="bg-gradient-to-br from-blue-400 to-indigo-500 text-white font-semibold">
                         {getRoomAvatar(selectedRoom)}
