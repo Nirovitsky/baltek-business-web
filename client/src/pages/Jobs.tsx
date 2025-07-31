@@ -279,13 +279,30 @@ export default function Jobs() {
                             <Calendar className="w-3 h-3 mr-1" />
                             <span>
                               Published: {(() => {
-                                try {
-                                  const date = new Date(job.date_started);
-                                  if (isNaN(date.getTime())) return 'Invalid';
-                                  return date.toLocaleDateString();
-                                } catch {
-                                  return 'Invalid';
+                                // Debug log to see the actual date format
+                                console.log('date_started value:', job.date_started, typeof job.date_started);
+                                
+                                // Handle different date formats
+                                let dateStr = job.date_started;
+                                if (typeof dateStr === 'object' && dateStr !== null) {
+                                  return JSON.stringify(dateStr);
                                 }
+                                if (!dateStr) return 'No date';
+                                
+                                // If it's already formatted as a date string, display it directly
+                                if (typeof dateStr === 'string' && dateStr.includes('-')) {
+                                  try {
+                                    const date = new Date(dateStr);
+                                    if (!isNaN(date.getTime())) {
+                                      return date.toLocaleDateString();
+                                    }
+                                  } catch (e) {
+                                    console.error('Date parsing error:', e);
+                                  }
+                                }
+                                
+                                // Fallback to raw string display
+                                return String(dateStr);
                               })()}
                             </span>
                           </div>
@@ -295,13 +312,30 @@ export default function Jobs() {
                             <Calendar className="w-3 h-3 mr-1" />
                             <span>
                               Expires: {(() => {
-                                try {
-                                  const date = new Date(job.date_ended);
-                                  if (isNaN(date.getTime())) return 'Invalid';
-                                  return date.toLocaleDateString();
-                                } catch {
-                                  return 'Invalid';
+                                // Debug log to see the actual date format
+                                console.log('date_ended value:', job.date_ended, typeof job.date_ended);
+                                
+                                // Handle different date formats
+                                let dateStr = job.date_ended;
+                                if (typeof dateStr === 'object' && dateStr !== null) {
+                                  return JSON.stringify(dateStr);
                                 }
+                                if (!dateStr) return 'No date';
+                                
+                                // If it's already formatted as a date string, display it directly
+                                if (typeof dateStr === 'string' && dateStr.includes('-')) {
+                                  try {
+                                    const date = new Date(dateStr);
+                                    if (!isNaN(date.getTime())) {
+                                      return date.toLocaleDateString();
+                                    }
+                                  } catch (e) {
+                                    console.error('Date parsing error:', e);
+                                  }
+                                }
+                                
+                                // Fallback to raw string display
+                                return String(dateStr);
                               })()}
                             </span>
                           </div>
