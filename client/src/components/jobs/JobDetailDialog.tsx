@@ -48,36 +48,10 @@ export default function JobDetailDialog({
     enabled: !!jobId && open,
   });
 
-  const { data: location } = useQuery({
-    queryKey: ['/locations/', job?.location],
-    queryFn: () => {
-      const locationId = typeof job!.location === 'object' && job!.location ? job!.location.id : job!.location;
-      return apiService.request<Location>(`/locations/${locationId}/`);
-    },
-    enabled: !!job?.location,
-  });
-
-  const { data: category } = useQuery({
-    queryKey: ['/categories/', job?.category],
-    queryFn: () => {
-      const categoryId = typeof job!.category === 'object' && job!.category ? job!.category.id : job!.category;
-      return apiService.request<Category>(`/categories/${categoryId}/`);
-    },
-    enabled: !!job?.category,
-  });
-
-  const { data: languages } = useQuery({
-    queryKey: ['/languages/', job?.required_languages],
-    queryFn: async () => {
-      if (!job?.required_languages?.length) return [];
-      const languagePromises = job.required_languages.map(langId => {
-        const actualLangId = typeof langId === 'object' && langId ? langId.id : langId;
-        return apiService.request<Language>(`/languages/${actualLangId}/`);
-      });
-      return Promise.all(languagePromises);
-    },
-    enabled: !!job?.required_languages?.length,
-  });
+  // Extract location, category, and languages directly from job data (backend provides full objects)
+  const location = typeof job?.location === 'object' && job.location ? job.location : null;
+  const category = typeof job?.category === 'object' && job.category ? job.category : null;
+  const languages = job?.required_languages || [];
 
   const archiveMutation = useMutation({
     mutationFn: () => apiService.request(`/jobs/${jobId}/`, {
@@ -132,9 +106,13 @@ export default function JobDetailDialog({
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'Not specified';
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return 'Invalid date';
-    return date.toLocaleDateString();
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Not specified';
+      return date.toLocaleDateString();
+    } catch {
+      return 'Not specified';
+    }
   };
 
   const getApplicationsCount = (job: Job) => {
@@ -219,7 +197,7 @@ export default function JobDetailDialog({
               <h1 className="text-2xl font-bold text-gray-900 mb-2">{job.title}</h1>
               <div className="flex items-center space-x-4 mb-4">
                 <Badge className={getStatusColor(job.status)}>
-                  {job.status ? job.status.charAt(0).toUpperCase() + job.status.slice(1) : 'Unknown'}
+                  {job.status ? job.status.charAt(0).toUpperCase() + job.status.slice(1) : 'Open'}
                 </Badge>
                 <span className="text-sm text-gray-500 flex items-center">
                   <Users className="w-4 h-4 mr-1" />
@@ -312,9 +290,9 @@ export default function JobDetailDialog({
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap gap-2">
-                      {languages.map((lang) => (
-                        <Badge key={lang.id} variant="outline">
-                          {lang.name}
+                      {languages.map((lang, index) => (
+                        <Badge key={typeof lang === 'object' ? lang.id : index} variant="outline">
+                          {typeof lang === 'object' ? lang.name : `Language ${lang}`}
                         </Badge>
                       ))}
                     </div>

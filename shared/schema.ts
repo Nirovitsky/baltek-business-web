@@ -138,15 +138,39 @@ export const languageSchema = z.object({
   code: z.string(),
 });
 
-// Job schemas
+// Job schemas - updated to match actual backend response
 export const jobSchema = z.object({
   id: z.number(),
   title: z.string(),
   description: z.string(),
   requirements: z.string().optional(),
-  category: z.number(),
-  organization: z.number(),
-  location: z.number(),
+  category: z.union([
+    z.number(),
+    z.object({
+      id: z.number(),
+      name: z.string(),
+      description: z.string().optional(),
+    })
+  ]),
+  organization: z.union([
+    z.number(),
+    z.object({
+      id: z.number(),
+      official_name: z.string(),
+      display_name: z.string().optional(),
+      logo: z.string().optional(),
+    })
+  ]),
+  location: z.union([
+    z.number(),
+    z.object({
+      id: z.number(),
+      name: z.string(),
+      country: z.string().optional(),
+      state: z.string().optional(),
+      city: z.string().optional(),
+    })
+  ]),
   job_type: z.enum(["full_time", "part_time", "contract"]),
   workplace_type: z.enum(["remote", "on_site", "hybrid"]),
   min_education_level: z
@@ -157,7 +181,15 @@ export const jobSchema = z.object({
   salary_payment_type: z
     .enum(["yearly", "monthly", "weekly", "daily", "hourly"])
     .optional(),
-  required_languages: z.array(z.number()).optional(),
+  currency: z.string().optional(),
+  required_languages: z.array(z.union([
+    z.number(),
+    z.object({
+      id: z.number(),
+      name: z.string(),
+      code: z.string(),
+    })
+  ])).optional(),
   status: z.enum(["open", "archived", "expired"]),
   date_started: z.string(),
   date_ended: z.string().optional(),
