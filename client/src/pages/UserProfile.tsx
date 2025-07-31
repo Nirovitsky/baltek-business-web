@@ -146,19 +146,7 @@ export default function UserProfile() {
 
           {/* Personal Information Card */}
           <Card>
-            <CardHeader>
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <UserIcon className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <CardTitle>Personal Information</CardTitle>
-                  <CardDescription>Basic personal details and contact information</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-
-            <CardContent>
+            <CardContent className="pt-6">
               <div className="space-y-6">
                 {/* Profile Header with Avatar */}
                 <div className="flex items-center space-x-4 pb-4 border-b">
@@ -186,7 +174,10 @@ export default function UserProfile() {
                       )}
                     </div>
                   </div>
-                  <Button className="bg-gradient-to-r from-blue-500 to-blue-600">
+                  <Button 
+                    className="bg-gradient-to-r from-blue-500 to-blue-600"
+                    onClick={() => window.location.href = `/messages?userId=${userProfile.id}`}
+                  >
                     <Mail className="w-4 h-4 mr-2" />
                     Send Message
                   </Button>
@@ -229,7 +220,7 @@ export default function UserProfile() {
                   <div className="space-y-1">
                     <label className="text-sm font-medium text-gray-700">Date of Birth</label>
                     <p className="text-gray-900">
-                      {userProfile.date_of_birth ? new Date(userProfile.date_of_birth).toLocaleDateString() : "Not provided"}
+                      {userProfile.date_of_birth ? userProfile.date_of_birth : "Not provided"}
                     </p>
                   </div>
 
@@ -265,10 +256,8 @@ export default function UserProfile() {
                       <h4 className="font-semibold text-gray-900">{experience.position}</h4>
                       <p className="text-blue-600 font-medium">{experience.organization_name}</p>
                       <p className="text-sm text-gray-600 mt-1">
-                        {new Date(experience.date_started).toLocaleDateString()} - {
-                          experience.date_finished 
-                            ? new Date(experience.date_finished).toLocaleDateString() 
-                            : "Present"
+                        {experience.date_started} - {
+                          experience.date_finished || "Present"
                         }
                       </p>
                       {experience.description && (
@@ -311,10 +300,8 @@ export default function UserProfile() {
                         </p>
                       )}
                       <p className="text-sm text-gray-600 mt-1">
-                        {education.date_started && new Date(education.date_started).toLocaleDateString()} - {
-                          education.date_finished 
-                            ? new Date(education.date_finished).toLocaleDateString() 
-                            : "Present"
+                        {education.date_started || "Not specified"} - {
+                          education.date_finished || "Present"
                         }
                       </p>
                     </div>
@@ -354,10 +341,8 @@ export default function UserProfile() {
                         </a>
                       )}
                       <p className="text-sm text-gray-600 mt-1">
-                        {new Date(project.date_started).toLocaleDateString()} - {
-                          project.date_finished 
-                            ? new Date(project.date_finished).toLocaleDateString() 
-                            : "Ongoing"
+                        {project.date_started} - {
+                          project.date_finished || "Ongoing"
                         }
                       </p>
                       <p className="text-gray-700 mt-2">{project.description}</p>
@@ -368,46 +353,61 @@ export default function UserProfile() {
             </Card>
           )}
 
-          {/* Resumes Section */}
-          {userProfile.resumes && userProfile.resumes.length > 0 && (
-            <Card>
-              <CardHeader>
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                    <FileText className="w-6 h-6 text-orange-600" />
-                  </div>
-                  <div>
-                    <CardTitle>Resumes</CardTitle>
-                    <CardDescription>Uploaded resume documents</CardDescription>
-                  </div>
+          {/* CV/Resumes Section - Always show for business users */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                  <FileText className="w-6 h-6 text-orange-600" />
                 </div>
-              </CardHeader>
-              <CardContent>
+                <div>
+                  <CardTitle>CV / Resume Documents</CardTitle>
+                  <CardDescription>Uploaded resume and CV files</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {userProfile.resumes && userProfile.resumes.length > 0 ? (
                 <div className="space-y-3">
                   {userProfile.resumes.map((resume) => (
-                    <div key={resume.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div key={resume.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors">
                       <div className="flex items-center space-x-3">
-                        <FileText className="w-5 h-5 text-orange-600" />
+                        <FileText className="w-6 h-6 text-orange-600" />
                         <div>
                           <p className="font-medium text-gray-900">{resume.title}</p>
                           <p className="text-sm text-gray-500">
-                            Uploaded on {new Date(resume.date_created).toLocaleDateString()}
+                            Uploaded on {resume.date_created}
                           </p>
                         </div>
                       </div>
-                      {resume.file && (
-                        <Button variant="outline" size="sm" asChild>
-                          <a href={resume.file} target="_blank" rel="noopener noreferrer">
-                            View
-                          </a>
-                        </Button>
-                      )}
+                      <div className="flex items-center space-x-2">
+                        {resume.file && (
+                          <>
+                            <Button variant="outline" size="sm" asChild>
+                              <a href={resume.file} target="_blank" rel="noopener noreferrer">
+                                <FileText className="w-4 h-4 mr-1" />
+                                View
+                              </a>
+                            </Button>
+                            <Button variant="outline" size="sm" asChild>
+                              <a href={resume.file} download={resume.title}>
+                                Download
+                              </a>
+                            </Button>
+                          </>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
-          )}
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <FileText className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                  <p>No CV or resume documents uploaded</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
           {/* Contact Actions */}
           {userProfile.email && (

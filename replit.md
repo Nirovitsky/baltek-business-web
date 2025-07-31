@@ -210,3 +210,8 @@ This is a modern business dashboard for the Baltek Karyera platform built with R
 ✓ Enhanced back button to use browser history instead of hardcoded route
 ✓ Improved profile layout with avatar and action buttons in single card
 ✓ Fixed blank page issue and console errors for applicant profile viewing
+✓ Removed redundant "Personal Information" header text from profile card
+✓ Enhanced Send Message button to redirect to messages with specific user ID
+✓ Fixed date formatting throughout frontend to display raw date strings properly
+✓ Enhanced CV/Resume section to always show for business users with download options
+✓ Added proper file viewing and downloading capabilities for uploaded documents
