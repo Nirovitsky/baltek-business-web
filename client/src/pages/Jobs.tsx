@@ -247,12 +247,19 @@ export default function Jobs() {
                       <div className="flex items-center text-sm mb-4">
                         <DollarSign className="w-4 h-4 mr-2 text-green-600" />
                         <span className="font-medium text-gray-900">
-                          {job.salary_from && job.salary_to 
-                            ? `$${job.salary_from.toLocaleString()} - $${job.salary_to.toLocaleString()}`
-                            : job.salary_from 
-                            ? `$${job.salary_from.toLocaleString()}+`
-                            : `Up to $${job.salary_to?.toLocaleString()}`
-                          }
+                          {(() => {
+                            const currency = job.currency || 'TMT';
+                            const currencySymbol = currency === 'USD' ? '$' : currency === 'TMT' ? 'TMT' : currency;
+                            
+                            if (job.salary_from && job.salary_to) {
+                              return `${currencySymbol} ${job.salary_from.toLocaleString()} - ${job.salary_to.toLocaleString()}`;
+                            } else if (job.salary_from) {
+                              return `${currencySymbol} ${job.salary_from.toLocaleString()}+`;
+                            } else if (job.salary_to) {
+                              return `Up to ${currencySymbol} ${job.salary_to.toLocaleString()}`;
+                            }
+                            return 'Salary not specified';
+                          })()}
                           {job.salary_payment_type && (
                             <span className="text-gray-500 ml-1">
                               / {job.salary_payment_type.replace('_', ' ')}

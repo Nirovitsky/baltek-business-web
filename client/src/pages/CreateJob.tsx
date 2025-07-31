@@ -50,6 +50,7 @@ export default function CreateJob() {
       salary_from: undefined,
       salary_to: undefined,
       salary_payment_type: "monthly",
+      currency: "TMT",
       required_languages: [],
       date_started: new Date().toLocaleDateString('en-GB').replace(/\//g, '.'),
       date_ended: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-GB').replace(/\//g, '.'),
@@ -73,6 +74,7 @@ export default function CreateJob() {
         salary_from: job.salary_from || undefined,
         salary_to: job.salary_to || undefined,
         salary_payment_type: job.salary_payment_type || "monthly",
+        currency: job.currency || "TMT",
         required_languages: job.required_languages || [],
         date_started: job.date_started || new Date().toLocaleDateString('en-GB').replace(/\//g, '.'),
         date_ended: job.date_ended || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-GB').replace(/\//g, '.'),
@@ -484,7 +486,7 @@ export default function CreateJob() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-6 space-y-6 bg-white">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <FormField
                       control={form.control}
                       name="salary_from"
@@ -533,6 +535,28 @@ export default function CreateJob() {
                           <FormDescription className="text-xs text-gray-500">
                             Optional: Leave blank if not specified
                           </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="currency"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium text-gray-700">Currency</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger className="mt-1">
+                                <SelectValue />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="TMT">TMT (Turkmenistan Manat)</SelectItem>
+                              <SelectItem value="USD">USD (US Dollar)</SelectItem>
+                            </SelectContent>
+                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}
