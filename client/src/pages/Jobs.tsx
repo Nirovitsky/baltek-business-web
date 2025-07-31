@@ -270,7 +270,7 @@ export default function Jobs() {
                           variant="secondary" 
                           className={`${getStatusColor(job.status)} border`}
                         >
-                          {job.status ? job.status.charAt(0).toUpperCase() + job.status.slice(1) : 'Unknown'}
+                          {job.status ? job.status.charAt(0).toUpperCase() + job.status.slice(1) : 'Open'}
                         </Badge>
                       </div>
                       <div className="flex flex-col items-end text-xs text-gray-500 space-y-1">
@@ -278,32 +278,7 @@ export default function Jobs() {
                           <div className="flex items-center">
                             <Calendar className="w-3 h-3 mr-1" />
                             <span>
-                              Published: {(() => {
-                                // Debug log to see the actual date format
-                                console.log('date_started value:', job.date_started, typeof job.date_started);
-                                
-                                // Handle different date formats
-                                let dateStr = job.date_started;
-                                if (typeof dateStr === 'object' && dateStr !== null) {
-                                  return JSON.stringify(dateStr);
-                                }
-                                if (!dateStr) return 'No date';
-                                
-                                // If it's already formatted as a date string, display it directly
-                                if (typeof dateStr === 'string' && dateStr.includes('-')) {
-                                  try {
-                                    const date = new Date(dateStr);
-                                    if (!isNaN(date.getTime())) {
-                                      return date.toLocaleDateString();
-                                    }
-                                  } catch (e) {
-                                    console.error('Date parsing error:', e);
-                                  }
-                                }
-                                
-                                // Fallback to raw string display
-                                return String(dateStr);
-                              })()}
+                              Published: {job.date_started || 'No date'}
                             </span>
                           </div>
                         )}
@@ -311,32 +286,7 @@ export default function Jobs() {
                           <div className="flex items-center">
                             <Calendar className="w-3 h-3 mr-1" />
                             <span>
-                              Expires: {(() => {
-                                // Debug log to see the actual date format
-                                console.log('date_ended value:', job.date_ended, typeof job.date_ended);
-                                
-                                // Handle different date formats
-                                let dateStr = job.date_ended;
-                                if (typeof dateStr === 'object' && dateStr !== null) {
-                                  return JSON.stringify(dateStr);
-                                }
-                                if (!dateStr) return 'No date';
-                                
-                                // If it's already formatted as a date string, display it directly
-                                if (typeof dateStr === 'string' && dateStr.includes('-')) {
-                                  try {
-                                    const date = new Date(dateStr);
-                                    if (!isNaN(date.getTime())) {
-                                      return date.toLocaleDateString();
-                                    }
-                                  } catch (e) {
-                                    console.error('Date parsing error:', e);
-                                  }
-                                }
-                                
-                                // Fallback to raw string display
-                                return String(dateStr);
-                              })()}
+                              Expires: {job.date_ended || 'No date'}
                             </span>
                           </div>
                         )}
