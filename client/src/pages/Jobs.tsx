@@ -136,15 +136,11 @@ export default function Jobs() {
                         <Skeleton className="h-6 w-48" />
                         <Skeleton className="h-4 w-32" />
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <Skeleton className="h-8 w-8" />
-                        <Skeleton className="h-8 w-8" />
-                        <Skeleton className="h-8 w-8" />
-                      </div>
+                      <Skeleton className="h-4 w-28" />
                     </div>
                     
-                    {/* Details grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {/* Details */}
+                    <div className="space-y-3">
                       <Skeleton className="h-4 w-36" />
                       <Skeleton className="h-4 w-28" />
                     </div>
@@ -202,7 +198,7 @@ export default function Jobs() {
                   onClick={() => handleViewJob(job.id)}
                 >
                   <CardContent className="p-6">
-                    {/* Header with title and actions */}
+                    {/* Header with title and applications count */}
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
                         <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-[#1877F2] transition-colors">
@@ -215,37 +211,14 @@ export default function Jobs() {
                           </div>
                         )}
                       </div>
-                      <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleViewJob(job.id)}
-                          className="text-[#1877F2] border-[#1877F2] hover:bg-[#1877F2] hover:text-white"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleEditJob(job)}
-                          className="text-gray-600 hover:text-gray-900"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleDeleteJob(job.id)}
-                          disabled={deleteJobMutation.isPending}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                      <div className="flex items-center text-sm text-gray-600">
+                        <Users className="w-4 h-4 mr-1 text-[#1877F2]" />
+                        <span className="font-medium">{job.applications_count || 0} applications</span>
                       </div>
                     </div>
 
-                    {/* Job details grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                    {/* Job details */}
+                    <div className="space-y-3 mb-4">
                       <div className="flex items-center text-sm text-gray-600">
                         <Briefcase className="w-4 h-4 mr-2 text-[#1877F2] flex-shrink-0" />
                         <span>
@@ -255,12 +228,8 @@ export default function Jobs() {
                            job.job_type === 'part_time' ? 'Part Time' : 'Contract'}
                         </span>
                       </div>
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Users className="w-4 h-4 mr-2 text-[#1877F2] flex-shrink-0" />
-                        <span>{job.applications_count || 0} applications</span>
-                      </div>
                       {location && (
-                        <div className="flex items-center text-sm text-gray-600 sm:col-span-2">
+                        <div className="flex items-center text-sm text-gray-600">
                           <MapPin className="w-4 h-4 mr-2 text-[#1877F2] flex-shrink-0" />
                           <span>{location.name}</span>
                         </div>
@@ -307,7 +276,16 @@ export default function Jobs() {
                       <div className="flex items-center text-xs text-gray-500">
                         <Calendar className="w-3 h-3 mr-1" />
                         <span>
-                          {job.date_started ? new Date(job.date_started).toLocaleDateString() : 'No date'}
+                          {(() => {
+                            if (!job.date_started) return 'No date';
+                            try {
+                              const date = new Date(job.date_started);
+                              if (isNaN(date.getTime())) return 'No date';
+                              return date.toLocaleDateString();
+                            } catch {
+                              return 'No date';
+                            }
+                          })()}
                         </span>
                       </div>
                     </div>
