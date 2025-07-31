@@ -21,12 +21,12 @@ export default function StatsCard({
   iconColor = "text-primary" 
 }: StatsCardProps) {
   return (
-    <Card className="shadow-sm border border-gray-200 dark:border-gray-700">
+    <Card className="shadow-sm border border-gray-200">
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{title}</p>
-            <p className="text-3xl font-bold text-gray-900 dark:text-white">{value}</p>
+            <p className="text-sm font-medium text-gray-600">{title}</p>
+            <p className="text-3xl font-bold text-gray-900">{value}</p>
           </div>
           <div className={`w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center`}>
             <Icon className={`${iconColor} text-xl w-6 h-6`} />
@@ -40,12 +40,12 @@ export default function StatsCard({
                   ? 'text-green-500'
                   : change.type === 'negative'
                   ? 'text-red-500'
-                  : 'text-gray-500 dark:text-gray-400'
+                  : 'text-gray-500'
               }`}
             >
               {change.value}
             </span>
-            <span className="text-gray-500 dark:text-gray-400 text-sm ml-2">{change.label}</span>
+            <span className="text-gray-500 text-sm ml-2">{change.label}</span>
           </div>
         )}
       </CardContent>

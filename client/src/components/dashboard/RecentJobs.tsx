@@ -38,10 +38,10 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
 
   if (isLoading) {
     return (
-      <Card className="shadow-sm border border-gray-200 dark:border-gray-700">
-        <CardHeader className="border-b border-gray-200 dark:border-gray-700">
+      <Card className="shadow-sm border border-gray-200">
+        <CardHeader className="border-b border-gray-200">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Job Postings</h3>
+            <h3 className="text-lg font-semibold text-gray-900">Recent Job Postings</h3>
             <Button variant="ghost" size="sm">View All</Button>
           </div>
         </CardHeader>
