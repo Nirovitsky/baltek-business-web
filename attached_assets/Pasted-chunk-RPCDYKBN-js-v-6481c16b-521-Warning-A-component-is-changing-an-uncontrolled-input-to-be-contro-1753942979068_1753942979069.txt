@@ -1,0 +1,50 @@
+chunk-RPCDYKBN.js?v=6481c16b:521 Warning: A component is changing an uncontrolled input to be controlled. This is likely caused by the value changing from undefined to a defined value, which should not happen. Decide between using a controlled or uncontrolled input element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components
+    at input
+    at _c (https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.dev:5000/src/components/ui/input.tsx:20:11)
+    at https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…unner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=6481c16b:79:13
+    at https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…unner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=6481c16b:56:13
+    at https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.dev:5000/src/components/ui/form.tsx:130:9
+    at div
+    at https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.dev:5000/src/components/ui/form.tsx:72:6
+    at Controller (https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…nner/workspace/node_modules/.vite/deps/chunk-4BFJKWC4.js?v=6481c16b:298:35)
+    at FormField (https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.dev:5000/src/components/ui/form.tsx:33:6)
+    at div
+    at form
+    at FormProvider (https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…nner/workspace/node_modules/.vite/deps/chunk-4BFJKWC4.js?v=6481c16b:102:11)
+    at JobForm (https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.dev:5000/src/components/jobs/JobForm.tsx:31:35)
+    at div
+    at https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…unner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=6481c16b:42:13
+    at https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…runner/workspace/node_modules/.vite/deps/chunk-SD42OOGP.js?v=6481c16b:61:7
+    at https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…unner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=6481c16b:79:13
+    at https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…unner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=6481c16b:56:13
+    at https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…unner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=6481c16b:42:13
+    at https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…runner/workspace/node_modules/.vite/deps/chunk-UDJZONCO.js?v=6481c16b:29:5
+    at https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…nner/workspace/node_modules/.vite/deps/chunk-WJHODHM3.js?v=6481c16b:233:13
+    at https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…nner/workspace/node_modules/.vite/deps/chunk-WJHODHM3.js?v=6481c16b:156:58
+    at Presence (https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…unner/workspace/node_modules/.vite/deps/chunk-WIIJQEXM.js?v=6481c16b:24:11)
+    at https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…nner/workspace/node_modules/.vite/deps/chunk-WJHODHM3.js?v=6481c16b:147:64
+    at https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…unner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=6481c16b:79:13
+    at https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…unner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=6481c16b:56:13
+    at https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…unner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=6481c16b:42:13
+    at https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…nner/workspace/node_modules/.vite/deps/chunk-SD42OOGP.js?v=6481c16b:260:22
+    at Presence (https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…unner/workspace/node_modules/.vite/deps/chunk-WIIJQEXM.js?v=6481c16b:24:11)
+    at Provider (https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…unner/workspace/node_modules/.vite/deps/chunk-5AJU3CG7.js?v=6481c16b:38:15)
+    at DialogPortal (https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…nner/workspace/node_modules/.vite/deps/chunk-WJHODHM3.js?v=6481c16b:109:11)
+    at _c3 (https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.dev:5000/src/components/ui/dialog.tsx:52:12)
+    at Provider (https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…unner/workspace/node_modules/.vite/deps/chunk-5AJU3CG7.js?v=6481c16b:38:15)
+    at Dialog (https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…runner/workspace/node_modules/.vite/deps/chunk-WJHODHM3.js?v=6481c16b:50:5)
+    at JobModal (https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.dev:5000/src/components/modals/JobModal.tsx:19:36)
+    at div
+    at Dashboard (https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.dev:5000/src/pages/Dashboard.tsx:32:27)
+    at div
+    at div
+    at ProtectedRoute (https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.dev:5000/src/App.tsx?v=tdC6bzs74fITry8oggI_d:36:27)
+    at Route (https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6481c16b:323:16)
+    at Switch (https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6481c16b:379:17)
+    at Router (https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.dev:5000/src/App.tsx?v=tdC6bzs74fITry8oggI_d:82:31)
+    at Provider (https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…unner/workspace/node_modules/.vite/deps/chunk-5AJU3CG7.js?v=6481c16b:38:15)
+    at TooltipProvider (https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…rkspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6481c16b:61:5)
+    at QueryClientProvider (https://a91e484b-fb18-4cab-b3aa-3c80590c7e77-00-x288tb4osb3h.picard.replit.…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6481c16b:2805:3)
+    at App
+
+chunk-WJHODHM3.js?v=6481c16b:337 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.

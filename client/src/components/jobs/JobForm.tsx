@@ -20,39 +20,28 @@ interface JobFormProps {
 
 export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
   const { toast } = useToast();
-  const { selectedOrganization, organizations } = useAuth();
+  const { selectedOrganization } = useAuth();
   const queryClient = useQueryClient();
-
-  // Use the selected organization from auth state
-  const currentOrganization = selectedOrganization;
 
   const form = useForm<CreateJob>({
     resolver: zodResolver(createJobSchema),
-    defaultValues: job ? {
-      title: job.title,
-      description: job.description,
-      requirements: job.requirements || undefined,
-      category: job.category,
-      organization: job.organization,
-      location: job.location,
-      job_type: job.job_type,
-      workplace_type: job.workplace_type,
-      min_education_level: job.min_education_level || undefined,
-      salary_from: job.salary_from || undefined,
-      salary_to: job.salary_to || undefined,
-      salary_payment_type: job.salary_payment_type || "monthly",
-      required_languages: job.required_languages || [],
-      date_started: job.date_started,
-      date_ended: job.date_ended || undefined,
-    } : {
-      job_type: "full_time",
-      workplace_type: "remote",
-      status: "open",
-      organization: currentOrganization?.id,
-      salary_payment_type: "monthly",
-      required_languages: [],
-      date_started: new Date().toLocaleDateString('en-GB').replace(/\//g, '.'), // Today's date in DD.MM.YYYY format
-      date_ended: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-GB').replace(/\//g, '.'), // 30 days from now
+    defaultValues: {
+      title: job?.title || "",
+      description: job?.description || "",
+      requirements: job?.requirements || "",
+      category: job?.category || 1,
+      organization: job?.organization || selectedOrganization?.id || 1,
+      location: job?.location || 1,
+      job_type: job?.job_type || "full_time",
+      workplace_type: job?.workplace_type || "remote",
+      min_education_level: job?.min_education_level || "secondary",
+      salary_from: job?.salary_from || 0,
+      salary_to: job?.salary_to || 0,
+      salary_payment_type: job?.salary_payment_type || "monthly",
+      required_languages: job?.required_languages || [],
+      date_started: job?.date_started || new Date().toLocaleDateString('en-GB').replace(/\//g, '.'),
+      date_ended: job?.date_ended || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-GB').replace(/\//g, '.'),
+      status: job?.status || "open",
     },
   });
 
@@ -81,10 +70,8 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       body: JSON.stringify(data),
     }),
     onSuccess: () => {
-      // Invalidate all job-related queries
       queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
-      queryClient.invalidateQueries({ queryKey: ['/jobs/', currentOrganization?.id] });
-      // Also refetch immediately to ensure fresh data
+      queryClient.invalidateQueries({ queryKey: ['/jobs/', selectedOrganization?.id] });
       queryClient.refetchQueries({ queryKey: ['/jobs/'] });
       toast({
         title: "Success",
@@ -107,11 +94,9 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       body: JSON.stringify(data),
     }),
     onSuccess: () => {
-      // Invalidate all job-related queries
       queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
-      queryClient.invalidateQueries({ queryKey: ['/jobs/', currentOrganization?.id] });
+      queryClient.invalidateQueries({ queryKey: ['/jobs/', selectedOrganization?.id] });
       queryClient.invalidateQueries({ queryKey: ['/jobs/', job!.id] });
-      // Also refetch immediately to ensure fresh data
       queryClient.refetchQueries({ queryKey: ['/jobs/'] });
       toast({
         title: "Success",
@@ -129,7 +114,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
   });
 
   const onSubmit = (data: CreateJob) => {
-    if (!currentOrganization?.id) {
+    if (!selectedOrganization?.id) {
       toast({
         title: "Error",
         description: "No organization found. Please contact support.",
@@ -138,16 +123,14 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       return;
     }
 
-    // Ensure date fields are properly formatted for backend (DD.MM.YYYY)
-    // and organization is correctly set
     const formattedData = {
       ...data,
-      organization: currentOrganization.id,
+      organization: selectedOrganization.id,
       date_started: data.date_started || new Date().toLocaleDateString('en-GB').replace(/\//g, '.'),
       date_ended: data.date_ended || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-GB').replace(/\//g, '.'),
     };
 
-    console.log('Submitting job data:', formattedData); // Debug log
+    console.log('Submitting job data:', formattedData);
     
     if (job) {
       updateMutation.mutate(formattedData);
@@ -200,9 +183,32 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
               </FormItem>
             )}
           />
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <FormField
+            control={form.control}
+            name="location"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Location</FormLabel>
+                <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select location" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {locations.map((location) => (
+                      <SelectItem key={location.id} value={location.id.toString()}>
+                        {location.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name="job_type"
@@ -248,59 +254,32 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
               </FormItem>
             )}
           />
-        </div>
 
-        <FormField
-          control={form.control}
-          name="location"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Location</FormLabel>
-              <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select location" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {locations?.map((location) => (
-                    <SelectItem key={location.id} value={location.id.toString()}>
-                      {location.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="min_education_level"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Minimum Education Level</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="secondary">Secondary Education</SelectItem>
+                    <SelectItem value="undergraduate">Undergraduate</SelectItem>
+                    <SelectItem value="bachelor">Bachelor's Degree</SelectItem>
+                    <SelectItem value="master">Master's Degree</SelectItem>
+                    <SelectItem value="doctorate">Doctorate</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="min_education_level"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Minimum Education Level</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select minimum education level" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="secondary">Secondary</SelectItem>
-                  <SelectItem value="undergraduate">Undergraduate</SelectItem>
-                  <SelectItem value="bachelor">Bachelor</SelectItem>
-                  <SelectItem value="master">Master</SelectItem>
-                  <SelectItem value="doctorate">Doctorate</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <FormField
             control={form.control}
             name="salary_from"
@@ -310,9 +289,9 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
                 <FormControl>
                   <Input 
                     type="number" 
-                    placeholder="80000" 
-                    {...field}
-                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                    placeholder="e.g. 1000"
+                    value={field.value || ''}
+                    onChange={(e) => field.onChange(Number(e.target.value) || 0)}
                   />
                 </FormControl>
                 <FormMessage />
@@ -329,9 +308,9 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
                 <FormControl>
                   <Input 
                     type="number" 
-                    placeholder="120000" 
-                    {...field}
-                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                    placeholder="e.g. 2000"
+                    value={field.value || ''}
+                    onChange={(e) => field.onChange(Number(e.target.value) || 0)}
                   />
                 </FormControl>
                 <FormMessage />
@@ -352,11 +331,11 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="yearly">Yearly</SelectItem>
-                    <SelectItem value="monthly">Monthly</SelectItem>
-                    <SelectItem value="weekly">Weekly</SelectItem>
-                    <SelectItem value="daily">Daily</SelectItem>
                     <SelectItem value="hourly">Hourly</SelectItem>
+                    <SelectItem value="daily">Daily</SelectItem>
+                    <SelectItem value="weekly">Weekly</SelectItem>
+                    <SelectItem value="monthly">Monthly</SelectItem>
+                    <SelectItem value="yearly">Yearly</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
