@@ -186,31 +186,17 @@ export default function Messages() {
     const fetchMemberData = async () => {
       const allMemberIds = new Set<number>();
       
-      console.log('Processing rooms for member data:', rooms.length);
-      rooms.forEach((room, roomIndex) => {
-        console.log(`Room ${roomIndex} (ID: ${room.id}):`, {
-          name: room.name,
-          members: room.members,
-          membersType: typeof room.members,
-          membersLength: room.members?.length
-        });
-        
+      rooms.forEach(room => {
         if (Array.isArray(room.members)) {
-          room.members.forEach((memberId, memberIndex) => {
-            console.log(`  Member ${memberIndex}:`, memberId, 'typeof:', typeof memberId);
+          room.members.forEach(memberId => {
             // Ensure memberId is properly handled as a number
             const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
             if (!isNaN(numericMemberId) && numericMemberId !== user?.id) {
-              console.log(`  Adding member ID: ${numericMemberId}`);
               allMemberIds.add(numericMemberId);
             }
           });
-        } else {
-          console.warn(`Room ${room.id} has invalid members:`, room.members);
         }
       });
-      
-      console.log('All unique member IDs to fetch:', Array.from(allMemberIds));
 
       // Fetch user data for each unique member
       const memberDataPromises = Array.from(allMemberIds).map(async (userId) => {
@@ -226,7 +212,7 @@ export default function Messages() {
             return;
           }
           
-          console.log(`Fetching user data for userId: ${numericUserId}`);
+
           const userData = await apiService.request<any>(`/users/${numericUserId}/`);
           setRoomMemberData(prev => ({
             ...prev,
