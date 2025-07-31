@@ -191,3 +191,13 @@ This is a modern business dashboard for the Baltek Karyera platform built with R
 ✓ Enhanced applications ordering to show most recent applications first
 ✓ Fixed Applications page to prevent showing applicants from other organizations
 ✓ Added comprehensive organization filtering for both dashboard and main applications view
+
+### Business Profile Optimization (July 31, 2025)
+✓ Simplified current user Profile page to show only essential business information
+✓ Removed detailed profile sections (experience, education, projects, resumes) from business user profile
+✓ Updated Profile form to only include first name, last name, and optional email
+✓ Kept comprehensive UserProfile page for viewing detailed applicant information
+✓ Added user profile navigation links throughout the application
+✓ Updated Applications page with clickable user profiles routing to /profile/:userId
+✓ Enhanced RecentApplications component with proper user profile navigation
+✓ Maintained clear separation: basic info for business users, detailed info for applicants

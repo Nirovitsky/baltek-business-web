@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import TopBar from "@/components/layout/TopBar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ export default function Applications() {
   const { toast } = useToast();
   const { selectedOrganization } = useAuth();
   const queryClient = useQueryClient();
+  const [, setLocation] = useLocation();
 
   const { data, isLoading } = useQuery({
     queryKey: ['/jobs/applications/', selectedOrganization?.id, statusFilter],
@@ -198,14 +200,20 @@ export default function Applications() {
               <Card key={application.id} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
+                    <div 
+                      className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0 cursor-pointer hover:bg-primary/10 transition-colors"
+                      onClick={() => setLocation(`/profile/${application.owner.id}`)}
+                    >
                       <User className="text-gray-600 w-6 h-6" />
                     </div>
                     
                     <div className="flex-1">
                       <div className="flex items-start justify-between mb-3">
                         <div>
-                          <h3 className="font-semibold text-gray-900">
+                          <h3 
+                            className="font-semibold text-gray-900 cursor-pointer hover:text-primary transition-colors"
+                            onClick={() => setLocation(`/profile/${application.owner.id}`)}
+                          >
                             {`${application.owner.first_name} ${application.owner.last_name}`}
                           </h3>
                           <p className="text-sm text-gray-600 mb-1">

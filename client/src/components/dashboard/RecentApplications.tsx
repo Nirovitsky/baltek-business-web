@@ -106,14 +106,14 @@ export default function RecentApplications() {
               <div key={application.id} className="flex items-center space-x-4 p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
                 <div 
                   className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0 cursor-pointer hover:bg-primary/10"
-                  onClick={() => setLocation(`/users/${application.owner?.id || application.id}`)}
+                  onClick={() => setLocation(`/profile/${application.owner?.id || application.id}`)}
                 >
                   <User className="text-gray-600 w-5 h-5" />
                 </div>
                 <div className="flex-1">
                   <h4 
                     className="font-medium text-gray-900 cursor-pointer hover:text-primary"
-                    onClick={() => setLocation(`/users/${application.owner?.id || application.id}`)}
+                    onClick={() => setLocation(`/profile/${application.owner?.id || application.id}`)}
                   >
                     {application.owner?.first_name && application.owner?.last_name 
                       ? `${application.owner.first_name} ${application.owner.last_name}`
