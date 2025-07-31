@@ -240,8 +240,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       if (response.ok || response.status < 500) {
-        const data = await response.json();
-        res.json(data);
+        // Check if response has content before parsing JSON
+        const text = await response.text();
+        if (text.trim()) {
+          try {
+            const data = JSON.parse(text);
+            res.json(data);
+          } catch (parseError) {
+            console.error('JSON parse error:', parseError, 'Response text:', text);
+            res.json({ message: "Invalid response format" });
+          }
+        } else {
+          // Empty response (common for DELETE operations)
+          res.status(response.status).json({ success: true });
+        }
       } else {
         res.json({ message: "Backend service unavailable" });
       }

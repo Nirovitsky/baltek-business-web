@@ -12,7 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
-import { Edit, Trash2, Search, Eye, Briefcase } from "lucide-react";
+import { Edit, Trash2, Search, Eye, Briefcase, MapPin, Users, DollarSign, Calendar, Building2 } from "lucide-react";
 import type { Job, PaginatedResponse } from "@shared/schema";
 
 export default function Jobs() {
@@ -125,23 +125,43 @@ export default function Jobs() {
 
         {/* Jobs List */}
         {isLoading ? (
-          <div className="space-y-4">
-            {[1, 2, 3, 4, 5].map((i) => (
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
               <Card key={i}>
                 <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 space-y-3">
-                      <Skeleton className="h-6 w-64" />
-                      <Skeleton className="h-4 w-48" />
-                      <div className="flex items-center space-x-4">
-                        <Skeleton className="h-5 w-16" />
-                        <Skeleton className="h-4 w-24" />
+                  <div className="space-y-4">
+                    {/* Header */}
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-2">
+                        <Skeleton className="h-6 w-48" />
+                        <Skeleton className="h-4 w-32" />
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Skeleton className="h-8 w-8" />
+                        <Skeleton className="h-8 w-8" />
+                        <Skeleton className="h-8 w-8" />
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Skeleton className="h-8 w-8" />
-                      <Skeleton className="h-8 w-8" />
-                      <Skeleton className="h-8 w-8" />
+                    
+                    {/* Details grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <Skeleton className="h-4 w-36" />
+                      <Skeleton className="h-4 w-28" />
+                    </div>
+                    
+                    {/* Salary */}
+                    <Skeleton className="h-4 w-40" />
+                    
+                    {/* Description */}
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-3/4" />
+                    </div>
+                    
+                    {/* Footer */}
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                      <Skeleton className="h-5 w-16" />
+                      <Skeleton className="h-3 w-24" />
                     </div>
                   </div>
                 </CardContent>
@@ -169,74 +189,132 @@ export default function Jobs() {
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-4">
-            {jobs.map((job) => (
-              <Card 
-                key={job.id} 
-                className="hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => handleViewJob(job.id)}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between mb-3">
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                            {job.title}
-                          </h3>
-                          <p className="text-gray-600 text-sm">
-                            {job.workplace_type === 'remote' ? 'Remote' : 
-                             job.workplace_type === 'on_site' ? 'On Site' : 'Hybrid'} • {' '}
-                            {job.job_type === 'full_time' ? 'Full Time' : 
-                             job.job_type === 'part_time' ? 'Part Time' : 'Contract'}
-                          </p>
-                        </div>
-                        <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleEditJob(job)}
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleDeleteJob(job.id)}
-                            disabled={deleteJobMutation.isPending}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            {jobs.map((job) => {
+              // Extract location and organization data safely
+              const location = typeof job.location === 'object' && job.location ? job.location : null;
+              const organization = typeof job.organization === 'object' && job.organization ? job.organization : null;
+              
+              return (
+                <Card 
+                  key={job.id} 
+                  className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-gray-200 hover:border-[#1877F2]/20"
+                  onClick={() => handleViewJob(job.id)}
+                >
+                  <CardContent className="p-6">
+                    {/* Header with title and actions */}
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-[#1877F2] transition-colors">
+                          {job.title}
+                        </h3>
+                        {organization && (
+                          <div className="flex items-center text-sm text-gray-600 mb-2">
+                            <Building2 className="w-4 h-4 mr-1" />
+                            {organization.official_name}
+                          </div>
+                        )}
                       </div>
-                      
-                      <p className="text-gray-700 text-sm mb-4 line-clamp-2">
-                        {job.description}
-                      </p>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <Badge variant="secondary" className={getStatusColor(job.status)}>
-                            {job.status ? job.status.charAt(0).toUpperCase() + job.status.slice(1) : 'Unknown'}
-                          </Badge>
-                          <span className="text-sm text-gray-500">
-                            {job.applications_count || 0} applications
-                          </span>
-                          {job.salary_from && job.salary_to && (
-                            <span className="text-sm font-medium text-gray-900">
-                              ${job.salary_from.toLocaleString()} - ${job.salary_to.toLocaleString()}
+                      <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleViewJob(job.id)}
+                          className="text-[#1877F2] border-[#1877F2] hover:bg-[#1877F2] hover:text-white"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleEditJob(job)}
+                          className="text-gray-600 hover:text-gray-900"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleDeleteJob(job.id)}
+                          disabled={deleteJobMutation.isPending}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Job details grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                      <div className="flex items-center text-sm text-gray-600">
+                        <Briefcase className="w-4 h-4 mr-2 text-[#1877F2] flex-shrink-0" />
+                        <span>
+                          {job.workplace_type === 'remote' ? 'Remote' : 
+                           job.workplace_type === 'on_site' ? 'On Site' : 'Hybrid'} • {' '}
+                          {job.job_type === 'full_time' ? 'Full Time' : 
+                           job.job_type === 'part_time' ? 'Part Time' : 'Contract'}
+                        </span>
+                      </div>
+                      <div className="flex items-center text-sm text-gray-600">
+                        <Users className="w-4 h-4 mr-2 text-[#1877F2] flex-shrink-0" />
+                        <span>{job.applications_count || 0} applications</span>
+                      </div>
+                      {location && (
+                        <div className="flex items-center text-sm text-gray-600 sm:col-span-2">
+                          <MapPin className="w-4 h-4 mr-2 text-[#1877F2] flex-shrink-0" />
+                          <span>{location.name}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Salary information */}
+                    {(job.salary_from || job.salary_to) && (
+                      <div className="flex items-center text-sm mb-4">
+                        <DollarSign className="w-4 h-4 mr-2 text-green-600" />
+                        <span className="font-medium text-gray-900">
+                          {job.salary_from && job.salary_to 
+                            ? `$${job.salary_from.toLocaleString()} - $${job.salary_to.toLocaleString()}`
+                            : job.salary_from 
+                            ? `$${job.salary_from.toLocaleString()}+`
+                            : `Up to $${job.salary_to?.toLocaleString()}`
+                          }
+                          {job.salary_payment_type && (
+                            <span className="text-gray-500 ml-1">
+                              / {job.salary_payment_type.replace('_', ' ')}
                             </span>
                           )}
-                        </div>
-                        <span className="text-xs text-gray-500">
-                          Created {new Date(job.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Description preview */}
+                    {job.description && (
+                      <p className="text-gray-700 text-sm mb-4 line-clamp-2 leading-relaxed">
+                        {job.description}
+                      </p>
+                    )}
+
+                    {/* Footer with status and date */}
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                      <div className="flex items-center space-x-3">
+                        <Badge 
+                          variant="secondary" 
+                          className={`${getStatusColor(job.status)} border`}
+                        >
+                          {job.status ? job.status.charAt(0).toUpperCase() + job.status.slice(1) : 'Unknown'}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center text-xs text-gray-500">
+                        <Calendar className="w-3 h-3 mr-1" />
+                        <span>
+                          {job.date_started ? new Date(job.date_started).toLocaleDateString() : 'No date'}
                         </span>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         )}
       </main>
