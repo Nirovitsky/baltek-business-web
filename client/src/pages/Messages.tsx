@@ -293,16 +293,30 @@ export default function Messages() {
 
   // Helper function to get the other participant's numeric ID
   const getOtherParticipantId = (room: Room): number | null => {
-    const otherMemberId = room.members.find(memberId => {
-      const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
-      return !isNaN(numericMemberId) && numericMemberId !== user?.id;
+    console.log('getOtherParticipantId called with room:', {
+      id: room.id,
+      members: room.members,
+      userId: user?.id,
+      membersTypes: room.members.map(m => typeof m)
     });
     
-    if (otherMemberId) {
+    const otherMemberId = room.members.find(memberId => {
+      const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
+      const isValid = !isNaN(numericMemberId) && numericMemberId !== user?.id;
+      console.log('Checking member:', memberId, 'numeric:', numericMemberId, 'valid:', isValid);
+      return isValid;
+    });
+    
+    console.log('Found otherMemberId:', otherMemberId);
+    
+    if (otherMemberId !== undefined) {
       const numericId = typeof otherMemberId === 'number' ? otherMemberId : parseInt(String(otherMemberId));
-      return !isNaN(numericId) ? numericId : null;
+      const result = !isNaN(numericId) ? numericId : null;
+      console.log('Returning numeric ID:', result);
+      return result;
     }
     
+    console.log('No valid member found, returning null');
     return null;
   };
 
@@ -407,13 +421,28 @@ export default function Messages() {
               }`}
             >
               <div className="flex items-start space-x-3">
-                <Link href={`/profile/${getOtherParticipantId(room) || 'unknown'}`}>
-                  <Avatar className="w-10 h-10 shadow-md cursor-pointer hover:shadow-lg transition-shadow">
-                    <AvatarFallback className="bg-gradient-to-br from-blue-400 to-indigo-500 text-white font-semibold">
-                      {getRoomAvatar(room)}
-                    </AvatarFallback>
-                  </Avatar>
-                </Link>
+                {(() => {
+                  const participantId = getOtherParticipantId(room);
+                  if (participantId) {
+                    return (
+                      <Link href={`/profile/${participantId}`}>
+                        <Avatar className="w-10 h-10 shadow-md cursor-pointer hover:shadow-lg transition-shadow">
+                          <AvatarFallback className="bg-gradient-to-br from-blue-400 to-indigo-500 text-white font-semibold">
+                            {getRoomAvatar(room)}
+                          </AvatarFallback>
+                        </Avatar>
+                      </Link>
+                    );
+                  } else {
+                    return (
+                      <Avatar className="w-10 h-10 shadow-md cursor-not-allowed opacity-50">
+                        <AvatarFallback className="bg-gradient-to-br from-gray-400 to-gray-500 text-white font-semibold">
+                          {getRoomAvatar(room)}
+                        </AvatarFallback>
+                      </Avatar>
+                    );
+                  }
+                })()}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-medium text-gray-900 truncate">
@@ -448,13 +477,28 @@ export default function Messages() {
             <div className="bg-white border-b border-gray-200 p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <Link href={`/profile/${getOtherParticipantId(selectedRoom) || 'unknown'}`}>
-                    <Avatar className="w-10 h-10 shadow-md cursor-pointer hover:shadow-lg transition-shadow">
-                      <AvatarFallback className="bg-gradient-to-br from-blue-400 to-indigo-500 text-white font-semibold">
-                        {getRoomAvatar(selectedRoom)}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Link>
+                  {(() => {
+                    const participantId = getOtherParticipantId(selectedRoom);
+                    if (participantId) {
+                      return (
+                        <Link href={`/profile/${participantId}`}>
+                          <Avatar className="w-10 h-10 shadow-md cursor-pointer hover:shadow-lg transition-shadow">
+                            <AvatarFallback className="bg-gradient-to-br from-blue-400 to-indigo-500 text-white font-semibold">
+                              {getRoomAvatar(selectedRoom)}
+                            </AvatarFallback>
+                          </Avatar>
+                        </Link>
+                      );
+                    } else {
+                      return (
+                        <Avatar className="w-10 h-10 shadow-md cursor-not-allowed opacity-50">
+                          <AvatarFallback className="bg-gradient-to-br from-gray-400 to-gray-500 text-white font-semibold">
+                            {getRoomAvatar(selectedRoom)}
+                          </AvatarFallback>
+                        </Avatar>
+                      );
+                    }
+                  })()}
                   <div>
                     <h2 className="text-lg font-medium text-gray-900">
                       {getRoomDisplayName(selectedRoom)}
