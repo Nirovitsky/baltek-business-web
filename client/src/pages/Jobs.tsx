@@ -77,15 +77,16 @@ export default function Jobs() {
   };
 
   const getStatusColor = (status: string) => {
-    switch (status) {
+    const statusLower = status?.toLowerCase();
+    switch (statusLower) {
       case 'open':
-        return 'bg-green-100 text-green-800';
-      case 'archived':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-green-100 text-green-800'; // Active - green color
+      case 'closed':
+        return 'bg-gray-100 text-gray-800';   // Archived - grey color  
       case 'expired':
-        return 'bg-red-100 text-red-800';
+        return 'bg-amber-100 text-amber-800'; // Expired - brown/amber color
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-green-100 text-green-800'; // Default to active
     }
   };
 
@@ -270,7 +271,13 @@ export default function Jobs() {
                           variant="secondary" 
                           className={`${getStatusColor(job.status)} border`}
                         >
-                          {job.status ? job.status.charAt(0).toUpperCase() + job.status.slice(1) : 'Open'}
+                          {(() => {
+                            const status = job.status?.toLowerCase();
+                            if (status === 'open') return 'Active';
+                            if (status === 'closed') return 'Archived';
+                            if (status === 'expired') return 'Expired';
+                            return 'Active'; // Default fallback
+                          })()}
                         </Badge>
                       </div>
                       <div className="flex flex-col items-end text-xs text-gray-500 space-y-1">
