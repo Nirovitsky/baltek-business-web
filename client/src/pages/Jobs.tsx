@@ -254,7 +254,9 @@ export default function Jobs() {
         onOpenChange={setIsJobModalOpen}
         job={selectedJob}
         onSuccess={() => {
+          // Invalidate and refetch all job queries
           queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
+          queryClient.refetchQueries({ queryKey: ['/jobs/', selectedOrganization?.id, searchTerm, statusFilter] });
         }}
       />
 

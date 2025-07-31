@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Code, TrendingUp, Palette } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { apiService } from "@/lib/api";
+import { useAuth } from "@/hooks/useAuth";
 import type { Job, PaginatedResponse } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -14,9 +15,18 @@ const jobIcons: Record<string, any> = {
 };
 
 export default function RecentJobs() {
+  const { selectedOrganization } = useAuth();
+  
   const { data, isLoading } = useQuery({
-    queryKey: ['/jobs/'],
-    queryFn: () => apiService.request<PaginatedResponse<Job>>('/jobs/?limit=3'),
+    queryKey: ['/jobs/', selectedOrganization?.id],
+    queryFn: () => {
+      const params = new URLSearchParams();
+      if (selectedOrganization) params.append('organization', selectedOrganization.id.toString());
+      params.append('limit', '3');
+      
+      return apiService.request<PaginatedResponse<Job>>(`/jobs/?${params.toString()}`);
+    },
+    enabled: !!selectedOrganization,
   });
 
   if (isLoading) {

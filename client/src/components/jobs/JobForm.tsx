@@ -78,7 +78,11 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       body: JSON.stringify(data),
     }),
     onSuccess: () => {
+      // Invalidate all job-related queries
       queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
+      queryClient.invalidateQueries({ queryKey: ['/jobs/', selectedOrganization?.id] });
+      // Also refetch immediately to ensure fresh data
+      queryClient.refetchQueries({ queryKey: ['/jobs/'] });
       toast({
         title: "Success",
         description: "Job posting created successfully",
@@ -100,8 +104,12 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       body: JSON.stringify(data),
     }),
     onSuccess: () => {
+      // Invalidate all job-related queries
       queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
+      queryClient.invalidateQueries({ queryKey: ['/jobs/', selectedOrganization?.id] });
       queryClient.invalidateQueries({ queryKey: ['/jobs/', job!.id] });
+      // Also refetch immediately to ensure fresh data
+      queryClient.refetchQueries({ queryKey: ['/jobs/'] });
       toast({
         title: "Success",
         description: "Job posting updated successfully",
