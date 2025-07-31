@@ -56,11 +56,18 @@ export default function Messages() {
   const rooms = roomsData?.results || [];
   const apiMessages = messagesData?.results || [];
 
-  // Combine API messages with WebSocket messages for current room
-  const allMessages =
-    selectedRoom?.id === currentRoom
-      ? [...apiMessages, ...wsMessages]
-      : apiMessages;
+  // Combine API messages with WebSocket messages, removing duplicates
+  const allMessages = selectedRoom?.id === currentRoom
+    ? (() => {
+        const combined = [...apiMessages];
+        wsMessages.forEach(wsMsg => {
+          if (!combined.some(apiMsg => apiMsg.id === wsMsg.id)) {
+            combined.push(wsMsg);
+          }
+        });
+        return combined.sort((a, b) => new Date(a.date_created).getTime() - new Date(b.date_created).getTime());
+      })()
+    : apiMessages;
 
   // File upload mutation
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -104,6 +111,14 @@ export default function Messages() {
             setSelectedFile(null);
             setShowFileUpload(false);
             setUploadProgress(0);
+            // Invalidate messages query to refresh
+            queryClient.invalidateQueries({ queryKey: ["/chat/messages/", selectedRoom.id] });
+          } else {
+            toast({
+              title: "Error",
+              description: "Failed to send message with attachment.",
+              variant: "destructive",
+            });
           }
         },
         onError: () => {
@@ -120,6 +135,8 @@ export default function Messages() {
       const success = sendMessage(selectedRoom.id, newMessage);
       if (success) {
         setNewMessage("");
+        // Invalidate messages query to refresh
+        queryClient.invalidateQueries({ queryKey: ["/chat/messages/", selectedRoom.id] });
       } else {
         toast({
           title: "Error",
@@ -141,6 +158,8 @@ export default function Messages() {
   const handleRoomSelect = (room: Room) => {
     setSelectedRoom(room);
     joinRoom(room.id);
+    // Invalidate messages query to refresh
+    queryClient.invalidateQueries({ queryKey: ["/chat/messages/", room.id] });
   };
 
   const filteredRooms = rooms.filter((room) => {

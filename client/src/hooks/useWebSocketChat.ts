@@ -49,12 +49,26 @@ export function useWebSocketChat() {
 
       ws.onmessage = (event) => {
         try {
-          const message: WebSocketMessage = JSON.parse(event.data);
+          const message = JSON.parse(event.data);
 
-          if (message.type === "message_received") {
-            setMessages((prev) => [...prev, message.data]);
+          if (message.type === "authenticated") {
+            console.log("WebSocket authenticated:", message.user.first_name);
+          } else if (message.type === "message_received") {
+            // Only add message to current room
+            if (message.data.room === currentRoom) {
+              setMessages((prev) => {
+                // Avoid duplicates by checking message ID
+                if (prev.some(m => m.id === message.data.id)) {
+                  return prev;
+                }
+                return [...prev, message.data];
+              });
+            }
           } else if (message.type === "error") {
-            console.error("WebSocket error:", message.data);
+            console.error("WebSocket error:", message.message || message.data);
+          } else if (message.type === "auth_error") {
+            console.error("Authentication error:", message.message);
+            setConnected(false);
           }
         } catch (error) {
           console.error("Failed to parse WebSocket message:", error, event.data);
@@ -140,7 +154,16 @@ export function useWebSocketChat() {
 
   const joinRoom = (roomId: number) => {
     setCurrentRoom(roomId);
-    setMessages([]); // Clear messages when switching rooms
+    setMessages([]); // Clear WebSocket messages when switching rooms
+    
+    // Send room join message to server if connected
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({
+        type: 'join_room',
+        room: roomId,
+        token: getToken()
+      }));
+    }
   };
 
   useEffect(() => {

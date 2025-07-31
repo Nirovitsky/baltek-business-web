@@ -50,6 +50,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
               ws.close();
             }
           }
+        } else if (message.type === "join_room") {
+          if (!authenticatedUserId) {
+            ws.send(JSON.stringify({ type: "error", message: "Not authenticated" }));
+            return;
+          }
+          
+          // Store user's current room for message routing
+          const userConnection = connections.get(authenticatedUserId);
+          if (userConnection) {
+            (userConnection as any).currentRoom = message.room;
+            console.log(`User ${authenticatedUserId} joined room ${message.room}`);
+          }
+          
         } else if (message.type === "send_message") {
           if (!authenticatedUserId) {
             ws.send(JSON.stringify({ type: "error", message: "Not authenticated" }));
@@ -58,35 +71,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           // Save message to backend via API
           try {
+            const messageData: any = {
+              room: message.data.room,
+              text: message.data.text || '',
+            };
+
+            // Add file attachment data if present
+            if (message.data.attachment_url) {
+              messageData.attachment_url = message.data.attachment_url;
+              messageData.attachment_name = message.data.attachment_name;
+              messageData.attachment_type = message.data.attachment_type;
+              messageData.attachment_size = message.data.attachment_size;
+            }
+
             const response = await fetch(`${API_BASE_URL}/api/chat/messages/`, {
               method: 'POST',
               headers: {
                 'Authorization': `Bearer ${message.token || ''}`,
                 'Content-Type': 'application/json',
               },
-              body: JSON.stringify({
-                room: message.data.room,
-                text: message.data.text,
-              }),
+              body: JSON.stringify(messageData),
             });
 
             if (response.ok) {
               const savedMessage = await response.json();
               
-              // Broadcast message to all connected clients in the room
+              // Broadcast message to all connected clients in the same room
               const messageToSend = {
                 type: "message_received",
                 data: savedMessage
               };
 
-              // Send to all connections (simplified room logic)
-              Array.from(connections.values()).forEach((conn) => {
-                if (conn.readyState === WebSocket.OPEN) {
+              // Send to all connections in the same room
+              Array.from(connections.entries()).forEach(([userId, conn]) => {
+                if (conn.readyState === WebSocket.OPEN && 
+                    ((conn as any).currentRoom === savedMessage.room || !((conn as any).currentRoom))) {
                   conn.send(JSON.stringify(messageToSend));
                 }
               });
             } else {
-              ws.send(JSON.stringify({ type: "error", message: "Failed to save message" }));
+              const errorData = await response.json().catch(() => ({}));
+              console.error('Message save failed:', errorData);
+              ws.send(JSON.stringify({ 
+                type: "error", 
+                message: errorData.detail || "Failed to save message" 
+              }));
             }
           } catch (error) {
             console.error('Message save error:', error);
