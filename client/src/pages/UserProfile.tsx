@@ -8,8 +8,7 @@ import {
   Calendar, 
   Briefcase, 
   GraduationCap, 
-  FolderOpen, 
-  FileText,
+  FolderOpen,
   User as UserIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,7 +21,7 @@ import { Link } from "wouter";
 import TopBar from "@/components/layout/TopBar";
 
 // Use the existing User type from schema
-import type { User, UserExperience, UserEducation, UserProject, UserResume } from "@shared/schema";
+import type { User, UserExperience, UserEducation, UserProject } from "@shared/schema";
 
 export default function UserProfile() {
   const [match, params] = useRoute("/profile/:userId");
@@ -353,61 +352,7 @@ export default function UserProfile() {
             </Card>
           )}
 
-          {/* CV/Resumes Section - Always show for business users */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                  <FileText className="w-6 h-6 text-orange-600" />
-                </div>
-                <div>
-                  <CardTitle>CV / Resume Documents</CardTitle>
-                  <CardDescription>Uploaded resume and CV files</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {userProfile.resumes && userProfile.resumes.length > 0 ? (
-                <div className="space-y-3">
-                  {userProfile.resumes.map((resume) => (
-                    <div key={resume.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-                      <div className="flex items-center space-x-3">
-                        <FileText className="w-6 h-6 text-orange-600" />
-                        <div>
-                          <p className="font-medium text-gray-900">{resume.title}</p>
-                          <p className="text-sm text-gray-500">
-                            Uploaded on {resume.date_created}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        {resume.file && (
-                          <>
-                            <Button variant="outline" size="sm" asChild>
-                              <a href={resume.file} target="_blank" rel="noopener noreferrer">
-                                <FileText className="w-4 h-4 mr-1" />
-                                View
-                              </a>
-                            </Button>
-                            <Button variant="outline" size="sm" asChild>
-                              <a href={resume.file} download={resume.title}>
-                                Download
-                              </a>
-                            </Button>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <FileText className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                  <p>No CV or resume documents uploaded</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+
 
           {/* Contact Actions */}
           {userProfile.email && (

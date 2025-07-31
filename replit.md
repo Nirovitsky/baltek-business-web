@@ -223,3 +223,4 @@ This is a modern business dashboard for the Baltek Karyera platform built with R
 ✓ Ensured all API proxy requests now route to the updated backend service
 ✓ Fixed WebSocket connection issues and authentication endpoint errors
 ✓ Resolved 405 Method Not Allowed error for login API endpoint
+✓ Removed CV/Resume section from user profile page as requested
