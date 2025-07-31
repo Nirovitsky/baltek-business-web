@@ -187,8 +187,10 @@ export default function Messages() {
       const allMemberIds = new Set<number>();
       rooms.forEach(room => {
         room.members.forEach(memberId => {
-          if (memberId !== user?.id) {
-            allMemberIds.add(memberId);
+          // Ensure memberId is properly handled as a number
+          const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
+          if (!isNaN(numericMemberId) && numericMemberId !== user?.id) {
+            allMemberIds.add(numericMemberId);
           }
         });
       });
@@ -198,10 +200,12 @@ export default function Messages() {
         if (roomMemberData[userId]) return; // Already have this data
         
         try {
-          const userData = await apiService.request<any>(`/users/${userId}/`);
+          // Ensure userId is a number when making the request
+          const numericUserId = typeof userId === 'number' ? userId : parseInt(String(userId));
+          const userData = await apiService.request<any>(`/users/${numericUserId}/`);
           setRoomMemberData(prev => ({
             ...prev,
-            [userId]: {
+            [numericUserId]: {
               id: userData.id,
               first_name: userData.first_name || 'Unknown',
               last_name: userData.last_name || 'User'
@@ -209,10 +213,11 @@ export default function Messages() {
           }));
         } catch (error) {
           console.error(`Failed to fetch user data for ${userId}:`, error);
+          const numericUserId = typeof userId === 'number' ? userId : parseInt(String(userId));
           setRoomMemberData(prev => ({
             ...prev,
-            [userId]: {
-              id: userId,
+            [numericUserId]: {
+              id: numericUserId,
               first_name: 'Unknown',
               last_name: 'User'
             }
@@ -230,10 +235,15 @@ export default function Messages() {
 
   const filteredRooms = rooms.filter((room) => {
     const participantNames = room.members
-      .filter((memberId) => memberId !== user?.id)
+      .filter((memberId) => {
+        // Ensure memberId is treated as a number
+        const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
+        return !isNaN(numericMemberId) && numericMemberId !== user?.id;
+      })
       .map((memberId) => {
-        const memberData = roomMemberData[memberId];
-        return memberData ? `${memberData.first_name} ${memberData.last_name}` : `User ${memberId}`;
+        const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
+        const memberData = roomMemberData[numericMemberId];
+        return memberData ? `${memberData.first_name} ${memberData.last_name}` : `User ${numericMemberId}`;
       })
       .join(" ");
 
@@ -249,12 +259,18 @@ export default function Messages() {
 
     // Find the other participant ID (not the current user)
     const otherParticipantId = room.members.find(
-      (memberId) => memberId !== user?.id,
+      (memberId) => {
+        const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
+        return !isNaN(numericMemberId) && numericMemberId !== user?.id;
+      }
     );
     
-    if (otherParticipantId && roomMemberData[otherParticipantId]) {
-      const memberData = roomMemberData[otherParticipantId];
-      return `${memberData.first_name} ${memberData.last_name}`;
+    if (otherParticipantId) {
+      const numericParticipantId = typeof otherParticipantId === 'number' ? otherParticipantId : parseInt(String(otherParticipantId));
+      const memberData = roomMemberData[numericParticipantId];
+      if (memberData) {
+        return `${memberData.first_name} ${memberData.last_name}`;
+      }
     }
     
     // Fallback: show the room ID or participant count
@@ -263,14 +279,20 @@ export default function Messages() {
 
   const getRoomAvatar = (room: Room) => {
     const otherParticipantId = room.members.find(
-      (memberId) => memberId !== user?.id,
+      (memberId) => {
+        const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
+        return !isNaN(numericMemberId) && numericMemberId !== user?.id;
+      }
     );
     
-    if (otherParticipantId && roomMemberData[otherParticipantId]) {
-      const memberData = roomMemberData[otherParticipantId];
-      const firstInitial = memberData.first_name[0]?.toUpperCase() || '';
-      const lastInitial = memberData.last_name[0]?.toUpperCase() || '';
-      return firstInitial + lastInitial;
+    if (otherParticipantId) {
+      const numericParticipantId = typeof otherParticipantId === 'number' ? otherParticipantId : parseInt(String(otherParticipantId));
+      const memberData = roomMemberData[numericParticipantId];
+      if (memberData) {
+        const firstInitial = memberData.first_name[0]?.toUpperCase() || '';
+        const lastInitial = memberData.last_name[0]?.toUpperCase() || '';
+        return firstInitial + lastInitial;
+      }
     }
     
     // Fallback avatar
