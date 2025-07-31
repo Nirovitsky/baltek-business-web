@@ -45,10 +45,10 @@ export default function CreateJob() {
       organization: selectedOrganization?.id || 1,
       location: 1,
       job_type: "full_time",
-      workplace_type: "remote",
-      min_education_level: "secondary",
-      salary_from: 0,
-      salary_to: 0,
+      workplace_type: "on_site",
+      min_education_level: undefined,
+      salary_from: undefined,
+      salary_to: undefined,
       salary_payment_type: "monthly",
       required_languages: [],
       date_started: new Date().toLocaleDateString('en-GB').replace(/\//g, '.'),
@@ -68,10 +68,10 @@ export default function CreateJob() {
         organization: job.organization || selectedOrganization?.id || 1,
         location: job.location || 1,
         job_type: job.job_type || "full_time",
-        workplace_type: job.workplace_type || "remote",
-        min_education_level: job.min_education_level || "secondary",
-        salary_from: job.salary_from || 0,
-        salary_to: job.salary_to || 0,
+        workplace_type: job.workplace_type || "on_site",
+        min_education_level: job.min_education_level || undefined,
+        salary_from: job.salary_from || undefined,
+        salary_to: job.salary_to || undefined,
         salary_payment_type: job.salary_payment_type || "monthly",
         required_languages: job.required_languages || [],
         date_started: job.date_started || new Date().toLocaleDateString('en-GB').replace(/\//g, '.'),
@@ -396,12 +396,12 @@ export default function CreateJob() {
                         <FormItem>
                           <FormLabel className="text-sm font-medium text-gray-700 flex items-center">
                             <GraduationCap className="h-4 w-4 mr-1 text-[#1877F2]" />
-                            Minimum Education *
+                            Minimum Education
                           </FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger className="mt-1">
-                                <SelectValue />
+                                <SelectValue placeholder="Select minimum education (optional)" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -415,67 +415,58 @@ export default function CreateJob() {
                         </FormItem>
                       )}
                     />
-
-                    <FormField
-                      control={form.control}
-                      name="status"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-sm font-medium text-gray-700">Job Status *</FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value}>
-                            <FormControl>
-                              <SelectTrigger className="mt-1">
-                                <SelectValue />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="open">Open</SelectItem>
-                              <SelectItem value="archived">Archived</SelectItem>
-                              <SelectItem value="expired">Expired</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
                   </div>
 
                   <div>
                     <FormField
                       control={form.control}
                       name="required_languages"
-                      render={() => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-medium text-gray-700">Required Languages</FormLabel>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
-                            {languages.map((language) => (
-                              <FormField
-                                key={language.id}
-                                control={form.control}
-                                name="required_languages"
-                                render={({ field }) => (
-                                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                                    <FormControl>
-                                      <Checkbox
-                                        checked={field.value?.includes(language.id)}
-                                        onCheckedChange={(checked) => {
-                                          const currentValue = field.value || [];
-                                          if (checked) {
-                                            field.onChange([...currentValue, language.id]);
-                                          } else {
-                                            field.onChange(currentValue.filter((id) => id !== language.id));
-                                          }
-                                        }}
-                                      />
-                                    </FormControl>
-                                    <FormLabel className="text-sm font-normal cursor-pointer">
-                                      {language.name}
-                                    </FormLabel>
-                                  </FormItem>
-                                )}
-                              />
-                            ))}
-                          </div>
+                          <Select 
+                            onValueChange={(value) => {
+                              const currentValue = field.value || [];
+                              const languageId = Number(value);
+                              if (!currentValue.includes(languageId)) {
+                                field.onChange([...currentValue, languageId]);
+                              }
+                            }}
+                          >
+                            <FormControl>
+                              <SelectTrigger className="mt-1">
+                                <SelectValue placeholder="Select languages" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {languages.map((language) => (
+                                <SelectItem key={language.id} value={language.id.toString()}>
+                                  {language.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          {field.value && field.value.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mt-2">
+                              {field.value.map((langId: number) => {
+                                const lang = languages.find(l => l.id === langId);
+                                return lang ? (
+                                  <div key={langId} className="bg-[#1877F2] text-white px-3 py-1 rounded-full text-sm flex items-center">
+                                    {lang.name}
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        field.onChange(field.value?.filter(id => id !== langId) || []);
+                                      }}
+                                      className="ml-2 text-white hover:text-gray-200"
+                                    >
+                                      ×
+                                    </button>
+                                  </div>
+                                ) : null;
+                              })}
+                            </div>
+                          )}
                           <FormMessage />
                         </FormItem>
                       )}
@@ -499,14 +490,19 @@ export default function CreateJob() {
                       name="salary_from"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium text-gray-700">Minimum Salary</FormLabel>
+                          <FormLabel className="text-sm font-medium text-gray-700">Minimum Salary *</FormLabel>
                           <FormControl>
                             <Input
                               type="number"
                               {...field}
-                              onChange={(e) => field.onChange(Number(e.target.value))}
-                              placeholder="0"
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                field.onChange(value === '' ? undefined : Number(value));
+                              }}
+                              placeholder="Enter minimum salary"
                               className="mt-1"
+                              min="0"
+                              step="100"
                             />
                           </FormControl>
                           <FormMessage />
@@ -524,11 +520,19 @@ export default function CreateJob() {
                             <Input
                               type="number"
                               {...field}
-                              onChange={(e) => field.onChange(Number(e.target.value))}
-                              placeholder="0"
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                field.onChange(value === '' ? undefined : Number(value));
+                              }}
+                              placeholder="Enter maximum salary (optional)"
                               className="mt-1"
+                              min="0"
+                              step="100"
                             />
                           </FormControl>
+                          <FormDescription className="text-xs text-gray-500">
+                            Optional: Leave blank if not specified
+                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -560,55 +564,7 @@ export default function CreateJob() {
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="date_started"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-sm font-medium text-gray-700 flex items-center">
-                            <Calendar className="h-4 w-4 mr-1 text-[#1877F2]" />
-                            Start Date
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              placeholder="DD.MM.YYYY"
-                              className="mt-1"
-                            />
-                          </FormControl>
-                          <FormDescription className="text-xs text-gray-500">
-                            When this job posting goes live
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
 
-                    <FormField
-                      control={form.control}
-                      name="date_ended"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-sm font-medium text-gray-700 flex items-center">
-                            <Calendar className="h-4 w-4 mr-1 text-[#1877F2]" />
-                            End Date
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              placeholder="DD.MM.YYYY"
-                              className="mt-1"
-                            />
-                          </FormControl>
-                          <FormDescription className="text-xs text-gray-500">
-                            When applications close
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
                 </CardContent>
               </Card>
 

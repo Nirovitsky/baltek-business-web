@@ -176,20 +176,13 @@ export const jobSchema = z.object({
   min_education_level: z
     .enum(["secondary", "undergraduate", "bachelor", "master", "doctorate"])
     .optional(),
-  salary_from: z.number().optional(),
+  salary_from: z.number(),
   salary_to: z.number().optional(),
   salary_payment_type: z
     .enum(["yearly", "monthly", "weekly", "daily", "hourly"])
     .optional(),
   currency: z.string().optional(),
-  required_languages: z.array(z.union([
-    z.number(),
-    z.object({
-      id: z.number(),
-      name: z.string(),
-      code: z.string(),
-    })
-  ])).optional(),
+  required_languages: z.array(z.number()).optional(),
   status: z.enum(["open", "archived", "expired"]),
   date_started: z.string(),
   date_ended: z.string().optional(),
@@ -204,10 +197,10 @@ export const createJobSchema = jobSchema
     created_at: true,
     updated_at: true,
     applications_count: true,
-    status: true,
   })
   .extend({
-    status: z.enum(["open", "archived", "expired"]).optional(),
+    min_education_level: z.enum(["secondary", "undergraduate", "bachelor", "master", "doctorate"]).optional(),
+    salary_to: z.number().optional(),
   });
 
 // User info schema for nested objects
