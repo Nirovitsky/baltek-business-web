@@ -247,110 +247,115 @@ export default function JobDetails() {
             </CardContent>
           </Card>
 
-          {/* Job Details */}
+          {/* Job Details & Compensation */}
           <Card className="shadow-sm border border-gray-200">
             <CardHeader className="border-b border-gray-200 bg-white">
               <CardTitle className="flex items-center text-lg font-semibold text-gray-900">
                 <Users className="h-5 w-5 mr-3 text-[#1877F2]" />
-                Job Details
+                Job Information
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-6 bg-white">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div>
-                    <span className="text-sm font-medium text-gray-700">Employment Type</span>
-                    <p className="text-gray-900 mt-1">{formatJobType(job.job_type)}</p>
-                  </div>
-                  <div>
-                    <span className="text-sm font-medium text-gray-700">Work Type</span>
-                    <p className="text-gray-900 mt-1">{formatWorkplaceType(job.workplace_type)}</p>
-                  </div>
-                  {job.min_education_level && (
-                    <div>
-                      <span className="text-sm font-medium text-gray-700 flex items-center">
-                        <GraduationCap className="h-4 w-4 mr-1 text-[#1877F2]" />
-                        Minimum Education
-                      </span>
-                      <p className="text-gray-900 mt-1">{formatEducationLevel(job.min_education_level)}</p>
-                    </div>
-                  )}
-                </div>
-                <div className="space-y-4">
-                  {category && (
-                    <div>
-                      <span className="text-sm font-medium text-gray-700">Category</span>
-                      <p className="text-gray-900 mt-1">{category.name}</p>
-                    </div>
-                  )}
-                  {location && (
-                    <div>
-                      <span className="text-sm font-medium text-gray-700 flex items-center">
-                        <MapPin className="h-4 w-4 mr-1 text-[#1877F2]" />
-                        Location
-                      </span>
-                      <p className="text-gray-900 mt-1">{location.name}</p>
-                    </div>
-                  )}
-                  {languages.length > 0 && (
-                    <div>
-                      <span className="text-sm font-medium text-gray-700 flex items-center">
-                        <Languages className="h-4 w-4 mr-1 text-[#1877F2]" />
-                        Required Languages
-                      </span>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {languages.map((lang: any, index: number) => (
-                          <span key={index} className="bg-[#1877F2] text-white px-3 py-1 rounded-full text-sm">
-                            {typeof lang === 'object' ? lang.name : lang}
-                          </span>
-                        ))}
+            <CardContent className="p-6 bg-white space-y-8">
+              
+              {/* Compensation First */}
+              {(job.salary_from || job.salary_to) && (
+                <div>
+                  <h4 className="flex items-center text-base font-semibold text-gray-900 mb-4">
+                    <DollarSign className="h-4 w-4 mr-2 text-[#1877F2]" />
+                    Compensation
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {job.salary_from && (
+                      <div>
+                        <span className="text-sm font-medium text-gray-700">Minimum Salary</span>
+                        <p className="text-gray-900 mt-1 text-lg font-semibold">
+                          ${job.salary_from.toLocaleString()}
+                        </p>
                       </div>
+                    )}
+                    {job.salary_to && (
+                      <div>
+                        <span className="text-sm font-medium text-gray-700">Maximum Salary</span>
+                        <p className="text-gray-900 mt-1 text-lg font-semibold">
+                          ${job.salary_to.toLocaleString()}
+                        </p>
+                      </div>
+                    )}
+                    {job.salary_payment_type && (
+                      <div>
+                        <span className="text-sm font-medium text-gray-700">Payment Type</span>
+                        <p className="text-gray-900 mt-1 capitalize">
+                          {job.salary_payment_type.replace('_', ' ')}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Job Details */}
+              <div>
+                <h4 className="flex items-center text-base font-semibold text-gray-900 mb-4">
+                  <Briefcase className="h-4 w-4 mr-2 text-[#1877F2]" />
+                  Job Details
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div>
+                      <span className="text-sm font-medium text-gray-700">Employment Type</span>
+                      <p className="text-gray-900 mt-1">{formatJobType(job.job_type)}</p>
                     </div>
-                  )}
+                    <div>
+                      <span className="text-sm font-medium text-gray-700">Work Type</span>
+                      <p className="text-gray-900 mt-1">{formatWorkplaceType(job.workplace_type)}</p>
+                    </div>
+                    {job.min_education_level && (
+                      <div>
+                        <span className="text-sm font-medium text-gray-700 flex items-center">
+                          <GraduationCap className="h-4 w-4 mr-1 text-[#1877F2]" />
+                          Minimum Education
+                        </span>
+                        <p className="text-gray-900 mt-1">{formatEducationLevel(job.min_education_level)}</p>
+                      </div>
+                    )}
+                  </div>
+                  <div className="space-y-4">
+                    {category && (
+                      <div>
+                        <span className="text-sm font-medium text-gray-700">Category</span>
+                        <p className="text-gray-900 mt-1">{category.name}</p>
+                      </div>
+                    )}
+                    {location && (
+                      <div>
+                        <span className="text-sm font-medium text-gray-700 flex items-center">
+                          <MapPin className="h-4 w-4 mr-1 text-[#1877F2]" />
+                          Location
+                        </span>
+                        <p className="text-gray-900 mt-1">{location.name}</p>
+                      </div>
+                    )}
+                    {languages.length > 0 && (
+                      <div>
+                        <span className="text-sm font-medium text-gray-700 flex items-center">
+                          <Languages className="h-4 w-4 mr-1 text-[#1877F2]" />
+                          Required Languages
+                        </span>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {languages.map((lang: any, index: number) => (
+                            <span key={index} className="bg-[#1877F2] text-white px-3 py-1 rounded-full text-sm">
+                              {typeof lang === 'object' ? lang.name : lang}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
+
             </CardContent>
           </Card>
-
-          {/* Compensation */}
-          {(job.salary_from || job.salary_to) && (
-            <Card className="shadow-sm border border-gray-200">
-              <CardHeader className="border-b border-gray-200 bg-white">
-                <CardTitle className="flex items-center text-lg font-semibold text-gray-900">
-                  <DollarSign className="h-5 w-5 mr-3 text-[#1877F2]" />
-                  Compensation
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 bg-white">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {job.salary_from && (
-                    <div>
-                      <span className="text-sm font-medium text-gray-700">Minimum Salary</span>
-                      <p className="text-gray-900 mt-1 text-lg font-semibold">
-                        ${job.salary_from.toLocaleString()}
-                      </p>
-                    </div>
-                  )}
-                  {job.salary_to && (
-                    <div>
-                      <span className="text-sm font-medium text-gray-700">Maximum Salary</span>
-                      <p className="text-gray-900 mt-1 text-lg font-semibold">
-                        ${job.salary_to.toLocaleString()}
-                      </p>
-                    </div>
-                  )}
-                  {job.salary_payment_type && (
-                    <div>
-                      <span className="text-sm font-medium text-gray-700">Payment Type</span>
-                      <p className="text-gray-900 mt-1 capitalize">
-                        {job.salary_payment_type.replace('_', ' ')}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          )}
 
 
 
