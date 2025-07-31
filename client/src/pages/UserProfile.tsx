@@ -21,7 +21,7 @@ import { Link } from "wouter";
 import TopBar from "@/components/layout/TopBar";
 
 // Use the existing User type from schema
-import type { User, UserExperience, UserEducation, UserProject } from "@shared/schema";
+import type { User, UserExperience, UserEducation, UserProject, Room } from "@shared/schema";
 
 export default function UserProfile() {
   const [match, params] = useRoute("/profile/:userId");
@@ -175,7 +175,27 @@ export default function UserProfile() {
                   </div>
                   <Button 
                     className="bg-gradient-to-r from-blue-500 to-blue-600"
-                    onClick={() => window.location.href = `/messages?userId=${userProfile.id}`}
+                    onClick={async () => {
+                      try {
+                        // Find or create a chat room with this user
+                        const response = await apiService.request<{results: Room[]}>('/chat/rooms/');
+                        const existingRoom = response.results.find((room: Room) => 
+                          room.members.some((member: any) => member.id === userProfile.id)
+                        );
+                        
+                        if (existingRoom) {
+                          // Navigate to existing room
+                          window.location.href = `/messages#room-${existingRoom.id}`;
+                        } else {
+                          // For now, navigate to messages page with user ID to show intent
+                          window.location.href = `/messages?newChat=${userProfile.id}`;
+                        }
+                      } catch (error) {
+                        console.error('Error finding chat room:', error);
+                        // Fallback to messages page
+                        window.location.href = `/messages?newChat=${userProfile.id}`;
+                      }
+                    }}
                   >
                     <Mail className="w-4 h-4 mr-2" />
                     Send Message

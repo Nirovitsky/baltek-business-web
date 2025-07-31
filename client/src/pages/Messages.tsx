@@ -27,6 +27,29 @@ export default function Messages() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Check URL parameters for new chat requests
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const newChatUserId = urlParams.get('newChat');
+    const roomHash = window.location.hash;
+    
+    if (newChatUserId) {
+      // Show notification about starting new chat
+      toast({
+        title: "New Chat",
+        description: "Select this user from conversations or wait for them to message you first.",
+      });
+      // Clear URL parameter
+      window.history.replaceState({}, '', '/messages');
+    } else if (roomHash.startsWith('#room-')) {
+      // Handle direct room navigation
+      const roomId = parseInt(roomHash.replace('#room-', ''));
+      if (roomId && !isNaN(roomId)) {
+        // This will be handled by the rooms query effect below
+      }
+    }
+  }, [toast]);
+
   const {
     connected,
     messages: wsMessages,
@@ -55,6 +78,20 @@ export default function Messages() {
 
   const rooms = roomsData?.results || [];
   const apiMessages = messagesData?.results || [];
+
+  // Auto-select room from URL hash
+  useEffect(() => {
+    const roomHash = window.location.hash;
+    if (roomHash.startsWith('#room-') && rooms.length > 0) {
+      const roomId = parseInt(roomHash.replace('#room-', ''));
+      const targetRoom = rooms.find(r => r.id === roomId);
+      if (targetRoom && (!selectedRoom || selectedRoom.id !== roomId)) {
+        handleRoomSelect(targetRoom);
+        // Clear hash after selection
+        window.history.replaceState({}, '', '/messages');
+      }
+    }
+  }, [rooms, selectedRoom]);
 
   // Combine API messages with WebSocket messages, removing duplicates
   const allMessages = selectedRoom?.id === currentRoom
