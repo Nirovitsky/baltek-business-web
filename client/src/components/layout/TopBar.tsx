@@ -1,19 +1,23 @@
+import { useLocation } from "wouter";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface TopBarProps {
   title: string;
   description?: string;
-  onCreateJob?: () => void;
   showCreateButton?: boolean;
 }
 
 export default function TopBar({ 
   title, 
   description, 
-  onCreateJob, 
   showCreateButton = true 
 }: TopBarProps) {
+  const [, setLocation] = useLocation();
+
+  const handleCreateJob = () => {
+    setLocation('/jobs/create');
+  };
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
@@ -25,7 +29,7 @@ export default function TopBar({
         </div>
         <div className="flex items-center space-x-4">
           {showCreateButton && (
-            <Button onClick={onCreateJob} className="bg-primary hover:bg-primary/90">
+            <Button onClick={handleCreateJob} className="bg-primary hover:bg-primary/90">
               <Plus className="w-4 h-4 mr-2" />
               Post New Job
             </Button>

@@ -1,17 +1,21 @@
+import { useLocation } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, ClipboardList, MessageCircle } from "lucide-react";
 
 interface QuickActionsProps {
-  onCreateJob?: () => void;
   onReviewApplications?: () => void;
   onOpenMessages?: () => void;
 }
 
 export default function QuickActions({ 
-  onCreateJob, 
   onReviewApplications, 
   onOpenMessages 
 }: QuickActionsProps) {
+  const [, setLocation] = useLocation();
+
+  const handleCreateJob = () => {
+    setLocation('/jobs/create');
+  };
   const actions = [
     {
       title: "Create Job Posting",
@@ -19,7 +23,7 @@ export default function QuickActions({
       icon: Plus,
       iconBg: "bg-primary/10",
       iconColor: "text-primary",
-      onClick: onCreateJob,
+      onClick: handleCreateJob,
     },
     {
       title: "Review Applications",

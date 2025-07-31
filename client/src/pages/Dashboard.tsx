@@ -6,7 +6,6 @@ import StatsCard from "@/components/dashboard/StatsCard";
 import RecentJobs from "@/components/dashboard/RecentJobs";
 import RecentApplications from "@/components/dashboard/RecentApplications";
 import QuickActions from "@/components/dashboard/QuickActions";
-import JobModal from "@/components/modals/JobModal";
 import JobDetailDialog from "@/components/jobs/JobDetailDialog";
 import { Briefcase, Users, Clock, UserCheck } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -15,7 +14,6 @@ import type { Job, JobApplication, PaginatedResponse } from "@shared/schema";
 
 export default function Dashboard() {
   const [, setLocation] = useLocation();
-  const [isJobModalOpen, setIsJobModalOpen] = useState(false);
   const [isJobDetailOpen, setIsJobDetailOpen] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState<number | null>(null);
   const { selectedOrganization } = useAuth();
@@ -51,9 +49,7 @@ export default function Dashboard() {
   const pendingApplications = applications.filter(app => app.status === 'pending').length;
   const hiredThisMonth = applications.filter(app => app.status === 'hired').length;
 
-  const handleCreateJob = () => {
-    setIsJobModalOpen(true);
-  };
+
 
   const handleReviewApplications = () => {
     setLocation('/applications');
@@ -73,7 +69,6 @@ export default function Dashboard() {
       <TopBar 
         title="Dashboard Overview"
         description="Manage your job postings and applications"
-        onCreateJob={handleCreateJob}
       />
 
       <main className="flex-1 overflow-y-auto p-6 space-y-8">
@@ -135,20 +130,10 @@ export default function Dashboard() {
 
         {/* Quick Actions */}
         <QuickActions
-          onCreateJob={handleCreateJob}
           onReviewApplications={handleReviewApplications}
           onOpenMessages={handleOpenMessages}
         />
       </main>
-
-      <JobModal
-        open={isJobModalOpen}
-        onOpenChange={setIsJobModalOpen}
-        onSuccess={() => {
-          // Refresh data after job creation
-          window.location.reload();
-        }}
-      />
 
       <JobDetailDialog
         jobId={selectedJobId}

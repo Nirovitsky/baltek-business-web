@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import TopBar from "@/components/layout/TopBar";
-import JobModal from "@/components/modals/JobModal";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,8 +16,6 @@ import { Edit, Trash2, Search, Eye, Briefcase } from "lucide-react";
 import type { Job, PaginatedResponse } from "@shared/schema";
 
 export default function Jobs() {
-  const [isJobModalOpen, setIsJobModalOpen] = useState(false);
-  const [selectedJob, setSelectedJob] = useState<Job | undefined>();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   
@@ -62,13 +59,11 @@ export default function Jobs() {
   });
 
   const handleCreateJob = () => {
-    setSelectedJob(undefined);
-    setIsJobModalOpen(true);
+    setLocation('/jobs/create');
   };
 
   const handleEditJob = (job: Job) => {
-    setSelectedJob(job);
-    setIsJobModalOpen(true);
+    setLocation(`/jobs/edit/${job.id}`);
   };
 
   const handleViewJob = (jobId: number) => {
@@ -101,7 +96,6 @@ export default function Jobs() {
       <TopBar 
         title="Job Postings"
         description="Manage your job opportunities"
-        onCreateJob={handleCreateJob}
       />
 
       <main className="flex-1 overflow-y-auto p-6">
@@ -246,18 +240,6 @@ export default function Jobs() {
           </div>
         )}
       </main>
-
-      <JobModal
-        open={isJobModalOpen}
-        onOpenChange={setIsJobModalOpen}
-        job={selectedJob}
-        onSuccess={() => {
-          // Invalidate and refetch all job queries
-          queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
-          queryClient.refetchQueries({ queryKey: ['/jobs/', selectedOrganization?.id, searchTerm, statusFilter] });
-        }}
-      />
-
 
     </div>
   );
