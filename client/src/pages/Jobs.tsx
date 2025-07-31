@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import TopBar from "@/components/layout/TopBar";
 import JobModal from "@/components/modals/JobModal";
-import JobDetailDialog from "@/components/jobs/JobDetailDialog";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,12 +18,11 @@ import type { Job, PaginatedResponse } from "@shared/schema";
 
 export default function Jobs() {
   const [isJobModalOpen, setIsJobModalOpen] = useState(false);
-  const [isJobDetailOpen, setIsJobDetailOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<Job | undefined>();
-  const [selectedJobId, setSelectedJobId] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
   const { selectedOrganization } = useAuth();
   const queryClient = useQueryClient();
@@ -69,18 +69,15 @@ export default function Jobs() {
   const handleEditJob = (job: Job) => {
     setSelectedJob(job);
     setIsJobModalOpen(true);
-    setIsJobDetailOpen(false);
   };
 
   const handleViewJob = (jobId: number) => {
-    setSelectedJobId(jobId);
-    setIsJobDetailOpen(true);
+    setLocation(`/jobs/${jobId}`);
   };
 
   const handleDeleteJob = (jobId: number) => {
     if (confirm('Are you sure you want to delete this job posting?')) {
       deleteJobMutation.mutate(jobId);
-      setIsJobDetailOpen(false);
     }
   };
 
@@ -261,13 +258,7 @@ export default function Jobs() {
         }}
       />
 
-      <JobDetailDialog
-        jobId={selectedJobId}
-        open={isJobDetailOpen}
-        onOpenChange={setIsJobDetailOpen}
-        onEdit={handleEditJob}
-        onDelete={handleDeleteJob}
-      />
+
     </div>
   );
 }

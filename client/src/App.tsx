@@ -14,6 +14,7 @@ import Sidebar from "@/components/layout/Sidebar";
 import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
 import Jobs from "@/pages/Jobs";
+import JobDetails from "@/pages/JobDetails";
 import Applications from "@/pages/Applications";
 import Messages from "@/pages/Messages";
 import Users from "@/pages/Users";
@@ -75,6 +76,12 @@ function Router() {
       <Route path="/jobs">
         <ProtectedRoute>
           <Jobs />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/jobs/:id">
+        <ProtectedRoute>
+          <JobDetails />
         </ProtectedRoute>
       </Route>
       
