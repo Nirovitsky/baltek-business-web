@@ -111,12 +111,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // API proxy endpoints to backend
-  const API_BASE_URL = process.env.API_BASE_URL || "http://116.203.92.15/api";
+  const API_BASE_URL = process.env.API_BASE_URL || "http://116.203.92.15";
 
   // Proxy authentication requests
   app.post("/api/token/", async (req, res) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/token/`, {
+      const response = await fetch(`${API_BASE_URL}/api/token/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -137,15 +137,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(data);
     } catch (error) {
       console.error("Authentication error:", error);
-      res.status(503).json({ 
-        message: "Authentication service temporarily unavailable. Please try again later." 
-      });
+      res.status(500).json({ message: "Internal server error" });
     }
   });
 
   app.post("/api/token/refresh", async (req, res) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/token/refresh`, {
+      const response = await fetch(`${API_BASE_URL}/api/token/refresh`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -163,9 +161,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(data);
     } catch (error) {
       console.error("Token refresh error:", error);
-      res.status(503).json({ 
-        message: "Authentication service temporarily unavailable. Please try again later." 
-      });
+      res.status(500).json({ message: "Internal server error" });
     }
   });
 
@@ -190,7 +186,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Generic API proxy middleware
   app.use("/api/*", async (req, res) => {
     try {
-      const apiPath = req.originalUrl.replace('/api', '');
+      const apiPath = req.originalUrl;
       const url = `${API_BASE_URL}${apiPath}`;
 
       const headers: HeadersInit = {
@@ -229,9 +225,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     } catch (error) {
       console.error("API proxy error:", error);
-      res.status(503).json({ 
-        message: "Backend API service is not accessible. Please check the API URL configuration." 
-      });
+      res.status(500).json({ message: "Internal server error" });
     }
   });
 
