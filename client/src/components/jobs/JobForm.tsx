@@ -5,11 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
-import { createJobSchema, type CreateJob, type Job, type Category, type Location, type PaginatedResponse } from "@shared/schema";
+import { createJobSchema, type CreateJob, type Job, type Category, type Location, type Language, type PaginatedResponse } from "@shared/schema";
 
 interface JobFormProps {
   job?: Job;
@@ -43,10 +44,11 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       status: "open",
       organization: selectedOrganization?.id || 0,
       salary_payment_type: "monthly",
+      required_languages: [],
     },
   });
 
-  // Fetch categories and locations for selects
+  // Fetch categories, locations, and languages for selects
   const { data: categories } = useQuery({
     queryKey: ['/categories/'],
     queryFn: () => apiService.request<Category[]>('/categories/'),
@@ -57,7 +59,13 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
     queryFn: () => apiService.request<PaginatedResponse<Location>>('/locations/'),
   });
 
+  const { data: languagesData } = useQuery({
+    queryKey: ['/languages/'],
+    queryFn: () => apiService.request<PaginatedResponse<Language>>('/languages/'),
+  });
+
   const locations = locationsData?.results || [];
+  const languages = languagesData?.results || [];
 
   const createMutation = useMutation({
     mutationFn: (data: CreateJob) => apiService.request<Job>('/jobs/', {
@@ -231,7 +239,32 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
           )}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <FormField
+          control={form.control}
+          name="min_education_level"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Minimum Education Level</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select minimum education level" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="secondary">Secondary</SelectItem>
+                  <SelectItem value="undergraduate">Undergraduate</SelectItem>
+                  <SelectItem value="bachelor">Bachelor</SelectItem>
+                  <SelectItem value="master">Master</SelectItem>
+                  <SelectItem value="doctorate">Doctorate</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <FormField
             control={form.control}
             name="salary_from"
@@ -269,7 +302,72 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="salary_payment_type"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Payment Type</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="yearly">Yearly</SelectItem>
+                    <SelectItem value="monthly">Monthly</SelectItem>
+                    <SelectItem value="weekly">Weekly</SelectItem>
+                    <SelectItem value="daily">Daily</SelectItem>
+                    <SelectItem value="hourly">Hourly</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
+
+        <FormField
+          control={form.control}
+          name="required_languages"
+          render={({ field }) => (
+            <FormItem>
+              <div className="mb-4">
+                <FormLabel className="text-base">Required Languages</FormLabel>
+                <FormDescription>
+                  Select the languages required for this position
+                </FormDescription>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {languages.map((language) => (
+                  <div key={language.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`language-${language.id}`}
+                      checked={field.value?.includes(language.id) || false}
+                      onCheckedChange={(checked) => {
+                        const currentLanguages = field.value || [];
+                        if (checked) {
+                          field.onChange([...currentLanguages, language.id]);
+                        } else {
+                          field.onChange(currentLanguages.filter(id => id !== language.id));
+                        }
+                      }}
+                    />
+                    <label
+                      htmlFor={`language-${language.id}`}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      {language.name}
+                    </label>
+                  </div>
+                ))}
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}
@@ -284,6 +382,29 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="status"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Job Status</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="open">Open</SelectItem>
+                  <SelectItem value="archived">Archived</SelectItem>
+                  <SelectItem value="expired">Expired</SelectItem>
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}

@@ -1,0 +1,683 @@
+/api/jobs/:
+    get:
+      operationId: jobs_list
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: integer
+      - in: query
+        name: has_application
+        schema:
+          type: boolean
+      - in: query
+        name: job_type
+        schema:
+          type: string
+          enum:
+          - contract
+          - full_time
+          - part_time
+        description: |-
+          * `full_time` - Full Time
+          * `part_time` - Part Time
+          * `contract` - Contract Time
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: location
+        schema:
+          type: integer
+      - in: query
+        name: min_education_level
+        schema:
+          type: string
+          enum:
+          - bachelor
+          - doctorate
+          - master
+          - secondary
+          - undergraduate
+        description: |-
+          * `secondary` - Secondary
+          * `undergraduate` - Undergraduate
+          * `bachelor` - Bachelor
+          * `master` - Master
+          * `doctorate` - Doctorate
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - in: query
+        name: organization
+        schema:
+          type: integer
+      - in: query
+        name: required_languages
+        schema:
+          type: array
+          items:
+            type: integer
+        explode: true
+        style: form
+      - in: query
+        name: salary_from
+        schema:
+          type: integer
+      - in: query
+        name: salary_payment_type
+        schema:
+          type: string
+          enum:
+          - daily
+          - hourly
+          - monthly
+          - weekly
+          - yearly
+        description: |-
+          * `yearly` - Yearly
+          * `monthly` - Monthly
+          * `weekly` - Weekly
+          * `daily` - Daily
+          * `hourly` - Hourly
+      - in: query
+        name: salary_to
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - archived
+          - expired
+          - open
+        description: |-
+          * `open` - Open
+          * `archived` - Archived
+          * `expired` - Expired
+      - in: query
+        name: workplace_type
+        schema:
+          type: string
+          enum:
+          - hybrid
+          - on_site
+          - remote
+        description: |-
+          * `remote` - Remote
+          * `on_site` - On Site
+          * `hybrid` - Hybrid
+      tags:
+      - jobs
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedJobListList'
+          description: ''
+    post:
+      operationId: jobs_create
+      tags:
+      - jobs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Job'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Job'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Job'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+          description: ''
+  /api/jobs/{id}/:
+    get:
+      operationId: jobs_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job.
+        required: true
+      tags:
+      - jobs
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+          description: ''
+    put:
+      operationId: jobs_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job.
+        required: true
+      tags:
+      - jobs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Job'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Job'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Job'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+          description: ''
+    patch:
+      operationId: jobs_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job.
+        required: true
+      tags:
+      - jobs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedJob'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedJob'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedJob'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+          description: ''
+    delete:
+      operationId: jobs_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job.
+        required: true
+      tags:
+      - jobs
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/jobs/{id}/bookmark/:
+    post:
+      operationId: jobs_bookmark_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job.
+        required: true
+      tags:
+      - jobs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Bookmark'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Bookmark'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Bookmark'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bookmark'
+          description: ''
+  /api/jobs/applications/:
+    get:
+      operationId: jobs_applications_list
+      description: Mixin class for chat-related functionality.
+      parameters:
+      - in: query
+        name: job
+        schema:
+          type: integer
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - in: query
+        name: status
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - expired
+            - hired
+            - invited
+            - pending
+            - rejected
+        description: |-
+          * `pending` - Pending
+          * `invited` - Invited
+          * `rejected` - Rejected
+          * `hired` - Hired
+          * `expired` - Expired
+        explode: true
+        style: form
+      tags:
+      - jobs
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedJobApplicationListList'
+          description: ''
+    post:
+      operationId: jobs_applications_create
+      description: Mixin class for chat-related functionality.
+      tags:
+      - jobs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobApplication'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JobApplication'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JobApplication'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobApplication'
+          description: ''
+  /api/jobs/applications/{id}/:
+    get:
+      operationId: jobs_applications_retrieve
+      description: Mixin class for chat-related functionality.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job application.
+        required: true
+      tags:
+      - jobs
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobApplication'
+          description: ''
+    put:
+      operationId: jobs_applications_update
+      description: Mixin class for chat-related functionality.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job application.
+        required: true
+      tags:
+      - jobs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobApplication'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JobApplication'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JobApplication'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobApplication'
+          description: ''
+    patch:
+      operationId: jobs_applications_partial_update
+      description: Mixin class for chat-related functionality.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job application.
+        required: true
+      tags:
+      - jobs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedJobApplication'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedJobApplication'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedJobApplication'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobApplication'
+          description: ''
+    delete:
+      operationId: jobs_applications_destroy
+      description: Mixin class for chat-related functionality.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job application.
+        required: true
+      tags:
+      - jobs
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/jobs/applications/{id}/create_room/:
+    post:
+      operationId: jobs_applications_create_room_create
+      description: Create a new chat room.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job application.
+        required: true
+      tags:
+      - jobs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobApplication'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JobApplication'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JobApplication'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobApplication'
+          description: ''
+  /api/jobs/bookmarks/:
+    get:
+      operationId: jobs_bookmarks_retrieve
+      tags:
+      - jobs
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+          description: ''
+  /api/jobs/my/:
+    get:
+      operationId: jobs_my_retrieve
+      tags:
+      - jobs
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+          description: ''
+  /api/jobs/saved_filters/:
+    get:
+      operationId: jobs_saved_filters_list
+      tags:
+      - jobs
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SavedFilter'
+          description: ''
+    post:
+      operationId: jobs_saved_filters_create
+      tags:
+      - jobs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SavedFilter'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SavedFilter'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SavedFilter'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedFilter'
+          description: ''
+  /api/jobs/saved_filters/{id}/:
+    get:
+      operationId: jobs_saved_filters_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this saved filter.
+        required: true
+      tags:
+      - jobs
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedFilter'
+          description: ''
+    put:
+      operationId: jobs_saved_filters_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this saved filter.
+        required: true
+      tags:
+      - jobs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SavedFilter'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SavedFilter'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SavedFilter'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedFilter'
+          description: ''
+    patch:
+      operationId: jobs_saved_filters_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this saved filter.
+        required: true
+      tags:
+      - jobs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSavedFilter'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSavedFilter'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSavedFilter'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedFilter'
+          description: ''
+    delete:
+      operationId: jobs_saved_filters_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this saved filter.
+        required: true
+      tags:
+      - jobs
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
