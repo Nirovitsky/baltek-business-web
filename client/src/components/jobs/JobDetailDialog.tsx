@@ -51,7 +51,8 @@ export default function JobDetailDialog({
   const { data: location } = useQuery({
     queryKey: ['/locations/', job?.location],
     queryFn: () => {
-      return apiService.request<Location>(`/locations/${job!.location}/`);
+      const locationId = typeof job!.location === 'object' && job!.location ? job!.location.id : job!.location;
+      return apiService.request<Location>(`/locations/${locationId}/`);
     },
     enabled: !!job?.location,
   });
@@ -59,7 +60,8 @@ export default function JobDetailDialog({
   const { data: category } = useQuery({
     queryKey: ['/categories/', job?.category],
     queryFn: () => {
-      return apiService.request<Category>(`/categories/${job!.category}/`);
+      const categoryId = typeof job!.category === 'object' && job!.category ? job!.category.id : job!.category;
+      return apiService.request<Category>(`/categories/${categoryId}/`);
     },
     enabled: !!job?.category,
   });
@@ -68,9 +70,10 @@ export default function JobDetailDialog({
     queryKey: ['/languages/', job?.required_languages],
     queryFn: async () => {
       if (!job?.required_languages?.length) return [];
-      const languagePromises = job.required_languages.map(langId =>
-        apiService.request<Language>(`/languages/${langId}/`)
-      );
+      const languagePromises = job.required_languages.map(langId => {
+        const actualLangId = typeof langId === 'object' && langId ? langId.id : langId;
+        return apiService.request<Language>(`/languages/${actualLangId}/`);
+      });
       return Promise.all(languagePromises);
     },
     enabled: !!job?.required_languages?.length,
@@ -224,7 +227,7 @@ export default function JobDetailDialog({
                 </span>
                 <span className="text-sm text-gray-500 flex items-center">
                   <Calendar className="w-4 h-4 mr-1" />
-                  Posted {formatDate(job.created_at)}
+                  Posted {formatDate(job.date_started)}
                 </span>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -337,12 +340,12 @@ export default function JobDetailDialog({
                     <span className="text-sm font-medium">{formatWorkplaceType(job.workplace_type)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">Created:</span>
-                    <span className="text-sm font-medium">{formatDate(job.created_at)}</span>
+                    <span className="text-sm text-gray-600">Start Date:</span>
+                    <span className="text-sm font-medium">{formatDate(job.date_started)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">Last Updated:</span>
-                    <span className="text-sm font-medium">{formatDate(job.updated_at)}</span>
+                    <span className="text-sm text-gray-600">End Date:</span>
+                    <span className="text-sm font-medium">{formatDate(job.date_ended)}</span>
                   </div>
                 </CardContent>
               </Card>
