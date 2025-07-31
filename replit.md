@@ -224,3 +224,12 @@ This is a modern business dashboard for the Baltek Karyera platform built with R
 ✓ Fixed WebSocket connection issues and authentication endpoint errors
 ✓ Resolved 405 Method Not Allowed error for login API endpoint
 ✓ Removed CV/Resume section from user profile page as requested
+
+### Chat System Fixes (July 31, 2025)
+✓ Fixed WebSocket connection URL construction for Replit environment compatibility
+✓ Resolved "Unknown User" display issue in chat rooms with improved fallback handling
+✓ Updated "Send Message" button to check for existing rooms and provide informative feedback
+✓ Enhanced chat room display names with proper fallbacks ("Chat Room [ID]" instead of "Unknown User")
+✓ Improved avatar generation for chat rooms with proper initial handling
+✓ Confirmed backend API only supports GET for chat/messages, implemented WebSocket-only messaging
+✓ Fixed WebSocket URL generation to handle both localhost development and Replit production environments

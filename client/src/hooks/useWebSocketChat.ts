@@ -27,9 +27,19 @@ export function useWebSocketChat() {
     if (!token || !isAuthenticated) return;
 
     try {
-      // Use local WebSocket server instead of hardcoded external URL
+      // Use local WebSocket server - handle Replit environment
       const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-      const wsUrl = `${protocol}//${window.location.host}/ws`;
+      let wsUrl: string;
+      
+      if (window.location.hostname === 'localhost') {
+        // Local development
+        wsUrl = `${protocol}//localhost:5000/ws`;
+      } else {
+        // Production/Replit environment
+        wsUrl = `${protocol}//${window.location.host}/ws`;
+      }
+      
+      console.log('Connecting to WebSocket:', wsUrl);
       const ws = new WebSocket(wsUrl);
 
       // Send authentication after connection

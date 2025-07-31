@@ -16,8 +16,17 @@ export function useWebSocket({ onMessage, reconnectInterval = 3000 }: UseWebSock
     if (!isAuthenticated) return;
 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    let wsUrl: string;
     
+    if (window.location.hostname === 'localhost') {
+      // Local development
+      wsUrl = `${protocol}//localhost:5000/ws`;
+    } else {
+      // Production/Replit environment
+      wsUrl = `${protocol}//${window.location.host}/ws`;
+    }
+    
+    console.log('Connecting to WebSocket:', wsUrl);
     wsRef.current = new WebSocket(wsUrl);
 
     wsRef.current.onopen = () => {
