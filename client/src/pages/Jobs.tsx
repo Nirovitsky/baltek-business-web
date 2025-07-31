@@ -245,7 +245,11 @@ export default function Jobs() {
                     {/* Salary information */}
                     {(job.salary_from || job.salary_to) && (
                       <div className="flex items-center text-sm mb-4">
-                        <DollarSign className="w-4 h-4 mr-2 text-green-600" />
+                        {job.currency === 'USD' ? (
+                          <DollarSign className="w-4 h-4 mr-2 text-green-600" />
+                        ) : (
+                          <div className="w-4 h-4 mr-2 flex items-center justify-center text-green-600 font-semibold text-xs">₼</div>
+                        )}
                         <span className="font-medium text-gray-900">
                           {(() => {
                             const currency = job.currency || 'TMT';

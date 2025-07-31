@@ -417,9 +417,7 @@ export default function CreateJob() {
                         </FormItem>
                       )}
                     />
-                  </div>
 
-                  <div>
                     <FormField
                       control={form.control}
                       name="required_languages"
