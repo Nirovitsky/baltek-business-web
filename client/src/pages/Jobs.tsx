@@ -31,13 +31,16 @@ export default function Jobs() {
     queryKey: ['/jobs/', selectedOrganization?.id, searchTerm, statusFilter],
     queryFn: () => {
       const params = new URLSearchParams();
-      if (selectedOrganization) params.append('organization', selectedOrganization.id.toString());
+      // Don't filter by organization to see all jobs for now - let's debug this
+      // if (selectedOrganization) params.append('organization', selectedOrganization.id.toString());
       if (searchTerm) params.append('search', searchTerm);
       if (statusFilter !== 'all') params.append('status', statusFilter);
       
+      console.log('Fetching jobs with params:', params.toString());
       return apiService.request<PaginatedResponse<Job>>(`/jobs/?${params.toString()}`);
     },
-    enabled: !!selectedOrganization,
+    // Remove organization dependency for now
+    // enabled: !!selectedOrganization,
   });
 
   const deleteJobMutation = useMutation({
