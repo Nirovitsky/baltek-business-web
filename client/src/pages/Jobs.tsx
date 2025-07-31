@@ -273,20 +273,39 @@ export default function Jobs() {
                           {job.status ? job.status.charAt(0).toUpperCase() + job.status.slice(1) : 'Unknown'}
                         </Badge>
                       </div>
-                      <div className="flex items-center text-xs text-gray-500">
-                        <Calendar className="w-3 h-3 mr-1" />
-                        <span>
-                          {(() => {
-                            if (!job.date_started) return 'No date';
-                            try {
-                              const date = new Date(job.date_started);
-                              if (isNaN(date.getTime())) return 'No date';
-                              return date.toLocaleDateString();
-                            } catch {
-                              return 'No date';
-                            }
-                          })()}
-                        </span>
+                      <div className="flex flex-col items-end text-xs text-gray-500 space-y-1">
+                        {job.date_started && (
+                          <div className="flex items-center">
+                            <Calendar className="w-3 h-3 mr-1" />
+                            <span>
+                              Published: {(() => {
+                                try {
+                                  const date = new Date(job.date_started);
+                                  if (isNaN(date.getTime())) return 'Invalid';
+                                  return date.toLocaleDateString();
+                                } catch {
+                                  return 'Invalid';
+                                }
+                              })()}
+                            </span>
+                          </div>
+                        )}
+                        {job.date_ended && (
+                          <div className="flex items-center">
+                            <Calendar className="w-3 h-3 mr-1" />
+                            <span>
+                              Expires: {(() => {
+                                try {
+                                  const date = new Date(job.date_ended);
+                                  if (isNaN(date.getTime())) return 'Invalid';
+                                  return date.toLocaleDateString();
+                                } catch {
+                                  return 'Invalid';
+                                }
+                              })()}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </CardContent>
