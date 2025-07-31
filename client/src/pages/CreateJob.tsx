@@ -174,9 +174,9 @@ export default function CreateJob() {
   const isLoading = createMutation.isPending || updateMutation.isPending;
 
   return (
-    <div className="flex-1 flex flex-col bg-gray-50">
+    <div className="flex-1 flex flex-col bg-gray-50 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white border-b border-gray-200 flex-shrink-0">
         <div className="max-w-4xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
@@ -203,8 +203,8 @@ export default function CreateJob() {
       </div>
 
       {/* Content */}
-      <div className="flex-1">
-        <div className="max-w-4xl mx-auto px-6 py-8 pb-6">
+      <div className="flex-1 overflow-y-auto scrollbar-hide">
+        <div className="max-w-4xl mx-auto px-6 py-8">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {/* Basic Information */}
@@ -569,7 +569,7 @@ export default function CreateJob() {
               </Card>
 
               {/* Action Buttons */}
-              <div className="flex justify-end space-x-3 pt-6 pb-2">
+              <div className="flex justify-end space-x-3 pt-6 pb-8">
                 <Button 
                   type="button" 
                   variant="outline"
