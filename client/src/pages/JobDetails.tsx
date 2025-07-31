@@ -190,35 +190,15 @@ export default function JobDetails() {
       <div className="bg-white border-b border-gray-200 flex-shrink-0">
         <div className="max-w-4xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setLocation('/jobs')}
-                className="mr-4 text-gray-600 hover:text-gray-900"
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Jobs
-              </Button>
-              <div>
-                <h1 className="text-2xl font-semibold text-gray-900">{job.title}</h1>
-                <div className="flex items-center space-x-4 mt-2">
-                  <Badge className={`${getStatusColor(job.status)} border`}>
-                    {job.status?.charAt(0).toUpperCase() + job.status?.slice(1)}
-                  </Badge>
-                  {location && (
-                    <div className="flex items-center text-sm text-gray-500">
-                      <MapPin className="h-4 w-4 mr-1" />
-                      {location.name}
-                    </div>
-                  )}
-                  <div className="flex items-center text-sm text-gray-500">
-                    <Users className="h-4 w-4 mr-1" />
-                    {getApplicationsCount(job)} applications
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setLocation('/jobs')}
+              className="text-gray-600 hover:text-gray-900"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Jobs
+            </Button>
             <div className="flex items-center space-x-3">
               <Button
                 variant="outline"
@@ -265,26 +245,11 @@ export default function JobDetails() {
             </CardHeader>
             <CardContent className="p-6 bg-white space-y-8">
               
-              {/* Organization Information */}
-              {job.organization && (
+              {/* Organization */}
+              {job.organization && typeof job.organization === 'object' && (
                 <div>
-                  <h4 className="flex items-center text-base font-semibold text-gray-900 mb-4">
-                    <Building2 className="h-4 w-4 mr-2 text-[#1877F2]" />
-                    Organization
-                  </h4>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-[#1877F2] rounded-lg flex items-center justify-center">
-                      <span className="text-white font-semibold text-lg">
-                        {job.organization.official_name?.charAt(0) || 'O'}
-                      </span>
-                    </div>
-                    <div>
-                      <p className="text-gray-900 font-medium">{job.organization.official_name}</p>
-                      {job.organization.display_name && job.organization.display_name !== job.organization.official_name && (
-                        <p className="text-gray-600 text-sm">{job.organization.display_name}</p>
-                      )}
-                    </div>
-                  </div>
+                  <span className="text-sm font-medium text-gray-700">Organization</span>
+                  <p className="text-gray-900 mt-1 text-lg font-medium">{job.organization.official_name}</p>
                 </div>
               )}
               
