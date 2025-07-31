@@ -352,33 +352,7 @@ export default function JobDetails() {
             </Card>
           )}
 
-          {/* Timeline */}
-          {(job.date_started || job.date_ended) && (
-            <Card className="shadow-sm border border-gray-200">
-              <CardHeader className="border-b border-gray-200 bg-white">
-                <CardTitle className="flex items-center text-lg font-semibold text-gray-900">
-                  <Calendar className="h-5 w-5 mr-3 text-[#1877F2]" />
-                  Timeline
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 bg-white">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {job.date_started && (
-                    <div>
-                      <span className="text-sm font-medium text-gray-700">Start Date</span>
-                      <p className="text-gray-900 mt-1">{formatDate(job.date_started)}</p>
-                    </div>
-                  )}
-                  {job.date_ended && (
-                    <div>
-                      <span className="text-sm font-medium text-gray-700">End Date</span>
-                      <p className="text-gray-900 mt-1">{formatDate(job.date_ended)}</p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          )}
+
 
         </div>
       </div>
