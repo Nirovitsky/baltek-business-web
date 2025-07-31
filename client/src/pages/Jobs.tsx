@@ -82,11 +82,14 @@ export default function Jobs() {
       case 'open':
         return 'bg-green-100 text-green-800'; // Active - green color
       case 'closed':
+      case 'archived':
         return 'bg-gray-100 text-gray-800';   // Archived - grey color  
       case 'expired':
         return 'bg-amber-100 text-amber-800'; // Expired - brown/amber color
+      case 'draft':
+        return 'bg-blue-100 text-blue-800';   // Draft - blue color
       default:
-        return 'bg-green-100 text-green-800'; // Default to active
+        return 'bg-gray-100 text-gray-800';   // Default to grey for unknown status
     }
   };
 
@@ -271,12 +274,20 @@ export default function Jobs() {
                           variant="secondary" 
                           className={`${getStatusColor(job.status)} border`}
                         >
-                          {(() => {
+{(() => {
+                            // Debug: log the actual status value from backend
+                            console.log('Job status from backend:', job.status, 'for job:', job.id);
+                            
                             const status = job.status?.toLowerCase();
+                            
+                            // Map backend status values to display labels
                             if (status === 'open') return 'Active';
-                            if (status === 'closed') return 'Archived';
+                            if (status === 'closed' || status === 'archived') return 'Archived';
                             if (status === 'expired') return 'Expired';
-                            return 'Active'; // Default fallback
+                            if (status === 'draft') return 'Draft';
+                            
+                            // Show the raw status if it doesn't match known values
+                            return job.status ? job.status.charAt(0).toUpperCase() + job.status.slice(1) : 'Active';
                           })()}
                         </Badge>
                       </div>
