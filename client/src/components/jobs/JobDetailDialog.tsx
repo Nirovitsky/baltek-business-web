@@ -49,14 +49,20 @@ export default function JobDetailDialog({
   });
 
   const { data: location } = useQuery({
-    queryKey: ['/locations/', job?.location],
-    queryFn: () => apiService.request<Location>(`/locations/${job!.location}/`),
+    queryKey: ['/locations/', typeof job?.location === 'object' ? job?.location?.id : job?.location],
+    queryFn: () => {
+      const locationId = typeof job!.location === 'object' ? job!.location.id : job!.location;
+      return apiService.request<Location>(`/locations/${locationId}/`);
+    },
     enabled: !!job?.location,
   });
 
   const { data: category } = useQuery({
-    queryKey: ['/categories/', job?.category],
-    queryFn: () => apiService.request<Category>(`/categories/${job!.category}/`),
+    queryKey: ['/categories/', typeof job?.category === 'object' ? job?.category?.id : job?.category],
+    queryFn: () => {
+      const categoryId = typeof job!.category === 'object' ? job!.category.id : job!.category;
+      return apiService.request<Category>(`/categories/${categoryId}/`);
+    },
     enabled: !!job?.category,
   });
 
