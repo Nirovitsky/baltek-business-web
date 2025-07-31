@@ -20,8 +20,11 @@ interface JobFormProps {
 
 export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
   const { toast } = useToast();
-  const { selectedOrganization } = useAuth();
+  const { selectedOrganization, organizations } = useAuth();
   const queryClient = useQueryClient();
+
+  // Use the first organization if selectedOrganization is null
+  const currentOrganization = selectedOrganization || organizations[0];
 
   const form = useForm<CreateJob>({
     resolver: zodResolver(createJobSchema),
@@ -45,7 +48,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       job_type: "full_time",
       workplace_type: "remote",
       status: "open",
-      organization: selectedOrganization?.id || 0,
+      organization: currentOrganization?.id || 1,
       salary_payment_type: "monthly",
       required_languages: [],
       date_started: new Date().toLocaleDateString('en-GB').replace(/\//g, '.'), // Today's date in DD.MM.YYYY format
@@ -80,7 +83,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
     onSuccess: () => {
       // Invalidate all job-related queries
       queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
-      queryClient.invalidateQueries({ queryKey: ['/jobs/', selectedOrganization?.id] });
+      queryClient.invalidateQueries({ queryKey: ['/jobs/', currentOrganization?.id] });
       // Also refetch immediately to ensure fresh data
       queryClient.refetchQueries({ queryKey: ['/jobs/'] });
       toast({
@@ -106,7 +109,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
     onSuccess: () => {
       // Invalidate all job-related queries
       queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
-      queryClient.invalidateQueries({ queryKey: ['/jobs/', selectedOrganization?.id] });
+      queryClient.invalidateQueries({ queryKey: ['/jobs/', currentOrganization?.id] });
       queryClient.invalidateQueries({ queryKey: ['/jobs/', job!.id] });
       // Also refetch immediately to ensure fresh data
       queryClient.refetchQueries({ queryKey: ['/jobs/'] });
@@ -127,11 +130,15 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
 
   const onSubmit = (data: CreateJob) => {
     // Ensure date fields are properly formatted for backend (DD.MM.YYYY)
+    // and organization is correctly set
     const formattedData = {
       ...data,
+      organization: currentOrganization?.id || 1,
       date_started: data.date_started || new Date().toLocaleDateString('en-GB').replace(/\//g, '.'),
       date_ended: data.date_ended || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-GB').replace(/\//g, '.'),
     };
+
+    console.log('Submitting job data:', formattedData); // Debug log
     
     if (job) {
       updateMutation.mutate(formattedData);
