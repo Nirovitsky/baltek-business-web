@@ -58,45 +58,40 @@ export const useAuth = create<AuthState>((set, get) => ({
 
   fetchOrganizations: async () => {
     try {
-      const response = await apiService.request<Organization[]>('/organizations/my/');
-      const organizations = Array.isArray(response) ? response : [];
+      const response = await apiService.request<Organization>('/organizations/my/');
+      console.log('Fetched organization:', response); // Debug log
       
-      console.log('Fetched organizations:', organizations); // Debug log
-      
-      // Don't update if we already have the same organizations
-      const currentOrgs = get().organizations;
-      const sameOrgs = currentOrgs.length === organizations.length && 
-        currentOrgs.every(org => organizations.find(o => o.id === org.id));
-      
-      if (sameOrgs) {
-        console.log('Organizations unchanged, skipping update');
-        return;
-      }
-      
-      // Set first organization as selected if none is selected
-      let selectedOrganization = get().selectedOrganization;
-      const savedOrg = localStorage.getItem('selected_organization');
-      
-      if (savedOrg) {
-        try {
-          const parsedOrg = JSON.parse(savedOrg);
-          // Verify the saved org still exists in the fetched organizations
-          selectedOrganization = organizations.find(org => org.id === parsedOrg.id) || organizations[0];
-        } catch {
-          selectedOrganization = organizations[0];
+      // According to API spec, /api/organizations/my/ returns a single organization object
+      if (response && response.id) {
+        const organization = response;
+        const organizations = [organization]; // Wrap in array for consistency
+        
+        // Set this organization as selected
+        let selectedOrganization = organization;
+        const savedOrg = localStorage.getItem('selected_organization');
+        
+        if (savedOrg) {
+          try {
+            const parsedOrg = JSON.parse(savedOrg);
+            // Use saved org if it matches the fetched one, otherwise use fetched org
+            selectedOrganization = parsedOrg.id === organization.id ? parsedOrg : organization;
+          } catch {
+            selectedOrganization = organization;
+          }
         }
-      } else if (organizations.length > 0) {
-        selectedOrganization = organizations[0];
-      }
-      
-      if (selectedOrganization) {
+        
         localStorage.setItem('selected_organization', JSON.stringify(selectedOrganization));
+        
+        console.log('Setting organization:', organization, 'Selected:', selectedOrganization); // Debug log
+        set({ organizations, selectedOrganization });
+      } else {
+        console.log('No organization found for user');
+        set({ organizations: [], selectedOrganization: null });
       }
-      
-      console.log('Setting organizations:', organizations, 'Selected:', selectedOrganization); // Debug log
-      set({ organizations, selectedOrganization });
     } catch (error) {
-      console.error('Failed to fetch organizations:', error);
+      console.error('Failed to fetch organization:', error);
+      // If user doesn't have an organization, set empty state
+      set({ organizations: [], selectedOrganization: null });
     }
   },
 

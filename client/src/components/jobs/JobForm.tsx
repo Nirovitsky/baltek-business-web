@@ -23,8 +23,8 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
   const { selectedOrganization, organizations } = useAuth();
   const queryClient = useQueryClient();
 
-  // Use the first organization if selectedOrganization is null
-  const currentOrganization = selectedOrganization || organizations[0];
+  // Use the selected organization from auth state
+  const currentOrganization = selectedOrganization;
 
   const form = useForm<CreateJob>({
     resolver: zodResolver(createJobSchema),
@@ -48,7 +48,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       job_type: "full_time",
       workplace_type: "remote",
       status: "open",
-      organization: currentOrganization?.id || 1,
+      organization: currentOrganization?.id,
       salary_payment_type: "monthly",
       required_languages: [],
       date_started: new Date().toLocaleDateString('en-GB').replace(/\//g, '.'), // Today's date in DD.MM.YYYY format
@@ -129,11 +129,20 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
   });
 
   const onSubmit = (data: CreateJob) => {
+    if (!currentOrganization?.id) {
+      toast({
+        title: "Error",
+        description: "No organization found. Please contact support.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Ensure date fields are properly formatted for backend (DD.MM.YYYY)
     // and organization is correctly set
     const formattedData = {
       ...data,
-      organization: currentOrganization?.id || 1,
+      organization: currentOrganization.id,
       date_started: data.date_started || new Date().toLocaleDateString('en-GB').replace(/\//g, '.'),
       date_ended: data.date_ended || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-GB').replace(/\//g, '.'),
     };
