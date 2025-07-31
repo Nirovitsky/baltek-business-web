@@ -186,17 +186,31 @@ export default function Messages() {
     const fetchMemberData = async () => {
       const allMemberIds = new Set<number>();
       
+      console.log('=== FETCH MEMBER DATA DEBUG ===');
+      console.log('Total rooms:', rooms.length);
+      console.log('Current user ID:', user?.id);
+      
       rooms.forEach(room => {
+        console.log(`Room ${room.id}:`, {
+          members: room.members,
+          membersType: typeof room.members,
+          isArray: Array.isArray(room.members)
+        });
+        
         if (Array.isArray(room.members)) {
-          room.members.forEach(memberId => {
+          room.members.forEach((memberId, index) => {
+            console.log(`  Member ${index}:`, memberId, typeof memberId);
             // Ensure memberId is properly handled as a number
             const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
+            console.log(`  Numeric conversion:`, numericMemberId, !isNaN(numericMemberId), numericMemberId !== user?.id);
             if (!isNaN(numericMemberId) && numericMemberId !== user?.id) {
               allMemberIds.add(numericMemberId);
             }
           });
         }
       });
+      
+      console.log('All member IDs to fetch:', Array.from(allMemberIds));
 
       // Fetch user data for each unique member
       const memberDataPromises = Array.from(allMemberIds).map(async (userId) => {
