@@ -27,28 +27,7 @@ export default function Messages() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Check URL parameters for new chat requests
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const newChatUserId = urlParams.get('newChat');
-    const roomHash = window.location.hash;
-    
-    if (newChatUserId) {
-      // Show notification about starting new chat
-      toast({
-        title: "New Chat",
-        description: "Select this user from conversations or wait for them to message you first.",
-      });
-      // Clear URL parameter
-      window.history.replaceState({}, '', '/messages');
-    } else if (roomHash.startsWith('#room-')) {
-      // Handle direct room navigation
-      const roomId = parseInt(roomHash.replace('#room-', ''));
-      if (roomId && !isNaN(roomId)) {
-        // This will be handled by the rooms query effect below
-      }
-    }
-  }, [toast]);
+  // Check URL parameters for new chat requests - removed since we handle this in UserProfile now
 
   const {
     connected,
@@ -219,18 +198,28 @@ export default function Messages() {
     const otherParticipant = room.members.find(
       (p) => p.id !== user?.id,
     );
-    return otherParticipant
-      ? `${otherParticipant.first_name} ${otherParticipant.last_name}`
-      : "Unknown User";
+    
+    if (otherParticipant && otherParticipant.first_name && otherParticipant.last_name) {
+      return `${otherParticipant.first_name} ${otherParticipant.last_name}`;
+    }
+    
+    // Fallback: show the room ID or participant count
+    return room.members.length > 1 ? `Chat Room ${room.id}` : "Private Chat";
   };
 
   const getRoomAvatar = (room: Room) => {
     const otherParticipant = room.members.find(
       (p) => p.id !== user?.id,
     );
-    return otherParticipant
-      ? `${otherParticipant.first_name[0]}${otherParticipant.last_name[0]}`
-      : "U";
+    
+    if (otherParticipant && otherParticipant.first_name && otherParticipant.last_name) {
+      const firstInitial = otherParticipant.first_name[0]?.toUpperCase() || '';
+      const lastInitial = otherParticipant.last_name[0]?.toUpperCase() || '';
+      return firstInitial + lastInitial;
+    }
+    
+    // Fallback avatar
+    return room.id ? `R${room.id}` : "??";
   };
 
   useEffect(() => {

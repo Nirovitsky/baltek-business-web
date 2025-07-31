@@ -177,7 +177,7 @@ export default function UserProfile() {
                     className="bg-gradient-to-r from-blue-500 to-blue-600"
                     onClick={async () => {
                       try {
-                        // Find or create a chat room with this user
+                        // Find existing chat room with this user
                         const response = await apiService.request<{results: Room[]}>('/chat/rooms/');
                         const existingRoom = response.results.find((room: Room) => 
                           room.members.some((member: any) => member.id === userProfile.id)
@@ -187,13 +187,13 @@ export default function UserProfile() {
                           // Navigate to existing room
                           window.location.href = `/messages#room-${existingRoom.id}`;
                         } else {
-                          // For now, navigate to messages page with user ID to show intent
-                          window.location.href = `/messages?newChat=${userProfile.id}`;
+                          // Since API doesn't support creating rooms, show a message
+                          // explaining that the user needs to message first
+                          alert(`To start a conversation with ${userProfile.first_name} ${userProfile.last_name}, they need to apply for a job or send the first message through the platform.`);
                         }
                       } catch (error) {
                         console.error('Error finding chat room:', error);
-                        // Fallback to messages page
-                        window.location.href = `/messages?newChat=${userProfile.id}`;
+                        alert('Unable to access chat rooms at this time. Please try again later.');
                       }
                     }}
                   >
