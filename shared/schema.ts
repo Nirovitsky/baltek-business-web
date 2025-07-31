@@ -11,13 +11,63 @@ export const tokenSchema = z.object({
   refresh: z.string(),
 });
 
+// User Experience schema
+export const userExperienceSchema = z.object({
+  id: z.number(),
+  organization: z.number().optional(),
+  organization_name: z.string(),
+  position: z.string(),
+  description: z.string(),
+  date_started: z.string(),
+  date_finished: z.string().nullable().optional(),
+});
+
+// User Education schema
+export const userEducationSchema = z.object({
+  id: z.number(),
+  university: z.number(),
+  level: z.enum(["secondary", "undergraduate", "bachelor", "master", "doctorate"]),
+  date_started: z.string().nullable().optional(),
+  date_finished: z.string().nullable().optional(),
+});
+
+// User Project schema
+export const userProjectSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  description: z.string(),
+  link: z.string().optional(),
+  date_started: z.string(),
+  date_finished: z.string().nullable().optional(),
+});
+
+// User Resume schema
+export const userResumeSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  file: z.string().nullable().optional(),
+  date_created: z.string(),
+});
+
 // User schemas
 export const userSchema = z.object({
-  id: z.string(),
+  id: z.number(),
   phone: z.string(),
   email: z.string().email().optional(),
   first_name: z.string().optional(),
   last_name: z.string().optional(),
+  profession: z.string().optional(),
+  gender: z.enum(["m", "f"]).optional(),
+  avatar: z.string().optional(),
+  location: z.number().optional(),
+  date_of_birth: z.string().nullable().optional(),
+  experiences: z.array(userExperienceSchema).optional(),
+  educations: z.array(userEducationSchema).optional(),
+  projects: z.array(userProjectSchema).optional(),
+  resumes: z.array(userResumeSchema).optional(),
+  is_jobs_onboarding_completed: z.boolean().optional(),
+  is_organizations_onboarding_completed: z.boolean().optional(),
+  is_online: z.boolean().optional(),
 });
 
 // Organization schemas
@@ -123,8 +173,11 @@ export const userInfoSchema = z.object({
   id: z.number(),
   first_name: z.string(),
   last_name: z.string(),
-  email: z.string().email(),
+  email: z.string().email().optional(),
   phone: z.string(),
+  profession: z.string().optional(),
+  avatar: z.string().optional(),
+  is_online: z.boolean().optional(),
 });
 
 // Job list schema for nested objects
@@ -228,6 +281,10 @@ export const paginatedSchema = <T extends z.ZodType<any>>(itemSchema: T) =>
 // Type exports
 export type LoginRequest = z.infer<typeof loginSchema>;
 export type TokenResponse = z.infer<typeof tokenSchema>;
+export type UserExperience = z.infer<typeof userExperienceSchema>;
+export type UserEducation = z.infer<typeof userEducationSchema>;
+export type UserProject = z.infer<typeof userProjectSchema>;
+export type UserResume = z.infer<typeof userResumeSchema>;
 export type User = z.infer<typeof userSchema>;
 export type Organization = z.infer<typeof organizationSchema>;
 export type OrganizationProject = z.infer<typeof organizationProjectSchema>;
