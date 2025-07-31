@@ -9,7 +9,7 @@ This is a modern business dashboard for the Baltek Karyera platform built with R
 - Preferred communication style: Simple, everyday language
 - Application name: "baltek business" (lowercase "business")
 - Primary color: #1877F2 (Facebook blue)
-- Backend URL: http://116.203.92.15/api/
+- Backend URL: https://api.baltek.net/api/
 - Authentication: Phone number + password (not username)
 
 ## System Architecture
@@ -215,3 +215,9 @@ This is a modern business dashboard for the Baltek Karyera platform built with R
 ✓ Fixed date formatting throughout frontend to display raw date strings properly
 ✓ Enhanced CV/Resume section to always show for business users with download options
 ✓ Added proper file viewing and downloading capabilities for uploaded documents
+
+### Backend URL Migration (July 31, 2025)
+✓ Updated backend API URL from http://116.203.92.15 to https://api.baltek.net
+✓ Updated server configuration in routes.ts to use new secure endpoint
+✓ Updated documentation to reflect new backend URL
+✓ Ensured all API proxy requests now route to the updated backend service
