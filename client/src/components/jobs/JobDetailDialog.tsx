@@ -49,19 +49,17 @@ export default function JobDetailDialog({
   });
 
   const { data: location } = useQuery({
-    queryKey: ['/locations/', typeof job?.location === 'object' ? job?.location?.id : job?.location],
+    queryKey: ['/locations/', job?.location],
     queryFn: () => {
-      const locationId = typeof job!.location === 'object' ? job!.location.id : job!.location;
-      return apiService.request<Location>(`/locations/${locationId}/`);
+      return apiService.request<Location>(`/locations/${job!.location}/`);
     },
     enabled: !!job?.location,
   });
 
   const { data: category } = useQuery({
-    queryKey: ['/categories/', typeof job?.category === 'object' ? job?.category?.id : job?.category],
+    queryKey: ['/categories/', job?.category],
     queryFn: () => {
-      const categoryId = typeof job!.category === 'object' ? job!.category.id : job!.category;
-      return apiService.request<Category>(`/categories/${categoryId}/`);
+      return apiService.request<Category>(`/categories/${job!.category}/`);
     },
     enabled: !!job?.category,
   });
@@ -129,6 +127,18 @@ export default function JobDetailDialog({
     ).join(' ');
   };
 
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'Not specified';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Invalid date';
+    return date.toLocaleDateString();
+  };
+
+  const getApplicationsCount = (job: Job) => {
+    // Use the applications_count field from the Job type
+    return job.applications_count || 0;
+  };
+
   const formatJobType = (type?: string) => {
     if (!type) return 'Unknown';
     return type.split('_').map(word => 
@@ -151,38 +161,36 @@ export default function JobDetailDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            <span>Job Details</span>
-            {job && (
-              <div className="flex items-center space-x-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => onEdit?.(job)}
-                >
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => archiveMutation.mutate()}
-                  disabled={archiveMutation.isPending}
-                >
-                  <Archive className="w-4 h-4 mr-2" />
-                  {job.status === 'archived' ? 'Unarchive' : 'Archive'}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => onDelete?.(job.id)}
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Delete
-                </Button>
-              </div>
-            )}
-          </DialogTitle>
+          <DialogTitle>Job Details</DialogTitle>
+          {job && (
+            <div className="flex items-center space-x-2 pt-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => onEdit?.(job)}
+              >
+                <Edit className="w-4 h-4 mr-2" />
+                Edit
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => archiveMutation.mutate()}
+                disabled={archiveMutation.isPending}
+              >
+                <Archive className="w-4 h-4 mr-2" />
+                {job.status === 'archived' ? 'Unarchive' : 'Archive'}
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => onDelete?.(job.id)}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete
+              </Button>
+            </div>
+          )}
         </DialogHeader>
 
         {isLoading ? (
@@ -212,11 +220,11 @@ export default function JobDetailDialog({
                 </Badge>
                 <span className="text-sm text-gray-500 flex items-center">
                   <Users className="w-4 h-4 mr-1" />
-                  {job.applications_count || 0} applications
+                  {getApplicationsCount(job)} applications
                 </span>
                 <span className="text-sm text-gray-500 flex items-center">
                   <Calendar className="w-4 h-4 mr-1" />
-                  Posted {new Date(job.created_at).toLocaleDateString()}
+                  Posted {formatDate(job.created_at)}
                 </span>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -330,11 +338,11 @@ export default function JobDetailDialog({
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm text-gray-600">Created:</span>
-                    <span className="text-sm font-medium">{new Date(job.created_at).toLocaleDateString()}</span>
+                    <span className="text-sm font-medium">{formatDate(job.created_at)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm text-gray-600">Last Updated:</span>
-                    <span className="text-sm font-medium">{new Date(job.updated_at).toLocaleDateString()}</span>
+                    <span className="text-sm font-medium">{formatDate(job.updated_at)}</span>
                   </div>
                 </CardContent>
               </Card>
