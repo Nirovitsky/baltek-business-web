@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Code, TrendingUp, Palette } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { apiService } from "@/lib/api";
@@ -52,8 +51,7 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
                 <div className="flex-1 space-y-2">
                   <Skeleton className="h-4 w-48" />
                   <Skeleton className="h-3 w-32" />
-                  <div className="flex items-center space-x-4">
-                    <Skeleton className="h-5 w-16" />
+                  <div className="flex items-center">
                     <Skeleton className="h-3 w-24" />
                   </div>
                 </div>
@@ -90,23 +88,7 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
             {jobs.map((job) => {
               const categoryKey = typeof job.category === 'object' ? job.category.name : 'technology';
               const IconComponent = jobIcons[categoryKey] || Code;
-              // Improved status color mapping
-              const getStatusColor = (status: string) => {
-                switch (status?.toLowerCase()) {
-                  case 'open':
-                    return 'bg-green-100 text-green-800';
-                  case 'closed':
-                  case 'archived':
-                    return 'bg-gray-100 text-gray-800';
-                  case 'expired':
-                    return 'bg-red-100 text-red-800';
-                  case 'draft':
-                    return 'bg-blue-100 text-blue-800';
-                  default:
-                    return 'bg-gray-100 text-gray-800';
-                }
-              };
-              const statusColor = getStatusColor(job.status || 'unknown');
+
 
               return (
                 <div 
@@ -122,10 +104,7 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
                       {job.job_type === 'full_time' ? 'Full Time' : 
                        job.job_type === 'part_time' ? 'Part Time' : 'Contract'}
                     </p>
-                    <div className="flex items-center mt-2 space-x-4">
-                      <Badge variant="secondary" className={statusColor}>
-                        {job.status ? job.status.charAt(0).toUpperCase() + job.status.slice(1) : 'Draft'}
-                      </Badge>
+                    <div className="flex items-center mt-2">
                       <span className="text-xs text-gray-500">
                         {job.applications_count || 0} applications
                       </span>
