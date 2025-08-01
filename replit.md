@@ -22,6 +22,10 @@ The Baltek Business Dashboard is a React and Express-based application designed 
 - ✅ **Message Ordering**: Messages now display in chronological order (oldest to newest) with latest at bottom
 - ✅ **WebSocket Only Messaging**: Removed fetch requests after sending messages, now relies purely on WebSocket for real-time updates
 - ✅ **Chat Room Enhancement**: Room names now display "User Name - Job Title" format with clickable job links
+- ✅ **Optimistic Messaging**: Messages appear instantly in chat with proper deduplication when server confirms
+- ✅ **Automatic Reconnection**: WebSocket automatically reconnects with exponential backoff when connection is lost
+- ✅ **Connection Status**: Enhanced status indicator shows reconnection attempts and manual retry option
+- ✅ **Clean UI**: Removed "Sending message..." text, messages appear immediately without loading states
 
 ## User Preferences
 - Preferred communication style: Simple, everyday language

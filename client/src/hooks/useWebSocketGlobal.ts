@@ -16,6 +16,9 @@ let globalMessages: Message[] = [];
 let globalCurrentRoom: number | null = null;
 let globalListeners: Set<() => void> = new Set();
 let messageQueue: Array<{ roomId: number; content: string; attachment?: any }> = [];
+let reconnectInterval: NodeJS.Timeout | null = null;
+let reconnectAttempts = 0;
+let maxReconnectAttempts = 10;
 
 // Global WebSocket manager
 const WebSocketManager = {
@@ -34,6 +37,13 @@ const WebSocketManager = {
         console.log("WebSocket connected globally");
         globalConnected = true;
         globalSocket = ws;
+        
+        // Reset reconnection attempts on successful connection
+        reconnectAttempts = 0;
+        if (reconnectInterval) {
+          clearTimeout(reconnectInterval);
+          reconnectInterval = null;
+        }
         
         // Send queued messages
         if (messageQueue.length > 0) {
@@ -93,6 +103,20 @@ const WebSocketManager = {
         
         // Notify all listeners
         globalListeners.forEach(listener => listener());
+        
+        // Start reconnection attempts
+        if (reconnectAttempts < maxReconnectAttempts) {
+          const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000); // Exponential backoff, max 30s
+          console.log(`Attempting to reconnect in ${delay}ms (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})`);
+          
+          reconnectInterval = setTimeout(() => {
+            reconnectAttempts++;
+            const token = localStorage.getItem('access_token');
+            if (token) {
+              WebSocketManager.connect(token);
+            }
+          }, delay);
+        }
       };
 
       ws.onerror = (error) => {
@@ -104,6 +128,13 @@ const WebSocketManager = {
   },
 
   disconnect: () => {
+    // Clear reconnection attempts when manually disconnecting
+    if (reconnectInterval) {
+      clearTimeout(reconnectInterval);
+      reconnectInterval = null;
+    }
+    reconnectAttempts = 0;
+    
     if (globalSocket && globalSocket.readyState === WebSocket.OPEN) {
       globalSocket.close();
     }
@@ -218,5 +249,14 @@ export function useWebSocketGlobal() {
     joinRoom: WebSocketManager.joinRoom,
     connect: (token: string) => WebSocketManager.connect(token),
     disconnect: WebSocketManager.disconnect,
+    reconnect: () => {
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        reconnectAttempts = 0; // Reset attempts for manual reconnect
+        WebSocketManager.connect(token);
+      }
+    },
+    reconnectAttempts,
+    maxReconnectAttempts,
   };
 }

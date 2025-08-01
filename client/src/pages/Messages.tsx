@@ -37,6 +37,9 @@ export default function Messages() {
     currentRoom,
     sendMessage,
     joinRoom,
+    reconnect,
+    reconnectAttempts,
+    maxReconnectAttempts,
   } = useWebSocketGlobal();
   
   // Access messageQueue - we'll show a simplified queue indicator since it's internal
@@ -248,11 +251,8 @@ export default function Messages() {
       const success = sendMessage(selectedRoom.id, newMessage);
       setNewMessage("");
       
-      // Set a timeout to clear the sending state and remove optimistic message if no response
-      setTimeout(() => {
-        setSendingMessage(false);
-        // If message wasn't confirmed by WebSocket, keep the optimistic message but stop showing as sending
-      }, 2000);
+      // Clear sending state immediately since we're not showing the indicator
+      setSendingMessage(false);
     }
   };
 
@@ -535,11 +535,35 @@ export default function Messages() {
             <h1 className="text-xl font-bold text-gray-900">Messages</h1>
             <div className="flex items-center space-x-2 bg-white px-3 py-1 rounded-full shadow-sm">
               <div
-                className={`w-2 h-2 rounded-full ${connected ? "bg-green-500 animate-pulse" : "bg-red-500"}`}
+                className={`w-2 h-2 rounded-full ${
+                  connected 
+                    ? "bg-green-500 animate-pulse" 
+                    : reconnectAttempts > 0 
+                      ? "bg-yellow-500 animate-pulse" 
+                      : "bg-red-500"
+                }`}
               />
-              <span className={`text-xs font-medium ${connected ? "text-green-600" : "text-red-600"}`}>
-                {connected ? "Connected" : "Disconnected"}
+              <span className={`text-xs font-medium ${
+                connected 
+                  ? "text-green-600" 
+                  : reconnectAttempts > 0 
+                    ? "text-yellow-600" 
+                    : "text-red-600"
+              }`}>
+                {connected 
+                  ? "Connected" 
+                  : reconnectAttempts > 0 
+                    ? `Reconnecting (${reconnectAttempts}/${maxReconnectAttempts})` 
+                    : "Disconnected"}
               </span>
+              {!connected && reconnectAttempts >= maxReconnectAttempts && (
+                <button
+                  onClick={reconnect}
+                  className="text-xs text-blue-600 hover:text-blue-800 underline ml-2"
+                >
+                  Retry
+                </button>
+              )}
             </div>
           </div>
           <div className="relative">
@@ -892,14 +916,7 @@ export default function Messages() {
                   )}
                 </Button>
               </div>
-              {sendingMessage && (
-                <div className="flex items-center space-x-2 mt-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                  <p className="text-xs text-blue-700 font-medium">
-                    Sending message...
-                  </p>
-                </div>
-              )}
+
             </div>
           </>
         ) : (
