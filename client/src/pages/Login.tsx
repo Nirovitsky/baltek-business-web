@@ -74,13 +74,26 @@ export default function Login() {
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone</FormLabel>
+                    <FormLabel>Phone Number</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Enter your phone"
-                        {...field}
-                        disabled={isLoading}
-                      />
+                      <div className="relative flex">
+                        <div className="flex items-center px-3 bg-gray-50 border border-r-0 border-gray-300 rounded-l-md">
+                          <span className="text-gray-600 text-sm font-medium">+993</span>
+                        </div>
+                        <Input
+                          type="tel"
+                          placeholder="Enter your phone number"
+                          maxLength={8}
+                          {...field}
+                          disabled={isLoading}
+                          className="rounded-l-none"
+                          onChange={(e) => {
+                            // Only allow digits and limit to 8 characters
+                            const value = e.target.value.replace(/\D/g, '').slice(0, 8);
+                            field.onChange(value);
+                          }}
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

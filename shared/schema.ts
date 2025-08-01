@@ -2,7 +2,10 @@ import { z } from "zod";
 
 // Authentication schemas
 export const loginSchema = z.object({
-  phone: z.string().min(1, "Phone is required"),
+  phone: z.string()
+    .min(8, "Phone number must be 8 digits")
+    .max(8, "Phone number must be 8 digits")
+    .regex(/^\d{8}$/, "Phone number must contain only digits"),
   password: z.string().min(1, "Password is required"),
 });
 
