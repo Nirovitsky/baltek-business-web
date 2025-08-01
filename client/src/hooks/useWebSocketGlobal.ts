@@ -211,8 +211,14 @@ const WebSocketManager = {
         },
       };
 
+      console.log("Sending message with attachments:", { 
+        text: limitedText, 
+        attachments: attachments || [], 
+        hasAttachments: !!(attachments && attachments.length > 0)
+      });
+      
       globalSocket.send(JSON.stringify(message));
-      console.log("Sent message:", message);
+      console.log("Message sent to WebSocket:", JSON.stringify(message));
       return true;
     } catch (error) {
       console.error("Failed to send message:", error);

@@ -248,6 +248,12 @@ export default function Messages() {
       setOptimisticMessages(prev => [...prev, optimisticMessage]);
       
       // Send message via WebSocket with attachment ID
+      console.log("Attempting to send message with attachment:", {
+        roomId: selectedRoom.id,
+        text: newMessage,
+        attachmentId: uploadedFile.id,
+        attachmentArray: [uploadedFile.id]
+      });
       const success = sendMessage(selectedRoom.id, newMessage, [uploadedFile.id]);
       
       // Reset form
