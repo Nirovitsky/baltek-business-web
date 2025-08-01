@@ -551,10 +551,10 @@ export default function Messages() {
 
   if (roomsLoading) {
     return (
-      <div className="flex h-screen bg-gray-50 items-center justify-center">
+      <div className="flex h-screen bg-background items-center justify-center">
         <div className="text-center">
-          <MessageCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-500">Loading conversations...</p>
+          <MessageCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading conversations...</p>
         </div>
       </div>
     );
@@ -562,9 +562,9 @@ export default function Messages() {
 
   if (rooms.length === 0) {
     return (
-      <div className="flex h-screen bg-gray-50 items-center justify-center">
+      <div className="flex h-screen bg-background items-center justify-center">
         <div className="text-center">
-          <MessageCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <MessageCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
             No conversations yet
           </h2>

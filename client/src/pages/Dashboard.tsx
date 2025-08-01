@@ -75,7 +75,7 @@ export default function Dashboard() {
         description="Manage your job postings and applications"
       />
 
-      <main className="flex-1 overflow-y-auto p-6 space-y-8">
+      <main className="flex-1 overflow-y-auto p-6 space-y-8 bg-muted/30">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatsCard
