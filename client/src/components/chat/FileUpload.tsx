@@ -118,12 +118,12 @@ export default function FileUpload({
           onDrop={handleDrop}
           className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors ${
             dragOver
-              ? 'border-blue-400 bg-blue-50'
-              : 'border-gray-300 hover:border-gray-400'
+              ? 'border-primary bg-primary/10'
+              : 'border-muted-foreground/30 hover:border-muted-foreground/50'
           }`}
         >
-          <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-          <p className="text-sm text-gray-600 mb-2">
+          <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+          <p className="text-sm text-muted-foreground mb-2">
             Drag and drop a file here, or click to select
           </p>
           <Button

@@ -29,17 +29,17 @@ export default function RecentApplications() {
 
   if (isLoading) {
     return (
-      <Card className="shadow-sm border border-gray-200">
-        <CardHeader className="border-b border-gray-200">
+      <Card className="shadow-sm">
+        <CardHeader className="border-b">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900">Recent Applications</h3>
+            <h3 className="text-lg font-semibold">Recent Applications</h3>
             <Button variant="ghost" size="sm">View All</Button>
           </div>
         </CardHeader>
         <CardContent className="p-6">
           <div className="space-y-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="flex items-center space-x-4 p-4 border border-gray-100 rounded-lg">
+              <div key={i} className="flex items-center space-x-4 p-4 border rounded-lg">
                 <Skeleton className="w-10 h-10 rounded-full" />
                 <div className="flex-1 space-y-2">
                   <Skeleton className="h-4 w-32" />
@@ -77,7 +77,7 @@ export default function RecentApplications() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-primary/10 text-primary';
       case 'invited':
         return 'bg-green-100 text-green-800';
       case 'rejected':
@@ -119,10 +119,10 @@ export default function RecentApplications() {
   };
 
   return (
-    <Card className="shadow-sm border border-gray-200">
-      <CardHeader className="border-b border-gray-200">
+    <Card className="shadow-sm">
+      <CardHeader className="border-b">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">Recent Applications</h3>
+          <h3 className="text-lg font-semibold">Recent Applications</h3>
           <Button variant="ghost" size="sm" onClick={() => setLocation('/applications')}>View All</Button>
         </div>
       </CardHeader>

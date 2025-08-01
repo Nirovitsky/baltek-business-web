@@ -22,7 +22,7 @@ import type { JobApplication, PaginatedResponse } from "@shared/schema";
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'pending':
-      return 'bg-blue-100 text-blue-800';
+      return 'bg-primary/10 text-primary';
     case 'invited':
       return 'bg-green-100 text-green-800';
     case 'rejected':
