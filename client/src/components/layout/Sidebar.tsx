@@ -114,7 +114,7 @@ export default function Sidebar() {
                   <div className="w-2 h-2 bg-primary/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
                 <p className="text-xs text-gray-600 truncate font-medium">
-                  {user?.email || 'Personal Account'}
+                  {user?.phone || 'Personal Account'}
                 </p>
               </div>
             </div>
