@@ -1,8 +1,7 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Code, TrendingUp, Palette, Building2 } from "lucide-react";
+import { Code, TrendingUp, Palette } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { apiService } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
@@ -50,7 +49,6 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
               <div key={i} className="flex items-start space-x-4 p-4 border border-gray-100 rounded-lg">
-                <Skeleton className="w-12 h-12 rounded-lg" />
                 <div className="flex-1 space-y-2">
                   <Skeleton className="h-4 w-48" />
                   <Skeleton className="h-3 w-32" />
@@ -92,9 +90,23 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
             {jobs.map((job) => {
               const categoryKey = typeof job.category === 'object' ? job.category.name : 'technology';
               const IconComponent = jobIcons[categoryKey] || Code;
-              const statusColor = job.status === 'open' ? 'bg-green-100 text-green-800' : 
-                                job.status === 'archived' ? 'bg-gray-100 text-gray-800' : 
-                                'bg-yellow-100 text-yellow-800';
+              // Improved status color mapping
+              const getStatusColor = (status: string) => {
+                switch (status?.toLowerCase()) {
+                  case 'open':
+                    return 'bg-green-100 text-green-800';
+                  case 'closed':
+                  case 'archived':
+                    return 'bg-gray-100 text-gray-800';
+                  case 'expired':
+                    return 'bg-red-100 text-red-800';
+                  case 'draft':
+                    return 'bg-blue-100 text-blue-800';
+                  default:
+                    return 'bg-gray-100 text-gray-800';
+                }
+              };
+              const statusColor = getStatusColor(job.status || 'unknown');
 
               return (
                 <div 
@@ -102,22 +114,6 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
                   className="flex items-start space-x-4 p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                   onClick={() => onJobClick?.(job.id)}
                 >
-                  <div className="flex-shrink-0">
-                    <Avatar className="w-12 h-12 rounded-lg">
-                      <AvatarImage 
-                        src={typeof job.organization === 'object' ? job.organization.logo : undefined} 
-                        alt={typeof job.organization === 'object' ? (job.organization.display_name || job.organization.official_name) : 'Organization'} 
-                        className="object-cover rounded-lg"
-                      />
-                      <AvatarFallback className="bg-primary/10 rounded-lg">
-                        {typeof job.organization === 'object' && job.organization.logo ? (
-                          <Building2 className="text-primary w-5 h-5" />
-                        ) : (
-                          <IconComponent className="text-primary w-5 h-5" />
-                        )}
-                      </AvatarFallback>
-                    </Avatar>
-                  </div>
                   <div className="flex-1">
                     <h4 className="font-medium text-gray-900">{job.title}</h4>
                     <p className="text-sm text-gray-500">
@@ -128,7 +124,7 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
                     </p>
                     <div className="flex items-center mt-2 space-x-4">
                       <Badge variant="secondary" className={statusColor}>
-                        {job.status ? job.status.charAt(0).toUpperCase() + job.status.slice(1) : 'Unknown'}
+                        {job.status ? job.status.charAt(0).toUpperCase() + job.status.slice(1) : 'Draft'}
                       </Badge>
                       <span className="text-xs text-gray-500">
                         {job.applications_count || 0} applications
