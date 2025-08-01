@@ -106,6 +106,11 @@ export default function Applications() {
 
   const applications = data?.results || [];
   
+  // Debug: Log the first application to see its structure
+  if (applications.length > 0) {
+    console.log('First application data:', applications[0]);
+  }
+  
   // First filter by organization to ensure we only show applications for jobs 
   // that belong to the selected organization
   const organizationFilteredApplications = applications.filter(app => {
@@ -266,7 +271,7 @@ export default function Applications() {
                   {/* Application Details Section */}
                   <div className="space-y-3">
                     {/* Cover Letter */}
-                    {application.cover_letter && (
+                    {application.cover_letter ? (
                       <div className="bg-gray-50 rounded-md p-3">
                         <div className="flex items-center space-x-2 mb-2">
                           <FileText className="w-4 h-4 text-blue-600 flex-shrink-0" />
@@ -278,7 +283,8 @@ export default function Applications() {
                               {application.cover_letter.substring(0, 120)}...
                               <button 
                                 className="text-blue-600 hover:text-blue-800 ml-1 font-medium"
-                                onClick={() => {
+                                onClick={(e) => {
+                                  e.stopPropagation();
                                   alert(application.cover_letter);
                                 }}
                               >
@@ -290,10 +296,20 @@ export default function Applications() {
                           )}
                         </div>
                       </div>
+                    ) : (
+                      <div className="bg-gray-50 rounded-md p-3">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <FileText className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                          <h4 className="text-xs font-semibold text-gray-500">Cover Letter</h4>
+                        </div>
+                        <div className="text-xs text-gray-500 italic">
+                          No cover letter provided
+                        </div>
+                      </div>
                     )}
 
                     {/* Resume/CV */}
-                    {application.resume && (
+                    {application.resume ? (
                       <div className="bg-blue-50 rounded-md p-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
@@ -305,18 +321,22 @@ export default function Applications() {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center space-x-1 text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors"
+                            onClick={(e) => e.stopPropagation()}
                           >
                             <Download className="w-3 h-3" />
                             <span>View</span>
                           </a>
                         </div>
                       </div>
-                    )}
-
-                    {/* Show message if no cover letter or CV */}
-                    {!application.cover_letter && !application.resume && (
-                      <div className="text-xs text-gray-500 italic text-center py-2">
-                        No cover letter or CV provided
+                    ) : (
+                      <div className="bg-gray-100 rounded-md p-3">
+                        <div className="flex items-center space-x-2">
+                          <Download className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                          <h4 className="text-xs font-semibold text-gray-500">Resume/CV</h4>
+                        </div>
+                        <div className="text-xs text-gray-500 italic mt-1">
+                          No CV uploaded
+                        </div>
                       </div>
                     )}
 
@@ -434,27 +454,33 @@ export default function Applications() {
                 </div>
 
                 {/* Cover Letter */}
-                {selectedApplication.cover_letter && (
-                  <div className="space-y-3">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
-                      <FileText className="w-5 h-5 text-blue-600" />
-                      <span>Cover Letter</span>
-                    </h3>
+                <div className="space-y-3">
+                  <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
+                    <FileText className="w-5 h-5 text-blue-600" />
+                    <span>Cover Letter</span>
+                  </h3>
+                  {selectedApplication.cover_letter ? (
                     <div className="bg-gray-50 rounded-lg p-4">
                       <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
                         {selectedApplication.cover_letter}
                       </p>
                     </div>
-                  </div>
-                )}
+                  ) : (
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <p className="text-sm text-gray-500 italic">
+                        No cover letter provided by the applicant
+                      </p>
+                    </div>
+                  )}
+                </div>
 
                 {/* Resume/CV */}
-                {selectedApplication.resume && (
-                  <div className="space-y-3">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
-                      <Download className="w-5 h-5 text-blue-600" />
-                      <span>Resume/CV</span>
-                    </h3>
+                <div className="space-y-3">
+                  <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
+                    <Download className="w-5 h-5 text-blue-600" />
+                    <span>Resume/CV</span>
+                  </h3>
+                  {selectedApplication.resume ? (
                     <div className="bg-blue-50 rounded-lg p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
@@ -475,8 +501,29 @@ export default function Applications() {
                         Click the download button to view the full resume document
                       </p>
                     </div>
+                  ) : (
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <p className="text-sm text-gray-500 italic">
+                        No CV/resume uploaded by the applicant
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Debug Information */}
+                <div className="space-y-3 border-t pt-4">
+                  <h3 className="text-sm font-semibold text-gray-600">Debug Info</h3>
+                  <div className="bg-yellow-50 rounded-lg p-3 text-xs">
+                    <p><strong>Cover Letter:</strong> {selectedApplication.cover_letter ? 'Available' : 'Not provided'}</p>
+                    <p><strong>Resume:</strong> {selectedApplication.resume ? 'Available' : 'Not provided'}</p>
+                    <details className="mt-2">
+                      <summary className="cursor-pointer text-blue-600">View Raw Data</summary>
+                      <pre className="mt-2 text-xs overflow-auto">
+                        {JSON.stringify(selectedApplication, null, 2)}
+                      </pre>
+                    </details>
                   </div>
-                )}
+                </div>
 
                 {/* Actions */}
                 <div className="flex items-center justify-between pt-4 border-t border-gray-200">
