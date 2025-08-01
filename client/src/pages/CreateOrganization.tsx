@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Redirect } from "wouter";
 import {
   Card,
@@ -20,12 +20,19 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
 import { Building2 } from "lucide-react";
 import { z } from "zod";
-import type { Organization } from "@shared/schema";
+import type { Organization, Category, Location, PaginatedResponse } from "@shared/schema";
 
 const createOrganizationSchema = z.object({
   official_name: z.string().min(1, "Organization name is required"),
@@ -35,6 +42,8 @@ const createOrganizationSchema = z.object({
   website: z.string().url().optional().or(z.literal("")),
   email: z.string().email().optional().or(z.literal("")),
   phone: z.string().optional(),
+  category_id: z.number().min(1, "Category is required"),
+  location_id: z.number().min(1, "Location is required"),
 });
 
 type CreateOrganizationData = z.infer<typeof createOrganizationSchema>;
@@ -42,6 +51,20 @@ type CreateOrganizationData = z.infer<typeof createOrganizationSchema>;
 export default function CreateOrganization() {
   const { toast } = useToast();
   const { selectedOrganization, fetchOrganizations } = useAuth();
+
+  // Fetch categories for dropdown
+  const { data: categories } = useQuery({
+    queryKey: ['/categories/'],
+    queryFn: () => apiService.request<Category[]>('/categories/'),
+  });
+
+  // Fetch locations for dropdown
+  const { data: locationsData } = useQuery({
+    queryKey: ['/locations/'],
+    queryFn: () => apiService.request<PaginatedResponse<Location>>('/locations/'),
+  });
+
+  const locations = locationsData?.results || [];
 
   const form = useForm<CreateOrganizationData>({
     resolver: zodResolver(createOrganizationSchema),
@@ -53,6 +76,8 @@ export default function CreateOrganization() {
       website: "",
       email: "",
       phone: "",
+      category_id: undefined,
+      location_id: undefined,
     },
   });
 
@@ -170,6 +195,64 @@ export default function CreateOrganization() {
                   </FormItem>
                 )}
               />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="category_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category*</FormLabel>
+                      <Select 
+                        onValueChange={(value) => field.onChange(Number(value))} 
+                        value={field.value?.toString()}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {categories?.map((category) => (
+                            <SelectItem key={category.id} value={category.id.toString()}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="location_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Location*</FormLabel>
+                      <Select 
+                        onValueChange={(value) => field.onChange(Number(value))} 
+                        value={field.value?.toString()}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select location" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {locations?.map((location) => (
+                            <SelectItem key={location.id} value={location.id.toString()}>
+                              {location.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
