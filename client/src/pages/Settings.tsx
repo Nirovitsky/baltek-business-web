@@ -8,11 +8,12 @@ import { Separator } from "@/components/ui/separator";
 import { LogOut, Settings as SettingsIcon, Bell, Shield, Globe, Palette } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { useTheme } from "@/components/theme-provider";
 
 export default function Settings() {
   const { logout } = useAuth();
   const { toast } = useToast();
-  const [darkMode, setDarkMode] = useState(false);
+  const { theme, setTheme } = useTheme();
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(true);
 
@@ -32,7 +33,7 @@ export default function Settings() {
         showCreateButton={false}
       />
 
-      <main className="flex-1 overflow-y-auto p-6">
+      <main className="flex-1 overflow-y-auto p-6 bg-muted/30">
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Preferences Section */}
           <Card className="shadow-md">
@@ -48,20 +49,20 @@ export default function Settings() {
             <CardContent className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <Palette className="w-5 h-5 text-gray-600" />
+                  <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center">
+                    <Palette className="w-5 h-5 text-muted-foreground" />
                   </div>
                   <div className="space-y-1">
                     <Label htmlFor="dark-mode">Dark Mode</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-muted-foreground">
                       Switch between light and dark themes
                     </p>
                   </div>
                 </div>
                 <Switch
                   id="dark-mode"
-                  checked={darkMode}
-                  onCheckedChange={setDarkMode}
+                  checked={theme === "dark"}
+                  onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
                 />
               </div>
 
@@ -69,12 +70,12 @@ export default function Settings() {
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <Globe className="w-5 h-5 text-gray-600" />
+                  <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center">
+                    <Globe className="w-5 h-5 text-muted-foreground" />
                   </div>
                   <div className="space-y-1">
                     <Label>Language</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-muted-foreground">
                       Currently set to English
                     </p>
                   </div>
@@ -100,12 +101,12 @@ export default function Settings() {
             <CardContent className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <Bell className="w-5 h-5 text-blue-600" />
+                  <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <Bell className="w-5 h-5 text-primary" />
                   </div>
                   <div className="space-y-1">
                     <Label htmlFor="email-notifications">Email Notifications</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-muted-foreground">
                       Receive updates and alerts via email
                     </p>
                   </div>
@@ -121,12 +122,12 @@ export default function Settings() {
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center">
                     <Bell className="w-5 h-5 text-green-600" />
                   </div>
                   <div className="space-y-1">
                     <Label htmlFor="push-notifications">Push Notifications</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-muted-foreground">
                       Get instant browser notifications
                     </p>
                   </div>
@@ -159,7 +160,7 @@ export default function Settings() {
                   </div>
                   <div className="space-y-1">
                     <Label>Password</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-muted-foreground">
                       Update your account password
                     </p>
                   </div>
@@ -173,12 +174,12 @@ export default function Settings() {
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                    <LogOut className="w-5 h-5 text-red-600" />
+                  <div className="w-10 h-10 bg-destructive/10 rounded-lg flex items-center justify-center">
+                    <LogOut className="w-5 h-5 text-destructive" />
                   </div>
                   <div className="space-y-1">
                     <Label>Log Out</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-muted-foreground">
                       End your current session
                     </p>
                   </div>
