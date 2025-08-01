@@ -183,12 +183,6 @@ export default function Applications() {
                   </div>
                   
                   <div className="space-y-2">
-                    <div className="bg-gray-50 rounded-md p-3">
-                      <Skeleton className="h-3 w-20 mb-2" />
-                      <Skeleton className="h-3 w-full" />
-                      <Skeleton className="h-3 w-2/3" />
-                    </div>
-                    
                     <div className="flex items-center justify-between pt-2 border-t border-gray-200">
                       <Skeleton className="h-8 w-20" />
                       <div className="flex items-center space-x-2">
@@ -268,126 +262,53 @@ export default function Applications() {
                     </Badge>
                   </div>
 
-                  {/* Application Details Section */}
-                  <div className="space-y-3">
-                    {/* Cover Letter */}
-                    {application.cover_letter ? (
-                      <div className="bg-gray-50 rounded-md p-3">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <FileText className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                          <h4 className="text-xs font-semibold text-gray-900">Cover Letter</h4>
-                        </div>
-                        <div className="text-xs text-gray-700 leading-relaxed">
-                          {application.cover_letter.length > 120 ? (
-                            <>
-                              {application.cover_letter.substring(0, 120)}...
-                              <button 
-                                className="text-blue-600 hover:text-blue-800 ml-1 font-medium"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  alert(application.cover_letter);
-                                }}
-                              >
-                                Read more
-                              </button>
-                            </>
-                          ) : (
-                            application.cover_letter
-                          )}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="bg-gray-50 rounded-md p-3">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <FileText className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                          <h4 className="text-xs font-semibold text-gray-500">Cover Letter</h4>
-                        </div>
-                        <div className="text-xs text-gray-500 italic">
-                          No cover letter provided
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Resume/CV */}
-                    {application.resume ? (
-                      <div className="bg-blue-50 rounded-md p-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
-                            <Download className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                            <h4 className="text-xs font-semibold text-gray-900">Resume/CV</h4>
-                          </div>
-                          <a 
-                            href={application.resume}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center space-x-1 text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <Download className="w-3 h-3" />
-                            <span>View</span>
-                          </a>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="bg-gray-100 rounded-md p-3">
-                        <div className="flex items-center space-x-2">
-                          <Download className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                          <h4 className="text-xs font-semibold text-gray-500">Resume/CV</h4>
-                        </div>
-                        <div className="text-xs text-gray-500 italic mt-1">
-                          No CV uploaded
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Actions Section */}
-                    <div 
-                      className="flex items-center justify-between pt-2 border-t border-gray-200"
-                      onClick={(e) => e.stopPropagation()}
+                  {/* Actions Section */}
+                  <div 
+                    className="flex items-center justify-between pt-2 border-t border-gray-200"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Select
+                      value={application.status}
+                      onValueChange={(value) => handleStatusChange(application.id, value)}
+                      disabled={updateApplicationMutation.isPending}
                     >
-                      <Select
-                        value={application.status}
-                        onValueChange={(value) => handleStatusChange(application.id, value)}
-                        disabled={updateApplicationMutation.isPending}
+                      <SelectTrigger className="w-24 h-8 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="invited">Invited</SelectItem>
+                        <SelectItem value="rejected">Rejected</SelectItem>
+                        <SelectItem value="hired">Hired</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCreateChatRoom(application.id);
+                        }}
+                        disabled={createChatRoomMutation.isPending}
+                        className="h-8 px-2 text-xs"
                       >
-                        <SelectTrigger className="w-24 h-8 text-xs">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="pending">Pending</SelectItem>
-                          <SelectItem value="invited">Invited</SelectItem>
-                          <SelectItem value="rejected">Rejected</SelectItem>
-                          <SelectItem value="hired">Hired</SelectItem>
-                        </SelectContent>
-                      </Select>
+                        <MessageCircle className="w-3 h-3 mr-1" />
+                        Message
+                      </Button>
                       
-                      <div className="flex items-center space-x-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleCreateChatRoom(application.id);
-                          }}
-                          disabled={createChatRoomMutation.isPending}
-                          className="h-8 px-2 text-xs"
-                        >
-                          <MessageCircle className="w-3 h-3 mr-1" />
-                          Message
-                        </Button>
-                        
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setLocation(`/profile/${application.owner.id}`);
-                          }}
-                          className="h-8 px-2 text-xs text-gray-600 hover:text-gray-900"
-                        >
-                          Profile
-                        </Button>
-                      </div>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setLocation(`/profile/${application.owner.id}`);
+                        }}
+                        className="h-8 px-2 text-xs text-gray-600 hover:text-gray-900"
+                      >
+                        Profile
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
