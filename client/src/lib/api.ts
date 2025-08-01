@@ -162,6 +162,61 @@ export class ApiService {
   isAuthenticated(): boolean {
     return !!localStorage.getItem('access_token');
   }
+
+  async uploadFile(file: File): Promise<{ id: number; url: string; name: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const url = `${API_BASE_URL}/files/`;
+    const headers = {
+      ...this.getAuthHeaders(),
+      // Don't set Content-Type for FormData, let browser set it with boundary
+    };
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: formData,
+      });
+
+      return await this.handleResponse(response);
+    } catch (error: any) {
+      if (error.status === 401 && localStorage.getItem('refresh_token')) {
+        try {
+          await this.performTokenRefresh();
+          // Retry upload with new token
+          const retryHeaders = {
+            ...this.getAuthHeaders(),
+          };
+          const retryResponse = await fetch(url, {
+            method: 'POST',
+            headers: retryHeaders,
+            body: formData,
+          });
+          return await this.handleResponse(retryResponse);
+        } catch (refreshError) {
+          this.logout();
+          throw refreshError;
+        }
+      }
+      throw error;
+    }
+  }
+
+  async sendMessageWithAttachment(roomId: number, text: string, attachments: number[]): Promise<any> {
+    return this.request('/files/', {
+      method: 'POST',
+      body: JSON.stringify({
+        type: 'send_message',
+        data: {
+          room: roomId,
+          text: text,
+          attachments: attachments
+        }
+      })
+    });
+  }
 }
 
 export const apiService = new ApiService();

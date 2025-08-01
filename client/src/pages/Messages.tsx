@@ -189,26 +189,23 @@ export default function Messages() {
 
   const uploadFileMutation = useMutation({
     mutationFn: async (file: File) => {
-      // Simulate upload progress with more realistic intervals
       setUploadProgress(0);
       
-      // Simulate upload chunks
-      const chunks = [0, 15, 35, 60, 80, 100];
-      for (const progress of chunks) {
-        setUploadProgress(progress);
-        await new Promise(resolve => setTimeout(resolve, 300));
+      // Simulate upload progress while actual upload happens
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => Math.min(prev + 20, 90));
+      }, 200);
+      
+      try {
+        const result = await apiService.uploadFile(file);
+        clearInterval(progressInterval);
+        setUploadProgress(100);
+        return result;
+      } catch (error) {
+        clearInterval(progressInterval);
+        setUploadProgress(0);
+        throw error;
       }
-      
-      // Simulate final processing
-      await new Promise(resolve => setTimeout(resolve, 200));
-      
-      // For now, simulate the upload since we don't have actual file storage
-      return {
-        url: `https://example.com/files/${Date.now()}-${file.name}`,
-        name: file.name,
-        type: file.type,
-        size: file.size,
-      };
     },
   });
 
@@ -216,18 +213,31 @@ export default function Messages() {
     if (!selectedRoom || (!newMessage.trim() && !selectedFile)) return;
 
     if (selectedFile) {
-      // Send file
+      // Upload file first, then send message with attachment
       uploadFileMutation.mutate(selectedFile, {
-        onSuccess: (uploadResult) => {
-          // Send message with attachment
-          const success = sendMessage(selectedRoom.id, newMessage || '', uploadResult);
-          if (success) {
+        onSuccess: async (uploadResult) => {
+          try {
+            // Send message with attachment using the API format
+            await apiService.sendMessageWithAttachment(
+              selectedRoom.id, 
+              newMessage || '', 
+              [uploadResult.id]
+            );
+            
             setNewMessage("");
             setSelectedFile(null);
             setShowFileUpload(false);
             setUploadProgress(0);
-            // WebSocket will handle adding the message to the list
-          } else {
+            
+            // Invalidate messages to get the new message from server
+            queryClient.invalidateQueries({ queryKey: ["/chat/messages/", selectedRoom.id] });
+            
+            toast({
+              title: "Message sent",
+              description: "Your message with attachment was sent successfully.",
+            });
+          } catch (error) {
+            console.error('Failed to send message with attachment:', error);
             toast({
               title: "Error",
               description: "Failed to send message with attachment.",
@@ -235,7 +245,8 @@ export default function Messages() {
             });
           }
         },
-        onError: () => {
+        onError: (error) => {
+          console.error('File upload failed:', error);
           toast({
             title: "Upload failed",
             description: "Failed to upload file. Please try again.",
