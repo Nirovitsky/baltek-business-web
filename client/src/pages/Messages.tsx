@@ -91,10 +91,38 @@ export default function Messages() {
   // Combine API messages, WebSocket messages, and optimistic messages
   const allMessages = selectedRoom?.id === currentRoom
     ? (() => {
-        const combined = [...apiMessages, ...optimisticMessages];
+        // Start with API messages and WebSocket messages
+        const combined = [...apiMessages];
         wsMessages.forEach(wsMsg => {
           if (!combined.some(apiMsg => apiMsg.id === wsMsg.id)) {
             combined.push(wsMsg);
+          }
+        });
+        
+        // Only add optimistic messages that don't have corresponding real messages
+        optimisticMessages.forEach(optMsg => {
+          const hasRealMessage = combined.some(realMsg => 
+            realMsg.text === optMsg.text && 
+            realMsg.owner.id === optMsg.owner.id && 
+            realMsg.room === optMsg.room
+          );
+          if (!hasRealMessage) {
+            combined.push(optMsg);
+          }
+        });
+        
+        return combined.sort((a, b) => {
+          const dateA = parseDate(a.date_created).getTime();
+          const dateB = parseDate(b.date_created).getTime();
+          return dateA - dateB;
+        });
+      })()
+    : (() => {
+        // For rooms that are not the current WebSocket room, only use API messages and optimistic
+        const combined = [...apiMessages];
+        optimisticMessages.forEach(optMsg => {
+          if (optMsg.room === selectedRoom?.id) {
+            combined.push(optMsg);
           }
         });
         return combined.sort((a, b) => {
@@ -102,21 +130,17 @@ export default function Messages() {
           const dateB = parseDate(b.date_created).getTime();
           return dateA - dateB;
         });
-      })()
-    : [...apiMessages, ...optimisticMessages].sort((a, b) => {
-        const dateA = parseDate(a.date_created).getTime();
-        const dateB = parseDate(b.date_created).getTime();
-        return dateA - dateB;
-      });
+      })();
 
   // Clear optimistic messages when real messages with same content arrive
   useEffect(() => {
     if (optimisticMessages.length > 0 && wsMessages.length > 0) {
       const newOptimisticMessages = optimisticMessages.filter(optimistic => {
+        // Remove optimistic message if we find a real message with same text from same user
         return !wsMessages.some(ws => 
           ws.text === optimistic.text && 
           ws.owner.id === optimistic.owner.id &&
-          Math.abs(parseDate(ws.date_created).getTime() - parseDate(optimistic.date_created).getTime()) < 30000
+          ws.room === optimistic.room
         );
       });
       if (newOptimisticMessages.length !== optimisticMessages.length) {
@@ -124,6 +148,14 @@ export default function Messages() {
       }
     }
   }, [wsMessages, optimisticMessages]);
+
+  // Also clear optimistic messages when we get new messages via WebSocket
+  useEffect(() => {
+    if (wsMessages.length > 0) {
+      // Clear all optimistic messages for the current room when new real messages arrive
+      setOptimisticMessages(prev => prev.filter(opt => opt.room !== selectedRoom?.id));
+    }
+  }, [wsMessages.length, selectedRoom?.id]);
 
   // Clear optimistic messages when room changes
   useEffect(() => {
@@ -202,10 +234,10 @@ export default function Messages() {
           first_name: user?.first_name || 'You',
           last_name: user?.last_name || '',
         },
-        attachment_url: null,
-        attachment_name: null,
-        attachment_type: null,
-        attachment_size: null,
+        attachment_url: undefined,
+        attachment_name: undefined,
+        attachment_type: undefined,
+        attachment_size: undefined,
       };
 
       // Add optimistic message immediately
@@ -215,11 +247,12 @@ export default function Messages() {
       // Send text message
       const success = sendMessage(selectedRoom.id, newMessage);
       setNewMessage("");
-      setSendingMessage(false);
       
-      if (!success) {
-        console.log("Message queued for sending when connected");
-      }
+      // Set a timeout to clear the sending state and remove optimistic message if no response
+      setTimeout(() => {
+        setSendingMessage(false);
+        // If message wasn't confirmed by WebSocket, keep the optimistic message but stop showing as sending
+      }, 2000);
     }
   };
 
