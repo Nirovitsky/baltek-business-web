@@ -307,7 +307,7 @@ export default function Applications() {
                       
                       <TableCell>
                         <div className="font-medium">{application.job.title}</div>
-                        <div className="text-sm text-gray-500">{application.job.organization?.official_name || 'Organization'}</div>
+                        <div className="text-sm text-gray-500">{application.job.organization?.name || 'Organization'}</div>
                       </TableCell>
                       
                       <TableCell>

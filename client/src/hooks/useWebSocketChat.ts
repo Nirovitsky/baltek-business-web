@@ -163,6 +163,11 @@ export function useWebSocketChat() {
   };
 
   const joinRoom = (roomId: number) => {
+    // Prevent joining the same room multiple times
+    if (currentRoom === roomId) {
+      return;
+    }
+    
     setCurrentRoom(roomId);
     setMessages([]); // Clear WebSocket messages when switching rooms
     

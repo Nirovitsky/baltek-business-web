@@ -172,6 +172,11 @@ export default function Messages() {
   };
 
   const handleRoomSelect = (room: Room) => {
+    // Prevent selecting the same room multiple times
+    if (selectedRoom?.id === room.id) {
+      return;
+    }
+    
     setSelectedRoom(room);
     joinRoom(room.id);
     // Invalidate messages query to refresh
@@ -212,9 +217,10 @@ export default function Messages() {
       
       console.log('All member IDs to fetch:', Array.from(allMemberIds));
 
-      // Fetch user data for each unique member
-      const memberDataPromises = Array.from(allMemberIds).map(async (userId) => {
-        if (roomMemberData[userId]) return; // Already have this data
+      // Fetch user data for each unique member (only if we don't already have it)
+      const memberDataPromises = Array.from(allMemberIds)
+        .filter(userId => !roomMemberData[userId]) // Only fetch if we don't have the data
+        .map(async (userId) => {
         
         try {
           // Ensure userId is a number when making the request
@@ -255,10 +261,10 @@ export default function Messages() {
       await Promise.all(memberDataPromises);
     };
 
-    if (rooms.length > 0) {
+    if (rooms.length > 0 && user?.id) {
       fetchMemberData();
     }
-  }, [rooms, user?.id, roomMemberData, apiService]);
+  }, [rooms, user?.id]); // Removed roomMemberData dependency to prevent loop
 
   const filteredRooms = rooms.filter((room) => {
     const participantNames = room.members
