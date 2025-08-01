@@ -98,12 +98,12 @@ export default function JobDetails() {
 
   const formatSalary = (from?: number, to?: number, type?: string, currency?: string) => {
     if (!from && !to) return null;
-    const currencySymbol = currency || '$';
+    const currencySymbol = currency === 'USD' ? '$' : currency === 'TMT' ? 'TMT' : (currency || 'TMT');
     const typeLabel = type ? ` / ${type.replace('_', ' ')}` : '';
     if (from && to) {
-      return `${currencySymbol}${from.toLocaleString()} - ${currencySymbol}${to.toLocaleString()}${typeLabel}`;
+      return `${currencySymbol} ${from.toLocaleString()} - ${currencySymbol} ${to.toLocaleString()}${typeLabel}`;
     }
-    return `${currencySymbol}${(from || to)?.toLocaleString()}${typeLabel}`;
+    return `${currencySymbol} ${(from || to)?.toLocaleString()}${typeLabel}`;
   };
 
   const formatEducationLevel = (level?: string) => {
@@ -265,7 +265,11 @@ export default function JobDetails() {
                       <div>
                         <span className="text-sm font-medium text-gray-700">Minimum Salary</span>
                         <p className="text-gray-900 mt-1 text-lg font-semibold">
-                          ${job.salary_from.toLocaleString()}
+                          {(() => {
+                            const currency = job.currency || 'TMT';
+                            const currencySymbol = currency === 'USD' ? '$' : currency === 'TMT' ? 'TMT' : currency;
+                            return `${currencySymbol} ${job.salary_from.toLocaleString()}`;
+                          })()}
                         </p>
                       </div>
                     )}
@@ -273,7 +277,11 @@ export default function JobDetails() {
                       <div>
                         <span className="text-sm font-medium text-gray-700">Maximum Salary</span>
                         <p className="text-gray-900 mt-1 text-lg font-semibold">
-                          ${job.salary_to.toLocaleString()}
+                          {(() => {
+                            const currency = job.currency || 'TMT';
+                            const currencySymbol = currency === 'USD' ? '$' : currency === 'TMT' ? 'TMT' : currency;
+                            return `${currencySymbol} ${job.salary_to.toLocaleString()}`;
+                          })()}
                         </p>
                       </div>
                     )}

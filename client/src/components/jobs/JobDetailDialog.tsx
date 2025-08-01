@@ -88,13 +88,14 @@ export default function JobDetailDialog({
     }
   };
 
-  const formatSalary = (from?: number, to?: number, type?: string) => {
+  const formatSalary = (from?: number, to?: number, type?: string, currency?: string) => {
     if (!from && !to) return null;
+    const currencySymbol = currency === 'USD' ? '$' : currency === 'TMT' ? 'TMT' : (currency || 'TMT');
     const typeLabel = type ? ` / ${type.replace('_', ' ')}` : '';
     if (from && to) {
-      return `$${from.toLocaleString()} - $${to.toLocaleString()}${typeLabel}`;
+      return `${currencySymbol} ${from.toLocaleString()} - ${currencySymbol} ${to.toLocaleString()}${typeLabel}`;
     }
-    return `$${(from || to)?.toLocaleString()}${typeLabel}`;
+    return `${currencySymbol} ${(from || to)?.toLocaleString()}${typeLabel}`;
   };
 
   const formatEducationLevel = (level?: string) => {
@@ -256,7 +257,7 @@ export default function JobDetailDialog({
                   </CardHeader>
                   <CardContent>
                     <p className="text-lg font-semibold">
-                      {formatSalary(job.salary_from, job.salary_to, job.salary_payment_type)}
+                      {formatSalary(job.salary_from, job.salary_to, job.salary_payment_type, job.currency)}
                     </p>
                   </CardContent>
                 </Card>
