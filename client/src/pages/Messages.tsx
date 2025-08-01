@@ -578,7 +578,7 @@ export default function Messages() {
   }
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="flex h-screen bg-background">
       {/* Sidebar */}
       <div className="w-1/3 bg-card shadow-lg border-r border flex flex-col">
         <div className="p-4 border-b border bg-gradient-to-r from-primary/10 to-primary/5">
@@ -588,18 +588,18 @@ export default function Messages() {
               <div
                 className={`w-2 h-2 rounded-full ${
                   connected 
-                    ? "bg-green-500 animate-pulse" 
+                    ? "bg-green-500 dark:bg-green-400 animate-pulse" 
                     : reconnectAttempts > 0 
-                      ? "bg-yellow-500 animate-pulse" 
-                      : "bg-red-500"
+                      ? "bg-yellow-500 dark:bg-yellow-400 animate-pulse" 
+                      : "bg-red-500 dark:bg-red-400"
                 }`}
               />
               <span className={`text-xs font-medium ${
                 connected 
-                  ? "text-green-600" 
+                  ? "text-green-600 dark:text-green-400" 
                   : reconnectAttempts > 0 
-                    ? "text-yellow-600" 
-                    : "text-red-600"
+                    ? "text-yellow-600 dark:text-yellow-400" 
+                    : "text-red-600 dark:text-red-400"
               }`}>
                 {connected 
                   ? "Connected" 
@@ -618,7 +618,7 @@ export default function Messages() {
             </div>
           </div>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               placeholder="Search conversations..."
               value={searchQuery}
