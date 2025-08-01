@@ -15,7 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
-import { Building2, Globe, MapPin } from "lucide-react";
+import { Building2, Globe, MapPin, Upload, X } from "lucide-react";
 import { z } from "zod";
 import type { Organization } from "@shared/schema";
 
@@ -38,6 +38,9 @@ type OrganizationUpdate = z.infer<typeof organizationUpdateSchema>;
 export default function Organization() {
   const [isEditing, setIsEditing] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string>("");
+  const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { selectedOrganization, fetchOrganizations } = useAuth();
@@ -143,7 +146,102 @@ export default function Organization() {
         logo: selectedOrganization.logo || "",
       });
     }
+    setLogoFile(null);
+    setLogoPreview("");
     setIsEditing(false);
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.match(/^image\/(jpeg|jpg|png)$/)) {
+      toast({
+        title: "Invalid file type",
+        description: "Please select a JPG or PNG image",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file size (2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please select an image smaller than 2MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLogoFile(file);
+    
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setLogoPreview(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleLogoUpload = async () => {
+    if (!logoFile || !selectedOrganization) return;
+
+    setIsUploading(true);
+    try {
+      // Create FormData for file upload
+      const formData = new FormData();
+      formData.append('file', logoFile);
+
+      // Upload file to the API
+      const response = await fetch('/api/files/', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upload logo');
+      }
+
+      const uploadResult = await response.json();
+      
+      // Update organization with new logo URL
+      const updateData = { logo: uploadResult.url || uploadResult.file };
+      const updatedOrg = await apiService.request<Organization>(`/organizations/${selectedOrganization.id}/`, {
+        method: 'PATCH',
+        body: JSON.stringify(updateData),
+      });
+
+      // Update form and auth state
+      form.setValue('logo', updatedOrg.logo || '');
+      const { updateSelectedOrganization } = useAuth.getState();
+      updateSelectedOrganization(updatedOrg);
+
+      setLogoFile(null);
+      setLogoPreview("");
+      
+      toast({
+        title: "Success",
+        description: "Logo uploaded successfully",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Upload failed",
+        description: error.message || "Failed to upload logo",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const removeLogo = () => {
+    setLogoFile(null);
+    setLogoPreview("");
   };
 
   return (
@@ -159,17 +257,10 @@ export default function Organization() {
           {/* Organization Profile Card */}
           <Card>
             <CardHeader>
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center">
-                  <Building2 className="w-8 h-8 text-primary" />
-                </div>
-                <div>
-                  <CardTitle>Organization Profile</CardTitle>
-                  <CardDescription>
-                    Manage your organization information and branding
-                  </CardDescription>
-                </div>
-              </div>
+              <CardTitle>Organization Details</CardTitle>
+              <CardDescription>
+                Update your organization information
+              </CardDescription>
             </CardHeader>
 
             <CardContent>
@@ -205,8 +296,23 @@ export default function Organization() {
                       <div className="md:col-span-1">
                         <FormLabel className="block mb-3 text-sm font-medium">Organization Logo</FormLabel>
                         <div className="w-full mb-4">
-                          <AspectRatio ratio={1 / 1} className="overflow-hidden rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-dashed border-gray-200 hover:border-primary/50 transition-colors">
-                            {selectedOrganization?.logo ? (
+                          <AspectRatio ratio={1 / 1} className="overflow-hidden rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-dashed border-gray-200 hover:border-primary/50 transition-colors relative group">
+                            {logoPreview ? (
+                              <>
+                                <img 
+                                  src={logoPreview} 
+                                  alt="Logo preview" 
+                                  className="object-cover w-full h-full rounded-xl"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={removeLogo}
+                                  className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                  <X className="h-3 w-3" />
+                                </button>
+                              </>
+                            ) : selectedOrganization?.logo ? (
                               <img 
                                 src={selectedOrganization.logo} 
                                 alt={selectedOrganization.name} 
@@ -220,11 +326,39 @@ export default function Organization() {
                             )}
                           </AspectRatio>
                         </div>
-                        <div className="text-center">
-                          <Button variant="outline" type="button" size="sm" className="w-full">
-                            Upload Logo
-                          </Button>
-                          <p className="text-xs text-gray-500 mt-2">JPG, PNG up to 2MB<br />Recommended: 400x400px</p>
+                        <div className="text-center space-y-2">
+                          {logoFile ? (
+                            <Button 
+                              type="button" 
+                              size="sm" 
+                              className="w-full"
+                              onClick={handleLogoUpload}
+                              disabled={isUploading}
+                            >
+                              {isUploading ? "Uploading..." : "Save Logo"}
+                            </Button>
+                          ) : (
+                            <>
+                              <input
+                                type="file"
+                                accept="image/jpeg,image/jpg,image/png"
+                                onChange={handleFileSelect}
+                                className="hidden"
+                                id="logo-upload"
+                              />
+                              <Button 
+                                variant="outline" 
+                                type="button" 
+                                size="sm" 
+                                className="w-full"
+                                onClick={() => document.getElementById('logo-upload')?.click()}
+                              >
+                                <Upload className="w-4 h-4 mr-2" />
+                                Upload Logo
+                              </Button>
+                            </>
+                          )}
+                          <p className="text-xs text-gray-500">JPG, PNG up to 2MB<br />Recommended: 400x400px</p>
                         </div>
                       </div>
 
