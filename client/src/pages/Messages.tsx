@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { MessageCircle, Send, Search, Phone, User, Paperclip, Image, FileText } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useWebSocketChat } from "@/hooks/useWebSocketChat";
+import { useWebSocketGlobal } from "@/hooks/useWebSocketGlobal";
 import { apiService } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -35,7 +35,7 @@ export default function Messages() {
     currentRoom,
     sendMessage,
     joinRoom,
-  } = useWebSocketChat();
+  } = useWebSocketGlobal();
 
   // Fetch chat rooms
   const { data: roomsData, isLoading: roomsLoading } = useQuery({

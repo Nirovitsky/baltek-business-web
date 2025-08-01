@@ -4,7 +4,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
-import { useWebSocketChat } from "@/hooks/useWebSocketChat";
+import { useWebSocketGlobal } from "@/hooks/useWebSocketGlobal";
 import { useEffect } from "react";
 
 // Layout Components
@@ -28,8 +28,8 @@ import NotFound from "@/pages/not-found";
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, checkAuth, fetchOrganizations, refreshProfile } = useAuth();
   
-  // Initialize WebSocket connection when authenticated
-  const { connected } = useWebSocketChat();
+  // Initialize global WebSocket connection when authenticated
+  const { connected } = useWebSocketGlobal();
 
   useEffect(() => {
     checkAuth();
