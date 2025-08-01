@@ -166,11 +166,9 @@ export default function UserProfile() {
                       <p className="text-gray-600">{userProfile.profession}</p>
                     )}
                     <div className="flex items-center space-x-3 mt-1 text-sm text-gray-500">
-                      {userProfile.is_online && (
-                        <Badge variant="outline" className="text-green-600 border-green-300">
-                          Online
-                        </Badge>
-                      )}
+                      <Badge variant="outline" className={userProfile.is_online ? "text-green-600 border-green-300" : "text-gray-600 border-gray-300"}>
+                        {userProfile.is_online ? "Online" : "Offline"}
+                      </Badge>
                     </div>
                   </div>
                   <Button 
@@ -385,21 +383,7 @@ export default function UserProfile() {
 
 
 
-          {/* Contact Actions */}
-          {userProfile.email && (
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-center">
-                  <Button variant="outline" asChild>
-                    <a href={`mailto:${userProfile.email}`}>
-                      <Mail className="w-4 h-4 mr-2" />
-                      Send Email
-                    </a>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+
         </div>
       </main>
     </div>

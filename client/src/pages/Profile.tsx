@@ -199,11 +199,9 @@ export default function Profile() {
                   <Phone className="w-4 h-4" />
                   <span>{profile.phone}</span>
                 </div>
-                {profile.is_online && (
-                  <Badge variant="outline" className="text-green-600 border-green-300">
-                    Online
-                  </Badge>
-                )}
+                <Badge variant="outline" className={profile.is_online ? "text-green-600 border-green-300" : "text-gray-600 border-gray-300"}>
+                  {profile.is_online ? "Online" : "Offline"}
+                </Badge>
               </div>
             </div>
           </div>
