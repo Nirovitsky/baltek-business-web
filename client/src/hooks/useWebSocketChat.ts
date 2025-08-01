@@ -143,7 +143,9 @@ export function useWebSocketChat() {
         data: {
           room: roomId,
           text: text?.trim() || '',
-          attachments: attachments || []
+          ...(attachments && attachments.length > 0 && {
+            attachments: attachments,
+          }),
         },
       };
 
