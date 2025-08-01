@@ -96,14 +96,12 @@ export default function Messages() {
         return combined.sort((a, b) => {
           const dateA = parseDate(a.date_created).getTime();
           const dateB = parseDate(b.date_created).getTime();
-          console.log('Sorting messages:', a.date_created, '→', dateA, 'vs', b.date_created, '→', dateB);
           return dateA - dateB;
         });
       })()
     : [...apiMessages].sort((a, b) => {
         const dateA = parseDate(a.date_created).getTime();
         const dateB = parseDate(b.date_created).getTime();
-        console.log('Sorting API messages:', a.date_created, '→', dateA, 'vs', b.date_created, '→', dateB);
         return dateA - dateB;
       });
 
@@ -149,8 +147,7 @@ export default function Messages() {
             setSelectedFile(null);
             setShowFileUpload(false);
             setUploadProgress(0);
-            // Invalidate messages query to refresh
-            queryClient.invalidateQueries({ queryKey: ["/chat/messages/", selectedRoom.id] });
+            // WebSocket will handle adding the message to the list
           } else {
             toast({
               title: "Error",
@@ -173,8 +170,7 @@ export default function Messages() {
       const success = sendMessage(selectedRoom.id, newMessage);
       if (success) {
         setNewMessage("");
-        // Invalidate messages query to refresh
-        queryClient.invalidateQueries({ queryKey: ["/chat/messages/", selectedRoom.id] });
+        // WebSocket will handle adding the message to the list
       } else {
         toast({
           title: "Error",
@@ -628,12 +624,8 @@ export default function Messages() {
                               isOwn ? "text-blue-100" : "text-gray-500"
                             }`}>
                             {(() => {
-                              // Debug: Log the raw date value
-                              console.log('Raw date_created:', message.date_created);
-                              
                               // Use the same parsing function for consistency
                               const messageDate = parseDate(message.date_created);
-                              console.log('Displaying date:', message.date_created, '→', messageDate);
 
                               // If date is still invalid, use message ID as fallback timestamp
                               if (isNaN(messageDate.getTime())) {
