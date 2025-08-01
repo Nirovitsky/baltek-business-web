@@ -171,45 +171,27 @@ export default function Settings() {
 
               <Separator />
 
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 space-y-4">
-                <div className="flex items-center space-x-2">
-                  <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-xs font-bold">!</span>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                    <LogOut className="w-5 h-5 text-red-600" />
                   </div>
-                  <Label className="text-red-700 font-medium">Session Management</Label>
-                </div>
-                
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-red-900">Log out from all devices</p>
-                      <p className="text-sm text-red-700">
-                        End all active sessions except this one
-                      </p>
-                    </div>
-                    <Button variant="outline" size="sm" className="border-red-300 text-red-700 hover:bg-red-50">
-                      Log Out All
-                    </Button>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-red-900">Log out</p>
-                      <p className="text-sm text-red-700">
-                        End your current session
-                      </p>
-                    </div>
-                    <Button 
-                      variant="destructive" 
-                      size="sm"
-                      onClick={handleLogout}
-                      className="bg-red-600 hover:bg-red-700"
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Log Out
-                    </Button>
+                  <div className="space-y-1">
+                    <Label>Log Out</Label>
+                    <p className="text-sm text-gray-500">
+                      End your current session
+                    </p>
                   </div>
                 </div>
+                <Button 
+                  variant="destructive" 
+                  size="sm"
+                  onClick={handleLogout}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Log Out
+                </Button>
               </div>
             </CardContent>
           </Card>
