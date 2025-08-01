@@ -13,6 +13,7 @@ import Sidebar from "@/components/layout/Sidebar";
 
 // Pages
 import Login from "@/pages/Login";
+import CreateOrganization from "@/pages/CreateOrganization";
 import Dashboard from "@/pages/Dashboard";
 import Jobs from "@/pages/Jobs";
 import CreateJob from "@/pages/CreateJob";
@@ -27,7 +28,7 @@ import Settings from "@/pages/Settings";
 import NotFound from "@/pages/not-found";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, checkAuth, fetchOrganizations, refreshProfile } = useAuth();
+  const { isAuthenticated, hasOrganizations, checkAuth, fetchOrganizations, refreshProfile } = useAuth();
   
   // Initialize global WebSocket connection when authenticated
   const { connected } = useWebSocketGlobal();
@@ -50,6 +51,11 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <Redirect to="/login" />;
   }
 
+  // If authenticated but has no organizations, redirect to create organization
+  if (isAuthenticated && !hasOrganizations) {
+    return <Redirect to="/create-organization" />;
+  }
+
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar />
@@ -61,12 +67,16 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 function Router() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, hasOrganizations } = useAuth();
 
   return (
     <Switch>
       <Route path="/login">
-        {isAuthenticated ? <Redirect to="/" /> : <Login />}
+        {isAuthenticated ? (hasOrganizations ? <Redirect to="/" /> : <Redirect to="/create-organization" />) : <Login />}
+      </Route>
+      
+      <Route path="/create-organization">
+        {!isAuthenticated ? <Redirect to="/login" /> : (hasOrganizations ? <Redirect to="/" /> : <CreateOrganization />)}
       </Route>
       
       <Route path="/">

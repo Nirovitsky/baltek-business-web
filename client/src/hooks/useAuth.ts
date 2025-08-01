@@ -8,6 +8,7 @@ interface AuthState {
   selectedOrganization: Organization | null;
   organizations: Organization[];
   user: User | null;
+  hasOrganizations: boolean;
   login: (credentials: LoginRequest) => Promise<void>;
   logout: () => void;
   checkAuth: () => void;
@@ -23,6 +24,7 @@ export const useAuth = create<AuthState>((set, get) => ({
   selectedOrganization: null,
   organizations: [],
   user: null,
+  hasOrganizations: false,
 
   login: async (credentials: LoginRequest) => {
     set({ isLoading: true });
@@ -42,7 +44,9 @@ export const useAuth = create<AuthState>((set, get) => ({
     set({ 
       isAuthenticated: false, 
       selectedOrganization: null, 
-      organizations: [] 
+      organizations: [],
+      hasOrganizations: false,
+      user: null
     });
   },
 
@@ -82,14 +86,14 @@ export const useAuth = create<AuthState>((set, get) => ({
         localStorage.setItem('selected_organization', JSON.stringify(selectedOrganization));
         
         console.log('Setting organizations:', organizations, 'Selected:', selectedOrganization); // Debug log
-        set({ organizations, selectedOrganization });
+        set({ organizations, selectedOrganization, hasOrganizations: true });
       } else {
         console.log('No organizations found for user');
-        set({ organizations: [], selectedOrganization: null });
+        set({ organizations: [], selectedOrganization: null, hasOrganizations: false });
       }
     } catch (error) {
       console.error('Failed to fetch organizations:', error);
-      set({ organizations: [], selectedOrganization: null });
+      set({ organizations: [], selectedOrganization: null, hasOrganizations: false });
     }
   },
 
