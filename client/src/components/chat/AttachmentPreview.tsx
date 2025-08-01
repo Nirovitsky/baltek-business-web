@@ -40,7 +40,7 @@ export default function AttachmentPreview({
   const isImage = attachment.type.startsWith('image/') && !imageError;
 
   return (
-    <div className="relative bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
+    <div className="relative bg-card border rounded-lg p-3 shadow-sm">
       {showRemove && onRemove && (
         <Button
           variant="ghost"
@@ -58,18 +58,18 @@ export default function AttachmentPreview({
             <img 
               src={attachment.url} 
               alt={attachment.name}
-              className="w-16 h-16 object-cover rounded-md border border-gray-200"
+              className="w-16 h-16 object-cover rounded-md border"
               onError={() => setImageError(true)}
             />
           </div>
         ) : (
-          <div className="flex-shrink-0 w-16 h-16 bg-gray-100 rounded-md flex items-center justify-center border border-gray-200">
+          <div className="flex-shrink-0 w-16 h-16 bg-muted rounded-md flex items-center justify-center border">
             {getFileIcon(attachment.type)}
           </div>
         )}
 
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-gray-900 truncate">
+          <p className="text-sm font-medium truncate">
             {attachment.name}
           </p>
           <div className="flex items-center space-x-2 mt-1">

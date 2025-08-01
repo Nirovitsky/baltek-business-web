@@ -565,10 +565,10 @@ export default function Messages() {
       <div className="flex h-screen bg-background items-center justify-center">
         <div className="text-center">
           <MessageCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          <h2 className="text-xl font-semibold mb-2">
             No conversations yet
           </h2>
-          <p className="text-gray-500">
+          <p className="text-muted-foreground">
             Conversations will appear here when you start chatting with
             candidates.
           </p>
@@ -761,7 +761,7 @@ export default function Messages() {
                     .map((memberId) => (
                       <div
                         key={memberId}
-                        className="flex items-center space-x-1 text-sm text-gray-500"
+                        className="flex items-center space-x-1 text-sm text-muted-foreground"
                       ></div>
                     ))}
                 </div>
@@ -769,16 +769,16 @@ export default function Messages() {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 bg-gradient-to-b from-gray-50/50 to-white/50 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-400">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 bg-muted/20 custom-scrollbar">
               {messagesLoading ? (
                 <div className="flex items-center justify-center h-full">
-                  <p className="text-gray-500">Loading messages...</p>
+                  <p className="text-muted-foreground">Loading messages...</p>
                 </div>
               ) : allMessages.length === 0 ? (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center">
-                    <MessageCircle className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-gray-500">
+                    <MessageCircle className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                    <p className="text-muted-foreground">
                       No messages yet. Start the conversation!
                     </p>
                   </div>
@@ -796,7 +796,7 @@ export default function Messages() {
                         {!isOwn && (
                           <Link href={`/profile/${message.owner.id}`}>
                             <Avatar className="w-6 h-6 shadow-sm cursor-pointer hover:shadow-md transition-shadow">
-                              <AvatarFallback className="bg-gradient-to-br from-gray-300 to-gray-400 text-gray-700 text-xs font-medium">
+                              <AvatarFallback className="bg-muted text-muted-foreground text-xs font-medium">
                                 {message.owner.first_name[0]}{message.owner.last_name[0]}
                               </AvatarFallback>
                             </Avatar>
@@ -805,8 +805,8 @@ export default function Messages() {
                         <div
                           className={`px-4 py-2 rounded-lg shadow-sm break-words max-w-full overflow-hidden ${
                             isOwn
-                              ? "bg-primary text-white"
-                              : "bg-white border border-gray-200 text-gray-900"
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-card border text-card-foreground"
                           }`}
                         >
 
@@ -830,7 +830,7 @@ export default function Messages() {
                             <p className="text-sm whitespace-pre-wrap">{message.text}</p>
                           )}
                           <p className={`text-xs mt-1 ${
-                              isOwn ? "text-blue-100" : "text-gray-500"
+                              isOwn ? "text-primary-foreground/70" : "text-muted-foreground"
                             }`}>
                             {(() => {
                               // Use the same parsing function for consistency
@@ -881,7 +881,7 @@ export default function Messages() {
             </div>
 
             {/* Message Input */}
-            <div className="bg-white border-t border-gray-200 p-4 shadow-lg">
+            <div className="bg-card border-t p-4 shadow-lg">
               {/* File upload area */}
               {selectedFile && (
                 <div className="mb-3">
@@ -897,11 +897,11 @@ export default function Messages() {
                   />
                   {uploadFileMutation.isPending && (
                     <div className="mt-2">
-                      <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+                      <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
                         <span>Uploading...</span>
                         <span>{uploadProgress}%</span>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="w-full bg-muted rounded-full h-2">
                         <div 
                           className="bg-primary h-2 rounded-full transition-all duration-200" 
                           style={{ width: `${uploadProgress}%` }}
@@ -913,7 +913,7 @@ export default function Messages() {
               )}
 
               {/* Message Input Card */}
-              <Card className="shadow-md border-gray-200">
+              <Card className="shadow-md">
                 <CardContent className="p-4">
                   <div className="relative">
                     {/* Text Input Area */}
@@ -950,7 +950,7 @@ export default function Messages() {
                     />
                     
                     {/* Character counter */}
-                    <div className="absolute top-2 right-2 text-xs text-gray-500">
+                    <div className="absolute top-2 right-2 text-xs text-muted-foreground">
                       {newMessage.length}/1024
                     </div>
                     
@@ -972,10 +972,10 @@ export default function Messages() {
                         size="sm"
                         onClick={() => document.getElementById('file-upload')?.click()}
                         disabled={!connected}
-                        className="h-8 w-8 p-0 hover:bg-gray-100"
+                        className="h-8 w-8 p-0 hover:bg-muted"
                         title="Attach file"
                       >
-                        <Paperclip className="w-4 h-4 text-gray-500" />
+                        <Paperclip className="w-4 h-4 text-muted-foreground" />
                       </Button>
                       
                       {/* Send Button */}
@@ -1001,11 +1001,11 @@ export default function Messages() {
         ) : (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
-              <MessageCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              <MessageCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <h2 className="text-xl font-semibold mb-2">
                 Select a conversation
               </h2>
-              <p className="text-gray-500">
+              <p className="text-muted-foreground">
                 Choose a conversation from the sidebar to start chatting.
               </p>
             </div>

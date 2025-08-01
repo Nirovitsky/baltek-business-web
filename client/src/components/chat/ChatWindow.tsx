@@ -80,16 +80,16 @@ export default function ChatWindow({ roomId }: ChatWindowProps) {
 
   return (
     <Card className="h-[600px] flex flex-col">
-      <CardHeader className="border-b border-gray-200 pb-4">
+      <CardHeader className="border-b pb-4">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
             <User className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <h3 className="font-medium text-gray-900">
+            <h3 className="font-medium">
               {room?.name || `Chat Room #${roomId}`}
             </h3>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
               {room?.members.length || 0} participants
             </p>
           </div>
@@ -100,32 +100,32 @@ export default function ChatWindow({ roomId }: ChatWindowProps) {
         <ScrollArea className="flex-1 p-4">
           {isLoading ? (
             <div className="flex items-center justify-center h-full">
-              <p className="text-gray-500">Loading messages...</p>
+              <p className="text-muted-foreground">Loading messages...</p>
             </div>
           ) : messages.length === 0 ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
-                <p className="text-gray-500">No messages yet</p>
-                <p className="text-sm text-gray-400 mt-2">Start the conversation!</p>
+                <p className="text-muted-foreground">No messages yet</p>
+                <p className="text-sm text-muted-foreground mt-2">Start the conversation!</p>
               </div>
             </div>
           ) : (
             <div className="space-y-4">
               {messages.map((message) => (
                 <div key={message.id} className="flex items-start space-x-3">
-                  <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
-                    <User className="w-4 h-4 text-gray-600" />
+                  <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
+                    <User className="w-4 h-4 text-muted-foreground" />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-1">
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm font-medium">
                         {`${message.owner.first_name} ${message.owner.last_name}`}
                       </span>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-muted-foreground">
                         {new Date(message.date_created).toLocaleTimeString()}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-700 whitespace-pre-wrap">{message.text}</p>
+                    <p className="text-sm whitespace-pre-wrap">{message.text}</p>
                   </div>
                 </div>
               ))}
@@ -135,7 +135,7 @@ export default function ChatWindow({ roomId }: ChatWindowProps) {
         </ScrollArea>
 
         {/* Message input */}
-        <div className="border-t border-gray-200 p-4">
+        <div className="border-t p-4">
           <form onSubmit={handleSendMessage} className="flex space-x-2">
             <Input
               value={newMessage}
