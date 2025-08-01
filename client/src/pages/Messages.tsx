@@ -15,7 +15,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { Link } from "wouter";
 import FileUpload from "@/components/chat/FileUpload";
 import AttachmentPreview from "@/components/chat/AttachmentPreview";
-import type { Room, Message, PaginatedResponse, JobApplication } from "@shared/schema";
+import type { Room, Message, PaginatedResponse } from "@shared/schema";
 
 export default function Messages() {
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
@@ -26,7 +26,7 @@ export default function Messages() {
   const [sendingMessage, setSendingMessage] = useState(false);
   const [optimisticMessages, setOptimisticMessages] = useState<Message[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { user, selectedOrganization } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -48,16 +48,8 @@ export default function Messages() {
 
   // Fetch chat rooms
   const { data: roomsData, isLoading: roomsLoading } = useQuery({
-    queryKey: ["/chat/rooms/", selectedOrganization?.id],
+    queryKey: ["/chat/rooms/"],
     queryFn: () => apiService.request<PaginatedResponse<Room>>("/chat/rooms/"),
-    enabled: !!selectedOrganization,
-  });
-
-  // Fetch job applications to get organization context for filtering rooms
-  const { data: applicationsData } = useQuery({
-    queryKey: ["/jobs/applications/", selectedOrganization?.id],
-    queryFn: () => apiService.request<PaginatedResponse<JobApplication>>("/jobs/applications/"),
-    enabled: !!selectedOrganization,
   });
 
   // Fetch messages for selected room
@@ -72,20 +64,7 @@ export default function Messages() {
     enabled: !!selectedRoom,
   });
 
-  const allRooms = roomsData?.results || [];
-  const applications = applicationsData?.results || [];
-  
-  // Filter rooms to only show those related to the current organization
-  const rooms = allRooms.filter(room => {
-    // Find if any application in current organization matches this room's object_id
-    return applications.some(app => 
-      app.id === room.object_id && 
-      (typeof app.job.organization === 'object' 
-        ? app.job.organization.id === selectedOrganization?.id
-        : app.job.organization === selectedOrganization?.id)
-    );
-  });
-  
+  const rooms = roomsData?.results || [];
   const apiMessages = messagesData?.results || [];
 
   // Auto-select room from URL hash
@@ -361,10 +340,6 @@ export default function Messages() {
       console.log('Total rooms:', rooms.length);
       console.log('Current user ID:', user?.id);
       
-      // Since members are now objects with full user data, we don't need to fetch them separately
-      // Just populate the roomMemberData with the data we already have
-      const newMemberData: Record<number, {id: number, first_name: string, last_name: string}> = {};
-      
       rooms.forEach(room => {
         console.log(`Room ${room.id}:`, {
           members: room.members,
@@ -373,25 +348,66 @@ export default function Messages() {
         });
         
         if (Array.isArray(room.members)) {
-          room.members.forEach((member, index) => {
-            if (typeof member === 'object' && member.id && member.first_name && member.last_name) {
-              newMemberData[member.id] = {
-                id: member.id,
-                first_name: member.first_name,
-                last_name: member.last_name
-              };
+          room.members.forEach((memberId, index) => {
+            console.log(`  Member ${index}:`, memberId, typeof memberId);
+            // Ensure memberId is properly handled as a number
+            const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
+            console.log(`  Numeric conversion:`, numericMemberId, !isNaN(numericMemberId), numericMemberId !== user?.id);
+            if (!isNaN(numericMemberId) && numericMemberId !== user?.id) {
+              allMemberIds.add(numericMemberId);
             }
           });
         }
       });
       
-      setRoomMemberData(prev => ({ ...prev, ...newMemberData }));
-      
-      console.log('Member data populated from room objects:', newMemberData);
+      console.log('All member IDs to fetch:', Array.from(allMemberIds));
+
+      // Fetch user data for each unique member (only if we don't already have it)
+      const memberDataPromises = Array.from(allMemberIds)
+        .filter(userId => !roomMemberData[userId]) // Only fetch if we don't have the data
+        .map(async (userId) => {
+        
+        try {
+          // Ensure userId is a number when making the request
+          const numericUserId = typeof userId === 'number' ? userId : parseInt(String(userId));
+          
+          // Add validation to prevent [object Object] issue
+          if (isNaN(numericUserId) || numericUserId <= 0) {
+            console.error('Invalid userId detected:', userId, 'numericUserId:', numericUserId);
+            return;
+          }
+          
+
+          const userData = await apiService.request<any>(`/users/${numericUserId}/`);
+          setRoomMemberData(prev => ({
+            ...prev,
+            [numericUserId]: {
+              id: userData.id,
+              first_name: userData.first_name || 'Unknown',
+              last_name: userData.last_name || 'User'
+            }
+          }));
+        } catch (error) {
+          console.error(`Failed to fetch user data for ${userId}:`, error);
+          const numericUserId = typeof userId === 'number' ? userId : parseInt(String(userId));
+          if (!isNaN(numericUserId) && numericUserId > 0) {
+            setRoomMemberData(prev => ({
+              ...prev,
+              [numericUserId]: {
+                id: numericUserId,
+                first_name: 'Unknown',
+                last_name: 'User'
+              }
+            }));
+          }
+        }
+      });
+
+      await Promise.all(memberDataPromises);
       
       // Fetch job application data for rooms that reference job applications
       const jobDataPromises = rooms
-        .filter(room => room.object_id && room.content_type === 22) // content_type 22 is job application based on API data
+        .filter(room => room.object_id && room.content_type === 14) // Assuming content_type 14 is job application
         .filter(room => !roomJobData[room.object_id!]) // Only fetch if we don't have the data
         .map(async (room) => {
           try {
@@ -420,17 +436,15 @@ export default function Messages() {
 
   const filteredRooms = rooms.filter((room) => {
     const participantNames = room.members
-      .filter((member) => {
-        // Members are now objects with id property
-        const memberId = typeof member === 'object' && member.id ? member.id : member;
-        return memberId !== user?.id;
+      .filter((memberId) => {
+        // Ensure memberId is treated as a number
+        const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
+        return !isNaN(numericMemberId) && numericMemberId !== user?.id;
       })
-      .map((member) => {
-        // Members already contain the user data we need
-        if (typeof member === 'object' && member.first_name && member.last_name) {
-          return `${member.first_name} ${member.last_name}`;
-        }
-        return 'Unknown User';
+      .map((memberId) => {
+        const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
+        const memberData = roomMemberData[numericMemberId];
+        return memberData ? `${memberData.first_name} ${memberData.last_name}` : `User ${numericMemberId}`;
       })
       .join(" ");
 
@@ -480,19 +494,18 @@ export default function Messages() {
     
     console.log('getOtherParticipantId - Room:', room.id, 'Members:', room.members, 'User ID:', user?.id);
     
-    const otherMember = room.members.find(member => {
-      // Members are now objects with id property
-      const memberId = typeof member === 'object' && member.id ? member.id : member;
-      const isValid = memberId !== user?.id;
-      console.log('  Checking member:', member, '→', memberId, 'valid:', isValid);
+    const otherMemberId = room.members.find(memberId => {
+      const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
+      const isValid = !isNaN(numericMemberId) && numericMemberId !== user?.id;
+      console.log('  Checking member:', memberId, '→', numericMemberId, 'valid:', isValid);
       return isValid;
     });
     
-    if (otherMember) {
-      const memberId = typeof otherMember === 'object' && otherMember.id ? otherMember.id : otherMember;
-      if (typeof memberId === 'number') {
-        console.log('  → Returning participant ID:', memberId);
-        return memberId;
+    if (otherMemberId !== undefined) {
+      const numericId = typeof otherMemberId === 'number' ? otherMemberId : parseInt(String(otherMemberId));
+      if (!isNaN(numericId)) {
+        console.log('  → Returning participant ID:', numericId);
+        return numericId;
       }
     }
     
