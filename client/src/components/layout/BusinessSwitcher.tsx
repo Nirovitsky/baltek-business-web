@@ -28,8 +28,6 @@ export default function BusinessSwitcher() {
   const MAX_ORGANIZATIONS = 10;
 
   const handleCreateOrganization = () => {
-    console.log('Create organization clicked, organizations count:', organizations.length);
-    
     if (organizations.length >= MAX_ORGANIZATIONS) {
       toast({
         title: "Maximum organizations reached",
@@ -40,7 +38,6 @@ export default function BusinessSwitcher() {
       return;
     }
 
-    console.log('Navigating to create organization page');
     setOpen(false);
     setLocation('/create-organization');
   };

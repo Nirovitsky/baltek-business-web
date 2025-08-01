@@ -30,8 +30,9 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
-import { Building2 } from "lucide-react";
+import { Building2, ArrowLeft, Upload, X } from "lucide-react";
 import { z } from "zod";
+import { useState, useRef } from "react";
 import type { Organization, Category, Location, PaginatedResponse } from "@shared/schema";
 
 const createOrganizationSchema = z.object({
@@ -44,6 +45,7 @@ const createOrganizationSchema = z.object({
   phone: z.string().optional(),
   category_id: z.number().min(1, "Category is required"),
   location_id: z.number().min(1, "Location is required"),
+  logo: z.any().optional(),
 });
 
 type CreateOrganizationData = z.infer<typeof createOrganizationSchema>;
@@ -52,6 +54,9 @@ export default function CreateOrganization() {
   const { toast } = useToast();
   const { selectedOrganization, fetchOrganizations, organizations } = useAuth();
   const [, setLocation] = useLocation();
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const MAX_ORGANIZATIONS = 10;
 
@@ -107,20 +112,84 @@ export default function CreateOrganization() {
       phone: "",
       category_id: undefined,
       location_id: undefined,
+      logo: null,
     },
   });
 
+  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Invalid file type",
+          description: "Please select an image file",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Please select an image smaller than 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setLogoFile(file);
+      form.setValue('logo', file);
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setLogoPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeLogo = () => {
+    setLogoFile(null);
+    setLogoPreview(null);
+    form.setValue('logo', null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const createMutation = useMutation({
-    mutationFn: (data: CreateOrganizationData) => {
-      // Map the form data to match API expectations
-      const { category_id, location_id, ...rest } = data;
+    mutationFn: async (data: CreateOrganizationData) => {
+      const { category_id, location_id, logo, ...rest } = data;
+      
+      // If there's a logo, upload it first
+      let logoUrl = null;
+      if (logoFile) {
+        const formData = new FormData();
+        formData.append('file', logoFile);
+        
+        try {
+          const uploadResponse = await apiService.request<{ url: string }>('/upload/', {
+            method: 'POST',
+            body: formData,
+            headers: {}, // Remove Content-Type to let browser set it with boundary
+          });
+          logoUrl = uploadResponse.url;
+        } catch (error) {
+          console.error('Logo upload failed:', error);
+          throw new Error('Failed to upload logo');
+        }
+      }
+
+      // Create organization with logo URL
       const apiData = {
         ...rest,
         category: category_id,
         location: location_id,
+        ...(logoUrl && { logo: logoUrl }),
       };
-      
-      console.log('Sending organization data:', apiData);
       
       return apiService.request<Organization>('/organizations/', {
         method: 'POST',
@@ -134,6 +203,8 @@ export default function CreateOrganization() {
       });
       // Refresh organizations to get the new one
       await fetchOrganizations();
+      // Navigate to dashboard
+      setLocation('/');
     },
     onError: (error: any) => {
       console.error('Organization creation error:', error);
@@ -159,8 +230,19 @@ export default function CreateOrganization() {
     <div className="auth-page min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-2xl">
         <CardHeader className="text-center">
-          <div className="mx-auto w-16 h-16 bg-primary rounded-xl flex items-center justify-center mb-4">
-            <Building2 className="w-8 h-8 text-white" />
+          <div className="flex items-center justify-between mb-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setLocation('/')}
+              className="p-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <div className="mx-auto w-16 h-16 bg-primary rounded-xl flex items-center justify-center">
+              <Building2 className="w-8 h-8 text-white" />
+            </div>
+            <div className="w-10"></div>
           </div>
           <CardTitle className="text-2xl font-bold">Create Your Organization</CardTitle>
           <CardDescription>
@@ -236,6 +318,62 @@ export default function CreateOrganization() {
                   </FormItem>
                 )}
               />
+
+              {/* Logo Upload Section */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  Organization Logo
+                </label>
+                <div className="flex items-center gap-4">
+                  {logoPreview ? (
+                    <div className="relative">
+                      <img
+                        src={logoPreview}
+                        alt="Logo preview"
+                        className="w-20 h-20 object-cover rounded-lg border-2 border-dashed border-gray-300"
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0"
+                        onClick={removeLogo}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div
+                      className="w-20 h-20 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 transition-colors"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <Upload className="h-6 w-6 text-gray-400" />
+                      <span className="text-xs text-gray-500 text-center mt-1">Upload Logo</span>
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleLogoUpload}
+                      className="hidden"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-full"
+                    >
+                      <Upload className="h-4 w-4 mr-2" />
+                      {logoFile ? 'Change Logo' : 'Upload Logo'}
+                    </Button>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Recommended: Square image, max 5MB
+                    </p>
+                  </div>
+                </div>
+              </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
