@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
@@ -187,37 +188,49 @@ export default function Applications() {
           </Select>
         </div>
 
-        {/* Applications List */}
+        {/* Applications Table */}
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <Card key={i} className="border-l-4 border-l-gray-200 h-fit">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-start space-x-3">
-                      <Skeleton className="w-12 h-12 rounded-full" />
-                      <div className="flex-1 space-y-1">
-                        <Skeleton className="h-4 w-32" />
-                        <Skeleton className="h-3 w-24" />
-                        <Skeleton className="h-3 w-28" />
-                      </div>
-                    </div>
-                    <Skeleton className="h-5 w-16" />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between pt-2 border-t border-gray-200">
-                      <Skeleton className="h-8 w-20" />
-                      <div className="flex items-center space-x-2">
-                        <Skeleton className="h-8 w-16" />
-                        <Skeleton className="h-8 w-14" />
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <Card>
+            <CardContent className="p-6">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Candidate</TableHead>
+                    <TableHead>Job Position</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Applied Date</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <TableRow key={i}>
+                      <TableCell>
+                        <div className="flex items-center space-x-3">
+                          <Skeleton className="w-10 h-10 rounded-full" />
+                          <div className="space-y-1">
+                            <Skeleton className="h-4 w-32" />
+                            <Skeleton className="h-3 w-24" />
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell><Skeleton className="h-4 w-28" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-16 rounded" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          <Skeleton className="h-8 w-20" />
+                          <Skeleton className="h-8 w-16" />
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
         ) : filteredApplications.length === 0 ? (
           <Card>
             <CardContent className="p-12 text-center">
@@ -234,111 +247,128 @@ export default function Applications() {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {filteredApplications.map((application) => (
-              <Card 
-                key={application.id} 
-                className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-blue-500 h-fit cursor-pointer"
-                onClick={() => setSelectedApplication(application)}
-              >
-                <CardContent className="p-4">
-                  {/* Header Section */}
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-start space-x-3">
-                      <Avatar 
-                        className="w-12 h-12 flex-shrink-0 cursor-pointer hover:shadow-md transition-all"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setLocation(`/profile/${application.owner.id}`);
-                        }}
-                      >
-                        <AvatarImage 
-                          src={application.owner.avatar} 
-                          alt={`${application.owner.first_name} ${application.owner.last_name}`}
-                        />
-                        <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold">
-                          {application.owner.first_name?.[0]}{application.owner.last_name?.[0]}
-                        </AvatarFallback>
-                      </Avatar>
-                      
-                      <div className="flex-1 min-w-0">
-                        <h3 
-                          className="font-bold text-gray-900 cursor-pointer hover:text-blue-600 transition-colors truncate"
-                          onClick={() => setLocation(`/profile/${application.owner.id}`)}
-                        >
-                          {`${application.owner.first_name} ${application.owner.last_name}`}
-                        </h3>
-                        
-                        {application.owner.profession && (
-                          <div className="text-xs text-gray-600 mt-1">
-                            <div className="flex items-center space-x-1 truncate">
-                              <Briefcase className="w-3 h-3 flex-shrink-0" />
-                              <span className="truncate">{application.owner.profession}</span>
-                            </div>
-                          </div>
-                        )}
-                        
-                        <div className="flex items-center space-x-1 mt-1 text-xs text-gray-500">
-                          <MapPin className="w-3 h-3 flex-shrink-0" />
-                          <span className="truncate">Applied for <strong>{application.job.title}</strong></span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Actions Section */}
-                  <div 
-                    className="flex items-center justify-between pt-2 border-t border-gray-200"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Select
-                      value={application.status}
-                      onValueChange={(value) => handleStatusChange(application.id, value)}
-                      disabled={updateApplicationMutation.isPending}
+          <Card>
+            <CardContent className="p-6">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Candidate</TableHead>
+                    <TableHead>Job Position</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Applied Date</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredApplications.map((application) => (
+                    <TableRow 
+                      key={application.id} 
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => setSelectedApplication(application)}
                     >
-                      <SelectTrigger className="w-24 h-8 text-xs">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="invited">Invited</SelectItem>
-                        <SelectItem value="rejected">Rejected</SelectItem>
-                        <SelectItem value="hired">Hired</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleCreateChatRoom(application.id);
-                        }}
-                        disabled={createChatRoomMutation.isPending}
-                        className="h-8 px-2 text-xs"
-                      >
-                        <MessageCircle className="w-3 h-3 mr-1" />
-                        Message
-                      </Button>
+                      <TableCell>
+                        <div className="flex items-center space-x-3">
+                          <Avatar 
+                            className="w-10 h-10 flex-shrink-0"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setLocation(`/profile/${application.owner.id}`);
+                            }}
+                          >
+                            <AvatarImage 
+                              src={application.owner.avatar} 
+                              alt={`${application.owner.first_name} ${application.owner.last_name}`}
+                            />
+                            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold">
+                              {application.owner.first_name?.[0]}{application.owner.last_name?.[0]}
+                            </AvatarFallback>
+                          </Avatar>
+                          
+                          <div className="min-w-0">
+                            <div 
+                              className="font-medium text-gray-900 cursor-pointer hover:text-blue-600 transition-colors"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setLocation(`/profile/${application.owner.id}`);
+                              }}
+                            >
+                              {`${application.owner.first_name} ${application.owner.last_name}`}
+                            </div>
+                            {application.owner.profession && (
+                              <div className="text-sm text-gray-600 flex items-center space-x-1">
+                                <Briefcase className="w-3 h-3 flex-shrink-0" />
+                                <span className="truncate">{application.owner.profession}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </TableCell>
                       
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setLocation(`/profile/${application.owner.id}`);
-                        }}
-                        className="h-8 px-2 text-xs text-gray-600 hover:text-gray-900"
-                      >
-                        Profile
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                      <TableCell>
+                        <div className="font-medium">{application.job.title}</div>
+                        <div className="text-sm text-gray-500">{application.job.organization?.official_name || 'Organization'}</div>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <div className="flex items-center space-x-1 text-sm text-gray-600">
+                          <MapPin className="w-3 h-3 flex-shrink-0" />
+                          <span>{application.job.location?.name || 'Not specified'}</span>
+                        </div>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <Badge variant="secondary" className={getStatusColor(application.status)}>
+                          {application.status ? application.status.charAt(0).toUpperCase() + application.status.slice(1) : 'Unknown'}
+                        </Badge>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <div className="flex items-center space-x-1 text-sm text-gray-600">
+                          <Calendar className="w-3 h-3 flex-shrink-0" />
+                          <span>Recently</span>
+                        </div>
+                      </TableCell>
+                      
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end space-x-2">
+                          <Select
+                            value={application.status}
+                            onValueChange={(value) => handleStatusChange(application.id, value)}
+                            disabled={updateApplicationMutation.isPending}
+                          >
+                            <SelectTrigger className="w-28 h-8 text-xs" onClick={(e) => e.stopPropagation()}>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="pending">Pending</SelectItem>
+                              <SelectItem value="invited">Invited</SelectItem>
+                              <SelectItem value="rejected">Rejected</SelectItem>
+                              <SelectItem value="hired">Hired</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCreateChatRoom(application.id);
+                            }}
+                            disabled={createChatRoomMutation.isPending}
+                            className="h-8 px-2 text-xs"
+                          >
+                            <MessageCircle className="w-3 h-3 mr-1" />
+                            Message
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
         )}
 
         {/* Application Details Dialog */}
