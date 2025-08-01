@@ -2,6 +2,9 @@ import express, { type Express } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 
+// API proxy endpoints to backend
+const API_BASE_URL = process.env.API_BASE_URL || "https://api.baltek.net";
+
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
 
@@ -132,8 +135,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // API proxy endpoints to backend
-  const API_BASE_URL = process.env.API_BASE_URL || "https://api.baltek.net";
+
 
   // Proxy authentication requests
   app.post("/api/token/", async (req, res) => {
