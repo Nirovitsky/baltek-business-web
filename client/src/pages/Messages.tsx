@@ -977,7 +977,7 @@ export default function Messages() {
                       {/* Send Button */}
                       <Button
                         onClick={handleSendMessage}
-                        disabled={(!newMessage.trim() && !uploadedFile) || sendingMessage || (selectedFile && !uploadedFile)}
+                        disabled={(!newMessage.trim() && !uploadedFile) || sendingMessage || (!!selectedFile && !uploadedFile)}
                         className="h-8 w-8 p-0 bg-primary hover:bg-primary/90"
                         size="sm"
                       >

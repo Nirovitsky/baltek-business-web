@@ -168,10 +168,13 @@ export class ApiService {
     formData.append('file', file);
 
     const url = `${API_BASE_URL}/files/`;
-    const headers = {
-      ...this.getAuthHeaders(),
-      // Don't set Content-Type for FormData, let browser set it with boundary
-    };
+    
+    // Only include Authorization header, don't set Content-Type for FormData
+    const authHeaders = this.getAuthHeaders();
+    const headers: Record<string, string> = {};
+    if ('Authorization' in authHeaders) {
+      headers.Authorization = authHeaders.Authorization as string;
+    }
 
     try {
       const response = await fetch(url, {
@@ -186,9 +189,12 @@ export class ApiService {
         try {
           await this.performTokenRefresh();
           // Retry upload with new token
-          const retryHeaders = {
-            ...this.getAuthHeaders(),
-          };
+          const retryAuthHeaders = this.getAuthHeaders();
+          const retryHeaders: Record<string, string> = {};
+          if ('Authorization' in retryAuthHeaders) {
+            retryHeaders.Authorization = retryAuthHeaders.Authorization as string;
+          }
+          
           const retryResponse = await fetch(url, {
             method: 'POST',
             headers: retryHeaders,
