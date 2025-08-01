@@ -90,7 +90,7 @@ export default function CreateOrganization() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
+    <div className="auth-page min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-2xl">
         <CardHeader className="text-center">
           <div className="mx-auto w-16 h-16 bg-primary rounded-xl flex items-center justify-center mb-4">

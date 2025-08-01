@@ -47,10 +47,26 @@
   scrollbar-width: none;  /* Firefox */
 }
 
-/* Prevent body scrolling */
-html, body, #root {
+/* Base styles for html and body */
+html, body {
+  height: 100%;
+}
+
+/* Main app container */
+#root {
+  height: 100%;
+}
+
+/* Dashboard layout - prevent scrolling only for dashboard pages */
+.dashboard-layout {
   height: 100%;
   overflow: hidden;
+}
+
+/* Allow scrolling for auth pages */
+.auth-page {
+  min-height: 100vh;
+  overflow-y: auto;
 }
 
 :root {
