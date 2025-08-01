@@ -827,7 +827,7 @@ export default function Messages() {
                           
                           {/* Show text if present */}
                           {message.text && (
-                            <p className="text-sm">{message.text}</p>
+                            <p className="text-sm whitespace-pre-wrap">{message.text}</p>
                           )}
                           <p className={`text-xs mt-1 ${
                               isOwn ? "text-blue-100" : "text-gray-500"

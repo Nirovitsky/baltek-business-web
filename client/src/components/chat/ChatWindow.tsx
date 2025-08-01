@@ -125,7 +125,7 @@ export default function ChatWindow({ roomId }: ChatWindowProps) {
                         {new Date(message.date_created).toLocaleTimeString()}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-700">{message.text}</p>
+                    <p className="text-sm text-gray-700 whitespace-pre-wrap">{message.text}</p>
                   </div>
                 </div>
               ))}

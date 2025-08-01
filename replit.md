@@ -40,6 +40,7 @@ The Baltek Business Dashboard is a React and Express-based application designed 
 - ✅ **Design Consistency**: Updated all blue color references to use the primary color variable
 - ✅ **Sidebar Modernization**: Moved Settings above Profile, added Settings as navigation item, cleaned up profile section design
 - ✅ **Settings Page Redesign**: Removed 3-tab structure, consolidated into organized sections (Preferences, Notifications, Security) with modern icons and visual hierarchy
+- ✅ **Message Formatting Fix**: Messages now preserve vertical formatting with whitespace-pre-wrap CSS, showing line breaks as written
 
 ## User Preferences
 - Preferred communication style: Simple, everyday language
