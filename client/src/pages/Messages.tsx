@@ -623,18 +623,18 @@ export default function Messages() {
               placeholder="Search conversations..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-white shadow-sm border-gray-300 focus:border-primary focus:ring-primary"
+              className="pl-10 bg-background shadow-sm focus:border-primary focus:ring-primary"
             />
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-400">
+        <div className="flex-1 overflow-y-auto custom-scrollbar">
           {filteredRooms.map((room) => (
             <div
               key={room.id}
               onClick={() => handleRoomSelect(room)}
-              className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gradient-to-r hover:from-primary/5 hover:to-primary/10 transition-all duration-200 ${
-                selectedRoom?.id === room.id ? "bg-gradient-to-r from-primary/10 to-primary/15 border-primary/30 shadow-md" : ""
+              className={`p-4 border-b cursor-pointer hover:bg-accent/50 transition-all duration-200 ${
+                selectedRoom?.id === room.id ? "bg-accent border-primary/30 shadow-md" : ""
               }`}
             >
               <div className="flex items-start space-x-3">
@@ -644,7 +644,7 @@ export default function Messages() {
                     return (
                       <Link href={`/profile/${participantId}`}>
                         <Avatar className="w-10 h-10 shadow-md cursor-pointer hover:shadow-lg transition-shadow">
-                          <AvatarFallback className="bg-gradient-to-br from-blue-400 to-indigo-500 text-white font-semibold">
+                          <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
                             {getRoomAvatar(room)}
                           </AvatarFallback>
                         </Avatar>
@@ -653,7 +653,7 @@ export default function Messages() {
                   } else {
                     return (
                       <Avatar className="w-10 h-10 shadow-md cursor-not-allowed opacity-50">
-                        <AvatarFallback className="bg-gradient-to-br from-gray-400 to-gray-500 text-white font-semibold">
+                        <AvatarFallback className="bg-muted text-muted-foreground font-semibold">
                           {getRoomAvatar(room)}
                         </AvatarFallback>
                       </Avatar>
@@ -671,12 +671,12 @@ export default function Messages() {
                         if (memberData) {
                           return (
                             <div className="flex items-center space-x-2">
-                              <span className="text-sm font-medium text-gray-900 truncate">
+                              <span className="text-sm font-medium truncate">
                                 {`${memberData.first_name} ${memberData.last_name}`}
                               </span>
                               {jobData && (
                                 <>
-                                  <span className="text-gray-400">-</span>
+                                  <span className="text-muted-foreground">-</span>
                                   <Link href={`/jobs/${jobData.id}`} className="text-sm text-primary hover:text-primary/80 truncate">
                                     {jobData.title}
                                   </Link>
@@ -687,13 +687,13 @@ export default function Messages() {
                         }
                         
                         return (
-                          <p className="text-sm font-medium text-gray-900 truncate">
+                          <p className="text-sm font-medium truncate">
                             {getRoomDisplayName(room)}
                           </p>
                         );
                       })()}
                     </div>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-muted-foreground">
                       {room.last_message_text
                         ? new Date(
                             room.last_message_date_created ?? "",
@@ -704,7 +704,7 @@ export default function Messages() {
                         : ""}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600 truncate mt-1">
+                  <p className="text-sm text-muted-foreground truncate mt-1">
                     {room.last_message_text || "No messages yet"}
                   </p>
                 </div>
@@ -719,7 +719,7 @@ export default function Messages() {
         {selectedRoom ? (
           <>
             {/* Chat Header */}
-            <div className="bg-white border-b border-gray-200 p-4 shadow-sm">
+            <div className="bg-card border-b p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   {(() => {
@@ -728,7 +728,7 @@ export default function Messages() {
                       return (
                         <Link href={`/profile/${participantId}`}>
                           <Avatar className="w-10 h-10 shadow-md cursor-pointer hover:shadow-lg transition-shadow">
-                            <AvatarFallback className="bg-gradient-to-br from-blue-400 to-indigo-500 text-white font-semibold">
+                            <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
                               {getRoomAvatar(selectedRoom)}
                             </AvatarFallback>
                           </Avatar>
@@ -737,7 +737,7 @@ export default function Messages() {
                     } else {
                       return (
                         <Avatar className="w-10 h-10 shadow-md cursor-not-allowed opacity-50">
-                          <AvatarFallback className="bg-gradient-to-br from-gray-400 to-gray-500 text-white font-semibold">
+                          <AvatarFallback className="bg-muted text-muted-foreground font-semibold">
                             {getRoomAvatar(selectedRoom)}
                           </AvatarFallback>
                         </Avatar>
@@ -745,10 +745,10 @@ export default function Messages() {
                     }
                   })()}
                   <div>
-                    <h2 className="text-lg font-medium text-gray-900">
+                    <h2 className="text-lg font-medium">
                       {getRoomDisplayName(selectedRoom)}
                     </h2>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-muted-foreground">
                       {selectedRoom.members.length} participant
                       {selectedRoom.members.length !== 1 ? "s" : ""}
                     </p>
