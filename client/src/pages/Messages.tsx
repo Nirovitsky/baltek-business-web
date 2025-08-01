@@ -72,6 +72,18 @@ export default function Messages() {
     }
   }, [rooms, selectedRoom]);
 
+  // Helper function to parse European date format
+  const parseDate = (dateString: string): Date => {
+    if (typeof dateString === 'string' && dateString.includes('.') && dateString.includes(' ')) {
+      const [datePart, timePart] = dateString.split(' ');
+      const [day, month, year] = datePart.split('.');
+      // Convert to ISO format: YYYY-MM-DDTHH:mm:ss
+      const isoString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${timePart}`;
+      return new Date(isoString);
+    }
+    return new Date(dateString);
+  };
+
   // Combine API messages with WebSocket messages, removing duplicates
   const allMessages = selectedRoom?.id === currentRoom
     ? (() => {
@@ -81,9 +93,19 @@ export default function Messages() {
             combined.push(wsMsg);
           }
         });
-        return combined.sort((a, b) => new Date(a.date_created).getTime() - new Date(b.date_created).getTime());
+        return combined.sort((a, b) => {
+          const dateA = parseDate(a.date_created).getTime();
+          const dateB = parseDate(b.date_created).getTime();
+          console.log('Sorting messages:', a.date_created, '→', dateA, 'vs', b.date_created, '→', dateB);
+          return dateA - dateB;
+        });
       })()
-    : [...apiMessages].sort((a, b) => new Date(a.date_created).getTime() - new Date(b.date_created).getTime());
+    : [...apiMessages].sort((a, b) => {
+        const dateA = parseDate(a.date_created).getTime();
+        const dateB = parseDate(b.date_created).getTime();
+        console.log('Sorting API messages:', a.date_created, '→', dateA, 'vs', b.date_created, '→', dateB);
+        return dateA - dateB;
+      });
 
   // File upload mutation
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -609,27 +631,9 @@ export default function Messages() {
                               // Debug: Log the raw date value
                               console.log('Raw date_created:', message.date_created);
                               
-                              // Handle different date formats that might come from API
-                              let messageDate: Date;
-                              if (typeof message.date_created === 'string') {
-                                // Handle European format: DD.MM.YYYY HH:mm:ss
-                                if (message.date_created.includes('.') && message.date_created.includes(' ')) {
-                                  const [datePart, timePart] = message.date_created.split(' ');
-                                  const [day, month, year] = datePart.split('.');
-                                  // Convert to ISO format: YYYY-MM-DDTHH:mm:ss
-                                  const isoString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${timePart}`;
-                                  messageDate = new Date(isoString);
-                                } else {
-                                  // Try parsing ISO string first, then fallback to direct parsing
-                                  messageDate = new Date(message.date_created);
-                                  if (isNaN(messageDate.getTime())) {
-                                    // Try alternative parsing if ISO fails
-                                    messageDate = new Date(message.date_created.replace(/[-]/g, '/'));
-                                  }
-                                }
-                              } else {
-                                messageDate = new Date();
-                              }
+                              // Use the same parsing function for consistency
+                              const messageDate = parseDate(message.date_created);
+                              console.log('Displaying date:', message.date_created, '→', messageDate);
 
                               // If date is still invalid, use message ID as fallback timestamp
                               if (isNaN(messageDate.getTime())) {
