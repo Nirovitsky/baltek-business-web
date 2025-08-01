@@ -4,7 +4,7 @@ import { useLocation } from "wouter";
 import TopBar from "@/components/layout/TopBar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
-import { User, Search, MessageCircle, FileText, Download, Mail, MapPin, Calendar, Briefcase, X, Eye } from "lucide-react";
+import { User, Search, MessageCircle, FileText, Download, MapPin, Calendar, Briefcase, X, Eye } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { JobApplication, PaginatedResponse } from "@shared/schema";
 
@@ -97,23 +97,6 @@ export default function Applications() {
 
   const handleCreateChatRoom = (applicationId: number) => {
     createChatRoomMutation.mutate(applicationId);
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return 'bg-blue-100 text-blue-800';
-      case 'invited':
-        return 'bg-green-100 text-green-800';
-      case 'rejected':
-        return 'bg-red-100 text-red-800';
-      case 'hired':
-        return 'bg-green-100 text-green-800';
-      case 'expired':
-        return 'bg-gray-100 text-gray-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
   };
 
   const applications = data?.results || [];
@@ -267,18 +250,14 @@ export default function Applications() {
                           {`${application.owner.first_name} ${application.owner.last_name}`}
                         </h3>
                         
-                        <div className="text-xs text-gray-600 mt-1">
-                          <div className="flex items-center space-x-1 truncate">
-                            <Mail className="w-3 h-3 flex-shrink-0" />
-                            <span className="truncate">{application.owner.email}</span>
-                          </div>
-                          {application.owner.profession && (
-                            <div className="flex items-center space-x-1 mt-1 truncate">
+                        {application.owner.profession && (
+                          <div className="text-xs text-gray-600 mt-1">
+                            <div className="flex items-center space-x-1 truncate">
                               <Briefcase className="w-3 h-3 flex-shrink-0" />
                               <span className="truncate">{application.owner.profession}</span>
                             </div>
-                          )}
-                        </div>
+                          </div>
+                        )}
                         
                         <div className="flex items-center space-x-1 mt-1 text-xs text-gray-500">
                           <MapPin className="w-3 h-3 flex-shrink-0" />
@@ -286,10 +265,6 @@ export default function Applications() {
                         </div>
                       </div>
                     </div>
-                    
-                    <Badge variant="secondary" className={`${getStatusColor(application.status)} text-xs`}>
-                      {application.status ? application.status.charAt(0).toUpperCase() + application.status.slice(1) : 'Unknown'}
-                    </Badge>
                   </div>
 
                   {/* Actions Section */}
@@ -390,10 +365,6 @@ export default function Applications() {
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-gray-900">Contact Information</h3>
                     <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <Mail className="w-4 h-4 text-gray-500" />
-                        <span className="text-sm">{selectedApplication.owner.email}</span>
-                      </div>
                       {selectedApplication.owner.profession && (
                         <div className="flex items-center space-x-2">
                           <Briefcase className="w-4 h-4 text-gray-500" />
