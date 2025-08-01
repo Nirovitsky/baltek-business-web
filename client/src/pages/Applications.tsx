@@ -9,12 +9,31 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
 import { User, Search, MessageCircle, FileText, Download, MapPin, Calendar, Briefcase, X, Eye } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { JobApplication, PaginatedResponse } from "@shared/schema";
+
+// Helper function to get status colors for applications
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'pending':
+      return 'bg-blue-100 text-blue-800';
+    case 'invited':
+      return 'bg-green-100 text-green-800';
+    case 'rejected':
+      return 'bg-red-100 text-red-800';
+    case 'hired':
+      return 'bg-green-100 text-green-800';
+    case 'expired':
+      return 'bg-gray-100 text-gray-800';
+    default:
+      return 'bg-gray-100 text-gray-800';
+  }
+};
 
 export default function Applications() {
   const [searchTerm, setSearchTerm] = useState("");
