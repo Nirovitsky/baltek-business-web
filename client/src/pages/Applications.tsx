@@ -452,13 +452,26 @@ export default function Applications() {
                           </Button>
                           <Button
                             size="sm"
-                            onClick={() => {
-                              const link = document.createElement('a');
-                              link.href = detailedApplication?.resume || selectedApplication.resume || '';
-                              link.download = `${selectedApplication.owner.first_name}_${selectedApplication.owner.last_name}_CV.pdf`;
-                              document.body.appendChild(link);
-                              link.click();
-                              document.body.removeChild(link);
+                            onClick={async () => {
+                              try {
+                                const response = await fetch(detailedApplication?.resume || selectedApplication.resume || '');
+                                const blob = await response.blob();
+                                const url = window.URL.createObjectURL(blob);
+                                const link = document.createElement('a');
+                                link.href = url;
+                                link.download = `${selectedApplication.owner.first_name}_${selectedApplication.owner.last_name}_CV.pdf`;
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                                window.URL.revokeObjectURL(url);
+                              } catch (error) {
+                                console.error('Download failed:', error);
+                                toast({
+                                  title: "Download Failed",
+                                  description: "Could not download the file. Please try again.",
+                                  variant: "destructive",
+                                });
+                              }
                             }}
                             className="flex items-center space-x-2 bg-blue-600 text-white hover:bg-blue-700"
                           >
@@ -491,10 +504,10 @@ export default function Applications() {
                         </div>
                         <div className="relative bg-gray-100">
                           <iframe
-                            src={previewUrl}
+                            src={`https://docs.google.com/viewer?url=${encodeURIComponent(previewUrl)}&embedded=true`}
                             className="w-full h-96 border-0"
                             title="CV Preview"
-                            sandbox="allow-same-origin"
+                            sandbox="allow-same-origin allow-scripts"
                           />
                           <div className="absolute bottom-2 right-2">
                             <Button
