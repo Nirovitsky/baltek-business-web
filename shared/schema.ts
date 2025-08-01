@@ -86,7 +86,8 @@ export const userSchema = z.object({
 // Organization schemas
 export const organizationSchema = z.object({
   id: z.number(),
-  name: z.string(),
+  name: z.string().optional(),
+  official_name: z.string(),
   display_name: z.string().optional(),
   description: z.string().optional(),
   about_us: z.string().optional(),

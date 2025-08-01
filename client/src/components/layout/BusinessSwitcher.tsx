@@ -37,7 +37,7 @@ export default function BusinessSwitcher() {
       <Button variant="outline" className="w-full justify-between" disabled>
         <div className="flex items-center">
           <Building2 className="mr-2 h-4 w-4" />
-          <span className="truncate">{organizations[0].name}</span>
+          <span className="truncate">{organizations[0].display_name || organizations[0].official_name}</span>
         </div>
       </Button>
     );
@@ -57,7 +57,7 @@ export default function BusinessSwitcher() {
               {selectedOrganization?.logo ? (
                 <img 
                   src={selectedOrganization.logo} 
-                  alt={selectedOrganization.name} 
+                  alt={selectedOrganization.official_name} 
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -65,7 +65,7 @@ export default function BusinessSwitcher() {
               )}
             </div>
             <span className="truncate">
-              {selectedOrganization?.display_name || selectedOrganization?.name || "Select business..."}
+              {selectedOrganization?.display_name || selectedOrganization?.official_name || "Select business..."}
             </span>
           </div>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -79,7 +79,7 @@ export default function BusinessSwitcher() {
             {organizations.map((org) => (
               <CommandItem
                 key={org.id}
-                value={org.name}
+                value={org.official_name}
                 onSelect={() => {
                   switchOrganization(org);
                   setOpen(false);
@@ -98,7 +98,7 @@ export default function BusinessSwitcher() {
                     {org.logo ? (
                       <img 
                         src={org.logo} 
-                        alt={org.name} 
+                        alt={org.official_name} 
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -108,7 +108,7 @@ export default function BusinessSwitcher() {
                     )}
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-medium">{org.display_name || org.name}</span>
+                    <span className="font-medium">{org.display_name || org.official_name}</span>
                     {org.description && (
                       <span className="text-xs text-gray-500 truncate">
                         {org.description}

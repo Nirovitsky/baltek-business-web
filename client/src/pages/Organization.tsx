@@ -20,7 +20,7 @@ import { z } from "zod";
 import type { Organization } from "@shared/schema";
 
 const organizationUpdateSchema = z.object({
-  name: z.string().min(1, "Organization name is required"),
+  official_name: z.string().min(1, "Organization name is required"),
   display_name: z.string().optional(),
   description: z.string().optional(),
   about_us: z.string().optional(),
@@ -69,7 +69,7 @@ export default function Organization() {
   const form = useForm<OrganizationUpdate>({
     resolver: zodResolver(organizationUpdateSchema),
     defaultValues: {
-      name: "",
+      official_name: "",
       display_name: "",
       description: "",
       about_us: "",
@@ -84,7 +84,7 @@ export default function Organization() {
   useEffect(() => {
     if (selectedOrganization) {
       form.reset({
-        name: selectedOrganization.name,
+        official_name: selectedOrganization.official_name,
         display_name: selectedOrganization.display_name || "",
         description: selectedOrganization.description || "",
         about_us: selectedOrganization.about_us || "",
@@ -134,7 +134,7 @@ export default function Organization() {
   const handleCancel = () => {
     if (selectedOrganization) {
       form.reset({
-        name: selectedOrganization.name,
+        official_name: selectedOrganization.official_name,
         display_name: selectedOrganization.display_name || "",
         description: selectedOrganization.description || "",
         about_us: selectedOrganization.about_us || "",
@@ -323,7 +323,7 @@ export default function Organization() {
                             ) : selectedOrganization?.logo ? (
                               <img 
                                 src={selectedOrganization.logo} 
-                                alt={selectedOrganization.name} 
+                                alt={selectedOrganization.official_name} 
                                 className="object-cover w-full h-full rounded-xl"
                               />
                             ) : (
@@ -376,7 +376,7 @@ export default function Organization() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                               <FormField
                                 control={form.control}
-                                name="name"
+                                name="official_name"
                                 render={({ field }) => (
                                   <FormItem>
                                     <FormLabel>Organization Name*</FormLabel>
