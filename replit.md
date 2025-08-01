@@ -3,6 +3,12 @@
 ## Overview
 The Baltek Business Dashboard is a React and Express-based application designed for HR managers within the Baltek Karyera platform. It provides tools for managing job postings, reviewing applications, and communicating with candidates, connecting to an existing OpenAPI backend. The project aims to offer a professional UI tailored for business users, streamlining HR operations and enhancing candidate engagement.
 
+## Recent Changes (January 2025)
+- ✅ **Migration Completed**: Successfully migrated from Replit Agent to Replit environment
+- ✅ **User Profile Cleanup**: Removed location fields and online status badges as users don't have location data
+- ✅ **WebSocket Integration**: Verified real-time messaging functionality works correctly
+- ✅ **Development Environment**: All packages installed and workflow running successfully
+
 ## User Preferences
 - Preferred communication style: Simple, everyday language
 - Application name: "baltek business" (lowercase "business")

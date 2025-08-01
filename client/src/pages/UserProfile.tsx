@@ -158,11 +158,7 @@ export default function UserProfile() {
                     {userProfile.profession && (
                       <p className="text-gray-600">{userProfile.profession}</p>
                     )}
-                    <div className="flex items-center space-x-3 mt-1 text-sm text-gray-500">
-                      <Badge variant="outline" className="text-gray-600 border-gray-300">
-                        Status: Member
-                      </Badge>
-                    </div>
+
                   </div>
                   <Button 
                     className="bg-gradient-to-r from-blue-500 to-blue-600"
