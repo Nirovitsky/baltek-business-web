@@ -186,6 +186,7 @@ export default function Messages() {
 
   // File upload mutation
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadedFile, setUploadedFile] = useState<{id: number; url: string; name: string} | null>(null);
 
   const uploadFileMutation = useMutation({
     mutationFn: async (file: File) => {
@@ -200,61 +201,65 @@ export default function Messages() {
         const result = await apiService.uploadFile(file);
         clearInterval(progressInterval);
         setUploadProgress(100);
+        setUploadedFile(result);
         return result;
       } catch (error) {
         clearInterval(progressInterval);
         setUploadProgress(0);
+        setUploadedFile(null);
         throw error;
       }
+    },
+    onError: (error) => {
+      console.error('File upload failed:', error);
+      toast({
+        title: "Upload failed",
+        description: "Failed to upload file. Please try again.",
+        variant: "destructive",
+      });
+      setUploadProgress(0);
+      setUploadedFile(null);
+      setSelectedFile(null);
     },
   });
 
   const handleSendMessage = () => {
-    if (!selectedRoom || (!newMessage.trim() && !selectedFile)) return;
+    if (!selectedRoom || (!newMessage.trim() && !uploadedFile)) return;
 
-    if (selectedFile) {
-      // Upload file first, then send message with attachment
-      uploadFileMutation.mutate(selectedFile, {
-        onSuccess: async (uploadResult) => {
-          try {
-            // Send message with attachment using the API format
-            await apiService.sendMessageWithAttachment(
-              selectedRoom.id, 
-              newMessage || '', 
-              [uploadResult.id]
-            );
-            
-            setNewMessage("");
-            setSelectedFile(null);
-            setShowFileUpload(false);
-            setUploadProgress(0);
-            
-            // Invalidate messages to get the new message from server
-            queryClient.invalidateQueries({ queryKey: ["/chat/messages/", selectedRoom.id] });
-            
-            toast({
-              title: "Message sent",
-              description: "Your message with attachment was sent successfully.",
-            });
-          } catch (error) {
-            console.error('Failed to send message with attachment:', error);
-            toast({
-              title: "Error",
-              description: "Failed to send message with attachment.",
-              variant: "destructive",
-            });
-          }
-        },
-        onError: (error) => {
-          console.error('File upload failed:', error);
+    if (uploadedFile) {
+      // File is already uploaded, just send the message
+      const sendMessageWithFile = async () => {
+        try {
+          await apiService.sendMessageWithAttachment(
+            selectedRoom.id, 
+            newMessage || '', 
+            [uploadedFile.id]
+          );
+          
+          setNewMessage("");
+          setSelectedFile(null);
+          setUploadedFile(null);
+          setShowFileUpload(false);
+          setUploadProgress(0);
+          
+          // Invalidate messages to get the new message from server
+          queryClient.invalidateQueries({ queryKey: ["/chat/messages/", selectedRoom.id] });
+          
           toast({
-            title: "Upload failed",
-            description: "Failed to upload file. Please try again.",
+            title: "Message sent",
+            description: "Your message with attachment was sent successfully.",
+          });
+        } catch (error) {
+          console.error('Failed to send message with attachment:', error);
+          toast({
+            title: "Error",
+            description: "Failed to send message with attachment.",
             variant: "destructive",
           });
-          setUploadProgress(0);
-        },
-      });
+        }
+      };
+      
+      sendMessageWithFile();
     } else {
       // Create optimistic message immediately
       const optimisticMessage: Message = {
@@ -288,10 +293,14 @@ export default function Messages() {
 
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);
+    // Start uploading immediately when file is selected
+    uploadFileMutation.mutate(file);
   };
 
   const handleRemoveFile = () => {
     setSelectedFile(null);
+    setUploadedFile(null);
+    setUploadProgress(0);
   };
 
   const handleRoomSelect = (room: Room) => {
@@ -302,6 +311,7 @@ export default function Messages() {
     
     setSelectedRoom(room);
     setSelectedFile(null);
+    setUploadedFile(null);
     setShowFileUpload(false);
     setUploadProgress(0);
     
@@ -967,11 +977,11 @@ export default function Messages() {
                       {/* Send Button */}
                       <Button
                         onClick={handleSendMessage}
-                        disabled={(!newMessage.trim() && !selectedFile) || uploadFileMutation.isPending || sendingMessage}
+                        disabled={(!newMessage.trim() && !uploadedFile) || sendingMessage || (selectedFile && !uploadedFile)}
                         className="h-8 w-8 p-0 bg-primary hover:bg-primary/90"
                         size="sm"
                       >
-                        {uploadFileMutation.isPending || sendingMessage ? (
+                        {sendingMessage ? (
                           <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin" />
                         ) : (
                           <Send className="w-4 h-4" />
