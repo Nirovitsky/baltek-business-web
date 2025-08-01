@@ -41,7 +41,12 @@ export default function Login() {
 
   const onSubmit = async (data: LoginRequest) => {
     try {
-      await login(data);
+      // Add +993 prefix to phone number before sending to backend
+      const loginData = {
+        ...data,
+        phone: `+993${data.phone}`
+      };
+      await login(loginData);
       toast({
         title: "Login successful",
         description: "Welcome to baltek business dashboard",
