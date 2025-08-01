@@ -889,10 +889,49 @@ export default function Messages() {
 
               {/* Message Input Card */}
               <Card className="shadow-md border-gray-200">
-                <CardContent className="p-3">
-                  <div className="flex space-x-3">
-                    {/* File Attach Button */}
-                    <div className="flex-shrink-0">
+                <CardContent className="p-4">
+                  <div className="relative">
+                    {/* Text Input Area */}
+                    <Textarea
+                      placeholder="Type your message..."
+                      value={newMessage}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        // Apply 1024 character limit
+                        if (value.length <= 1024) {
+                          setNewMessage(value);
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          handleSendMessage();
+                        }
+                      }}
+                      className="w-full min-h-[2.5rem] max-h-32 resize-none border-none bg-transparent focus:ring-0 focus:outline-none pr-20 pb-12 scrollbar-hide"
+                      rows={1}
+                      style={{
+                        height: 'auto',
+                        minHeight: '2.5rem',
+                        maxHeight: '8rem',
+                        scrollbarWidth: 'none',
+                        msOverflowStyle: 'none'
+                      }}
+                      onInput={(e) => {
+                        const target = e.target as HTMLTextAreaElement;
+                        target.style.height = 'auto';
+                        target.style.height = Math.min(target.scrollHeight, 128) + 'px';
+                      }}
+                    />
+                    
+                    {/* Character counter */}
+                    <div className="absolute top-2 right-2 text-xs text-gray-500">
+                      {newMessage.length}/1024
+                    </div>
+                    
+                    {/* Bottom Controls */}
+                    <div className="absolute bottom-2 right-2 flex space-x-2">
+                      {/* File Attach Button */}
                       <input
                         type="file"
                         id="file-upload"
@@ -904,62 +943,25 @@ export default function Messages() {
                         }}
                       />
                       <Button
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
                         onClick={() => document.getElementById('file-upload')?.click()}
                         disabled={!connected}
-                        className="h-10 px-3 border-2 border-dashed border-gray-300 hover:border-primary hover:bg-primary/5"
+                        className="h-8 w-8 p-0 hover:bg-gray-100"
                         title="Attach file"
                       >
-                        <Paperclip className="w-4 h-4" />
+                        <Paperclip className="w-4 h-4 text-gray-500" />
                       </Button>
-                    </div>
-                    
-                    {/* Text Input Area */}
-                    <div className="flex-1 relative">
-                      <Textarea
-                        placeholder="Type your message... (Shift+Enter for new line, Enter to send)"
-                        value={newMessage}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          // Apply 1024 character limit
-                          if (value.length <= 1024) {
-                            setNewMessage(value);
-                          }
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" && !e.shiftKey) {
-                            e.preventDefault();
-                            handleSendMessage();
-                          }
-                        }}
-                        className="min-h-[2.5rem] max-h-32 resize-none bg-gray-50 border-gray-300 focus:border-primary focus:ring-primary pr-16"
-                        rows={1}
-                        style={{
-                          height: 'auto',
-                          minHeight: '2.5rem',
-                          maxHeight: '8rem'
-                        }}
-                        onInput={(e) => {
-                          const target = e.target as HTMLTextAreaElement;
-                          target.style.height = 'auto';
-                          target.style.height = Math.min(target.scrollHeight, 128) + 'px';
-                        }}
-                      />
-                      <div className="absolute right-3 bottom-2 text-xs text-gray-500">
-                        {newMessage.length}/1024
-                      </div>
-                    </div>
-                    
-                    {/* Send Button */}
-                    <div className="flex-shrink-0">
+                      
+                      {/* Send Button */}
                       <Button
                         onClick={handleSendMessage}
                         disabled={(!newMessage.trim() && !selectedFile) || uploadFileMutation.isPending || sendingMessage}
-                        className="h-10 bg-primary hover:bg-primary/90 shadow-md"
+                        className="h-8 w-8 p-0 bg-primary hover:bg-primary/90"
+                        size="sm"
                       >
                         {uploadFileMutation.isPending || sendingMessage ? (
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin" />
                         ) : (
                           <Send className="w-4 h-4" />
                         )}
