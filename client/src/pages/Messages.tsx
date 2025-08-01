@@ -22,6 +22,8 @@ export default function Messages() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [showFileUpload, setShowFileUpload] = useState(false);
+  const [sendingMessage, setSendingMessage] = useState(false);
+  const [optimisticMessages, setOptimisticMessages] = useState<Message[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
   const { toast } = useToast();
@@ -86,10 +88,10 @@ export default function Messages() {
     return new Date(dateString);
   };
 
-  // Combine API messages with WebSocket messages, removing duplicates
+  // Combine API messages, WebSocket messages, and optimistic messages
   const allMessages = selectedRoom?.id === currentRoom
     ? (() => {
-        const combined = [...apiMessages];
+        const combined = [...apiMessages, ...optimisticMessages];
         wsMessages.forEach(wsMsg => {
           if (!combined.some(apiMsg => apiMsg.id === wsMsg.id)) {
             combined.push(wsMsg);
@@ -101,11 +103,32 @@ export default function Messages() {
           return dateA - dateB;
         });
       })()
-    : [...apiMessages].sort((a, b) => {
+    : [...apiMessages, ...optimisticMessages].sort((a, b) => {
         const dateA = parseDate(a.date_created).getTime();
         const dateB = parseDate(b.date_created).getTime();
         return dateA - dateB;
       });
+
+  // Clear optimistic messages when real messages with same content arrive
+  useEffect(() => {
+    if (optimisticMessages.length > 0 && wsMessages.length > 0) {
+      const newOptimisticMessages = optimisticMessages.filter(optimistic => {
+        return !wsMessages.some(ws => 
+          ws.text === optimistic.text && 
+          ws.owner.id === optimistic.owner.id &&
+          Math.abs(parseDate(ws.date_created).getTime() - parseDate(optimistic.date_created).getTime()) < 30000
+        );
+      });
+      if (newOptimisticMessages.length !== optimisticMessages.length) {
+        setOptimisticMessages(newOptimisticMessages);
+      }
+    }
+  }, [wsMessages, optimisticMessages]);
+
+  // Clear optimistic messages when room changes
+  useEffect(() => {
+    setOptimisticMessages([]);
+  }, [selectedRoom?.id]);
 
   // File upload mutation
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -168,17 +191,34 @@ export default function Messages() {
         },
       });
     } else {
+      // Create optimistic message immediately
+      const optimisticMessage: Message = {
+        id: -Date.now(), // Negative ID for optimistic messages
+        text: newMessage.trim(),
+        date_created: new Date().toISOString(),
+        room: selectedRoom.id,
+        owner: {
+          id: user?.id || 0,
+          first_name: user?.first_name || 'You',
+          last_name: user?.last_name || '',
+        },
+        attachment_url: null,
+        attachment_name: null,
+        attachment_type: null,
+        attachment_size: null,
+      };
+
+      // Add optimistic message immediately
+      setOptimisticMessages(prev => [...prev, optimisticMessage]);
+      setSendingMessage(true);
+      
       // Send text message
       const success = sendMessage(selectedRoom.id, newMessage);
-      if (success) {
-        setNewMessage("");
-        // WebSocket will handle adding the message to the list
-      } else {
-        toast({
-          title: "Error",
-          description: "Failed to send message. Please check your connection.",
-          variant: "destructive",
-        });
+      setNewMessage("");
+      setSendingMessage(false);
+      
+      if (!success) {
+        console.log("Message queued for sending when connected");
       }
     }
   };
@@ -638,10 +678,11 @@ export default function Messages() {
               ) : (
                 allMessages.map((message) => {
                   const isOwn = message.owner.id === user?.id;
+                  const isOptimistic = message.id < 0;
                   return (
                     <div
                       key={message.id}
-                      className={`flex ${isOwn ? "justify-end" : "justify-start"}`}
+                      className={`flex ${isOwn ? "justify-end" : "justify-start"} ${isOptimistic ? "opacity-70" : ""}`}
                     >
                       <div className="flex items-end space-x-2 max-w-xs lg:max-w-md">
                         {!isOwn && (
@@ -808,21 +849,21 @@ export default function Messages() {
                 </div>
                 <Button
                   onClick={handleSendMessage}
-                  disabled={(!newMessage.trim() && !selectedFile) || uploadFileMutation.isPending}
+                  disabled={(!newMessage.trim() && !selectedFile) || uploadFileMutation.isPending || sendingMessage}
                   className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-md"
                 >
-                  {uploadFileMutation.isPending ? (
+                  {uploadFileMutation.isPending || sendingMessage ? (
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   ) : (
                     <Send className="w-4 h-4" />
                   )}
                 </Button>
               </div>
-              {!connected && (
+              {sendingMessage && (
                 <div className="flex items-center space-x-2 mt-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
                   <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
                   <p className="text-xs text-blue-700 font-medium">
-                    Disconnected from chat server. Messages will be queued and sent when reconnected.
+                    Sending message...
                   </p>
                 </div>
               )}
