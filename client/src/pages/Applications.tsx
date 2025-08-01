@@ -12,13 +12,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
-import { User, Search, MessageCircle, FileText, Download, Mail, MapPin, Calendar, Briefcase } from "lucide-react";
+import { User, Search, MessageCircle, FileText, Download, Mail, MapPin, Calendar, Briefcase, X, Eye } from "lucide-react";
 import type { JobApplication, PaginatedResponse } from "@shared/schema";
 
 export default function Applications() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedApplication, setSelectedApplication] = useState<JobApplication | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   
   const { toast } = useToast();
   const { selectedOrganization } = useAuth();
@@ -338,8 +339,11 @@ export default function Applications() {
 
         {/* Application Details Dialog */}
         {selectedApplication && (
-          <Dialog open={!!selectedApplication} onOpenChange={() => setSelectedApplication(null)}>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <Dialog open={!!selectedApplication} onOpenChange={() => {
+            setSelectedApplication(null);
+            setPreviewUrl(null);
+          }}>
+            <DialogContent className="max-w-5xl max-h-[95vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="flex items-center space-x-3">
                   <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
@@ -429,6 +433,7 @@ export default function Applications() {
                     <span>Resume/CV</span>
                   </h3>
                   {(detailedApplication?.resume || selectedApplication.resume) ? (
+                    <>
                     <div className="bg-blue-50 rounded-lg p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
@@ -439,10 +444,10 @@ export default function Applications() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => window.open(detailedApplication?.resume || selectedApplication.resume, '_blank')}
+                            onClick={() => setPreviewUrl(detailedApplication?.resume || selectedApplication.resume || null)}
                             className="flex items-center space-x-2"
                           >
-                            <FileText className="w-4 h-4" />
+                            <Eye className="w-4 h-4" />
                             <span>Preview</span>
                           </Button>
                           <Button
@@ -463,9 +468,48 @@ export default function Applications() {
                         </div>
                       </div>
                       <p className="text-xs text-gray-600 mt-2">
-                        Preview the document in a new tab or download it directly
+                        Preview the document inline or download it directly
                       </p>
                     </div>
+                  
+                    {/* Inline CV Preview */}
+                    {previewUrl && (
+                      <div className="mt-4 bg-white rounded-lg border-2 border-blue-200 overflow-hidden">
+                        <div className="flex items-center justify-between bg-blue-50 px-4 py-2 border-b border-blue-200">
+                          <h4 className="text-sm font-medium text-blue-900 flex items-center space-x-2">
+                            <FileText className="w-4 h-4" />
+                            <span>CV Preview</span>
+                          </h4>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setPreviewUrl(null)}
+                            className="text-blue-700 hover:text-blue-900 hover:bg-blue-100"
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                        <div className="relative bg-gray-100">
+                          <iframe
+                            src={previewUrl}
+                            className="w-full h-96 border-0"
+                            title="CV Preview"
+                            sandbox="allow-same-origin"
+                          />
+                          <div className="absolute bottom-2 right-2">
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => window.open(previewUrl, '_blank')}
+                              className="text-xs"
+                            >
+                              Open Full Size
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    </>
                   ) : (
                     <div className="bg-gray-50 rounded-lg p-4">
                       <p className="text-sm text-gray-500 italic">
