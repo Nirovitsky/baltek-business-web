@@ -95,7 +95,10 @@ export default function Jobs() {
     }
   };
 
-  const jobs = data?.results || [];
+  // Sort jobs by created_at in descending order (newest first)
+  const jobs = data?.results ? 
+    [...data.results].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) : 
+    [];
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">

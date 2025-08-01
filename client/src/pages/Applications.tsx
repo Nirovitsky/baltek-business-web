@@ -119,7 +119,10 @@ export default function Applications() {
     createChatRoomMutation.mutate(applicationId);
   };
 
-  const applications = data?.results || [];
+  // Sort applications by ID in descending order (newest first, since higher ID = more recent)
+  const applications = data?.results ? 
+    [...data.results].sort((a, b) => b.id - a.id) : 
+    [];
   
   // Debug: Log the first application to see its structure
   if (applications.length > 0) {
