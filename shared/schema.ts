@@ -238,6 +238,8 @@ export const jobApplicationSchema = z.object({
   cover_letter: z.string().optional(),
   resume: z.string().optional(),
   room_id: z.number().nullable().optional(),
+  date_applied: z.string().optional(),
+  created_at: z.string().optional(),
 });
 
 export const createJobApplicationSchema = jobApplicationSchema

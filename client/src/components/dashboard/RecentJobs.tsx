@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Code, TrendingUp, Palette } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Code, TrendingUp, Palette, Building2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { apiService } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
@@ -89,7 +90,8 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
         ) : (
           <div className="space-y-4">
             {jobs.map((job) => {
-              const IconComponent = jobIcons[job.category] || Code;
+              const categoryKey = typeof job.category === 'object' ? job.category.name : 'technology';
+              const IconComponent = jobIcons[categoryKey] || Code;
               const statusColor = job.status === 'open' ? 'bg-green-100 text-green-800' : 
                                 job.status === 'archived' ? 'bg-gray-100 text-gray-800' : 
                                 'bg-yellow-100 text-yellow-800';
@@ -100,8 +102,21 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
                   className="flex items-start space-x-4 p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                   onClick={() => onJobClick?.(job.id)}
                 >
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <IconComponent className="text-primary w-5 h-5" />
+                  <div className="flex-shrink-0">
+                    <Avatar className="w-12 h-12 rounded-lg">
+                      <AvatarImage 
+                        src={typeof job.organization === 'object' ? job.organization.logo : undefined} 
+                        alt={typeof job.organization === 'object' ? (job.organization.display_name || job.organization.official_name) : 'Organization'} 
+                        className="object-cover rounded-lg"
+                      />
+                      <AvatarFallback className="bg-primary/10 rounded-lg">
+                        {typeof job.organization === 'object' && job.organization.logo ? (
+                          <Building2 className="text-primary w-5 h-5" />
+                        ) : (
+                          <IconComponent className="text-primary w-5 h-5" />
+                        )}
+                      </AvatarFallback>
+                    </Avatar>
                   </div>
                   <div className="flex-1">
                     <h4 className="font-medium text-gray-900">{job.title}</h4>

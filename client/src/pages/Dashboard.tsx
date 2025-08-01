@@ -42,12 +42,16 @@ export default function Dashboard() {
   const jobs = jobsData?.results || [];
   const applications = applicationsData?.results || [];
 
-  // Calculate stats
-  // Count jobs that are active (only "open" status jobs are active)
+  // Calculate real stats from API data
   const activeJobs = jobs.filter(job => job.status === 'open').length;
   const totalApplications = applicationsData?.count || 0;
   const pendingApplications = applications.filter(app => app.status === 'pending').length;
   const hiredThisMonth = applications.filter(app => app.status === 'hired').length;
+  
+  // Calculate changes (simplified calculation based on available data)
+  const totalJobs = jobsData?.count || 0;
+  const archivedJobs = jobs.filter(job => job.status === 'archived').length;
+  const invitedApplications = applications.filter(app => app.status === 'invited').length;
 
 
 
@@ -79,9 +83,9 @@ export default function Dashboard() {
             value={activeJobs}
             icon={Briefcase}
             change={{
-              value: `+${Math.max(0, activeJobs - 20)}`,
-              label: "from last month",
-              type: "positive"
+              value: `${totalJobs} total`,
+              label: `${archivedJobs} archived`,
+              type: "neutral"
             }}
           />
           
@@ -91,8 +95,8 @@ export default function Dashboard() {
             icon={Users}
             iconColor="text-blue-600"
             change={{
-              value: `+${Math.max(0, Math.floor(totalApplications * 0.08))}`,
-              label: "from last month",
+              value: `${pendingApplications} pending`,
+              label: `${invitedApplications} invited`,
               type: "positive"
             }}
           />
@@ -103,8 +107,8 @@ export default function Dashboard() {
             icon={Clock}
             iconColor="text-yellow-600"
             change={{
-              value: `+${Math.max(0, pendingApplications - 50)}`,
-              label: "since yesterday",
+              value: `${Math.round((pendingApplications / Math.max(totalApplications, 1)) * 100)}%`,
+              label: "of total applications",
               type: "neutral"
             }}
           />
@@ -115,8 +119,8 @@ export default function Dashboard() {
             icon={UserCheck}
             iconColor="text-green-600"
             change={{
-              value: `+${Math.max(0, hiredThisMonth - 5)}`,
-              label: "from last month",
+              value: `${Math.round((hiredThisMonth / Math.max(totalApplications, 1)) * 100)}%`,
+              label: "success rate",
               type: "positive"
             }}
           />

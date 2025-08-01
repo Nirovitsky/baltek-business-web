@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User, ChevronRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { apiService } from "@/lib/api";
@@ -8,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useLocation } from "wouter";
 import type { JobApplication, PaginatedResponse } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
+import { format, parseISO, isValid } from "date-fns";
 
 export default function RecentApplications() {
   const { selectedOrganization } = useAuth();
@@ -89,6 +91,33 @@ export default function RecentApplications() {
     }
   };
 
+  const formatApplicationDate = (dateString: string) => {
+    try {
+      // Handle European date format (DD.MM.YYYY HH:mm:ss)
+      const europeanFormat = /^(\d{2})\.(\d{2})\.(\d{4}) (\d{2}):(\d{2}):(\d{2})$/;
+      const europeanMatch = dateString.match(europeanFormat);
+      
+      if (europeanMatch) {
+        const [, day, month, year, hour, minute, second] = europeanMatch;
+        const isoString = `${year}-${month}-${day}T${hour}:${minute}:${second}Z`;
+        const date = parseISO(isoString);
+        if (isValid(date)) {
+          return format(date, 'MMM d, yyyy');
+        }
+      }
+      
+      // Try parsing as ISO string
+      const date = parseISO(dateString);
+      if (isValid(date)) {
+        return format(date, 'MMM d, yyyy');
+      }
+      
+      return 'Recently';
+    } catch {
+      return 'Recently';
+    }
+  };
+
   return (
     <Card className="shadow-sm border border-gray-200">
       <CardHeader className="border-b border-gray-200">
@@ -108,10 +137,25 @@ export default function RecentApplications() {
             {filteredApplications.map((application) => (
               <div key={application.id} className="flex items-center space-x-4 p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
                 <div 
-                  className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0 cursor-pointer hover:bg-primary/10"
+                  className="flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
                   onClick={() => setLocation(`/profile/${application.owner?.id || application.id}`)}
                 >
-                  <User className="text-gray-600 w-5 h-5" />
+                  <Avatar className="w-10 h-10">
+                    <AvatarImage 
+                      src={application.owner?.avatar} 
+                      alt={application.owner?.first_name && application.owner?.last_name 
+                        ? `${application.owner.first_name} ${application.owner.last_name}`
+                        : 'Candidate'} 
+                      className="object-cover"
+                    />
+                    <AvatarFallback className="bg-primary/10">
+                      {application.owner?.first_name && application.owner?.last_name ? (
+                        `${application.owner.first_name[0]}${application.owner.last_name[0]}`
+                      ) : (
+                        <User className="text-primary w-5 h-5" />
+                      )}
+                    </AvatarFallback>
+                  </Avatar>
                 </div>
                 <div className="flex-1">
                   <h4 
@@ -126,7 +170,7 @@ export default function RecentApplications() {
                     Applied for {application.job?.title || `Job #${application.job}`}
                   </p>
                   <p className="text-xs text-gray-400">
-                    Applied recently
+                    Applied on {formatApplicationDate(application.date_applied || application.created_at || '')}
                   </p>
                 </div>
                 <div className="flex items-center space-x-2">
