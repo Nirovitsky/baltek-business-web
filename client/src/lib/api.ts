@@ -8,6 +8,9 @@ export interface ApiError {
 }
 
 export class ApiService {
+  private isRefreshing = false;
+  private refreshPromise: Promise<any> | null = null;
+
   private getAuthHeaders(): HeadersInit {
     const token = localStorage.getItem('access_token');
     return token ? { 'Authorization': `Bearer ${token}` } : {};
@@ -50,11 +53,13 @@ export class ApiService {
       // If it's a 401 error and we haven't already retried with refresh
       if (error.status === 401 && retryWithRefresh && localStorage.getItem('refresh_token')) {
         try {
-          await this.refreshToken();
+          // Use the enhanced refresh method that prevents concurrent refreshes
+          await this.performTokenRefresh();
           // Retry the request with new token, but don't retry again
           return this.request<T>(endpoint, options, false);
         } catch (refreshError) {
           // Refresh failed, logout user
+          console.log('Token refresh failed, logging out user');
           this.logout();
           throw refreshError;
         }
@@ -82,12 +87,40 @@ export class ApiService {
     return tokens;
   }
 
+  // Public method for manual refresh (keep for backward compatibility)
   async refreshToken() {
+    return this.performTokenRefresh();
+  }
+
+  // Enhanced token refresh that prevents concurrent refreshes
+  private async performTokenRefresh(): Promise<any> {
+    // If already refreshing, wait for the existing refresh
+    if (this.isRefreshing && this.refreshPromise) {
+      console.log('Token refresh already in progress, waiting...');
+      return this.refreshPromise;
+    }
+
+    this.isRefreshing = true;
+    this.refreshPromise = this.doTokenRefresh();
+
+    try {
+      const result = await this.refreshPromise;
+      return result;
+    } finally {
+      this.isRefreshing = false;
+      this.refreshPromise = null;
+    }
+  }
+
+  private async doTokenRefresh(): Promise<any> {
     const refreshToken = localStorage.getItem('refresh_token');
     if (!refreshToken) {
+      console.log('No refresh token available, logging out');
       this.logout();
       throw new Error('No refresh token available');
     }
+
+    console.log('Refreshing access token...');
 
     try {
       const response = await fetch(`${API_BASE_URL}/token/refresh`, {
@@ -97,6 +130,7 @@ export class ApiService {
       });
 
       if (!response.ok) {
+        console.log('Token refresh failed with status:', response.status);
         this.logout();
         throw new Error('Token refresh failed');
       }
@@ -104,8 +138,15 @@ export class ApiService {
       const tokens = await response.json();
       localStorage.setItem('access_token', tokens.access);
       
+      // Update refresh token if provided
+      if (tokens.refresh) {
+        localStorage.setItem('refresh_token', tokens.refresh);
+      }
+
+      console.log('Access token refreshed successfully');
       return tokens;
     } catch (error) {
+      console.error('Token refresh error:', error);
       this.logout();
       throw error;
     }

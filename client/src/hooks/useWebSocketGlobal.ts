@@ -122,9 +122,33 @@ const WebSocketManager = {
           const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000); // Exponential backoff, max 30s
           console.log(`Attempting to reconnect in ${delay}ms (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})`);
           
-          reconnectInterval = setTimeout(() => {
+          reconnectInterval = setTimeout(async () => {
             reconnectAttempts++;
-            const token = localStorage.getItem('access_token');
+            let token = localStorage.getItem('access_token');
+            
+            // If no token, try to get a fresh one
+            if (!token) {
+              const refreshToken = localStorage.getItem('refresh_token');
+              if (refreshToken) {
+                try {
+                  // Try to refresh token before reconnecting
+                  const response = await fetch('/api/token/refresh', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ refresh: refreshToken }),
+                  });
+                  
+                  if (response.ok) {
+                    const tokens = await response.json();
+                    localStorage.setItem('access_token', tokens.access);
+                    token = tokens.access;
+                  }
+                } catch (error) {
+                  console.error('Failed to refresh token before WebSocket reconnect:', error);
+                }
+              }
+            }
+            
             if (token) {
               WebSocketManager.connect(token);
             }
