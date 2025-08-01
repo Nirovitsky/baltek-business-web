@@ -207,9 +207,7 @@ const WebSocketManager = {
         data: {
           room: roomId,
           text: limitedText,
-          ...(attachments && attachments.length > 0 && {
-            attachments: attachments,
-          }),
+          attachments: attachments || []
         },
       };
 
