@@ -189,14 +189,28 @@ export class ApiService {
         requestHeaders.Authorization = `Bearer ${authToken}`;
       }
 
+      console.log('Upload request headers:', requestHeaders);
+      console.log('FormData created with file');
+
       const response = await fetch(url, {
         method: "POST",
         headers: requestHeaders, // No Content-Type header!
         body: formData,
       });
 
+      console.log('Upload response status:', response.status);
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        const errorText = await response.text();
+        console.log('Upload error response:', errorText);
+        
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { message: errorText };
+        }
+        
         const error: ApiError = {
           message: errorData.message || errorData.detail || response.statusText,
           status: response.status,

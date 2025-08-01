@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import express, { type Express } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 
@@ -202,6 +202,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Upload error:", error);
       res.status(500).json({ message: "Upload failed" });
+    }
+  });
+
+  // File upload proxy with raw body handling
+  app.use("/api/files/", express.raw({ type: "*/*", limit: "50mb" }), async (req, res) => {
+    try {
+      const url = `${API_BASE_URL}/api/files/`;
+
+      // For file uploads, preserve the original request headers and body
+      const headers: HeadersInit = {};
+
+      // Forward authorization header if present
+      const authHeader = req.headers.authorization;
+      if (authHeader) {
+        headers["Authorization"] = authHeader;
+      }
+
+      // Forward content-type header for multipart uploads
+      const contentType = req.headers["content-type"];
+      if (contentType) {
+        headers["Content-Type"] = contentType;
+      }
+
+      console.log(`File upload proxy: ${req.method} ${url}`);
+      console.log('Content-Type:', contentType);
+      console.log('Authorization:', authHeader ? 'Present' : 'Missing');
+
+      const response = await fetch(url, {
+        method: req.method,
+        headers,
+        body: req.method !== "GET" && req.method !== "HEAD" ? req.body : undefined,
+      });
+
+      console.log('Backend response status:', response.status);
+
+      // Forward response status and headers
+      res.status(response.status);
+
+      // Forward important headers
+      const responseContentType = response.headers.get("content-type");
+      if (responseContentType) {
+        res.set("Content-Type", responseContentType);
+      }
+
+      if (response.ok || response.status < 500) {
+        const text = await response.text();
+        if (text.trim()) {
+          try {
+            const data = JSON.parse(text);
+            res.json(data);
+          } catch (parseError) {
+            console.error('JSON parse error:', parseError, 'Response text:', text);
+            res.json({ message: "Invalid response format" });
+          }
+        } else {
+          res.status(response.status).json({ success: true });
+        }
+      } else {
+        res.json({ message: "Backend service unavailable" });
+      }
+    } catch (error) {
+      console.error("File upload proxy error:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
   });
 
