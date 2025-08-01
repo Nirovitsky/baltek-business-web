@@ -606,7 +606,28 @@ export default function Messages() {
                               isOwn ? "text-blue-100" : "text-gray-500"
                             }`}>
                             {(() => {
-                              const messageDate = new Date(message.date_created);
+                              // Debug: Log the raw date value
+                              console.log('Raw date_created:', message.date_created);
+                              
+                              // Handle different date formats that might come from API
+                              let messageDate: Date;
+                              if (typeof message.date_created === 'string') {
+                                // Try parsing ISO string first, then fallback to direct parsing
+                                messageDate = new Date(message.date_created);
+                                if (isNaN(messageDate.getTime())) {
+                                  // Try alternative parsing if ISO fails
+                                  messageDate = new Date(message.date_created.replace(/[-]/g, '/'));
+                                }
+                              } else {
+                                messageDate = new Date();
+                              }
+
+                              // If date is still invalid, use message ID as fallback timestamp
+                              if (isNaN(messageDate.getTime())) {
+                                console.error('Invalid date, using fallback:', message.date_created);
+                                return `Message #${message.id}`;
+                              }
+
                               const today = new Date();
                               const yesterday = new Date(today);
                               yesterday.setDate(yesterday.getDate() - 1);
