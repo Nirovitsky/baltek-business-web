@@ -99,9 +99,13 @@ const WebSocketManager = {
             }
           } else if (message.type === "error") {
             console.error("WebSocket error:", message.message || message.data);
+            console.error("Full error message:", message);
           } else if (message.type === "auth_error") {
             console.error("Authentication error:", message.message);
+            console.error("Full auth error:", message);
             globalConnected = false;
+          } else {
+            console.log("Unknown WebSocket message type:", message.type, message);
           }
           
           // Notify all listeners
@@ -194,11 +198,19 @@ const WebSocketManager = {
     const trimmedText = text?.trim() || '';
     const limitedText = trimmedText.length > 1024 ? trimmedText.substring(0, 1024) : trimmedText;
     
-    if (!globalSocket || globalSocket.readyState !== WebSocket.OPEN) {
-      // Queue message for later sending
-      console.log("WebSocket not connected, queuing message");
+    console.log("SendMessage called with:", { roomId, text: limitedText, attachments, connected: globalConnected });
+    
+    if (!globalSocket) {
+      console.error("No WebSocket connection available");
       messageQueue.push({ roomId, content: limitedText, attachments });
-      return true; // Return true to indicate message was queued
+      return false;
+    }
+    
+    if (globalSocket.readyState !== WebSocket.OPEN) {
+      console.error("WebSocket not connected, readyState:", globalSocket.readyState);
+      console.log("Queuing message for later sending");
+      messageQueue.push({ roomId, content: limitedText, attachments });
+      return false;
     }
 
     try {
@@ -222,9 +234,10 @@ const WebSocketManager = {
       return true;
     } catch (error) {
       console.error("Failed to send message:", error);
+      console.error("Message that failed:", { roomId, text: limitedText, attachments });
       // Queue message for retry
       messageQueue.push({ roomId, content: limitedText, attachments });
-      return true; // Still return true as message was queued
+      return false; // Return false to indicate failure
     }
   },
 
