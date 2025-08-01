@@ -201,8 +201,9 @@ export default function Messages() {
     queryClient.invalidateQueries({ queryKey: ["/chat/messages/", room.id] });
   };
 
-  // Store user data for room members (we'll need to fetch this separately)
+  // Store user data for room members and job application data
   const [roomMemberData, setRoomMemberData] = useState<Record<number, {id: number, first_name: string, last_name: string}>>({});
+  const [roomJobData, setRoomJobData] = useState<Record<number, {id: number, title: string}>>({});
 
   // Fetch user data for room members
   useEffect(() => {
@@ -277,6 +278,29 @@ export default function Messages() {
       });
 
       await Promise.all(memberDataPromises);
+      
+      // Fetch job application data for rooms that reference job applications
+      const jobDataPromises = rooms
+        .filter(room => room.object_id && room.content_type === 14) // Assuming content_type 14 is job application
+        .filter(room => !roomJobData[room.object_id!]) // Only fetch if we don't have the data
+        .map(async (room) => {
+          try {
+            const applicationData = await apiService.request<any>(`/jobs/applications/${room.object_id}/`);
+            if (applicationData?.job) {
+              setRoomJobData(prev => ({
+                ...prev,
+                [room.object_id!]: {
+                  id: applicationData.job.id,
+                  title: applicationData.job.title
+                }
+              }));
+            }
+          } catch (error) {
+            console.error(`Failed to fetch job application data for room ${room.id}:`, error);
+          }
+        });
+        
+      await Promise.all(jobDataPromises);
     };
 
     if (rooms.length > 0 && user?.id) {
@@ -318,8 +342,14 @@ export default function Messages() {
     
     if (otherParticipantId) {
       const memberData = roomMemberData[otherParticipantId];
+      const jobData = room.object_id ? roomJobData[room.object_id] : null;
+      
       if (memberData) {
-        return `${memberData.first_name} ${memberData.last_name}`;
+        const userName = `${memberData.first_name} ${memberData.last_name}`;
+        if (jobData) {
+          return `${userName} - ${jobData.title}`;
+        }
+        return userName;
       }
       // If we don't have member data yet, show loading state
       return `Loading user ${otherParticipantId}...`;
@@ -482,9 +512,37 @@ export default function Messages() {
                 })()}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium text-gray-900 truncate">
-                      {getRoomDisplayName(room)}
-                    </p>
+                    <div className="flex-1 min-w-0">
+                      {(() => {
+                        const otherParticipantId = getOtherParticipantId(room);
+                        const memberData = otherParticipantId ? roomMemberData[otherParticipantId] : null;
+                        const jobData = room.object_id ? roomJobData[room.object_id] : null;
+                        
+                        if (memberData) {
+                          return (
+                            <div className="flex items-center space-x-2">
+                              <span className="text-sm font-medium text-gray-900 truncate">
+                                {`${memberData.first_name} ${memberData.last_name}`}
+                              </span>
+                              {jobData && (
+                                <>
+                                  <span className="text-gray-400">-</span>
+                                  <Link href={`/jobs/${jobData.id}`} className="text-sm text-blue-600 hover:text-blue-800 truncate">
+                                    {jobData.title}
+                                  </Link>
+                                </>
+                              )}
+                            </div>
+                          );
+                        }
+                        
+                        return (
+                          <p className="text-sm font-medium text-gray-900 truncate">
+                            {getRoomDisplayName(room)}
+                          </p>
+                        );
+                      })()}
+                    </div>
                     <span className="text-xs text-gray-500">
                       {room.last_message_text
                         ? new Date(
