@@ -124,7 +124,7 @@ export default function Sidebar() {
                     )}
                   </AvatarFallback>
                 </Avatar>
-                <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 rounded-full border-2 border-white shadow-sm"></div>
+
               </div>
               
               <div className="flex-1 min-w-0">
@@ -137,10 +137,6 @@ export default function Sidebar() {
                 <p className="text-xs text-gray-600 truncate font-medium">
                   {user?.email || 'Personal Account'}
                 </p>
-                <div className="mt-1 flex items-center space-x-1">
-                  <div className="w-1 h-1 bg-green-500 rounded-full"></div>
-                  <span className="text-xs text-green-600 font-medium">Online</span>
-                </div>
               </div>
             </div>
             
