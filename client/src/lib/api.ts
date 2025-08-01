@@ -175,7 +175,8 @@ export class ApiService {
 
     const url = `${API_BASE_URL}/files/`;
 
-    // Only include Authorization header, don't set Content-Type for FormData
+    // For FormData uploads, only include Authorization header
+    // DO NOT set Content-Type - let browser set it automatically with boundary
     const authHeaders = this.getAuthHeaders();
     const headers: Record<string, string> = {};
     if ("Authorization" in authHeaders) {
@@ -185,7 +186,7 @@ export class ApiService {
     try {
       const response = await fetch(url, {
         method: "POST",
-        headers,
+        headers, // Only auth headers, no Content-Type
         body: formData,
       });
 
@@ -204,7 +205,7 @@ export class ApiService {
 
           const retryResponse = await fetch(url, {
             method: "POST",
-            headers: retryHeaders,
+            headers: retryHeaders, // Only auth headers, no Content-Type
             body: formData,
           });
           return await this.handleResponse(retryResponse);
