@@ -4,13 +4,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import TopBar from "@/components/layout/TopBar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Switch } from "@/components/ui/switch";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -27,7 +27,7 @@ const organizationUpdateSchema = z.object({
   website: z.string().url().optional().or(z.literal("")),
   location_id: z.number().optional(),
   category_id: z.number().optional(),
-  is_public: z.boolean().optional(),
+
   email: z.string().email().optional().or(z.literal("")),
   phone: z.string().optional(),
   logo: z.string().optional(),
@@ -67,9 +67,13 @@ export default function Organization() {
     resolver: zodResolver(organizationUpdateSchema),
     defaultValues: {
       name: "",
+      display_name: "",
       description: "",
+      about_us: "",
       website: "",
-      location: "",
+      email: "",
+      phone: "",
+      logo: "",
     },
   });
 
@@ -84,7 +88,6 @@ export default function Organization() {
         website: selectedOrganization.website || "",
         location_id: selectedOrganization.location?.id,
         category_id: selectedOrganization.category?.id,
-        is_public: selectedOrganization.is_public || false,
         email: selectedOrganization.email || "",
         phone: selectedOrganization.phone || "",
         logo: selectedOrganization.logo || "",
@@ -135,7 +138,6 @@ export default function Organization() {
         website: selectedOrganization.website || "",
         location_id: selectedOrganization.location?.id,
         category_id: selectedOrganization.category?.id,
-        is_public: selectedOrganization.is_public || false,
         email: selectedOrganization.email || "",
         phone: selectedOrganization.phone || "",
         logo: selectedOrganization.logo || "",
@@ -236,15 +238,7 @@ export default function Organization() {
 
                       {/* Organization Details */}
                       <div className="md:col-span-3">
-                        <Tabs defaultValue="general" className="w-full">
-                          <TabsList className="w-full">
-                            <TabsTrigger value="general" className="flex-1">General</TabsTrigger>
-                            <TabsTrigger value="contact" className="flex-1">Contact Info</TabsTrigger>
-                            <TabsTrigger value="about" className="flex-1">About</TabsTrigger>
-                          </TabsList>
-
-                          {/* General Tab */}
-                          <TabsContent value="general" className="space-y-4 mt-4">
+                        <div className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                               <FormField
                                 control={form.control}
@@ -337,31 +331,9 @@ export default function Organization() {
                               />
                             </div>
 
-                            <FormField
-                              control={form.control}
-                              name="is_public"
-                              render={({ field }) => (
-                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                                  <div className="space-y-0.5">
-                                    <FormLabel className="text-base">Public Profile</FormLabel>
-                                    <FormDescription>
-                                      Make your organization visible to the public
-                                    </FormDescription>
-                                  </div>
-                                  <FormControl>
-                                    <Switch
-                                      checked={field.value}
-                                      onCheckedChange={field.onChange}
-                                      disabled={!isEditing}
-                                    />
-                                  </FormControl>
-                                </FormItem>
-                              )}
-                            />
-                          </TabsContent>
-
-                          {/* Contact Tab */}
-                          <TabsContent value="contact" className="space-y-4 mt-4">
+                          {/* Contact Information Section */}
+                          <div className="space-y-4">
+                            <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Contact Information</h3>
                             <FormField
                               control={form.control}
                               name="email"
@@ -424,10 +396,11 @@ export default function Organization() {
                                 </FormItem>
                               )}
                             />
-                          </TabsContent>
+                          </div>
 
-                          {/* About Tab */}
-                          <TabsContent value="about" className="space-y-4 mt-4">
+                          {/* About Section */}
+                          <div className="space-y-4">
+                            <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">About Organization</h3>
                             <FormField
                               control={form.control}
                               name="description"
@@ -465,8 +438,8 @@ export default function Organization() {
                                 </FormItem>
                               )}
                             />
-                          </TabsContent>
-                        </Tabs>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
@@ -494,36 +467,7 @@ export default function Organization() {
             </CardContent>
           </Card>
 
-          {/* Organization Stats */}
-          {selectedOrganization && !isEditing && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Organization Details</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <p className="text-2xl font-bold text-gray-900">
-                      {new Date(selectedOrganization.created_at).getFullYear()}
-                    </p>
-                    <p className="text-sm text-gray-600">Founded</p>
-                  </div>
 
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <p className="text-2xl font-bold text-gray-900">ID #{selectedOrganization.id}</p>
-                    <p className="text-sm text-gray-600">Organization ID</p>
-                  </div>
-
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <p className="text-2xl font-bold text-gray-900">
-                      {new Date(selectedOrganization.updated_at).toLocaleDateString()}
-                    </p>
-                    <p className="text-sm text-gray-600">Last Updated</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
         </div>
       </main>
     </div>
