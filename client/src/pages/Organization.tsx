@@ -190,12 +190,11 @@ export default function Organization() {
 
     setIsUploading(true);
     try {
-      // Create FormData for file upload
+      // First upload the file to get the URL
       const formData = new FormData();
-      formData.append('file', logoFile);
+      formData.append('path', logoFile);
 
-      // Upload file to the API
-      const response = await fetch('/api/files/', {
+      const uploadResponse = await fetch('/api/files/', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -203,14 +202,15 @@ export default function Organization() {
         body: formData,
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to upload logo');
+      if (!uploadResponse.ok) {
+        const errorData = await uploadResponse.json().catch(() => ({}));
+        throw new Error(errorData.path?.[0] || errorData.detail || 'Failed to upload file');
       }
 
-      const uploadResult = await response.json();
+      const uploadResult = await uploadResponse.json();
       
-      // Update organization with new logo URL
-      const updateData = { logo: uploadResult.url || uploadResult.file };
+      // Update organization with the new logo URL
+      const updateData = { logo: uploadResult.url || uploadResult.path || uploadResult.file };
       const updatedOrg = await apiService.request<Organization>(`/organizations/${selectedOrganization.id}/`, {
         method: 'PATCH',
         body: JSON.stringify(updateData),
