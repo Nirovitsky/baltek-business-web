@@ -96,11 +96,20 @@ export default function Applications() {
       apiService.request(`/jobs/applications/${applicationId}/create_room/`, {
         method: 'POST',
       }),
-    onSuccess: () => {
+    onSuccess: (roomData: any) => {
       toast({
         title: "Success",
-        description: "Chat room created successfully",
+        description: "Opening chat room...",
       });
+      // Navigate to the chat room
+      if (roomData?.id) {
+        setLocation(`/messages#room-${roomData.id}`);
+      } else {
+        // Fallback: refresh rooms and find the new one
+        setTimeout(() => {
+          setLocation('/messages');
+        }, 1000);
+      }
     },
     onError: (error: any) => {
       toast({
@@ -115,8 +124,41 @@ export default function Applications() {
     updateApplicationMutation.mutate({ id: applicationId, status: newStatus });
   };
 
-  const handleCreateChatRoom = (applicationId: number) => {
-    createChatRoomMutation.mutate(applicationId);
+  const handleCreateChatRoom = async (application: JobApplication) => {
+    try {
+      // First check if there's already a chat room with this user
+      const roomsResponse = await apiService.request<{results: any[]}>('/chat/rooms/');
+      console.log('Checking rooms for user:', application.owner.id);
+      console.log('Available rooms:', roomsResponse.results);
+      
+      const existingRoom = roomsResponse.results.find((room: any) => {
+        console.log(`Room ${room.id} members:`, room.members);
+        // Members are stored as numeric IDs
+        return room.members.some((memberId: number) => {
+          const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
+          console.log(`Comparing member ${numericMemberId} with user ${application.owner.id}`);
+          return numericMemberId === application.owner.id;
+        });
+      });
+      
+      console.log('Found existing room:', existingRoom);
+      
+      if (existingRoom) {
+        // Navigate to existing room
+        toast({
+          title: "Success",
+          description: "Opening existing chat room...",
+        });
+        setLocation(`/messages#room-${existingRoom.id}`);
+      } else {
+        // Create new room via application
+        createChatRoomMutation.mutate(application.id);
+      }
+    } catch (error) {
+      console.error('Error finding chat room:', error);
+      // Fallback to creating new room
+      createChatRoomMutation.mutate(application.id);
+    }
   };
 
   // Sort applications by ID in descending order (newest first, since higher ID = more recent)
@@ -356,7 +398,7 @@ export default function Applications() {
                             variant="outline"
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleCreateChatRoom(application.id);
+                              handleCreateChatRoom(application);
                             }}
                             disabled={createChatRoomMutation.isPending}
                             className="h-8 px-2 text-xs"
@@ -595,7 +637,7 @@ export default function Applications() {
                     
                     <Button
                       variant="outline"
-                      onClick={() => handleCreateChatRoom(selectedApplication.id)}
+                      onClick={() => handleCreateChatRoom(selectedApplication)}
                       disabled={createChatRoomMutation.isPending}
                       className="flex items-center space-x-2"
                     >

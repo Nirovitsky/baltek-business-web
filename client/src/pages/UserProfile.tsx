@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useRoute } from "wouter";
+import { useRoute, useLocation } from "wouter";
 import { 
   ArrowLeft, 
   Mail, 
@@ -18,6 +18,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { apiService } from "@/lib/api";
 import { Link } from "wouter";
 import TopBar from "@/components/layout/TopBar";
+import { useToast } from "@/hooks/use-toast";
 
 // Use the existing User type from schema
 import type { User, UserExperience, UserEducation, UserProject, Room } from "@shared/schema";
@@ -25,6 +26,8 @@ import type { User, UserExperience, UserEducation, UserProject, Room } from "@sh
 export default function UserProfile() {
   const [match, params] = useRoute("/profile/:userId");
   const userId = params?.userId;
+  const [, setLocation] = useLocation();
+  const { toast } = useToast();
 
   const { data: userProfile, isLoading, error } = useQuery({
     queryKey: ["/users/", userId],
@@ -183,15 +186,27 @@ export default function UserProfile() {
                         
                         if (existingRoom) {
                           // Navigate to existing room
-                          window.location.href = `/messages#room-${existingRoom.id}`;
+                          toast({
+                            title: "Success",
+                            description: "Opening existing chat room...",
+                          });
+                          setLocation(`/messages#room-${existingRoom.id}`);
                         } else {
-                          // Since API doesn't support creating rooms, show a message
-                          // explaining that the user needs to message first
-                          alert(`To start a conversation with ${userProfile.first_name} ${userProfile.last_name}, they need to apply for a job or send the first message through the platform.`);
+                          // Since there's no API to create rooms directly from user profiles,
+                          // explain that a room needs to be created through job applications
+                          toast({
+                            title: "No existing conversation",
+                            description: `To start a conversation with ${userProfile.first_name} ${userProfile.last_name}, they need to apply for a job first.`,
+                            variant: "destructive",
+                          });
                         }
                       } catch (error) {
                         console.error('Error finding chat room:', error);
-                        alert('Unable to access chat rooms at this time. Please try again later.');
+                        toast({
+                          title: "Error",
+                          description: "Unable to access chat rooms at this time. Please try again later.",
+                          variant: "destructive",
+                        });
                       }
                     }}
                   >
