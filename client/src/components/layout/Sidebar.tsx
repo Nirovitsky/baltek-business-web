@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import BusinessSwitcher from "./BusinessSwitcher";
 
 const navigationItems = [
@@ -109,15 +110,20 @@ export default function Sidebar() {
             
             <div className="relative flex items-center space-x-3">
               <div className="relative">
-                <div className="w-12 h-12 bg-gradient-to-br from-primary via-primary/90 to-primary/70 rounded-full flex items-center justify-center text-white font-bold shadow-lg ring-2 ring-white/20 group-hover:ring-white/40 transition-all duration-300">
-                  {user ? (
-                    <span className="text-sm">
-                      {`${user.first_name?.[0] || ''}${user.last_name?.[0] || ''}`}
-                    </span>
-                  ) : (
-                    <UserCircle className="w-6 h-6" />
-                  )}
-                </div>
+                <Avatar className="w-12 h-12 shadow-lg ring-2 ring-white/20 group-hover:ring-white/40 transition-all duration-300">
+                  <AvatarImage 
+                    src={user?.avatar} 
+                    alt={user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() : 'User'} 
+                    className="object-cover"
+                  />
+                  <AvatarFallback className="bg-gradient-to-br from-primary via-primary/90 to-primary/70 text-white font-bold text-sm">
+                    {user ? (
+                      `${user.first_name?.[0] || ''}${user.last_name?.[0] || ''}`
+                    ) : (
+                      <UserCircle className="w-6 h-6" />
+                    )}
+                  </AvatarFallback>
+                </Avatar>
                 <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 rounded-full border-2 border-white shadow-sm"></div>
               </div>
               
