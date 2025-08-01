@@ -209,12 +209,24 @@ export default function Organization() {
 
       const uploadResult = await uploadResponse.json();
       
-      // Update organization with the new logo URL
-      const updateData = { logo: uploadResult.url || uploadResult.path || uploadResult.file };
-      const updatedOrg = await apiService.request<Organization>(`/organizations/${selectedOrganization.id}/`, {
+      // Update organization with the new logo URL using FormData
+      const logoFormData = new FormData();
+      logoFormData.append('logo', uploadResult.path);
+      
+      const response = await fetch(`/api/organizations/${selectedOrganization.id}/`, {
         method: 'PATCH',
-        body: JSON.stringify(updateData),
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+        },
+        body: logoFormData,
       });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.logo?.[0] || errorData.detail || 'Failed to update organization logo');
+      }
+
+      const updatedOrg = await response.json();
 
       // Update form and auth state
       form.setValue('logo', updatedOrg.logo || '');
@@ -256,11 +268,7 @@ export default function Organization() {
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Organization Profile Card */}
           <Card>
-            <CardHeader>
-              <CardTitle>Organization Details</CardTitle>
-              <CardDescription>
-                Update your organization information
-              </CardDescription>
+            <CardHeader className="pb-4">
             </CardHeader>
 
             <CardContent>
