@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { MessageCircle, Send, Search, Phone, User, Paperclip, Image, FileText } from "lucide-react";
@@ -886,61 +887,87 @@ export default function Messages() {
                 </div>
               )}
 
-              <div className="flex space-x-2">
-                <div className="flex space-x-1">
-                  <input
-                    type="file"
-                    id="file-upload"
-                    className="hidden"
-                    accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleFileSelect(file);
-                    }}
-                  />
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => document.getElementById('file-upload')?.click()}
-                    disabled={!connected}
-                    className="h-10 px-3 border-2 border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50"
-                    title="Attach file"
-                  >
-                    <Paperclip className="w-4 h-4 mr-1" />
-                    <span className="text-xs">File</span>
-                  </Button>
-                </div>
-                
-                <div className="flex-1 relative">
-                  <Input
-                    placeholder="Type your message..."
-                    value={newMessage}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      // Apply 1024 character limit
-                      if (value.length <= 1024) {
-                        setNewMessage(value);
-                      }
-                    }}
-                    onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-                    className="pr-16 bg-gray-50 border-gray-300 focus:border-primary focus:ring-primary"
-                  />
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
-                    {newMessage.length}/1024
+              {/* Message Input Card */}
+              <Card className="shadow-md border-gray-200">
+                <CardContent className="p-3">
+                  <div className="flex space-x-3">
+                    {/* File Attach Button */}
+                    <div className="flex-shrink-0">
+                      <input
+                        type="file"
+                        id="file-upload"
+                        className="hidden"
+                        accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleFileSelect(file);
+                        }}
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => document.getElementById('file-upload')?.click()}
+                        disabled={!connected}
+                        className="h-10 px-3 border-2 border-dashed border-gray-300 hover:border-primary hover:bg-primary/5"
+                        title="Attach file"
+                      >
+                        <Paperclip className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    
+                    {/* Text Input Area */}
+                    <div className="flex-1 relative">
+                      <Textarea
+                        placeholder="Type your message... (Shift+Enter for new line, Enter to send)"
+                        value={newMessage}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          // Apply 1024 character limit
+                          if (value.length <= 1024) {
+                            setNewMessage(value);
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault();
+                            handleSendMessage();
+                          }
+                        }}
+                        className="min-h-[2.5rem] max-h-32 resize-none bg-gray-50 border-gray-300 focus:border-primary focus:ring-primary pr-16"
+                        rows={1}
+                        style={{
+                          height: 'auto',
+                          minHeight: '2.5rem',
+                          maxHeight: '8rem'
+                        }}
+                        onInput={(e) => {
+                          const target = e.target as HTMLTextAreaElement;
+                          target.style.height = 'auto';
+                          target.style.height = Math.min(target.scrollHeight, 128) + 'px';
+                        }}
+                      />
+                      <div className="absolute right-3 bottom-2 text-xs text-gray-500">
+                        {newMessage.length}/1024
+                      </div>
+                    </div>
+                    
+                    {/* Send Button */}
+                    <div className="flex-shrink-0">
+                      <Button
+                        onClick={handleSendMessage}
+                        disabled={(!newMessage.trim() && !selectedFile) || uploadFileMutation.isPending || sendingMessage}
+                        className="h-10 bg-primary hover:bg-primary/90 shadow-md"
+                      >
+                        {uploadFileMutation.isPending || sendingMessage ? (
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <Send className="w-4 h-4" />
+                        )}
+                      </Button>
+                    </div>
                   </div>
-                </div>
-                <Button
-                  onClick={handleSendMessage}
-                  disabled={(!newMessage.trim() && !selectedFile) || uploadFileMutation.isPending || sendingMessage}
-                  className="bg-primary hover:bg-primary/90 shadow-md"
-                >
-                  {uploadFileMutation.isPending || sendingMessage ? (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    <Send className="w-4 h-4" />
-                  )}
-                </Button>
-              </div>
+                </CardContent>
+              </Card>
 
             </div>
           </>
