@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
@@ -17,6 +18,7 @@ import type { JobApplication, PaginatedResponse } from "@shared/schema";
 export default function Applications() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [selectedApplication, setSelectedApplication] = useState<JobApplication | null>(null);
   
   const { toast } = useToast();
   const { selectedOrganization } = useAuth();
@@ -159,7 +161,7 @@ export default function Applications() {
 
         {/* Applications List */}
         {isLoading ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <Card key={i} className="border-l-4 border-l-gray-200 h-fit">
                 <CardContent className="p-4">
@@ -210,9 +212,13 @@ export default function Applications() {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {filteredApplications.map((application) => (
-              <Card key={application.id} className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-blue-500 h-fit">
+              <Card 
+                key={application.id} 
+                className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-blue-500 h-fit cursor-pointer"
+                onClick={() => setSelectedApplication(application)}
+              >
                 <CardContent className="p-4">
                   {/* Header Section */}
                   <div className="flex items-start justify-between mb-3">
@@ -315,7 +321,10 @@ export default function Applications() {
                     )}
 
                     {/* Actions Section */}
-                    <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+                    <div 
+                      className="flex items-center justify-between pt-2 border-t border-gray-200"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <Select
                         value={application.status}
                         onValueChange={(value) => handleStatusChange(application.id, value)}
@@ -336,7 +345,10 @@ export default function Applications() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleCreateChatRoom(application.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCreateChatRoom(application.id);
+                          }}
                           disabled={createChatRoomMutation.isPending}
                           className="h-8 px-2 text-xs"
                         >
@@ -347,7 +359,10 @@ export default function Applications() {
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => setLocation(`/profile/${application.owner.id}`)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setLocation(`/profile/${application.owner.id}`);
+                          }}
                           className="h-8 px-2 text-xs text-gray-600 hover:text-gray-900"
                         >
                           Profile
@@ -359,6 +374,160 @@ export default function Applications() {
               </Card>
             ))}
           </div>
+        )}
+
+        {/* Application Details Dialog */}
+        {selectedApplication && (
+          <Dialog open={!!selectedApplication} onOpenChange={() => setSelectedApplication(null)}>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+                    <User className="text-white w-6 h-6" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900">
+                      {`${selectedApplication.owner.first_name} ${selectedApplication.owner.last_name}`}
+                    </h2>
+                    <p className="text-sm text-gray-600">
+                      Application for {selectedApplication.job.title}
+                    </p>
+                  </div>
+                </DialogTitle>
+              </DialogHeader>
+
+              <div className="space-y-6 mt-6">
+                {/* Basic Information */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-gray-900">Contact Information</h3>
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <Mail className="w-4 h-4 text-gray-500" />
+                        <span className="text-sm">{selectedApplication.owner.email}</span>
+                      </div>
+                      {selectedApplication.owner.profession && (
+                        <div className="flex items-center space-x-2">
+                          <Briefcase className="w-4 h-4 text-gray-500" />
+                          <span className="text-sm">{selectedApplication.owner.profession}</span>
+                        </div>
+                      )}
+                      <div className="flex items-center space-x-2">
+                        <MapPin className="w-4 h-4 text-gray-500" />
+                        <span className="text-sm">{selectedApplication.job.location.name}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-gray-900">Application Status</h3>
+                    <div className="space-y-2">
+                      <Badge variant="secondary" className={`${getStatusColor(selectedApplication.status)} text-sm`}>
+                        {selectedApplication.status ? selectedApplication.status.charAt(0).toUpperCase() + selectedApplication.status.slice(1) : 'Unknown'}
+                      </Badge>
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="w-4 h-4 text-gray-500" />
+                        <span className="text-sm">Applied recently</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Cover Letter */}
+                {selectedApplication.cover_letter && (
+                  <div className="space-y-3">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
+                      <FileText className="w-5 h-5 text-blue-600" />
+                      <span>Cover Letter</span>
+                    </h3>
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                        {selectedApplication.cover_letter}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Resume/CV */}
+                {selectedApplication.resume && (
+                  <div className="space-y-3">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
+                      <Download className="w-5 h-5 text-blue-600" />
+                      <span>Resume/CV</span>
+                    </h3>
+                    <div className="bg-blue-50 rounded-lg p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <FileText className="w-5 h-5 text-blue-600" />
+                          <span className="text-sm font-medium text-gray-900">Resume Document</span>
+                        </div>
+                        <a 
+                          href={selectedApplication.resume}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+                        >
+                          <Download className="w-4 h-4" />
+                          <span>Download CV</span>
+                        </a>
+                      </div>
+                      <p className="text-xs text-gray-600 mt-2">
+                        Click the download button to view the full resume document
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                  <div className="flex items-center space-x-3">
+                    <Select
+                      value={selectedApplication.status}
+                      onValueChange={(value) => handleStatusChange(selectedApplication.id, value)}
+                      disabled={updateApplicationMutation.isPending}
+                    >
+                      <SelectTrigger className="w-40">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="invited">Invited</SelectItem>
+                        <SelectItem value="rejected">Rejected</SelectItem>
+                        <SelectItem value="hired">Hired</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    
+                    <Button
+                      variant="outline"
+                      onClick={() => handleCreateChatRoom(selectedApplication.id)}
+                      disabled={createChatRoomMutation.isPending}
+                      className="flex items-center space-x-2"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      <span>Start Conversation</span>
+                    </Button>
+                  </div>
+                  
+                  <div className="flex items-center space-x-3">
+                    <Button
+                      variant="ghost"
+                      onClick={() => setLocation(`/profile/${selectedApplication.owner.id}`)}
+                      className="text-gray-600 hover:text-gray-900"
+                    >
+                      View Full Profile
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      onClick={() => setSelectedApplication(null)}
+                    >
+                      Close
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         )}
       </main>
     </div>
