@@ -32,18 +32,28 @@ export default function Applications() {
       if (selectedOrganization) params.append('organization', selectedOrganization.id.toString());
       if (statusFilter !== 'all') params.append('status', statusFilter);
       
-      return apiService.request<PaginatedResponse<JobApplication>>(`/jobs/applications/`, {
+      return apiService.request<PaginatedResponse<JobApplication>>(`/jobs/applications/?${params.toString()}`);
+    },
+    enabled: !!selectedOrganization,
+  });
+
+  // Query for detailed application data when viewing details
+  const { data: detailedApplication, isLoading: isLoadingDetails } = useQuery({
+    queryKey: ['/jobs/applications/details/', selectedApplication?.id],
+    queryFn: () => {
+      if (!selectedApplication) return null;
+      
+      return apiService.request<JobApplication>(`/jobs/applications/`, {
         method: 'POST',
         body: JSON.stringify({ 
-          organization: selectedOrganization?.id,
-          status: statusFilter !== 'all' ? statusFilter : undefined 
+          application_id: selectedApplication.id 
         }),
         headers: {
           'Content-Type': 'application/json',
         },
       });
     },
-    enabled: !!selectedOrganization,
+    enabled: !!selectedApplication,
   });
 
   const updateApplicationMutation = useMutation({
@@ -348,6 +358,14 @@ export default function Applications() {
                 </DialogTitle>
               </DialogHeader>
 
+              {isLoadingDetails ? (
+                <div className="space-y-4 mt-6">
+                  <Skeleton className="h-20 w-full" />
+                  <Skeleton className="h-32 w-full" />
+                  <Skeleton className="h-20 w-full" />
+                </div>
+              ) : (
+
               <div className="space-y-6 mt-6">
                 {/* Basic Information */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -391,10 +409,10 @@ export default function Applications() {
                     <FileText className="w-5 h-5 text-blue-600" />
                     <span>Cover Letter</span>
                   </h3>
-                  {selectedApplication.cover_letter ? (
+                  {(detailedApplication?.cover_letter || selectedApplication.cover_letter) ? (
                     <div className="bg-gray-50 rounded-lg p-4">
                       <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                        {selectedApplication.cover_letter}
+                        {detailedApplication?.cover_letter || selectedApplication.cover_letter}
                       </p>
                     </div>
                   ) : (
@@ -412,7 +430,7 @@ export default function Applications() {
                     <Download className="w-5 h-5 text-blue-600" />
                     <span>Resume/CV</span>
                   </h3>
-                  {selectedApplication.resume ? (
+                  {(detailedApplication?.resume || selectedApplication.resume) ? (
                     <div className="bg-blue-50 rounded-lg p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
@@ -420,7 +438,7 @@ export default function Applications() {
                           <span className="text-sm font-medium text-gray-900">Resume Document</span>
                         </div>
                         <a 
-                          href={selectedApplication.resume}
+                          href={detailedApplication?.resume || selectedApplication.resume}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
@@ -446,12 +464,14 @@ export default function Applications() {
                 <div className="space-y-3 border-t pt-4">
                   <h3 className="text-sm font-semibold text-gray-600">Debug Info</h3>
                   <div className="bg-yellow-50 rounded-lg p-3 text-xs">
-                    <p><strong>Cover Letter:</strong> {selectedApplication.cover_letter ? 'Available' : 'Not provided'}</p>
-                    <p><strong>Resume:</strong> {selectedApplication.resume ? 'Available' : 'Not provided'}</p>
+                    <p><strong>Basic Data Cover Letter:</strong> {selectedApplication.cover_letter ? 'Available' : 'Not provided'}</p>
+                    <p><strong>Basic Data Resume:</strong> {selectedApplication.resume ? 'Available' : 'Not provided'}</p>
+                    <p><strong>Detailed Data Cover Letter:</strong> {detailedApplication?.cover_letter ? 'Available' : 'Not provided'}</p>
+                    <p><strong>Detailed Data Resume:</strong> {detailedApplication?.resume ? 'Available' : 'Not provided'}</p>
                     <details className="mt-2">
                       <summary className="cursor-pointer text-blue-600">View Raw Data</summary>
                       <pre className="mt-2 text-xs overflow-auto">
-                        {JSON.stringify(selectedApplication, null, 2)}
+                        {JSON.stringify(detailedApplication || selectedApplication, null, 2)}
                       </pre>
                     </details>
                   </div>
@@ -505,6 +525,7 @@ export default function Applications() {
                   </div>
                 </div>
               </div>
+              )}
             </DialogContent>
           </Dialog>
         )}
