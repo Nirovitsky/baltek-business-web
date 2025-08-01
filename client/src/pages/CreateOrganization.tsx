@@ -83,9 +83,19 @@ export default function CreateOrganization() {
 
   const createMutation = useMutation({
     mutationFn: (data: CreateOrganizationData) => {
+      // Map the form data to match API expectations
+      const { category_id, location_id, ...rest } = data;
+      const apiData = {
+        ...rest,
+        category: category_id,
+        location: location_id,
+      };
+      
+      console.log('Sending organization data:', apiData);
+      
       return apiService.request<Organization>('/organizations/', {
         method: 'POST',
-        body: JSON.stringify(data),
+        body: JSON.stringify(apiData),
       });
     },
     onSuccess: async () => {
@@ -97,9 +107,11 @@ export default function CreateOrganization() {
       await fetchOrganizations();
     },
     onError: (error: any) => {
+      console.error('Organization creation error:', error);
+      const errorMessage = error.message || error.detail || "Failed to create organization";
       toast({
         title: "Error",
-        description: error.message || "Failed to create organization",
+        description: errorMessage,
         variant: "destructive",
       });
     },

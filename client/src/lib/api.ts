@@ -19,6 +19,8 @@ export class ApiService {
   private async handleResponse<T>(response: Response): Promise<T> {
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      console.error('API Error:', { status: response.status, data: errorData });
+      
       const error: ApiError = {
         message: errorData.message || errorData.detail || response.statusText,
         status: response.status,
