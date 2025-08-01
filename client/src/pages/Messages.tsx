@@ -645,11 +645,13 @@ export default function Messages() {
                                 return messageDate.toLocaleTimeString([], {
                                   hour: "2-digit",
                                   minute: "2-digit",
+                                  hour12: false,
                                 });
                               } else if (messageDate.toDateString() === yesterday.toDateString()) {
                                 return `Yesterday ${messageDate.toLocaleTimeString([], {
                                   hour: "2-digit",
                                   minute: "2-digit",
+                                  hour12: false,
                                 })}`;
                               } else {
                                 return `${messageDate.toLocaleDateString([], {
@@ -659,6 +661,7 @@ export default function Messages() {
                                 })} ${messageDate.toLocaleTimeString([], {
                                   hour: "2-digit",
                                   minute: "2-digit",
+                                  hour12: false,
                                 })}`;
                               }
                             })()}
