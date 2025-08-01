@@ -83,7 +83,7 @@ export default function Messages() {
         });
         return combined.sort((a, b) => new Date(a.date_created).getTime() - new Date(b.date_created).getTime());
       })()
-    : apiMessages;
+    : [...apiMessages].sort((a, b) => new Date(a.date_created).getTime() - new Date(b.date_created).getTime());
 
   // File upload mutation
   const [uploadProgress, setUploadProgress] = useState(0);

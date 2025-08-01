@@ -182,16 +182,16 @@ export function useWebSocketChat() {
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !socket) {
       connect();
-    } else {
+    } else if (!isAuthenticated) {
       disconnect();
     }
 
     return () => {
       disconnect();
     };
-  }, [isAuthenticated]);
+  }, [isAuthenticated, socket]);
 
   return {
     connected,

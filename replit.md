@@ -10,6 +10,9 @@ The Baltek Business Dashboard is a React and Express-based application designed 
 - ✅ **Development Environment**: All packages installed and workflow running successfully
 - ✅ **Applications Fix**: Fixed crash when clicking applicant cards by adding missing Badge component import
 - ✅ **UI Improvement**: Converted applications display from cards to professional table layout
+- ✅ **Chat System Optimization**: Fixed WebSocket message loops causing repeated room joins
+- ✅ **Message Display Enhancement**: Implemented sophisticated date formatting (today/yesterday/date) and chronological ordering
+- ✅ **Performance Improvement**: Added rate limiting to member data fetching to prevent API spam
 
 ## User Preferences
 - Preferred communication style: Simple, everyday language
