@@ -46,7 +46,7 @@ const navigationItems = [
 
 export default function Sidebar() {
   const [location] = useLocation();
-  const { logout, selectedOrganization } = useAuth();
+  const { logout, selectedOrganization, user } = useAuth();
 
   return (
     <div className="w-64 bg-white shadow-lg border-r border-gray-200 flex flex-col">
@@ -101,15 +101,26 @@ export default function Sidebar() {
       </nav>
 
       {/* User Profile */}
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4 border-t border-gray-200 bg-gray-50/50">
         <Link href="/profile">
-          <div className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors">
-            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-              <UserCircle className="text-primary w-5 h-5" />
+          <div className="flex items-center space-x-3 cursor-pointer hover:bg-white/80 p-3 rounded-lg transition-all duration-200 shadow-sm border border-gray-200/50">
+            <div className="relative">
+              <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center text-white font-semibold shadow-md">
+                {user ? (
+                  `${user.first_name?.[0] || ''}${user.last_name?.[0] || ''}`
+                ) : (
+                  <UserCircle className="w-6 h-6" />
+                )}
+              </div>
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
             </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">Profile</p>
-              <p className="text-xs text-gray-500">Manage your account</p>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-gray-900 truncate">
+                {user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'User' : 'Profile'}
+              </p>
+              <p className="text-xs text-gray-500 truncate">
+                {user?.email || 'Personal Account'}
+              </p>
             </div>
           </div>
         </Link>
