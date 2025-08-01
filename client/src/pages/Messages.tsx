@@ -15,7 +15,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { Link } from "wouter";
 import FileUpload from "@/components/chat/FileUpload";
 import AttachmentPreview from "@/components/chat/AttachmentPreview";
-import type { Room, Message, PaginatedResponse } from "@shared/schema";
+import type { Room, Message, PaginatedResponse, JobApplication } from "@shared/schema";
 
 export default function Messages() {
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
@@ -26,7 +26,7 @@ export default function Messages() {
   const [sendingMessage, setSendingMessage] = useState(false);
   const [optimisticMessages, setOptimisticMessages] = useState<Message[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { user } = useAuth();
+  const { user, selectedOrganization } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -48,8 +48,16 @@ export default function Messages() {
 
   // Fetch chat rooms
   const { data: roomsData, isLoading: roomsLoading } = useQuery({
-    queryKey: ["/chat/rooms/"],
+    queryKey: ["/chat/rooms/", selectedOrganization?.id],
     queryFn: () => apiService.request<PaginatedResponse<Room>>("/chat/rooms/"),
+    enabled: !!selectedOrganization,
+  });
+
+  // Fetch job applications to get organization context for filtering rooms
+  const { data: applicationsData } = useQuery({
+    queryKey: ["/jobs/applications/", selectedOrganization?.id],
+    queryFn: () => apiService.request<PaginatedResponse<JobApplication>>("/jobs/applications/"),
+    enabled: !!selectedOrganization,
   });
 
   // Fetch messages for selected room
@@ -64,7 +72,20 @@ export default function Messages() {
     enabled: !!selectedRoom,
   });
 
-  const rooms = roomsData?.results || [];
+  const allRooms = roomsData?.results || [];
+  const applications = applicationsData?.results || [];
+  
+  // Filter rooms to only show those related to the current organization
+  const rooms = allRooms.filter(room => {
+    // Find if any application in current organization has this room_id
+    return applications.some(app => 
+      app.room_id === room.id && 
+      (typeof app.job.organization === 'object' 
+        ? app.job.organization.id === selectedOrganization?.id
+        : app.job.organization === selectedOrganization?.id)
+    );
+  });
+  
   const apiMessages = messagesData?.results || [];
 
   // Auto-select room from URL hash
