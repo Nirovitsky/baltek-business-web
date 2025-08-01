@@ -227,39 +227,43 @@ export default function Messages() {
     if (!selectedRoom || (!newMessage.trim() && !uploadedFile)) return;
 
     if (uploadedFile) {
-      // File is already uploaded, just send the message
-      const sendMessageWithFile = async () => {
-        try {
-          await apiService.sendMessageWithAttachment(
-            selectedRoom.id, 
-            newMessage || '', 
-            [uploadedFile.id]
-          );
-          
-          setNewMessage("");
-          setSelectedFile(null);
-          setUploadedFile(null);
-          setShowFileUpload(false);
-          setUploadProgress(0);
-          
-          // Invalidate messages to get the new message from server
-          queryClient.invalidateQueries({ queryKey: ["/chat/messages/", selectedRoom.id] });
-          
-          toast({
-            title: "Message sent",
-            description: "Your message with attachment was sent successfully.",
-          });
-        } catch (error) {
-          console.error('Failed to send message with attachment:', error);
-          toast({
-            title: "Error",
-            description: "Failed to send message with attachment.",
-            variant: "destructive",
-          });
-        }
+      // File is already uploaded, send via WebSocket with attachment ID
+      const optimisticMessage: Message = {
+        id: -Date.now(), // Negative ID for optimistic messages
+        text: newMessage.trim() || '',
+        date_created: new Date().toISOString(),
+        room: selectedRoom.id,
+        owner: {
+          id: user?.id || 0,
+          first_name: user?.first_name || 'You',
+          last_name: user?.last_name || '',
+        },
+        attachment_url: uploadedFile.url,
+        attachment_name: uploadedFile.name,
+        attachment_type: undefined,
+        attachment_size: undefined,
       };
+
+      // Add optimistic message immediately
+      setOptimisticMessages(prev => [...prev, optimisticMessage]);
       
-      sendMessageWithFile();
+      // Send message via WebSocket with attachment ID
+      const success = sendMessage(selectedRoom.id, newMessage, [uploadedFile.id]);
+      
+      // Reset form
+      setNewMessage("");
+      setSelectedFile(null);
+      setUploadedFile(null);
+      setShowFileUpload(false);
+      setUploadProgress(0);
+      
+      if (!success) {
+        toast({
+          title: "Error",
+          description: "Failed to send message with attachment.",
+          variant: "destructive",
+        });
+      }
     } else {
       // Create optimistic message immediately
       const optimisticMessage: Message = {

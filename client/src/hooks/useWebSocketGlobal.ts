@@ -15,7 +15,7 @@ let globalConnected = false;
 let globalMessages: Message[] = [];
 let globalCurrentRoom: number | null = null;
 let globalListeners: Set<() => void> = new Set();
-let messageQueue: Array<{ roomId: number; content: string; attachment?: any }> = [];
+let messageQueue: Array<{ roomId: number; content: string; attachments?: number[] }> = [];
 let reconnectInterval: NodeJS.Timeout | null = null;
 let reconnectAttempts = 0;
 let maxReconnectAttempts = 10;
@@ -52,7 +52,7 @@ const WebSocketManager = {
         if (messageQueue.length > 0) {
           console.log(`Sending ${messageQueue.length} queued messages`);
           messageQueue.forEach(queuedMessage => {
-            WebSocketManager.sendMessage(queuedMessage.roomId, queuedMessage.content, queuedMessage.attachment);
+            WebSocketManager.sendMessage(queuedMessage.roomId, queuedMessage.content, queuedMessage.attachments);
           });
           messageQueue = []; // Clear queue after sending
         }
@@ -184,7 +184,7 @@ const WebSocketManager = {
     globalListeners.forEach(listener => listener());
   },
 
-  sendMessage: (roomId: number, text: string, attachment?: { url: string; name: string; type: string; size: number }) => {
+  sendMessage: (roomId: number, text: string, attachments?: number[]) => {
     // Apply 1024 character limit
     const trimmedText = text?.trim() || '';
     const limitedText = trimmedText.length > 1024 ? trimmedText.substring(0, 1024) : trimmedText;
@@ -192,7 +192,7 @@ const WebSocketManager = {
     if (!globalSocket || globalSocket.readyState !== WebSocket.OPEN) {
       // Queue message for later sending
       console.log("WebSocket not connected, queuing message");
-      messageQueue.push({ roomId, content: limitedText, attachment });
+      messageQueue.push({ roomId, content: limitedText, attachments });
       return true; // Return true to indicate message was queued
     }
 
@@ -202,11 +202,8 @@ const WebSocketManager = {
         data: {
           room: roomId,
           text: limitedText,
-          ...(attachment && {
-            attachment_url: attachment.url,
-            attachment_name: attachment.name,
-            attachment_type: attachment.type,
-            attachment_size: attachment.size,
+          ...(attachments && attachments.length > 0 && {
+            attachments: attachments,
           }),
         },
       };
@@ -217,7 +214,7 @@ const WebSocketManager = {
     } catch (error) {
       console.error("Failed to send message:", error);
       // Queue message for retry
-      messageQueue.push({ roomId, content: limitedText, attachment });
+      messageQueue.push({ roomId, content: limitedText, attachments });
       return true; // Still return true as message was queued
     }
   },

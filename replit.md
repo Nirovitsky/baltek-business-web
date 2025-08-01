@@ -5,6 +5,7 @@ The Baltek Business Dashboard is a React and Express-based application designed 
 
 ## Recent Changes (January 2025)
 - ✅ **Migration Completed**: Successfully migrated from Replit Agent to Replit environment
+- ✅ **File Upload Security Fix**: Fixed WebSocket message sending with attachments to upload files first, then send message with attachment IDs instead of file data
 - ✅ **Chat UI Enhancement**: Redesigned message input with borderless textarea, file attach and send buttons positioned at bottom corner
 - ✅ **Message Input Improvement**: Removed scrollbar from textarea, updated placeholder text, unified controls in single card layout
 - ✅ **Chat Room Enhancement**: Improved "Send Message" functionality in Applications and User Profile pages

@@ -130,7 +130,7 @@ export function useWebSocketChat() {
     setConnected(false);
   };
 
-  const sendMessage = (roomId: number, text: string, attachment?: { url: string; name: string; type: string; size: number }) => {
+  const sendMessage = (roomId: number, text: string, attachments?: number[]) => {
     if (!socket || socket.readyState !== WebSocket.OPEN) {
       console.error("WebSocket is not connected");
       return false;
@@ -143,11 +143,8 @@ export function useWebSocketChat() {
         data: {
           room: roomId,
           text: text?.trim() || '',
-          ...(attachment && {
-            attachment_url: attachment.url,
-            attachment_name: attachment.name,
-            attachment_type: attachment.type,
-            attachment_size: attachment.size,
+          ...(attachments && attachments.length > 0 && {
+            attachments: attachments,
           }),
         },
       };

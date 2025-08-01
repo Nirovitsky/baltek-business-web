@@ -1,6 +1,6 @@
 import { queryClient } from "./queryClient";
 
-const API_BASE_URL = '/api';
+const API_BASE_URL = "/api";
 
 export interface ApiError {
   message: string;
@@ -12,8 +12,8 @@ export class ApiService {
   private refreshPromise: Promise<any> | null = null;
 
   private getAuthHeaders(): HeadersInit {
-    const token = localStorage.getItem('access_token');
-    return token ? { 'Authorization': `Bearer ${token}` } : {};
+    const token = localStorage.getItem("access_token");
+    return token ? { Authorization: `Bearer ${token}` } : {};
   }
 
   private async handleResponse<T>(response: Response): Promise<T> {
@@ -23,21 +23,21 @@ export class ApiService {
         message: errorData.message || errorData.detail || response.statusText,
         status: response.status,
       };
-      
+
       throw error;
     }
-    
+
     return response.json();
   }
 
   async request<T>(
     endpoint: string,
     options: RequestInit = {},
-    retryWithRefresh = true
+    retryWithRefresh = true,
   ): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
     const headers = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...this.getAuthHeaders(),
       ...options.headers,
     };
@@ -51,7 +51,11 @@ export class ApiService {
       return await this.handleResponse<T>(response);
     } catch (error: any) {
       // If it's a 401 error and we haven't already retried with refresh
-      if (error.status === 401 && retryWithRefresh && localStorage.getItem('refresh_token')) {
+      if (
+        error.status === 401 &&
+        retryWithRefresh &&
+        localStorage.getItem("refresh_token")
+      ) {
         try {
           // Use the enhanced refresh method that prevents concurrent refreshes
           await this.performTokenRefresh();
@@ -59,7 +63,7 @@ export class ApiService {
           return this.request<T>(endpoint, options, false);
         } catch (refreshError) {
           // Refresh failed, logout user
-          console.log('Token refresh failed, logging out user');
+          console.log("Token refresh failed, logging out user");
           this.logout();
           throw refreshError;
         }
@@ -70,20 +74,20 @@ export class ApiService {
 
   async login(credentials: { phone: string; password: string }) {
     const response = await fetch(`${API_BASE_URL}/token/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(credentials),
     });
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({}));
-      throw new Error(error.message || 'Login failed');
+      throw new Error(error.message || "Login failed");
     }
 
     const tokens = await response.json();
-    localStorage.setItem('access_token', tokens.access);
-    localStorage.setItem('refresh_token', tokens.refresh);
-    
+    localStorage.setItem("access_token", tokens.access);
+    localStorage.setItem("refresh_token", tokens.refresh);
+
     return tokens;
   }
 
@@ -96,7 +100,7 @@ export class ApiService {
   private async performTokenRefresh(): Promise<any> {
     // If already refreshing, wait for the existing refresh
     if (this.isRefreshing && this.refreshPromise) {
-      console.log('Token refresh already in progress, waiting...');
+      console.log("Token refresh already in progress, waiting...");
       return this.refreshPromise;
     }
 
@@ -113,90 +117,93 @@ export class ApiService {
   }
 
   private async doTokenRefresh(): Promise<any> {
-    const refreshToken = localStorage.getItem('refresh_token');
+    const refreshToken = localStorage.getItem("refresh_token");
     if (!refreshToken) {
-      console.log('No refresh token available, logging out');
+      console.log("No refresh token available, logging out");
       this.logout();
-      throw new Error('No refresh token available');
+      throw new Error("No refresh token available");
     }
 
-    console.log('Refreshing access token...');
+    console.log("Refreshing access token...");
 
     try {
       const response = await fetch(`${API_BASE_URL}/token/refresh`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ refresh: refreshToken }),
       });
 
       if (!response.ok) {
-        console.log('Token refresh failed with status:', response.status);
+        console.log("Token refresh failed with status:", response.status);
         this.logout();
-        throw new Error('Token refresh failed');
+        throw new Error("Token refresh failed");
       }
 
       const tokens = await response.json();
-      localStorage.setItem('access_token', tokens.access);
-      
+      localStorage.setItem("access_token", tokens.access);
+
       // Update refresh token if provided
       if (tokens.refresh) {
-        localStorage.setItem('refresh_token', tokens.refresh);
+        localStorage.setItem("refresh_token", tokens.refresh);
       }
 
-      console.log('Access token refreshed successfully');
+      console.log("Access token refreshed successfully");
       return tokens;
     } catch (error) {
-      console.error('Token refresh error:', error);
+      console.error("Token refresh error:", error);
       this.logout();
       throw error;
     }
   }
 
   logout() {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
     queryClient.clear();
-    window.location.href = '/login';
+    window.location.href = "/login";
   }
 
   isAuthenticated(): boolean {
-    return !!localStorage.getItem('access_token');
+    return !!localStorage.getItem("access_token");
   }
 
-  async uploadFile(file: File): Promise<{ id: number; url: string; name: string }> {
+  async uploadFile(
+    file: File,
+  ): Promise<{ id: number; url: string; name: string }> {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("path", file);
 
     const url = `${API_BASE_URL}/files/`;
-    
+
     // Only include Authorization header, don't set Content-Type for FormData
     const authHeaders = this.getAuthHeaders();
     const headers: Record<string, string> = {};
-    if ('Authorization' in authHeaders) {
+    if ("Authorization" in authHeaders) {
       headers.Authorization = authHeaders.Authorization as string;
     }
 
     try {
       const response = await fetch(url, {
-        method: 'POST',
+        method: "POST",
         headers,
         body: formData,
       });
 
       return await this.handleResponse(response);
     } catch (error: any) {
-      if (error.status === 401 && localStorage.getItem('refresh_token')) {
+      if (error.status === 401 && localStorage.getItem("refresh_token")) {
         try {
           await this.performTokenRefresh();
           // Retry upload with new token
           const retryAuthHeaders = this.getAuthHeaders();
           const retryHeaders: Record<string, string> = {};
-          if ('Authorization' in retryAuthHeaders) {
-            retryHeaders.Authorization = retryAuthHeaders.Authorization as string;
+          if ("Authorization" in retryAuthHeaders) {
+            retryHeaders.Authorization =
+              retryAuthHeaders.Authorization as string;
           }
-          
+
           const retryResponse = await fetch(url, {
-            method: 'POST',
+            method: "POST",
             headers: retryHeaders,
             body: formData,
           });
@@ -210,18 +217,15 @@ export class ApiService {
     }
   }
 
-  async sendMessageWithAttachment(roomId: number, text: string, attachments: number[]): Promise<any> {
-    return this.request('/files/', {
-      method: 'POST',
-      body: JSON.stringify({
-        type: 'send_message',
-        data: {
-          room: roomId,
-          text: text,
-          attachments: attachments
-        }
-      })
-    });
+  // Note: This method is deprecated - use WebSocket with uploaded file IDs instead
+  async sendMessageWithAttachment(
+    roomId: number,
+    text: string,
+    attachments: number[],
+  ): Promise<any> {
+    // This should not be used anymore - messages with attachments should be sent via WebSocket
+    // after uploading files and getting their IDs
+    throw new Error("Use WebSocket sendMessage with attachments array instead");
   }
 }
 
