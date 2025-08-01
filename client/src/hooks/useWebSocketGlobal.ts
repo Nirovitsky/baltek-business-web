@@ -19,6 +19,8 @@ let messageQueue: Array<{ roomId: number; content: string; attachment?: any }> =
 let reconnectInterval: NodeJS.Timeout | null = null;
 let reconnectAttempts = 0;
 let maxReconnectAttempts = 10;
+let lastSeenMessageId: number | null = null;
+let resyncCallbacks: Set<() => void> = new Set();
 
 // Global WebSocket manager
 const WebSocketManager = {
@@ -54,6 +56,12 @@ const WebSocketManager = {
           messageQueue = []; // Clear queue after sending
         }
         
+        // Trigger message resync after reconnection
+        if (reconnectAttempts > 0) {
+          console.log("Triggering message resync after reconnection");
+          resyncCallbacks.forEach(callback => callback());
+        }
+        
         // No need to send authentication message - token is in URL
         
         // Notify all listeners
@@ -72,6 +80,7 @@ const WebSocketManager = {
               // Avoid duplicates by checking message ID
               if (!globalMessages.some(m => m.id === message.message.id)) {
                 globalMessages = [...globalMessages, message.message];
+                lastSeenMessageId = Math.max(lastSeenMessageId || 0, message.message.id);
               }
             }
           } else if (message.type === "receive_message") {
@@ -80,6 +89,7 @@ const WebSocketManager = {
               // Avoid duplicates by checking message ID
               if (!globalMessages.some(m => m.id === message.message.id)) {
                 globalMessages = [...globalMessages, message.message];
+                lastSeenMessageId = Math.max(lastSeenMessageId || 0, message.message.id);
               }
             }
           } else if (message.type === "error") {
@@ -193,6 +203,7 @@ const WebSocketManager = {
     
     globalCurrentRoom = roomId;
     globalMessages = []; // Clear messages when switching rooms
+    lastSeenMessageId = null; // Reset last seen message
     
     // Send room join message to server if connected
     if (globalSocket && globalSocket.readyState === WebSocket.OPEN) {
@@ -204,8 +215,16 @@ const WebSocketManager = {
       }));
     }
     
+    // Trigger resync for room change
+    resyncCallbacks.forEach(callback => callback());
+    
     // Notify all listeners
     globalListeners.forEach(listener => listener());
+  },
+
+  addResyncCallback: (callback: () => void) => {
+    resyncCallbacks.add(callback);
+    return () => resyncCallbacks.delete(callback);
   }
 };
 
@@ -258,5 +277,6 @@ export function useWebSocketGlobal() {
     },
     reconnectAttempts,
     maxReconnectAttempts,
+    addResyncCallback: WebSocketManager.addResyncCallback,
   };
 }

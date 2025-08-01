@@ -40,6 +40,7 @@ export default function Messages() {
     reconnect,
     reconnectAttempts,
     maxReconnectAttempts,
+    addResyncCallback,
   } = useWebSocketGlobal();
   
   // Access messageQueue - we'll show a simplified queue indicator since it's internal
@@ -160,6 +161,20 @@ export default function Messages() {
     }
   }, [wsMessages.length, selectedRoom?.id]);
 
+  // Resync messages when reconnecting or switching rooms
+  useEffect(() => {
+    const removeResyncCallback = addResyncCallback(() => {
+      if (selectedRoom?.id) {
+        console.log("Resyncing messages for room", selectedRoom.id);
+        queryClient.invalidateQueries({ queryKey: ['/chat/messages/', selectedRoom.id] });
+      }
+    });
+
+    return () => {
+      removeResyncCallback();
+    };
+  }, [selectedRoom?.id, queryClient, addResyncCallback]);
+
   // Clear optimistic messages when room changes
   useEffect(() => {
     setOptimisticMessages([]);
@@ -271,8 +286,15 @@ export default function Messages() {
     }
     
     setSelectedRoom(room);
+    setSelectedFile(null);
+    setShowFileUpload(false);
+    setUploadProgress(0);
+    
+    // Clear optimistic messages when switching rooms
+    setOptimisticMessages([]);
+    
+    // Join the room via WebSocket and invalidate messages to get latest data
     joinRoom(room.id);
-    // Invalidate messages query to refresh
     queryClient.invalidateQueries({ queryKey: ["/chat/messages/", room.id] });
   };
 

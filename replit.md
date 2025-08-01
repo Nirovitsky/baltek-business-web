@@ -26,6 +26,8 @@ The Baltek Business Dashboard is a React and Express-based application designed 
 - ✅ **Automatic Reconnection**: WebSocket automatically reconnects with exponential backoff when connection is lost
 - ✅ **Connection Status**: Enhanced status indicator shows reconnection attempts and manual retry option
 - ✅ **Clean UI**: Removed "Sending message..." text, messages appear immediately without loading states
+- ✅ **Message Synchronization**: Automatic message refetch when reconnecting or switching rooms to catch missed messages
+- ✅ **Offline Resilience**: System handles offline scenarios by resyncing messages when connection is restored
 
 ## User Preferences
 - Preferred communication style: Simple, everyday language
