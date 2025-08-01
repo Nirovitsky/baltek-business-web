@@ -4,7 +4,6 @@ import {
   ArrowLeft, 
   Mail, 
   Phone, 
-  MapPin, 
   Calendar, 
   Briefcase, 
   GraduationCap, 
@@ -33,11 +32,7 @@ export default function UserProfile() {
     enabled: !!userId,
   });
 
-  // Fetch locations to display location name
-  const { data: locations } = useQuery({
-    queryKey: ["/locations/"],
-    queryFn: () => apiService.request<{results: Array<{id: number, name: string}>}>("/locations/"),
-  });
+
 
   if (!match || !userId) {
     return (
@@ -118,9 +113,7 @@ export default function UserProfile() {
     );
   }
 
-  const locationName = userProfile.location 
-    ? locations?.results?.find(l => l.id === userProfile.location)?.name 
-    : null;
+
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
@@ -166,8 +159,8 @@ export default function UserProfile() {
                       <p className="text-gray-600">{userProfile.profession}</p>
                     )}
                     <div className="flex items-center space-x-3 mt-1 text-sm text-gray-500">
-                      <Badge variant="outline" className={userProfile.is_online ? "text-green-600 border-green-300" : "text-gray-600 border-gray-300"}>
-                        {userProfile.is_online ? "Online" : "Offline"}
+                      <Badge variant="outline" className="text-gray-600 border-gray-300">
+                        Status: Member
                       </Badge>
                     </div>
                   </div>
@@ -252,12 +245,7 @@ export default function UserProfile() {
                     </p>
                   </div>
 
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-gray-700">Location</label>
-                    <p className="text-gray-900">
-                      {locationName || (userProfile.location ? `Location ID: ${userProfile.location}` : "Not provided")}
-                    </p>
-                  </div>
+
                 </div>
               </div>
             </CardContent>

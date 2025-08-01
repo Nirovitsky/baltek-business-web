@@ -199,8 +199,8 @@ export default function Profile() {
                   <Phone className="w-4 h-4" />
                   <span>{profile.phone}</span>
                 </div>
-                <Badge variant="outline" className={profile.is_online ? "text-green-600 border-green-300" : "text-gray-600 border-gray-300"}>
-                  {profile.is_online ? "Online" : "Offline"}
+                <Badge variant="outline" className="text-blue-600 border-blue-300">
+                  Business User
                 </Badge>
               </div>
             </div>
