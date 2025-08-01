@@ -93,7 +93,7 @@ export default function Dashboard() {
             title="Total Applications"
             value={totalApplications}
             icon={Users}
-            iconColor="text-blue-600"
+            iconColor="text-primary"
             change={{
               value: `${pendingApplications} pending`,
               label: `${invitedApplications} invited`,

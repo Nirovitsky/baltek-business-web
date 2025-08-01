@@ -48,7 +48,7 @@ export default function Users() {
         <TopBar title="User Profile" description="User not found" />
         <main className="flex-1 overflow-y-auto p-6">
           <div className="text-center">
-            <p className="text-gray-500">User not found</p>
+            <p className="text-muted-foreground">User not found</p>
             <Button onClick={() => setLocation('/dashboard')} className="mt-4">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Dashboard
@@ -129,7 +129,7 @@ export default function Users() {
                   <CardTitle className="text-2xl">
                     {user.first_name} {user.last_name}
                   </CardTitle>
-                  <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
+                  <div className="flex items-center space-x-4 mt-2 text-sm text-muted-foreground">
                     {user.email && (
                       <div className="flex items-center space-x-1">
                         <Mail className="w-4 h-4" />
@@ -149,7 +149,7 @@ export default function Users() {
                       </div>
                     )}
                   </div>
-                  <div className="flex items-center space-x-1 mt-2 text-sm text-gray-500">
+                  <div className="flex items-center space-x-1 mt-2 text-sm text-muted-foreground">
                     <Calendar className="w-4 h-4" />
                     <span>Joined {new Date(user.created_at).toLocaleDateString()}</span>
                   </div>
@@ -160,8 +160,8 @@ export default function Users() {
             {user.bio && (
               <CardContent>
                 <Separator className="mb-4" />
-                <h3 className="font-medium text-gray-900 mb-2">About</h3>
-                <p className="text-gray-600">{user.bio}</p>
+                <h3 className="font-medium text-foreground mb-2">About</h3>
+                <p className="text-muted-foreground">{user.bio}</p>
               </CardContent>
             )}
           </Card>
@@ -177,7 +177,7 @@ export default function Users() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600">{user.experience}</p>
+                  <p className="text-muted-foreground">{user.experience}</p>
                 </CardContent>
               </Card>
             )}

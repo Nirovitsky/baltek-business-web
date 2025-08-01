@@ -86,13 +86,13 @@ export default function JobDetails() {
   const getStatusColor = (status?: string) => {
     switch (status) {
       case 'open':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-green-500/10 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800';
       case 'archived':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-muted text-muted-foreground border';
       case 'expired':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-red-500/10 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-muted text-muted-foreground border';
     }
   };
 
@@ -144,8 +144,8 @@ export default function JobDetails() {
 
   if (isLoading) {
     return (
-      <div className="flex-1 flex flex-col bg-gray-50 overflow-hidden">
-        <div className="bg-white border-b border-gray-200 flex-shrink-0">
+      <div className="flex-1 flex flex-col bg-background overflow-hidden">
+        <div className="bg-card border-b border flex-shrink-0">
           <div className="max-w-4xl mx-auto px-6 py-6">
             <Skeleton className="h-8 w-3/4 mb-2" />
             <Skeleton className="h-4 w-1/2" />
@@ -164,17 +164,17 @@ export default function JobDetails() {
 
   if (error || !job) {
     return (
-      <div className="flex-1 flex flex-col bg-gray-50 overflow-hidden">
-        <div className="bg-white border-b border-gray-200 flex-shrink-0">
+      <div className="flex-1 flex flex-col bg-background overflow-hidden">
+        <div className="bg-card border-b border flex-shrink-0">
           <div className="max-w-4xl mx-auto px-6 py-6">
-            <h1 className="text-2xl font-semibold text-gray-900">Job Not Found</h1>
-            <p className="text-sm text-gray-500 mt-1">The job posting you're looking for doesn't exist</p>
+            <h1 className="text-2xl font-semibold text-foreground">Job Not Found</h1>
+            <p className="text-sm text-muted-foreground mt-1">The job posting you're looking for doesn't exist</p>
           </div>
         </div>
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-gray-600 mb-4">The job posting has been removed or doesn't exist.</p>
-            <Button onClick={() => setLocation('/jobs')} className="bg-[#1877F2] hover:bg-blue-700">
+            <p className="text-muted-foreground mb-4">The job posting has been removed or doesn't exist.</p>
+            <Button onClick={() => setLocation('/jobs')} className="bg-primary hover:bg-blue-700">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Jobs
             </Button>
@@ -185,16 +185,16 @@ export default function JobDetails() {
   }
 
   return (
-    <div className="flex-1 flex flex-col bg-gray-50 overflow-hidden">
+    <div className="flex-1 flex flex-col bg-background overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 flex-shrink-0">
+      <div className="bg-card border-b border flex-shrink-0">
         <div className="max-w-4xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setLocation('/jobs')}
-              className="text-gray-600 hover:text-gray-900"
+              className="text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Jobs
@@ -203,7 +203,7 @@ export default function JobDetails() {
               <Button
                 variant="outline"
                 onClick={() => setLocation(`/jobs/edit/${job.id}`)}
-                className="text-[#1877F2] border-[#1877F2] hover:bg-[#1877F2] hover:text-white"
+                className="text-primary border-primary hover:bg-primary hover:text-white"
               >
                 <Edit className="h-4 w-4 mr-2" />
                 Edit
@@ -212,7 +212,7 @@ export default function JobDetails() {
                 variant="outline"
                 onClick={() => archiveMutation.mutate()}
                 disabled={archiveMutation.isPending}
-                className="text-gray-600 border-gray-300 hover:bg-gray-50"
+                className="text-muted-foreground border hover:bg-background"
               >
                 <Archive className="h-4 w-4 mr-2" />
                 {job.status === 'archived' ? 'Unarchive' : 'Archive'}
@@ -236,35 +236,35 @@ export default function JobDetails() {
         <div className="max-w-4xl mx-auto px-6 py-8 space-y-6">
           
           {/* Job Information Card - First */}
-          <Card className="shadow-sm border border-gray-200">
-            <CardHeader className="border-b border-gray-200 bg-white">
-              <CardTitle className="flex items-center text-lg font-semibold text-gray-900">
-                <Users className="h-5 w-5 mr-3 text-[#1877F2]" />
+          <Card className="shadow-sm border border">
+            <CardHeader className="border-b border bg-card">
+              <CardTitle className="flex items-center text-lg font-semibold text-foreground">
+                <Users className="h-5 w-5 mr-3 text-primary" />
                 Job Information
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-6 bg-white space-y-8">
+            <CardContent className="p-6 bg-card space-y-8">
               
               {/* Organization */}
               {job.organization && typeof job.organization === 'object' && (
                 <div>
-                  <span className="text-sm font-medium text-gray-700">Organization</span>
-                  <p className="text-gray-900 mt-1 text-lg font-medium">{job.organization.official_name}</p>
+                  <span className="text-sm font-medium text-foreground">Organization</span>
+                  <p className="text-foreground mt-1 text-lg font-medium">{job.organization.official_name}</p>
                 </div>
               )}
               
               {/* Compensation */}
               {(job.salary_from || job.salary_to) && (
                 <div>
-                  <h4 className="flex items-center text-base font-semibold text-gray-900 mb-4">
-                    <DollarSign className="h-4 w-4 mr-2 text-[#1877F2]" />
+                  <h4 className="flex items-center text-base font-semibold text-foreground mb-4">
+                    <DollarSign className="h-4 w-4 mr-2 text-primary" />
                     Compensation
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {job.salary_from && (
                       <div>
-                        <span className="text-sm font-medium text-gray-700">Minimum Salary</span>
-                        <p className="text-gray-900 mt-1 text-lg font-semibold">
+                        <span className="text-sm font-medium text-foreground">Minimum Salary</span>
+                        <p className="text-foreground mt-1 text-lg font-semibold">
                           {(() => {
                             const currency = job.currency || 'TMT';
                             const currencySymbol = currency === 'USD' ? '$' : currency === 'TMT' ? 'TMT' : currency;
@@ -275,8 +275,8 @@ export default function JobDetails() {
                     )}
                     {job.salary_to && (
                       <div>
-                        <span className="text-sm font-medium text-gray-700">Maximum Salary</span>
-                        <p className="text-gray-900 mt-1 text-lg font-semibold">
+                        <span className="text-sm font-medium text-foreground">Maximum Salary</span>
+                        <p className="text-foreground mt-1 text-lg font-semibold">
                           {(() => {
                             const currency = job.currency || 'TMT';
                             const currencySymbol = currency === 'USD' ? '$' : currency === 'TMT' ? 'TMT' : currency;
@@ -287,8 +287,8 @@ export default function JobDetails() {
                     )}
                     {job.salary_payment_type && (
                       <div>
-                        <span className="text-sm font-medium text-gray-700">Payment Type</span>
-                        <p className="text-gray-900 mt-1 capitalize">
+                        <span className="text-sm font-medium text-foreground">Payment Type</span>
+                        <p className="text-foreground mt-1 capitalize">
                           {job.salary_payment_type.replace('_', ' ')}
                         </p>
                       </div>
@@ -299,55 +299,55 @@ export default function JobDetails() {
 
               {/* Job Details */}
               <div>
-                <h4 className="flex items-center text-base font-semibold text-gray-900 mb-4">
-                  <Briefcase className="h-4 w-4 mr-2 text-[#1877F2]" />
+                <h4 className="flex items-center text-base font-semibold text-foreground mb-4">
+                  <Briefcase className="h-4 w-4 mr-2 text-primary" />
                   Job Details
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <div>
-                      <span className="text-sm font-medium text-gray-700">Employment Type</span>
-                      <p className="text-gray-900 mt-1">{formatJobType(job.job_type)}</p>
+                      <span className="text-sm font-medium text-foreground">Employment Type</span>
+                      <p className="text-foreground mt-1">{formatJobType(job.job_type)}</p>
                     </div>
                     <div>
-                      <span className="text-sm font-medium text-gray-700">Work Type</span>
-                      <p className="text-gray-900 mt-1">{formatWorkplaceType(job.workplace_type)}</p>
+                      <span className="text-sm font-medium text-foreground">Work Type</span>
+                      <p className="text-foreground mt-1">{formatWorkplaceType(job.workplace_type)}</p>
                     </div>
                     {job.min_education_level && (
                       <div>
-                        <span className="text-sm font-medium text-gray-700 flex items-center">
-                          <GraduationCap className="h-4 w-4 mr-1 text-[#1877F2]" />
+                        <span className="text-sm font-medium text-foreground flex items-center">
+                          <GraduationCap className="h-4 w-4 mr-1 text-primary" />
                           Minimum Education
                         </span>
-                        <p className="text-gray-900 mt-1">{formatEducationLevel(job.min_education_level)}</p>
+                        <p className="text-foreground mt-1">{formatEducationLevel(job.min_education_level)}</p>
                       </div>
                     )}
                   </div>
                   <div className="space-y-4">
                     {category && (
                       <div>
-                        <span className="text-sm font-medium text-gray-700">Category</span>
-                        <p className="text-gray-900 mt-1">{category.name}</p>
+                        <span className="text-sm font-medium text-foreground">Category</span>
+                        <p className="text-foreground mt-1">{category.name}</p>
                       </div>
                     )}
                     {location && (
                       <div>
-                        <span className="text-sm font-medium text-gray-700 flex items-center">
-                          <MapPin className="h-4 w-4 mr-1 text-[#1877F2]" />
+                        <span className="text-sm font-medium text-foreground flex items-center">
+                          <MapPin className="h-4 w-4 mr-1 text-primary" />
                           Location
                         </span>
-                        <p className="text-gray-900 mt-1">{location.name}</p>
+                        <p className="text-foreground mt-1">{location.name}</p>
                       </div>
                     )}
                     {languages.length > 0 && (
                       <div>
-                        <span className="text-sm font-medium text-gray-700 flex items-center">
-                          <Languages className="h-4 w-4 mr-1 text-[#1877F2]" />
+                        <span className="text-sm font-medium text-foreground flex items-center">
+                          <Languages className="h-4 w-4 mr-1 text-primary" />
                           Required Languages
                         </span>
                         <div className="flex flex-wrap gap-2 mt-2">
                           {languages.map((lang: any, index: number) => (
-                            <span key={index} className="bg-[#1877F2] text-white px-3 py-1 rounded-full text-sm">
+                            <span key={index} className="bg-primary text-white px-3 py-1 rounded-full text-sm">
                               {typeof lang === 'object' ? lang.name : lang}
                             </span>
                           ))}
@@ -362,21 +362,21 @@ export default function JobDetails() {
           </Card>
 
           {/* Job Description - Second */}
-          <Card className="shadow-sm border border-gray-200">
-            <CardHeader className="border-b border-gray-200 bg-white">
-              <CardTitle className="flex items-center text-lg font-semibold text-gray-900">
-                <Briefcase className="h-5 w-5 mr-3 text-[#1877F2]" />
+          <Card className="shadow-sm border border">
+            <CardHeader className="border-b border bg-card">
+              <CardTitle className="flex items-center text-lg font-semibold text-foreground">
+                <Briefcase className="h-5 w-5 mr-3 text-primary" />
                 Job Description
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-6 bg-white">
-              <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+            <CardContent className="p-6 bg-card">
+              <p className="text-foreground whitespace-pre-wrap leading-relaxed">
                 {job.description}
               </p>
               {job.requirements && (
                 <div className="mt-6">
-                  <h4 className="font-medium text-gray-900 mb-3">Requirements</h4>
-                  <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+                  <h4 className="font-medium text-foreground mb-3">Requirements</h4>
+                  <p className="text-foreground whitespace-pre-wrap leading-relaxed">
                     {job.requirements}
                   </p>
                 </div>

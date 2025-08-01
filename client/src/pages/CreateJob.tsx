@@ -176,9 +176,9 @@ export default function CreateJob() {
   const isLoading = createMutation.isPending || updateMutation.isPending;
 
   return (
-    <div className="flex-1 flex flex-col bg-gray-50 overflow-hidden">
+    <div className="flex-1 flex flex-col bg-background overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 flex-shrink-0">
+      <div className="bg-card border-b flex-shrink-0">
         <div className="max-w-4xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
@@ -186,16 +186,16 @@ export default function CreateJob() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setLocation('/jobs')}
-                className="mr-4 text-gray-600 hover:text-gray-900"
+                className="mr-4 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Jobs
               </Button>
               <div>
-                <h1 className="text-2xl font-semibold text-gray-900">
+                <h1 className="text-2xl font-semibold">
                   {isEditing ? 'Edit Job Posting' : 'Create New Job Posting'}
                 </h1>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   {isEditing ? 'Update your job posting details' : 'Fill in the details to create a new job opportunity'}
                 </p>
               </div>
@@ -210,20 +210,20 @@ export default function CreateJob() {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {/* Basic Information */}
-              <Card className="shadow-sm border border-gray-200">
-                <CardHeader className="border-b border-gray-200 bg-white">
-                  <CardTitle className="flex items-center text-lg font-semibold text-gray-900">
-                    <Briefcase className="h-5 w-5 mr-3 text-[#1877F2]" />
+              <Card className="shadow-sm">
+                <CardHeader className="border-b bg-card">
+                  <CardTitle className="flex items-center text-lg font-semibold">
+                    <Briefcase className="h-5 w-5 mr-3 text-primary" />
                     Basic Information
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-6 space-y-6 bg-white">
+                <CardContent className="p-6 space-y-6 bg-card">
                   <FormField
                     control={form.control}
                     name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-sm font-medium text-gray-700">Job Title *</FormLabel>
+                        <FormLabel className="text-sm font-medium">Job Title *</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
@@ -241,7 +241,7 @@ export default function CreateJob() {
                     name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-sm font-medium text-gray-700">Job Description *</FormLabel>
+                        <FormLabel className="text-sm font-medium">Job Description *</FormLabel>
                         <FormControl>
                           <Textarea
                             {...field}
@@ -260,7 +260,7 @@ export default function CreateJob() {
                       name="category"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium text-gray-700">Category *</FormLabel>
+                          <FormLabel className="text-sm font-medium">Category *</FormLabel>
                           <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
                             <FormControl>
                               <SelectTrigger className="mt-1">
@@ -285,8 +285,8 @@ export default function CreateJob() {
                       name="location"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium text-gray-700 flex items-center">
-                            <MapPin className="h-4 w-4 mr-1 text-[#1877F2]" />
+                          <FormLabel className="text-sm font-medium flex items-center">
+                            <MapPin className="h-4 w-4 mr-1 text-primary" />
                             Location *
                           </FormLabel>
                           <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
@@ -314,7 +314,7 @@ export default function CreateJob() {
                     name="requirements"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-sm font-medium text-gray-700">Requirements</FormLabel>
+                        <FormLabel className="text-sm font-medium">Requirements</FormLabel>
                         <FormControl>
                           <Textarea
                             {...field}
@@ -322,7 +322,7 @@ export default function CreateJob() {
                             className="min-h-[100px] mt-1"
                           />
                         </FormControl>
-                        <FormDescription className="text-xs text-gray-500">
+                        <FormDescription className="text-xs text-muted-foreground">
                           Optional: Detailed requirements for this position
                         </FormDescription>
                         <FormMessage />
@@ -333,21 +333,21 @@ export default function CreateJob() {
               </Card>
 
               {/* Job Details */}
-              <Card className="shadow-sm border border-gray-200">
-                <CardHeader className="border-b border-gray-200 bg-white">
-                  <CardTitle className="flex items-center text-lg font-semibold text-gray-900">
-                    <Users className="h-5 w-5 mr-3 text-[#1877F2]" />
+              <Card className="shadow-sm border border">
+                <CardHeader className="border-b border bg-card">
+                  <CardTitle className="flex items-center text-lg font-semibold text-foreground">
+                    <Users className="h-5 w-5 mr-3 text-primary" />
                     Job Details
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-6 space-y-6 bg-white">
+                <CardContent className="p-6 space-y-6 bg-card">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
                       control={form.control}
                       name="job_type"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium text-gray-700">Employment Type *</FormLabel>
+                          <FormLabel className="text-sm font-medium text-foreground">Employment Type *</FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger className="mt-1">
@@ -371,7 +371,7 @@ export default function CreateJob() {
                       name="workplace_type"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium text-gray-700">Work Type *</FormLabel>
+                          <FormLabel className="text-sm font-medium text-foreground">Work Type *</FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger className="mt-1">
@@ -396,8 +396,8 @@ export default function CreateJob() {
                       name="min_education_level"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium text-gray-700 flex items-center">
-                            <GraduationCap className="h-4 w-4 mr-1 text-[#1877F2]" />
+                          <FormLabel className="text-sm font-medium text-foreground flex items-center">
+                            <GraduationCap className="h-4 w-4 mr-1 text-primary" />
                             Minimum Education
                           </FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
@@ -423,7 +423,7 @@ export default function CreateJob() {
                       name="required_languages"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium text-gray-700">Required Languages</FormLabel>
+                          <FormLabel className="text-sm font-medium text-foreground">Required Languages</FormLabel>
                           <Select 
                             onValueChange={(value) => {
                               const currentValue = field.value || [];
@@ -451,7 +451,7 @@ export default function CreateJob() {
                               {field.value.map((langId: number) => {
                                 const lang = languages.find(l => l.id === langId);
                                 return lang ? (
-                                  <div key={langId} className="bg-[#1877F2] text-white px-3 py-1 rounded-full text-sm flex items-center">
+                                  <div key={langId} className="bg-primary text-white px-3 py-1 rounded-full text-sm flex items-center">
                                     {lang.name}
                                     <button
                                       type="button"
@@ -476,21 +476,21 @@ export default function CreateJob() {
               </Card>
 
               {/* Compensation & Timeline */}
-              <Card className="shadow-sm border border-gray-200">
-                <CardHeader className="border-b border-gray-200 bg-white">
-                  <CardTitle className="flex items-center text-lg font-semibold text-gray-900">
-                    <DollarSign className="h-5 w-5 mr-3 text-[#1877F2]" />
+              <Card className="shadow-sm border border">
+                <CardHeader className="border-b border bg-card">
+                  <CardTitle className="flex items-center text-lg font-semibold text-foreground">
+                    <DollarSign className="h-5 w-5 mr-3 text-primary" />
                     Compensation & Timeline
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-6 space-y-6 bg-white">
+                <CardContent className="p-6 space-y-6 bg-card">
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <FormField
                       control={form.control}
                       name="salary_from"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium text-gray-700">Minimum Salary *</FormLabel>
+                          <FormLabel className="text-sm font-medium text-foreground">Minimum Salary *</FormLabel>
                           <FormControl>
                             <Input
                               type="number"
@@ -515,7 +515,7 @@ export default function CreateJob() {
                       name="salary_to"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium text-gray-700">Maximum Salary</FormLabel>
+                          <FormLabel className="text-sm font-medium text-foreground">Maximum Salary</FormLabel>
                           <FormControl>
                             <Input
                               type="number"
@@ -530,7 +530,7 @@ export default function CreateJob() {
                               step="100"
                             />
                           </FormControl>
-                          <FormDescription className="text-xs text-gray-500">
+                          <FormDescription className="text-xs text-muted-foreground">
                             Optional: Leave blank if not specified
                           </FormDescription>
                           <FormMessage />
@@ -543,7 +543,7 @@ export default function CreateJob() {
                       name="currency"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium text-gray-700">Currency</FormLabel>
+                          <FormLabel className="text-sm font-medium text-foreground">Currency</FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger className="mt-1">
@@ -565,7 +565,7 @@ export default function CreateJob() {
                       name="salary_payment_type"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium text-gray-700">Payment Type</FormLabel>
+                          <FormLabel className="text-sm font-medium text-foreground">Payment Type</FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger className="mt-1">
@@ -604,7 +604,7 @@ export default function CreateJob() {
                 <Button 
                   type="submit" 
                   disabled={isLoading}
-                  className="bg-[#1877F2] hover:bg-blue-700 px-6"
+                  className="bg-primary hover:bg-blue-700 px-6"
                 >
                   {isLoading ? 'Saving...' : isEditing ? 'Update Job Posting' : 'Create Job Posting'}
                 </Button>

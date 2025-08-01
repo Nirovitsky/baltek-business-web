@@ -82,16 +82,16 @@ export default function Jobs() {
     const statusLower = status?.toLowerCase();
     switch (statusLower) {
       case 'open':
-        return 'bg-green-100 text-green-800'; // Active - green color
+        return 'bg-green-500/10 text-green-700 dark:text-green-300'; // Active - green color
       case 'closed':
       case 'archived':
-        return 'bg-gray-100 text-gray-800';   // Archived - grey color  
+        return 'bg-muted text-muted-foreground';   // Archived - grey color  
       case 'expired':
-        return 'bg-red-100 text-red-800';     // Expired - red color
+        return 'bg-red-500/10 text-red-700 dark:text-red-300';     // Expired - red color
       case 'draft':
-        return 'bg-blue-100 text-blue-800';   // Draft - blue color
+        return 'bg-blue-500/10 text-blue-700 dark:text-blue-300';   // Draft - blue color
       default:
-        return 'bg-gray-100 text-gray-800';   // Default to grey for unknown status
+        return 'bg-muted text-muted-foreground';   // Default to grey for unknown status
     }
   };
 
@@ -176,11 +176,11 @@ export default function Jobs() {
         ) : jobs.length === 0 ? (
           <Card>
             <CardContent className="p-12 text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                 <Briefcase className="w-8 h-8 text-gray-400" />
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No job postings found</h3>
-              <p className="text-gray-500 mb-6">
+              <h3 className="text-lg font-medium text-foreground mb-2">No job postings found</h3>
+              <p className="text-muted-foreground mb-6">
                 {searchTerm || statusFilter !== 'all' 
                   ? "Try adjusting your search or filters"
                   : "Create your first job posting to get started"
@@ -203,33 +203,33 @@ export default function Jobs() {
               return (
                 <Card 
                   key={job.id} 
-                  className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-gray-200 hover:border-[#1877F2]/20"
+                  className="group hover:shadow-lg transition-all duration-200 cursor-pointer border hover:border-primary/20"
                   onClick={() => handleViewJob(job.id)}
                 >
                   <CardContent className="p-6">
                     {/* Header with title and applications count */}
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
-                        <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-[#1877F2] transition-colors">
+                        <h3 className="text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
                           {job.title}
                         </h3>
                         {organization && (
-                          <div className="flex items-center text-sm text-gray-600 mb-2">
+                          <div className="flex items-center text-sm text-muted-foreground mb-2">
                             <Building2 className="w-4 h-4 mr-1" />
                             {organization.official_name}
                           </div>
                         )}
                       </div>
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Users className="w-4 h-4 mr-1 text-[#1877F2]" />
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <Users className="w-4 h-4 mr-1 text-primary" />
                         <span className="font-medium">{job.applications_count || 0} applications</span>
                       </div>
                     </div>
 
                     {/* Job details */}
                     <div className="space-y-3 mb-4">
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Briefcase className="w-4 h-4 mr-2 text-[#1877F2] flex-shrink-0" />
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <Briefcase className="w-4 h-4 mr-2 text-primary flex-shrink-0" />
                         <span>
                           {job.workplace_type === 'remote' ? 'Remote' : 
                            job.workplace_type === 'on_site' ? 'On Site' : 'Hybrid'} • {' '}
@@ -238,8 +238,8 @@ export default function Jobs() {
                         </span>
                       </div>
                       {location && (
-                        <div className="flex items-center text-sm text-gray-600">
-                          <MapPin className="w-4 h-4 mr-2 text-[#1877F2] flex-shrink-0" />
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <MapPin className="w-4 h-4 mr-2 text-primary flex-shrink-0" />
                           <span>{location.name}</span>
                         </div>
                       )}
@@ -253,7 +253,7 @@ export default function Jobs() {
                         ) : (
                           <div className="w-4 h-4 mr-2 flex items-center justify-center text-green-600 font-semibold text-xs">₼</div>
                         )}
-                        <span className="font-medium text-gray-900">
+                        <span className="font-medium text-foreground">
                           {(() => {
                             const currency = job.currency || 'TMT';
                             const currencySymbol = currency === 'USD' ? '$' : currency === 'TMT' ? 'TMT' : currency;
@@ -268,7 +268,7 @@ export default function Jobs() {
                             return 'Salary not specified';
                           })()}
                           {job.salary_payment_type && (
-                            <span className="text-gray-500 ml-1">
+                            <span className="text-muted-foreground ml-1">
                               / {job.salary_payment_type.replace('_', ' ')}
                             </span>
                           )}
@@ -278,7 +278,7 @@ export default function Jobs() {
 
                     {/* Description preview */}
                     {job.description && (
-                      <p className="text-gray-700 text-sm mb-4 line-clamp-2 leading-relaxed">
+                      <p className="text-foreground text-sm mb-4 line-clamp-2 leading-relaxed">
                         {job.description}
                       </p>
                     )}
@@ -307,7 +307,7 @@ export default function Jobs() {
                           })()}
                         </Badge>
                       </div>
-                      <div className="flex flex-col items-end text-xs text-gray-500 space-y-1">
+                      <div className="flex flex-col items-end text-xs text-muted-foreground space-y-1">
                         {job.date_started && (
                           <div className="flex items-center">
                             <Calendar className="w-3 h-3 mr-1" />

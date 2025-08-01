@@ -80,11 +80,11 @@ export default function JobDetailDialog({
       case 'open':
         return 'bg-green-100 text-green-800 border-green-200';
       case 'archived':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-muted text-foreground border';
       case 'expired':
         return 'bg-red-100 text-red-800 border-red-200';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-muted text-foreground border';
     }
   };
 
@@ -195,16 +195,16 @@ export default function JobDetailDialog({
           <div className="space-y-6">
             {/* Header */}
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">{job.title}</h1>
+              <h1 className="text-2xl font-bold text-foreground mb-2">{job.title}</h1>
               <div className="flex items-center space-x-4 mb-4">
                 <Badge className={getStatusColor(job.status)}>
                   {job.status ? job.status.charAt(0).toUpperCase() + job.status.slice(1) : 'Open'}
                 </Badge>
-                <span className="text-sm text-gray-500 flex items-center">
+                <span className="text-sm text-muted-foreground flex items-center">
                   <Users className="w-4 h-4 mr-1" />
                   {getApplicationsCount(job)} applications
                 </span>
-                <span className="text-sm text-gray-500 flex items-center">
+                <span className="text-sm text-muted-foreground flex items-center">
                   <Calendar className="w-4 h-4 mr-1" />
                   Posted {formatDate(job.date_started)}
                 </span>
@@ -238,7 +238,7 @@ export default function JobDetailDialog({
             <div>
               <h3 className="text-lg font-semibold mb-3">Job Description</h3>
               <div className="prose prose-sm max-w-none">
-                <p className="text-gray-700 whitespace-pre-wrap">{job.description}</p>
+                <p className="text-foreground whitespace-pre-wrap">{job.description}</p>
               </div>
             </div>
 
@@ -311,19 +311,19 @@ export default function JobDetailDialog({
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">Job Type:</span>
+                    <span className="text-sm text-muted-foreground">Job Type:</span>
                     <span className="text-sm font-medium">{formatJobType(job.job_type)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">Workplace:</span>
+                    <span className="text-sm text-muted-foreground">Workplace:</span>
                     <span className="text-sm font-medium">{formatWorkplaceType(job.workplace_type)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">Start Date:</span>
+                    <span className="text-sm text-muted-foreground">Start Date:</span>
                     <span className="text-sm font-medium">{formatDate(job.date_started)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">End Date:</span>
+                    <span className="text-sm text-muted-foreground">End Date:</span>
                     <span className="text-sm font-medium">{formatDate(job.date_ended)}</span>
                   </div>
                 </CardContent>

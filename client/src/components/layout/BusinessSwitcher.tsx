@@ -110,7 +110,7 @@ export default function BusinessSwitcher() {
                   <div className="flex flex-col">
                     <span className="font-medium">{org.display_name || org.official_name}</span>
                     {org.description && (
-                      <span className="text-xs text-gray-500 truncate">
+                      <span className="text-xs text-muted-foreground truncate">
                         {org.description}
                       </span>
                     )}

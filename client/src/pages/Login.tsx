@@ -57,7 +57,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto w-16 h-16 bg-primary rounded-xl flex items-center justify-center mb-4">
@@ -78,8 +78,8 @@ export default function Login() {
                     <FormLabel>Phone Number</FormLabel>
                     <FormControl>
                       <div className="relative flex">
-                        <div className="flex items-center px-3 bg-gray-50 border border-r-0 border-gray-300 rounded-l-md">
-                          <span className="text-gray-600 text-sm font-medium">+993</span>
+                        <div className="flex items-center px-3 bg-background border border-r-0 border rounded-l-md">
+                          <span className="text-muted-foreground text-sm font-medium">+993</span>
                         </div>
                         <Input
                           type="tel"

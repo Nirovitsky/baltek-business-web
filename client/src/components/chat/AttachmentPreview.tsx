@@ -76,7 +76,7 @@ export default function AttachmentPreview({
             <Badge variant="secondary" className="text-xs">
               {attachment.type.split('/')[1]?.toUpperCase() || 'FILE'}
             </Badge>
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-muted-foreground">
               {formatFileSize(attachment.size)}
             </span>
           </div>

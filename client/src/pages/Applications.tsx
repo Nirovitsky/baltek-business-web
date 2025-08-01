@@ -24,15 +24,15 @@ const getStatusColor = (status: string) => {
     case 'pending':
       return 'bg-primary/10 text-primary';
     case 'invited':
-      return 'bg-green-100 text-green-800';
+      return 'bg-green-500/10 text-green-700 dark:text-green-300';
     case 'rejected':
-      return 'bg-red-100 text-red-800';
+      return 'bg-red-500/10 text-red-700 dark:text-red-300';
     case 'hired':
-      return 'bg-green-100 text-green-800';
+      return 'bg-green-500/10 text-green-700 dark:text-green-300';
     case 'expired':
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-muted text-muted-foreground';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-muted text-muted-foreground';  
   }
 };
 
@@ -279,11 +279,11 @@ export default function Applications() {
         ) : filteredApplications.length === 0 ? (
           <Card>
             <CardContent className="p-12 text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                 <User className="w-8 h-8 text-gray-400" />
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No applications found</h3>
-              <p className="text-gray-500">
+              <h3 className="text-lg font-medium text-foreground mb-2">No applications found</h3>
+              <p className="text-muted-foreground">
                 {searchTerm || statusFilter !== 'all' 
                   ? "Try adjusting your search or filters"
                   : "Applications will appear here when candidates apply to your jobs"
@@ -309,7 +309,7 @@ export default function Applications() {
                   {filteredApplications.map((application) => (
                     <TableRow 
                       key={application.id} 
-                      className="cursor-pointer hover:bg-gray-50"
+                      className="cursor-pointer hover:bg-background"
                       onClick={() => setSelectedApplication(application)}
                     >
                       <TableCell>
@@ -332,7 +332,7 @@ export default function Applications() {
                           
                           <div className="min-w-0">
                             <div 
-                              className="font-medium text-gray-900 cursor-pointer hover:text-blue-600 transition-colors"
+                              className="font-medium text-foreground cursor-pointer hover:text-primary transition-colors"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setLocation(`/profile/${application.owner.id}`);
@@ -341,7 +341,7 @@ export default function Applications() {
                               {`${application.owner.first_name} ${application.owner.last_name}`}
                             </div>
                             {application.owner.profession && (
-                              <div className="text-sm text-gray-600 flex items-center space-x-1">
+                              <div className="text-sm text-muted-foreground flex items-center space-x-1">
                                 <Briefcase className="w-3 h-3 flex-shrink-0" />
                                 <span className="truncate">{application.owner.profession}</span>
                               </div>
@@ -352,11 +352,11 @@ export default function Applications() {
                       
                       <TableCell>
                         <div className="font-medium">{application.job.title}</div>
-                        <div className="text-sm text-gray-500">{application.job.organization?.name || 'Organization'}</div>
+                        <div className="text-sm text-muted-foreground">{application.job.organization?.name || 'Organization'}</div>
                       </TableCell>
                       
                       <TableCell>
-                        <div className="flex items-center space-x-1 text-sm text-gray-600">
+                        <div className="flex items-center space-x-1 text-sm text-muted-foreground">
                           <MapPin className="w-3 h-3 flex-shrink-0" />
                           <span>{application.job.location?.name || 'Not specified'}</span>
                         </div>
@@ -369,7 +369,7 @@ export default function Applications() {
                       </TableCell>
                       
                       <TableCell>
-                        <div className="flex items-center space-x-1 text-sm text-gray-600">
+                        <div className="flex items-center space-x-1 text-sm text-muted-foreground">
                           <Calendar className="w-3 h-3 flex-shrink-0" />
                           <span>Recently</span>
                         </div>
@@ -435,10 +435,10 @@ export default function Applications() {
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h2 className="text-xl font-bold text-gray-900">
+                    <h2 className="text-xl font-bold text-foreground">
                       {`${selectedApplication.owner.first_name} ${selectedApplication.owner.last_name}`}
                     </h2>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-muted-foreground">
                       Application for {selectedApplication.job.title}
                     </p>
                   </div>
@@ -457,29 +457,29 @@ export default function Applications() {
                 {/* Basic Information */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Contact Information</h3>
+                    <h3 className="text-lg font-semibold text-foreground">Contact Information</h3>
                     <div className="space-y-2">
                       {selectedApplication.owner.profession && (
                         <div className="flex items-center space-x-2">
-                          <Briefcase className="w-4 h-4 text-gray-500" />
+                          <Briefcase className="w-4 h-4 text-muted-foreground" />
                           <span className="text-sm">{selectedApplication.owner.profession}</span>
                         </div>
                       )}
                       <div className="flex items-center space-x-2">
-                        <MapPin className="w-4 h-4 text-gray-500" />
+                        <MapPin className="w-4 h-4 text-muted-foreground" />
                         <span className="text-sm">{selectedApplication.job.location.name}</span>
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Application Status</h3>
+                    <h3 className="text-lg font-semibold text-foreground">Application Status</h3>
                     <div className="space-y-2">
                       <Badge variant="secondary" className={`${getStatusColor(selectedApplication.status)} text-sm`}>
                         {selectedApplication.status ? selectedApplication.status.charAt(0).toUpperCase() + selectedApplication.status.slice(1) : 'Unknown'}
                       </Badge>
                       <div className="flex items-center space-x-2">
-                        <Calendar className="w-4 h-4 text-gray-500" />
+                        <Calendar className="w-4 h-4 text-muted-foreground" />
                         <span className="text-sm">Applied recently</span>
                       </div>
                     </div>
@@ -488,19 +488,19 @@ export default function Applications() {
 
                 {/* Cover Letter */}
                 <div className="space-y-3">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
-                    <FileText className="w-5 h-5 text-blue-600" />
+                  <h3 className="text-lg font-semibold text-foreground flex items-center space-x-2">
+                    <FileText className="w-5 h-5 text-primary" />
                     <span>Cover Letter</span>
                   </h3>
                   {(detailedApplication?.cover_letter || selectedApplication.cover_letter) ? (
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                    <div className="bg-background rounded-lg p-4">
+                      <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
                         {detailedApplication?.cover_letter || selectedApplication.cover_letter}
                       </p>
                     </div>
                   ) : (
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <p className="text-sm text-gray-500 italic">
+                    <div className="bg-background rounded-lg p-4">
+                      <p className="text-sm text-muted-foreground italic">
                         No cover letter provided by the applicant
                       </p>
                     </div>
@@ -509,8 +509,8 @@ export default function Applications() {
 
                 {/* Resume/CV */}
                 <div className="space-y-3">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
-                    <Download className="w-5 h-5 text-blue-600" />
+                  <h3 className="text-lg font-semibold text-foreground flex items-center space-x-2">
+                    <Download className="w-5 h-5 text-primary" />
                     <span>Resume/CV</span>
                   </h3>
                   {(detailedApplication?.resume || selectedApplication.resume) ? (
@@ -518,8 +518,8 @@ export default function Applications() {
                     <div className="bg-blue-50 rounded-lg p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
-                          <FileText className="w-5 h-5 text-blue-600" />
-                          <span className="text-sm font-medium text-gray-900">Resume Document</span>
+                          <FileText className="w-5 h-5 text-primary" />
+                          <span className="text-sm font-medium text-foreground">Resume Document</span>
                         </div>
                         <div className="flex items-center space-x-2">
                           <Button
@@ -554,23 +554,23 @@ export default function Applications() {
                                 });
                               }
                             }}
-                            className="flex items-center space-x-2 bg-blue-600 text-white hover:bg-blue-700"
+                            className="flex items-center space-x-2 bg-primary text-primary-foreground hover:bg-primary/90"
                           >
                             <Download className="w-4 h-4" />
                             <span>Download</span>
                           </Button>
                         </div>
                       </div>
-                      <p className="text-xs text-gray-600 mt-2">
+                      <p className="text-xs text-muted-foreground mt-2">
                         Preview the document inline or download it directly
                       </p>
                     </div>
                   
                     {/* Inline CV Preview */}
                     {previewUrl && (
-                      <div className="mt-4 bg-white rounded-lg border-2 border-blue-200 overflow-hidden shadow-lg">
-                        <div className="flex items-center justify-between bg-blue-50 px-4 py-3 border-b border-blue-200">
-                          <h4 className="text-sm font-medium text-blue-900 flex items-center space-x-2">
+                      <div className="mt-4 bg-card rounded-lg border-2 border-primary/20 overflow-hidden shadow-lg">
+                        <div className="flex items-center justify-between bg-primary/5 px-4 py-3 border-b border-primary/20">
+                          <h4 className="text-sm font-medium text-primary flex items-center space-x-2">
                             <FileText className="w-4 h-4" />
                             <span>CV Preview</span>
                           </h4>
@@ -579,7 +579,7 @@ export default function Applications() {
                               size="sm"
                               variant="outline"
                               onClick={() => window.open(previewUrl, '_blank')}
-                              className="text-xs border-blue-300 text-blue-700 hover:bg-blue-100"
+                              className="text-xs border-primary/30 text-primary hover:bg-primary/10"
                             >
                               Open Full Size
                             </Button>
@@ -587,16 +587,16 @@ export default function Applications() {
                               variant="ghost"
                               size="sm"
                               onClick={() => setPreviewUrl(null)}
-                              className="text-blue-700 hover:text-blue-900 hover:bg-blue-100"
+                              className="text-primary hover:text-primary/80 hover:bg-primary/10"
                             >
                               <X className="w-4 h-4" />
                             </Button>
                           </div>
                         </div>
-                        <div className="relative bg-gray-50 overflow-auto">
+                        <div className="relative bg-background overflow-auto">
                           <iframe
                             src={`https://docs.google.com/viewer?url=${encodeURIComponent(previewUrl)}&embedded=true`}
-                            className="w-full h-[600px] border-0 bg-white"
+                            className="w-full h-[600px] border-0 bg-card"
                             title="CV Preview"
                             sandbox="allow-same-origin allow-scripts"
                             style={{ minHeight: '600px' }}
@@ -606,8 +606,8 @@ export default function Applications() {
                     )}
                     </>
                   ) : (
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <p className="text-sm text-gray-500 italic">
+                    <div className="bg-background rounded-lg p-4">
+                      <p className="text-sm text-muted-foreground italic">
                         No CV/resume uploaded by the applicant
                       </p>
                     </div>
@@ -617,7 +617,7 @@ export default function Applications() {
 
 
                 {/* Actions */}
-                <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                <div className="flex items-center justify-between pt-4 border-t border">
                   <div className="flex items-center space-x-3">
                     <Select
                       value={selectedApplication.status}
@@ -650,7 +650,7 @@ export default function Applications() {
                     <Button
                       variant="ghost"
                       onClick={() => setLocation(`/profile/${selectedApplication.owner.id}`)}
-                      className="text-gray-600 hover:text-gray-900"
+                      className="text-muted-foreground hover:text-foreground"
                     >
                       View Full Profile
                     </Button>

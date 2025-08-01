@@ -136,7 +136,7 @@ export default function FileUpload({
             <Paperclip className="w-3 h-3 mr-1" />
             Choose File
           </Button>
-          <p className="text-xs text-gray-500 mt-2">
+          <p className="text-xs text-muted-foreground mt-2">
             Max 10MB • Images, Documents, Videos, Audio
           </p>
         </div>

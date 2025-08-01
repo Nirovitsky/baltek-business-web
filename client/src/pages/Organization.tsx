@@ -291,7 +291,7 @@ export default function Organization() {
                 </div>
               ) : !selectedOrganization ? (
                 <div className="text-center py-8">
-                  <p className="text-gray-500">No organization found</p>
+                  <p className="text-muted-foreground">No organization found</p>
                   <p className="text-sm text-gray-400 mt-2">
                     Create an organization to manage your business profile
                   </p>
@@ -304,7 +304,7 @@ export default function Organization() {
                       <div className="md:col-span-1">
                         <FormLabel className="block mb-3 text-sm font-medium">Organization Logo</FormLabel>
                         <div className="w-full mb-4">
-                          <AspectRatio ratio={1 / 1} className="overflow-hidden rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-dashed border-gray-200 hover:border-primary/50 transition-colors relative group">
+                          <AspectRatio ratio={1 / 1} className="overflow-hidden rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-dashed border hover:border-primary/50 transition-colors relative group">
                             {logoPreview ? (
                               <>
                                 <img 
@@ -366,7 +366,7 @@ export default function Organization() {
                               </Button>
                             </>
                           )}
-                          <p className="text-xs text-gray-500">JPG, PNG up to 2MB<br />Recommended: 400x400px</p>
+                          <p className="text-xs text-muted-foreground">JPG, PNG up to 2MB<br />Recommended: 400x400px</p>
                         </div>
                       </div>
 
@@ -464,7 +464,7 @@ export default function Organization() {
 
                           {/* Contact Information Section */}
                           <div className="space-y-4">
-                            <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Contact Information</h3>
+                            <h3 className="text-lg font-medium text-foreground border-b border pb-2">Contact Information</h3>
                             <FormField
                               control={form.control}
                               name="email"
@@ -528,7 +528,7 @@ export default function Organization() {
 
                           {/* About Section */}
                           <div className="space-y-4">
-                            <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">About Organization</h3>
+                            <h3 className="text-lg font-medium text-foreground border-b border pb-2">About Organization</h3>
                             <FormField
                               control={form.control}
                               name="description"
@@ -569,7 +569,7 @@ export default function Organization() {
                       </div>
                     </div>
 
-                    <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                    <div className="flex justify-end space-x-4 pt-6 border-t border">
                       <Button 
                         type="button" 
                         variant="outline"

@@ -580,11 +580,11 @@ export default function Messages() {
   return (
     <div className="flex h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Sidebar */}
-      <div className="w-1/3 bg-white shadow-lg border-r border-gray-200 flex flex-col">
-        <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-primary/10 to-primary/5">
+      <div className="w-1/3 bg-card shadow-lg border-r border flex flex-col">
+        <div className="p-4 border-b border bg-gradient-to-r from-primary/10 to-primary/5">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-xl font-bold text-gray-900">Messages</h1>
-            <div className="flex items-center space-x-2 bg-white px-3 py-1 rounded-full shadow-sm">
+            <h1 className="text-xl font-bold text-foreground">Messages</h1>
+            <div className="flex items-center space-x-2 bg-card px-3 py-1 rounded-full shadow-sm">
               <div
                 className={`w-2 h-2 rounded-full ${
                   connected 
@@ -972,7 +972,7 @@ export default function Messages() {
                         size="sm"
                         onClick={() => document.getElementById('file-upload')?.click()}
                         disabled={!connected}
-                        className="h-8 w-8 p-0 hover:bg-muted"
+                        className="h-8 w-8 p-0 hover:bg-accent"
                         title="Attach file"
                       >
                         <Paperclip className="w-4 h-4 text-muted-foreground" />

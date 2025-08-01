@@ -85,9 +85,9 @@ export default function RecentApplications() {
       case 'hired':
         return 'bg-green-100 text-green-800';
       case 'expired':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-muted text-foreground';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-muted text-foreground';
     }
   };
 
@@ -129,13 +129,13 @@ export default function RecentApplications() {
       <CardContent className="p-6">
         {filteredApplications.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-gray-500">No applications yet</p>
+            <p className="text-muted-foreground">No applications yet</p>
             <p className="text-sm text-gray-400 mt-2">Applications will appear here when candidates apply</p>
           </div>
         ) : (
           <div className="space-y-4">
             {filteredApplications.map((application) => (
-              <div key={application.id} className="flex items-center space-x-4 p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
+              <div key={application.id} className="flex items-center space-x-4 p-4 border border-gray-100 rounded-lg hover:bg-background transition-colors">
                 <div 
                   className="flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
                   onClick={() => setLocation(`/profile/${application.owner?.id || application.id}`)}
@@ -159,14 +159,14 @@ export default function RecentApplications() {
                 </div>
                 <div className="flex-1">
                   <h4 
-                    className="font-medium text-gray-900 cursor-pointer hover:text-primary"
+                    className="font-medium text-foreground cursor-pointer hover:text-primary"
                     onClick={() => setLocation(`/profile/${application.owner?.id || application.id}`)}
                   >
                     {application.owner?.first_name && application.owner?.last_name 
                       ? `${application.owner.first_name} ${application.owner.last_name}`
                       : `Candidate #${application.id}`}
                   </h4>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-muted-foreground">
                     Applied for {application.job?.title || `Job #${application.job}`}
                   </p>
                   <p className="text-xs text-gray-400">

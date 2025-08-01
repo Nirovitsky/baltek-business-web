@@ -156,7 +156,7 @@ export default function Profile() {
           <div className="max-w-4xl mx-auto">
             <Card>
               <CardContent className="text-center py-8">
-                <p className="text-gray-500">No profile information found</p>
+                <p className="text-muted-foreground">No profile information found</p>
                 <p className="text-sm text-gray-400 mt-2">
                   Complete your profile to enhance your experience
                 </p>
@@ -190,16 +190,16 @@ export default function Profile() {
               )}
             </Avatar>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">
+              <h1 className="text-xl font-bold text-foreground">
                 {profile.first_name} {profile.last_name}
               </h1>
-              <p className="text-gray-600">Business User</p>
-              <div className="flex items-center space-x-3 mt-1 text-sm text-gray-500">
+              <p className="text-muted-foreground">Business User</p>
+              <div className="flex items-center space-x-3 mt-1 text-sm text-muted-foreground">
                 <div className="flex items-center space-x-1">
                   <Phone className="w-4 h-4" />
                   <span>{profile.phone}</span>
                 </div>
-                <Badge variant="outline" className="text-blue-600 border-blue-300">
+                <Badge variant="outline" className="text-primary border-primary/30">
                   Business User
                 </Badge>
               </div>
@@ -278,9 +278,9 @@ export default function Profile() {
                       />
 
                       <div className="space-y-1">
-                        <label className="text-sm font-medium text-gray-700">Phone Number</label>
-                        <p className="text-gray-900 bg-gray-50 p-2 rounded-md border">{profile.phone}</p>
-                        <p className="text-xs text-gray-500">Phone number cannot be changed</p>
+                        <label className="text-sm font-medium text-foreground">Phone Number</label>
+                        <p className="text-foreground bg-background p-2 rounded-md border">{profile.phone}</p>
+                        <p className="text-xs text-muted-foreground">Phone number cannot be changed</p>
                       </div>
                     </div>
 
@@ -309,23 +309,23 @@ export default function Profile() {
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-1">
-                      <label className="text-sm font-medium text-gray-700">First Name</label>
-                      <p className="text-gray-900">{profile.first_name || "Not provided"}</p>
+                      <label className="text-sm font-medium text-foreground">First Name</label>
+                      <p className="text-foreground">{profile.first_name || "Not provided"}</p>
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-sm font-medium text-gray-700">Last Name</label>
-                      <p className="text-gray-900">{profile.last_name || "Not provided"}</p>
+                      <label className="text-sm font-medium text-foreground">Last Name</label>
+                      <p className="text-foreground">{profile.last_name || "Not provided"}</p>
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-sm font-medium text-gray-700">Email</label>
-                      <p className="text-gray-900">{profile.email || "Not provided"}</p>
+                      <label className="text-sm font-medium text-foreground">Email</label>
+                      <p className="text-foreground">{profile.email || "Not provided"}</p>
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-sm font-medium text-gray-700">Phone Number</label>
-                      <p className="text-gray-900">{profile.phone}</p>
+                      <label className="text-sm font-medium text-foreground">Phone Number</label>
+                      <p className="text-foreground">{profile.phone}</p>
                     </div>
                   </div>
                 </div>

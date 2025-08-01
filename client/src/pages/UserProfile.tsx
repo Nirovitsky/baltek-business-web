@@ -43,7 +43,7 @@ export default function UserProfile() {
         <TopBar title="User Profile" description="User not found" />
         <main className="flex-1 overflow-y-auto p-6">
           <div className="text-center">
-            <p className="text-gray-500">User not found</p>
+            <p className="text-muted-foreground">User not found</p>
             <Link href="/dashboard">
               <Button className="mt-4">
                 <ArrowLeft className="w-4 h-4 mr-2" />
@@ -100,8 +100,8 @@ export default function UserProfile() {
           <div className="max-w-4xl mx-auto">
             <Card>
               <CardContent className="text-center py-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Profile not found</h2>
-                <p className="text-gray-600 mb-4">The user profile you're looking for doesn't exist.</p>
+                <h2 className="text-2xl font-bold text-foreground mb-2">Profile not found</h2>
+                <p className="text-muted-foreground mb-4">The user profile you're looking for doesn't exist.</p>
                 <Link href="/dashboard">
                   <Button>
                     <ArrowLeft className="w-4 h-4 mr-2" />
@@ -155,11 +155,11 @@ export default function UserProfile() {
                     )}
                   </Avatar>
                   <div className="flex-1">
-                    <h1 className="text-xl font-bold text-gray-900">
+                    <h1 className="text-xl font-bold text-foreground">
                       {userProfile.first_name} {userProfile.last_name}
                     </h1>
                     {userProfile.profession && (
-                      <p className="text-gray-600">{userProfile.profession}</p>
+                      <p className="text-muted-foreground">{userProfile.profession}</p>
                     )}
 
                   </div>
@@ -218,40 +218,40 @@ export default function UserProfile() {
                 {/* Personal Details Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-1">
-                    <label className="text-sm font-medium text-gray-700">First Name</label>
-                    <p className="text-gray-900">{userProfile.first_name || "Not provided"}</p>
+                    <label className="text-sm font-medium text-foreground">First Name</label>
+                    <p className="text-foreground">{userProfile.first_name || "Not provided"}</p>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-sm font-medium text-gray-700">Last Name</label>
-                    <p className="text-gray-900">{userProfile.last_name || "Not provided"}</p>
+                    <label className="text-sm font-medium text-foreground">Last Name</label>
+                    <p className="text-foreground">{userProfile.last_name || "Not provided"}</p>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-sm font-medium text-gray-700">Email</label>
-                    <p className="text-gray-900">{userProfile.email || "Not provided"}</p>
+                    <label className="text-sm font-medium text-foreground">Email</label>
+                    <p className="text-foreground">{userProfile.email || "Not provided"}</p>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-sm font-medium text-gray-700">Phone</label>
-                    <p className="text-gray-900">{userProfile.phone}</p>
+                    <label className="text-sm font-medium text-foreground">Phone</label>
+                    <p className="text-foreground">{userProfile.phone}</p>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-sm font-medium text-gray-700">Profession</label>
-                    <p className="text-gray-900">{userProfile.profession || "Not provided"}</p>
+                    <label className="text-sm font-medium text-foreground">Profession</label>
+                    <p className="text-foreground">{userProfile.profession || "Not provided"}</p>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-sm font-medium text-gray-700">Gender</label>
-                    <p className="text-gray-900">
+                    <label className="text-sm font-medium text-foreground">Gender</label>
+                    <p className="text-foreground">
                       {userProfile.gender === "m" ? "Male" : userProfile.gender === "f" ? "Female" : "Not provided"}
                     </p>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-sm font-medium text-gray-700">Date of Birth</label>
-                    <p className="text-gray-900">
+                    <label className="text-sm font-medium text-foreground">Date of Birth</label>
+                    <p className="text-foreground">
                       {userProfile.date_of_birth ? userProfile.date_of_birth : "Not provided"}
                     </p>
                   </div>
@@ -267,8 +267,8 @@ export default function UserProfile() {
             <Card>
               <CardHeader>
                 <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <Briefcase className="w-6 h-6 text-blue-600" />
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <Briefcase className="w-6 h-6 text-primary" />
                   </div>
                   <div>
                     <CardTitle>Work Experience</CardTitle>
@@ -280,15 +280,15 @@ export default function UserProfile() {
                 <div className="space-y-4">
                   {userProfile.experiences.map((experience) => (
                     <div key={experience.id} className="border-l-2 border-blue-200 pl-4">
-                      <h4 className="font-semibold text-gray-900">{experience.position}</h4>
-                      <p className="text-blue-600 font-medium">{experience.organization_name}</p>
-                      <p className="text-sm text-gray-600 mt-1">
+                      <h4 className="font-semibold text-foreground">{experience.position}</h4>
+                      <p className="text-primary font-medium">{experience.organization_name}</p>
+                      <p className="text-sm text-muted-foreground mt-1">
                         {experience.date_started} - {
                           experience.date_finished || "Present"
                         }
                       </p>
                       {experience.description && (
-                        <p className="text-gray-700 mt-2">{experience.description}</p>
+                        <p className="text-foreground mt-2">{experience.description}</p>
                       )}
                     </div>
                   ))}
@@ -315,18 +315,18 @@ export default function UserProfile() {
                 <div className="space-y-4">
                   {userProfile.educations.map((education) => (
                     <div key={education.id} className="border-l-2 border-green-200 pl-4">
-                      <h4 className="font-semibold text-gray-900 capitalize">{education.level}</h4>
+                      <h4 className="font-semibold text-foreground capitalize">{education.level}</h4>
                       <p className="text-green-600 font-medium">
                         {typeof education.university === 'object' && education.university?.name
                           ? education.university.name
                           : `University ID: ${education.university}`}
                       </p>
                       {typeof education.university === 'object' && education.university?.location?.name && (
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-muted-foreground">
                           Location: {education.university.location.name}
                         </p>
                       )}
-                      <p className="text-sm text-gray-600 mt-1">
+                      <p className="text-sm text-muted-foreground mt-1">
                         {education.date_started || "Not specified"} - {
                           education.date_finished || "Present"
                         }
@@ -356,7 +356,7 @@ export default function UserProfile() {
                 <div className="space-y-4">
                   {userProfile.projects.map((project) => (
                     <div key={project.id} className="border-l-2 border-purple-200 pl-4">
-                      <h4 className="font-semibold text-gray-900">{project.title}</h4>
+                      <h4 className="font-semibold text-foreground">{project.title}</h4>
                       {project.link && (
                         <a 
                           href={project.link} 
@@ -367,12 +367,12 @@ export default function UserProfile() {
                           View Project →
                         </a>
                       )}
-                      <p className="text-sm text-gray-600 mt-1">
+                      <p className="text-sm text-muted-foreground mt-1">
                         {project.date_started} - {
                           project.date_finished || "Ongoing"
                         }
                       </p>
-                      <p className="text-gray-700 mt-2">{project.description}</p>
+                      <p className="text-foreground mt-2">{project.description}</p>
                     </div>
                   ))}
                 </div>
