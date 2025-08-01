@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, ChevronsUpDown, Building2 } from "lucide-react";
+import { Check, ChevronsUpDown, Building2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -7,6 +7,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandSeparator,
 } from "@/components/ui/command";
 import {
   Popover,
@@ -15,29 +16,20 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
+import { useLocation } from "wouter";
 
 export default function BusinessSwitcher() {
   const [open, setOpen] = useState(false);
   const { selectedOrganization, organizations, switchOrganization } = useAuth();
+  const [, setLocation] = useLocation();
 
-  // Always show the switcher, but show current organization if only one
+  // Always show the switcher as dropdown, even with one organization
   if (organizations.length === 0) {
     return (
       <Button variant="outline" className="w-full justify-between" disabled>
         <div className="flex items-center">
           <Building2 className="mr-2 h-4 w-4" />
           <span className="truncate">Loading businesses...</span>
-        </div>
-      </Button>
-    );
-  }
-
-  if (organizations.length === 1) {
-    return (
-      <Button variant="outline" className="w-full justify-between" disabled>
-        <div className="flex items-center">
-          <Building2 className="mr-2 h-4 w-4" />
-          <span className="truncate">{organizations[0].display_name || organizations[0].official_name}</span>
         </div>
       </Button>
     );
@@ -118,6 +110,21 @@ export default function BusinessSwitcher() {
                 </div>
               </CommandItem>
             ))}
+          </CommandGroup>
+          <CommandSeparator />
+          <CommandGroup>
+            <CommandItem
+              onSelect={() => {
+                setOpen(false);
+                setLocation('/create-organization');
+              }}
+              className="text-primary cursor-pointer"
+            >
+              <div className="flex items-center w-full">
+                <Plus className="mr-2 h-4 w-4" />
+                <span className="font-medium">Create New Organization</span>
+              </div>
+            </CommandItem>
           </CommandGroup>
         </Command>
       </PopoverContent>

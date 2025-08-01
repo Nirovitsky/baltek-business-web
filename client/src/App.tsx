@@ -76,7 +76,7 @@ function Router() {
       </Route>
       
       <Route path="/create-organization">
-        {!isAuthenticated ? <Redirect to="/login" /> : (hasOrganizations ? <Redirect to="/" /> : <CreateOrganization />)}
+        {!isAuthenticated ? <Redirect to="/login" /> : <CreateOrganization />}
       </Route>
       
       <Route path="/">

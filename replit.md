@@ -55,6 +55,8 @@ The Baltek Business Dashboard is a React and Express-based application designed 
 - ✅ **Organization-First Authentication**: Implemented organization requirement for new users - users must create organization before accessing dashboard
 - ✅ **Create Organization Flow**: Added dedicated organization creation page with comprehensive form and validation
 - ✅ **Enhanced Auth State**: Updated authentication state management to track organization status and redirect appropriately
+- ✅ **Universal Business Switcher**: Updated sidebar to always show dropdown menu with "Create New Organization" option for all users
+- ✅ **Organization Access Enhancement**: Users with existing organizations can now create additional organizations through the business switcher
 
 ## User Preferences
 - Preferred communication style: Simple, everyday language
