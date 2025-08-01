@@ -33,11 +33,19 @@ export function ThemeProvider({
   useEffect(() => {
     const root = window.document.documentElement;
 
+    // Add transition class before changing theme
+    root.style.transition = 'color-scheme 0.3s ease';
+    
     root.classList.remove("light", "dark");
 
     if (theme === "dark") {
       root.classList.add("dark");
     }
+    
+    // Clean up transition after theme change
+    setTimeout(() => {
+      root.style.transition = '';
+    }, 300);
   }, [theme]);
 
   const value = {

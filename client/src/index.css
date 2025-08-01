@@ -132,10 +132,54 @@ html, body, #root {
 @layer base {
   * {
     @apply border-border;
+    /* Smooth transitions for all color properties */
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   }
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
+    /* Smooth transition for body background and text */
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Smooth transitions for all elements using CSS variables */
+  :root {
+    transition: color-scheme 0.3s ease;
+  }
+  
+  /* Additional smooth transitions for UI elements */
+  [class*="bg-"], [class*="text-"], [class*="border-"] {
+    transition: all 0.3s ease;
+  }
+  
+  /* Smooth transition for cards and containers */
+  .card, [data-shadcn], .border {
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  /* Specific smooth transitions for shadcn components */
+  button, .button {
+    transition: all 0.3s ease;
+  }
+  
+  /* Smooth transitions for input elements */
+  input, textarea, select {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  }
+  
+  /* Smooth transitions for navigation and sidebar elements */
+  nav, aside, .sidebar {
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  /* Enhance scrollbar transitions */
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Smooth transitions for tooltips and popovers */
+  [role="tooltip"], [role="dialog"], .popover {
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   }
 }
 
