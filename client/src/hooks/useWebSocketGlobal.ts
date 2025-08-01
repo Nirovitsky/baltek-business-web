@@ -57,12 +57,20 @@ const WebSocketManager = {
 
           if (message.type === "authenticated") {
             console.log("WebSocket authenticated globally:", message.user?.first_name);
-          } else if (message.type === "message_received") {
-            // Only add message to current room
-            if (message.data.room === globalCurrentRoom) {
+          } else if (message.type === "message_delivered") {
+            // Message sent by this user was delivered - add to current room
+            if (message.message.room === globalCurrentRoom) {
               // Avoid duplicates by checking message ID
-              if (!globalMessages.some(m => m.id === message.data.id)) {
-                globalMessages = [...globalMessages, message.data];
+              if (!globalMessages.some(m => m.id === message.message.id)) {
+                globalMessages = [...globalMessages, message.message];
+              }
+            }
+          } else if (message.type === "receive_message") {
+            // Message received from another user - add to current room
+            if (message.message.room === globalCurrentRoom) {
+              // Avoid duplicates by checking message ID
+              if (!globalMessages.some(m => m.id === message.message.id)) {
+                globalMessages = [...globalMessages, message.message];
               }
             }
           } else if (message.type === "error") {
@@ -116,8 +124,7 @@ const WebSocketManager = {
     }
 
     try {
-      const token = localStorage.getItem('access_token');
-      const message: WebSocketMessage = {
+      const message = {
         type: "send_message",
         data: {
           room: roomId,
@@ -131,8 +138,8 @@ const WebSocketManager = {
         },
       };
 
-      const messageWithToken = { ...message, token };
-      globalSocket.send(JSON.stringify(messageWithToken));
+      globalSocket.send(JSON.stringify(message));
+      console.log("Sent message:", message);
       return true;
     } catch (error) {
       console.error("Failed to send message:", error);
