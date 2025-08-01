@@ -32,6 +32,8 @@ The Baltek Business Dashboard is a React and Express-based application designed 
 - ✅ **Complete Sync**: On reconnection, refreshes both messages and room data to ensure nothing is missed
 - ✅ **Automatic Token Refresh**: Enhanced token management prevents concurrent refresh attempts and keeps users logged in
 - ✅ **WebSocket Token Handling**: WebSocket reconnection attempts refresh tokens automatically when needed
+- ✅ **Primary Color Update**: Applied #1877F2 (Facebook blue) as primary color throughout chat interface
+- ✅ **Design Consistency**: Updated all blue color references to use the primary color variable
 
 ## User Preferences
 - Preferred communication style: Simple, everyday language
