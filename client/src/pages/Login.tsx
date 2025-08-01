@@ -41,10 +41,10 @@ export default function Login() {
 
   const onSubmit = async (data: LoginRequest) => {
     try {
-      // Add +993 prefix to phone number before sending to backend
+      // Use phone number as provided (for testing: 99361111111)
       const loginData = {
         ...data,
-        phone: `+993${data.phone}`
+        phone: data.phone.startsWith('+') ? data.phone : `+${data.phone}`
       };
       await login(loginData);
       toast({

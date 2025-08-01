@@ -31,9 +31,12 @@ const WebSocketManager = {
     }
 
     try {
-      const wsUrl = `wss://api.baltek.net/ws/chat/?token=${token}`;
+      // URL encode the token to handle special characters
+      const encodedToken = encodeURIComponent(token);
+      const wsUrl = `wss://api.baltek.net/ws/chat/?token=${encodedToken}`;
       
-      console.log('Connecting to WebSocket:', wsUrl);
+      console.log('Connecting to WebSocket with encoded token');
+      console.log('Token length:', token.length);
       const ws = new WebSocket(wsUrl);
 
       ws.onopen = () => {
@@ -158,6 +161,8 @@ const WebSocketManager = {
 
       ws.onerror = (error) => {
         console.error("WebSocket error:", error);
+        console.error("WebSocket URL:", wsUrl);
+        console.error("WebSocket readyState:", ws.readyState);
       };
     } catch (error) {
       console.error("Failed to create WebSocket connection:", error);
