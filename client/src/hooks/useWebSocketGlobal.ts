@@ -24,14 +24,7 @@ const WebSocketManager = {
     }
 
     try {
-      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-      let wsUrl: string;
-      
-      if (window.location.hostname === 'localhost') {
-        wsUrl = `${protocol}//localhost:5000/ws`;
-      } else {
-        wsUrl = `${protocol}//${window.location.host}/ws`;
-      }
+      const wsUrl = `wss://api.baltek.net/ws/chat/?token=${token}`;
       
       console.log('Connecting to WebSocket:', wsUrl);
       const ws = new WebSocket(wsUrl);
@@ -41,11 +34,7 @@ const WebSocketManager = {
         globalConnected = true;
         globalSocket = ws;
         
-        // Authenticate with the server
-        ws.send(JSON.stringify({
-          type: 'authenticate',
-          token: token
-        }));
+        // No need to send authentication message - token is in URL
         
         // Notify all listeners
         globalListeners.forEach(listener => listener());
