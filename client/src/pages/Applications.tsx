@@ -343,7 +343,7 @@ export default function Applications() {
             setSelectedApplication(null);
             setPreviewUrl(null);
           }}>
-            <DialogContent className="max-w-5xl max-h-[95vh] overflow-y-auto">
+            <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="flex items-center space-x-3">
                   <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
@@ -487,38 +487,39 @@ export default function Applications() {
                   
                     {/* Inline CV Preview */}
                     {previewUrl && (
-                      <div className="mt-4 bg-white rounded-lg border-2 border-blue-200 overflow-hidden">
-                        <div className="flex items-center justify-between bg-blue-50 px-4 py-2 border-b border-blue-200">
+                      <div className="mt-4 bg-white rounded-lg border-2 border-blue-200 overflow-hidden shadow-lg">
+                        <div className="flex items-center justify-between bg-blue-50 px-4 py-3 border-b border-blue-200">
                           <h4 className="text-sm font-medium text-blue-900 flex items-center space-x-2">
                             <FileText className="w-4 h-4" />
                             <span>CV Preview</span>
                           </h4>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setPreviewUrl(null)}
-                            className="text-blue-700 hover:text-blue-900 hover:bg-blue-100"
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </div>
-                        <div className="relative bg-gray-100">
-                          <iframe
-                            src={`https://docs.google.com/viewer?url=${encodeURIComponent(previewUrl)}&embedded=true`}
-                            className="w-full h-96 border-0"
-                            title="CV Preview"
-                            sandbox="allow-same-origin allow-scripts"
-                          />
-                          <div className="absolute bottom-2 right-2">
+                          <div className="flex items-center space-x-2">
                             <Button
                               size="sm"
-                              variant="secondary"
+                              variant="outline"
                               onClick={() => window.open(previewUrl, '_blank')}
-                              className="text-xs"
+                              className="text-xs border-blue-300 text-blue-700 hover:bg-blue-100"
                             >
                               Open Full Size
                             </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setPreviewUrl(null)}
+                              className="text-blue-700 hover:text-blue-900 hover:bg-blue-100"
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
                           </div>
+                        </div>
+                        <div className="relative bg-gray-50 overflow-auto">
+                          <iframe
+                            src={`https://docs.google.com/viewer?url=${encodeURIComponent(previewUrl)}&embedded=true`}
+                            className="w-full h-[600px] border-0 bg-white"
+                            title="CV Preview"
+                            sandbox="allow-same-origin allow-scripts"
+                            style={{ minHeight: '600px' }}
+                          />
                         </div>
                       </div>
                     )}
