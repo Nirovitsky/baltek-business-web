@@ -28,6 +28,8 @@ export default function BusinessSwitcher() {
   const MAX_ORGANIZATIONS = 10;
 
   const handleCreateOrganization = () => {
+    console.log('Create organization clicked, organizations count:', organizations.length);
+    
     if (organizations.length >= MAX_ORGANIZATIONS) {
       toast({
         title: "Maximum organizations reached",
@@ -38,6 +40,7 @@ export default function BusinessSwitcher() {
       return;
     }
 
+    console.log('Navigating to create organization page');
     setOpen(false);
     setLocation('/create-organization');
   };
@@ -133,14 +136,14 @@ export default function BusinessSwitcher() {
           <CommandSeparator />
           <CommandGroup>
             <CommandItem
+              value="create-new-organization"
               onSelect={handleCreateOrganization}
               className={cn(
                 "cursor-pointer",
                 organizations.length >= MAX_ORGANIZATIONS 
-                  ? "text-muted-foreground" 
+                  ? "text-muted-foreground opacity-50 pointer-events-none" 
                   : "text-primary"
               )}
-              disabled={organizations.length >= MAX_ORGANIZATIONS}
             >
               <div className="flex items-center w-full">
                 <Plus className="mr-2 h-4 w-4" />
