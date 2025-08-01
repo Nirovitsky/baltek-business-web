@@ -41,12 +41,8 @@ export default function Login() {
 
   const onSubmit = async (data: LoginRequest) => {
     try {
-      // Use phone number as provided (for testing: 99361111111)
-      const loginData = {
-        ...data,
-        phone: data.phone.startsWith('+') ? data.phone : `+${data.phone}`
-      };
-      await login(loginData);
+      // Use phone number as provided - API expects exactly 8 digits
+      await login(data);
       toast({
         title: "Login successful",
         description: "Welcome to baltek business dashboard",
