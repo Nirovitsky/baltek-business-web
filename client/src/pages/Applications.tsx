@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
 import { User, Search, MessageCircle, FileText, Download, Mail, MapPin, Calendar, Briefcase, X, Eye } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { JobApplication, PaginatedResponse } from "@shared/schema";
 
 export default function Applications() {
@@ -242,12 +243,21 @@ export default function Applications() {
                   {/* Header Section */}
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-start space-x-3">
-                      <div 
-                        className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0 cursor-pointer hover:shadow-md transition-all"
-                        onClick={() => setLocation(`/profile/${application.owner.id}`)}
+                      <Avatar 
+                        className="w-12 h-12 flex-shrink-0 cursor-pointer hover:shadow-md transition-all"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setLocation(`/profile/${application.owner.id}`);
+                        }}
                       >
-                        <User className="text-white w-6 h-6" />
-                      </div>
+                        <AvatarImage 
+                          src={application.owner.avatar} 
+                          alt={`${application.owner.first_name} ${application.owner.last_name}`}
+                        />
+                        <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold">
+                          {application.owner.first_name?.[0]}{application.owner.last_name?.[0]}
+                        </AvatarFallback>
+                      </Avatar>
                       
                       <div className="flex-1 min-w-0">
                         <h3 
@@ -346,9 +356,15 @@ export default function Applications() {
             <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
-                    <User className="text-white w-6 h-6" />
-                  </div>
+                  <Avatar className="w-12 h-12">
+                    <AvatarImage 
+                      src={selectedApplication.owner.avatar} 
+                      alt={`${selectedApplication.owner.first_name} ${selectedApplication.owner.last_name}`}
+                    />
+                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold">
+                      {selectedApplication.owner.first_name?.[0]}{selectedApplication.owner.last_name?.[0]}
+                    </AvatarFallback>
+                  </Avatar>
                   <div>
                     <h2 className="text-xl font-bold text-gray-900">
                       {`${selectedApplication.owner.first_name} ${selectedApplication.owner.last_name}`}
