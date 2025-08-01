@@ -39,19 +39,10 @@ export default function Applications() {
 
   // Query for detailed application data when viewing details
   const { data: detailedApplication, isLoading: isLoadingDetails } = useQuery({
-    queryKey: ['/jobs/applications/details/', selectedApplication?.id],
+    queryKey: ['/jobs/applications/', selectedApplication?.id],
     queryFn: () => {
       if (!selectedApplication) return null;
-      
-      return apiService.request<JobApplication>(`/jobs/applications/`, {
-        method: 'POST',
-        body: JSON.stringify({ 
-          application_id: selectedApplication.id 
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      return apiService.request<JobApplication>(`/jobs/applications/${selectedApplication.id}/`);
     },
     enabled: !!selectedApplication,
   });
@@ -130,6 +121,13 @@ export default function Applications() {
     console.log('First application data:', applications[0]);
     console.log('Cover letter available:', !!applications[0].cover_letter);
     console.log('Resume available:', !!applications[0].resume);
+  }
+  
+  // Debug: Log detailed application data when fetched
+  if (detailedApplication) {
+    console.log('Detailed application data:', detailedApplication);
+    console.log('Detailed cover letter:', detailedApplication.cover_letter);
+    console.log('Detailed resume:', detailedApplication.resume);
   }
   
   // First filter by organization to ensure we only show applications for jobs 
