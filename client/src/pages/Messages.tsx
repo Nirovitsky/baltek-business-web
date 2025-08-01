@@ -612,11 +612,20 @@ export default function Messages() {
                               // Handle different date formats that might come from API
                               let messageDate: Date;
                               if (typeof message.date_created === 'string') {
-                                // Try parsing ISO string first, then fallback to direct parsing
-                                messageDate = new Date(message.date_created);
-                                if (isNaN(messageDate.getTime())) {
-                                  // Try alternative parsing if ISO fails
-                                  messageDate = new Date(message.date_created.replace(/[-]/g, '/'));
+                                // Handle European format: DD.MM.YYYY HH:mm:ss
+                                if (message.date_created.includes('.') && message.date_created.includes(' ')) {
+                                  const [datePart, timePart] = message.date_created.split(' ');
+                                  const [day, month, year] = datePart.split('.');
+                                  // Convert to ISO format: YYYY-MM-DDTHH:mm:ss
+                                  const isoString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${timePart}`;
+                                  messageDate = new Date(isoString);
+                                } else {
+                                  // Try parsing ISO string first, then fallback to direct parsing
+                                  messageDate = new Date(message.date_created);
+                                  if (isNaN(messageDate.getTime())) {
+                                    // Try alternative parsing if ISO fails
+                                    messageDate = new Date(message.date_created.replace(/[-]/g, '/'));
+                                  }
                                 }
                               } else {
                                 messageDate = new Date();

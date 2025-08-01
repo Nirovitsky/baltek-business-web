@@ -15,6 +15,8 @@ The Baltek Business Dashboard is a React and Express-based application designed 
 - ✅ **Performance Improvement**: Added rate limiting to member data fetching to prevent API spam
 - ✅ **WebSocket Architecture**: Moved WebSocket connection to global scope, initializes immediately after authentication
 - ✅ **Sorting Implementation**: Applications and jobs now show newest entries first (by ID and created_at respectively)
+- ✅ **Date Format Fix**: Added proper parsing for European date format (DD.MM.YYYY HH:mm:ss) from API
+- ✅ **Message Ordering**: Messages now display in chronological order (oldest to newest) with latest at bottom
 
 ## User Preferences
 - Preferred communication style: Simple, everyday language
