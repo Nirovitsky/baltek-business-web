@@ -36,7 +36,7 @@ const organizationUpdateSchema = z.object({
 type OrganizationUpdate = z.infer<typeof organizationUpdateSchema>;
 
 export default function Organization() {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -159,23 +159,16 @@ export default function Organization() {
           {/* Organization Profile Card */}
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center">
-                    <Building2 className="w-8 h-8 text-primary" />
-                  </div>
-                  <div>
-                    <CardTitle>Organization Profile</CardTitle>
-                    <CardDescription>
-                      Manage your organization information and branding
-                    </CardDescription>
-                  </div>
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center">
+                  <Building2 className="w-8 h-8 text-primary" />
                 </div>
-                {!isEditing && (
-                  <Button onClick={() => setIsEditing(true)}>
-                    Edit Profile
-                  </Button>
-                )}
+                <div>
+                  <CardTitle>Organization Profile</CardTitle>
+                  <CardDescription>
+                    Manage your organization information and branding
+                  </CardDescription>
+                </div>
               </div>
             </CardHeader>
 
@@ -209,31 +202,30 @@ export default function Organization() {
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                       {/* Logo Upload Section */}
-                      <div className="md:col-span-1 border rounded-lg p-4">
-                        <FormLabel className="block mb-2">Organization Logo</FormLabel>
+                      <div className="md:col-span-1">
+                        <FormLabel className="block mb-3 text-sm font-medium">Organization Logo</FormLabel>
                         <div className="w-full mb-4">
-                          <AspectRatio ratio={1 / 1} className="overflow-hidden rounded-lg bg-gray-100 border">
+                          <AspectRatio ratio={1 / 1} className="overflow-hidden rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-dashed border-gray-200 hover:border-primary/50 transition-colors">
                             {selectedOrganization?.logo ? (
                               <img 
                                 src={selectedOrganization.logo} 
                                 alt={selectedOrganization.name} 
-                                className="object-contain w-full h-full"
+                                className="object-cover w-full h-full rounded-xl"
                               />
                             ) : (
-                              <div className="flex items-center justify-center h-full w-full bg-gray-100">
-                                <Building2 className="h-12 w-12 text-gray-400" />
+                              <div className="flex flex-col items-center justify-center h-full w-full text-gray-400">
+                                <Building2 className="h-16 w-16 mb-2" />
+                                <span className="text-xs text-center px-2">No logo uploaded</span>
                               </div>
                             )}
                           </AspectRatio>
                         </div>
-                        {isEditing && (
-                          <div className="text-center">
-                            <Button variant="outline" type="button" size="sm">
-                              Upload Logo
-                            </Button>
-                            <p className="text-xs text-gray-500 mt-2">Recommended: 400x400px</p>
-                          </div>
-                        )}
+                        <div className="text-center">
+                          <Button variant="outline" type="button" size="sm" className="w-full">
+                            Upload Logo
+                          </Button>
+                          <p className="text-xs text-gray-500 mt-2">JPG, PNG up to 2MB<br />Recommended: 400x400px</p>
+                        </div>
                       </div>
 
                       {/* Organization Details */}
@@ -249,7 +241,6 @@ export default function Organization() {
                                     <FormControl>
                                       <Input 
                                         {...field} 
-                                        disabled={!isEditing}
                                         placeholder="Enter organization name"
                                       />
                                     </FormControl>
@@ -267,7 +258,6 @@ export default function Organization() {
                                     <FormControl>
                                       <Input 
                                         {...field} 
-                                        disabled={!isEditing}
                                         placeholder="Display name (optional)"
                                       />
                                     </FormControl>
@@ -293,7 +283,6 @@ export default function Organization() {
                                           // Keep the field's onChange to maintain form state
                                           field.onChange(selectedOrganization?.category?.id);
                                         }}
-                                        disabled={!isEditing}
                                         placeholder="Organization category"
                                       />
                                     </FormControl>
@@ -319,7 +308,7 @@ export default function Organization() {
                                             // Keep the field's onChange to maintain form state
                                             field.onChange(selectedOrganization?.location?.id);
                                           }}
-                                          disabled={!isEditing}
+
                                           placeholder="Location"
                                           className="pl-10"
                                         />
@@ -344,7 +333,6 @@ export default function Organization() {
                                     <div className="relative">
                                       <Input 
                                         {...field} 
-                                        disabled={!isEditing}
                                         placeholder="contact@yourcompany.com"
                                         type="email"
                                       />
@@ -365,7 +353,6 @@ export default function Organization() {
                                     <div className="relative">
                                       <Input 
                                         {...field} 
-                                        disabled={!isEditing}
                                         placeholder="+1 (555) 123-4567"
                                       />
                                     </div>
@@ -386,7 +373,6 @@ export default function Organization() {
                                       <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                                       <Input 
                                         {...field} 
-                                        disabled={!isEditing}
                                         placeholder="https://www.example.com"
                                         className="pl-10"
                                       />
@@ -410,7 +396,6 @@ export default function Organization() {
                                   <FormControl>
                                     <Textarea 
                                       {...field} 
-                                      disabled={!isEditing}
                                       placeholder="A brief description of your organization"
                                       rows={2}
                                     />
@@ -429,7 +414,6 @@ export default function Organization() {
                                   <FormControl>
                                     <Textarea 
                                       {...field} 
-                                      disabled={!isEditing}
                                       placeholder="Detailed information about your organization, history, mission, values, etc."
                                       rows={6}
                                     />
@@ -443,24 +427,22 @@ export default function Organization() {
                       </div>
                     </div>
 
-                    {isEditing && (
-                      <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
-                        <Button 
-                          type="button" 
-                          variant="outline"
-                          onClick={handleCancel}
-                          disabled={updateMutation.isPending}
-                        >
-                          Cancel
-                        </Button>
-                        <Button 
-                          type="submit" 
-                          disabled={updateMutation.isPending}
-                        >
-                          {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
-                        </Button>
-                      </div>
-                    )}
+                    <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                      <Button 
+                        type="button" 
+                        variant="outline"
+                        onClick={handleCancel}
+                        disabled={updateMutation.isPending}
+                      >
+                        Cancel
+                      </Button>
+                      <Button 
+                        type="submit" 
+                        disabled={updateMutation.isPending}
+                      >
+                        {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
+                      </Button>
+                    </div>
                   </form>
                 </Form>
               )}
