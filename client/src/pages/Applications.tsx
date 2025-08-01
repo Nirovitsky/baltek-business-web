@@ -159,37 +159,34 @@ export default function Applications() {
 
         {/* Applications List */}
         {isLoading ? (
-          <div className="space-y-4">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <Card key={i} className="border-l-4 border-l-gray-200">
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-start space-x-4">
-                      <Skeleton className="w-16 h-16 rounded-full" />
-                      <div className="flex-1 space-y-2">
-                        <Skeleton className="h-6 w-48" />
-                        <Skeleton className="h-4 w-64" />
-                        <Skeleton className="h-4 w-56" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <Card key={i} className="border-l-4 border-l-gray-200 h-fit">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-start space-x-3">
+                      <Skeleton className="w-12 h-12 rounded-full" />
+                      <div className="flex-1 space-y-1">
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-3 w-24" />
+                        <Skeleton className="h-3 w-28" />
                       </div>
                     </div>
-                    <Skeleton className="h-6 w-20" />
+                    <Skeleton className="h-5 w-16" />
                   </div>
                   
-                  <div className="space-y-3">
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <Skeleton className="h-4 w-24 mb-2" />
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-3/4" />
+                  <div className="space-y-2">
+                    <div className="bg-gray-50 rounded-md p-3">
+                      <Skeleton className="h-3 w-20 mb-2" />
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-3 w-2/3" />
                     </div>
                     
                     <div className="flex items-center justify-between pt-2 border-t border-gray-200">
-                      <div className="flex items-center space-x-3">
-                        <Skeleton className="h-8 w-32" />
-                        <Skeleton className="h-8 w-24" />
-                      </div>
-                      <div className="flex items-center space-x-3">
+                      <Skeleton className="h-8 w-20" />
+                      <div className="flex items-center space-x-2">
                         <Skeleton className="h-8 w-16" />
-                        <Skeleton className="h-8 w-20" />
+                        <Skeleton className="h-8 w-14" />
                       </div>
                     </div>
                   </div>
@@ -213,72 +210,69 @@ export default function Applications() {
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {filteredApplications.map((application) => (
-              <Card key={application.id} className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-blue-500">
-                <CardContent className="p-6">
+              <Card key={application.id} className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-blue-500 h-fit">
+                <CardContent className="p-4">
                   {/* Header Section */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-start space-x-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-start space-x-3">
                       <div 
-                        className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0 cursor-pointer hover:shadow-md transition-all"
+                        className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0 cursor-pointer hover:shadow-md transition-all"
                         onClick={() => setLocation(`/profile/${application.owner.id}`)}
                       >
-                        <User className="text-white w-8 h-8" />
+                        <User className="text-white w-6 h-6" />
                       </div>
                       
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <h3 
-                          className="text-lg font-bold text-gray-900 cursor-pointer hover:text-blue-600 transition-colors"
+                          className="font-bold text-gray-900 cursor-pointer hover:text-blue-600 transition-colors truncate"
                           onClick={() => setLocation(`/profile/${application.owner.id}`)}
                         >
                           {`${application.owner.first_name} ${application.owner.last_name}`}
                         </h3>
                         
-                        <div className="flex items-center space-x-4 mt-1 text-sm text-gray-600">
-                          <div className="flex items-center space-x-1">
-                            <Mail className="w-4 h-4" />
-                            <span>{application.owner.email}</span>
+                        <div className="text-xs text-gray-600 mt-1">
+                          <div className="flex items-center space-x-1 truncate">
+                            <Mail className="w-3 h-3 flex-shrink-0" />
+                            <span className="truncate">{application.owner.email}</span>
                           </div>
                           {application.owner.profession && (
-                            <div className="flex items-center space-x-1">
-                              <Briefcase className="w-4 h-4" />
-                              <span>{application.owner.profession}</span>
+                            <div className="flex items-center space-x-1 mt-1 truncate">
+                              <Briefcase className="w-3 h-3 flex-shrink-0" />
+                              <span className="truncate">{application.owner.profession}</span>
                             </div>
                           )}
                         </div>
                         
-                        <div className="flex items-center space-x-1 mt-1 text-sm text-gray-500">
-                          <MapPin className="w-4 h-4" />
-                          <span>Applied for <strong>{application.job.title}</strong> • {application.job.location.name}</span>
+                        <div className="flex items-center space-x-1 mt-1 text-xs text-gray-500">
+                          <MapPin className="w-3 h-3 flex-shrink-0" />
+                          <span className="truncate">Applied for <strong>{application.job.title}</strong></span>
                         </div>
                       </div>
                     </div>
                     
-                    <div className="flex items-center space-x-2">
-                      <Badge variant="secondary" className={getStatusColor(application.status)}>
-                        {application.status ? application.status.charAt(0).toUpperCase() + application.status.slice(1) : 'Unknown'}
-                      </Badge>
-                    </div>
+                    <Badge variant="secondary" className={`${getStatusColor(application.status)} text-xs`}>
+                      {application.status ? application.status.charAt(0).toUpperCase() + application.status.slice(1) : 'Unknown'}
+                    </Badge>
                   </div>
 
                   {/* Application Details Section */}
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {/* Cover Letter */}
                     {application.cover_letter && (
-                      <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="bg-gray-50 rounded-md p-3">
                         <div className="flex items-center space-x-2 mb-2">
-                          <FileText className="w-5 h-5 text-blue-600" />
-                          <h4 className="text-sm font-semibold text-gray-900">Cover Letter</h4>
+                          <FileText className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                          <h4 className="text-xs font-semibold text-gray-900">Cover Letter</h4>
                         </div>
-                        <div className="text-sm text-gray-700 leading-relaxed">
-                          {application.cover_letter.length > 200 ? (
+                        <div className="text-xs text-gray-700 leading-relaxed">
+                          {application.cover_letter.length > 120 ? (
                             <>
-                              {application.cover_letter.substring(0, 200)}...
+                              {application.cover_letter.substring(0, 120)}...
                               <button 
                                 className="text-blue-600 hover:text-blue-800 ml-1 font-medium"
                                 onClick={() => {
-                                  // Show full cover letter in a modal or expand
                                   alert(application.cover_letter);
                                 }}
                               >
@@ -294,75 +288,69 @@ export default function Applications() {
 
                     {/* Resume/CV */}
                     {application.resume && (
-                      <div className="bg-blue-50 rounded-lg p-4">
+                      <div className="bg-blue-50 rounded-md p-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
-                            <Download className="w-5 h-5 text-blue-600" />
-                            <h4 className="text-sm font-semibold text-gray-900">Resume/CV</h4>
+                            <Download className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                            <h4 className="text-xs font-semibold text-gray-900">Resume/CV</h4>
                           </div>
                           <a 
                             href={application.resume}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center space-x-1 text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
+                            className="flex items-center space-x-1 text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors"
                           >
-                            <Download className="w-4 h-4" />
-                            <span>Download</span>
+                            <Download className="w-3 h-3" />
+                            <span>View</span>
                           </a>
                         </div>
-                        <p className="text-xs text-gray-600 mt-1">
-                          Click to view and download the applicant's resume
-                        </p>
+                      </div>
+                    )}
+
+                    {/* Show message if no cover letter or CV */}
+                    {!application.cover_letter && !application.resume && (
+                      <div className="text-xs text-gray-500 italic text-center py-2">
+                        No cover letter or CV provided
                       </div>
                     )}
 
                     {/* Actions Section */}
                     <div className="flex items-center justify-between pt-2 border-t border-gray-200">
-                      <div className="flex items-center space-x-3">
-                        <Select
-                          value={application.status}
-                          onValueChange={(value) => handleStatusChange(application.id, value)}
-                          disabled={updateApplicationMutation.isPending}
-                        >
-                          <SelectTrigger className="w-36">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="pending">Pending</SelectItem>
-                            <SelectItem value="invited">Invited</SelectItem>
-                            <SelectItem value="rejected">Rejected</SelectItem>
-                            <SelectItem value="hired">Hired</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        
+                      <Select
+                        value={application.status}
+                        onValueChange={(value) => handleStatusChange(application.id, value)}
+                        disabled={updateApplicationMutation.isPending}
+                      >
+                        <SelectTrigger className="w-24 h-8 text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pending">Pending</SelectItem>
+                          <SelectItem value="invited">Invited</SelectItem>
+                          <SelectItem value="rejected">Rejected</SelectItem>
+                          <SelectItem value="hired">Hired</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      
+                      <div className="flex items-center space-x-2">
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => handleCreateChatRoom(application.id)}
                           disabled={createChatRoomMutation.isPending}
-                          className="flex items-center space-x-1"
+                          className="h-8 px-2 text-xs"
                         >
-                          <MessageCircle className="w-4 h-4" />
-                          <span>Message</span>
+                          <MessageCircle className="w-3 h-3 mr-1" />
+                          Message
                         </Button>
-                      </div>
-                      
-                      <div className="flex items-center space-x-3">
-                        <a 
-                          href={`mailto:${application.owner.email}`}
-                          className="flex items-center space-x-1 text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
-                        >
-                          <Mail className="w-4 h-4" />
-                          <span>Email</span>
-                        </a>
                         
                         <Button
                           size="sm"
                           variant="ghost"
                           onClick={() => setLocation(`/profile/${application.owner.id}`)}
-                          className="text-gray-600 hover:text-gray-900"
+                          className="h-8 px-2 text-xs text-gray-600 hover:text-gray-900"
                         >
-                          View Profile
+                          Profile
                         </Button>
                       </div>
                     </div>
