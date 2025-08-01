@@ -175,40 +175,47 @@ export class ApiService {
 
     const url = `${API_BASE_URL}/files/`;
 
-    // For FormData uploads, only include Authorization header
-    // DO NOT set Content-Type - let browser set it automatically with boundary
-    const authHeaders = this.getAuthHeaders();
+    // Create headers WITHOUT Content-Type for FormData
+    const token = localStorage.getItem("access_token");
     const headers: Record<string, string> = {};
-    if ("Authorization" in authHeaders) {
-      headers.Authorization = authHeaders.Authorization as string;
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
     }
+    // Explicitly DO NOT set Content-Type - browser will set multipart/form-data with boundary
 
-    try {
+    const uploadRequest = async (authToken?: string) => {
+      const requestHeaders: Record<string, string> = {};
+      if (authToken) {
+        requestHeaders.Authorization = `Bearer ${authToken}`;
+      }
+
       const response = await fetch(url, {
         method: "POST",
-        headers, // Only auth headers, no Content-Type
+        headers: requestHeaders, // No Content-Type header!
         body: formData,
       });
 
-      return await this.handleResponse(response);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        const error: ApiError = {
+          message: errorData.message || errorData.detail || response.statusText,
+          status: response.status,
+        };
+        throw error;
+      }
+
+      return response.json();
+    };
+
+    try {
+      return await uploadRequest(token || undefined);
     } catch (error: any) {
+      // Handle 401 errors with token refresh
       if (error.status === 401 && localStorage.getItem("refresh_token")) {
         try {
           await this.performTokenRefresh();
-          // Retry upload with new token
-          const retryAuthHeaders = this.getAuthHeaders();
-          const retryHeaders: Record<string, string> = {};
-          if ("Authorization" in retryAuthHeaders) {
-            retryHeaders.Authorization =
-              retryAuthHeaders.Authorization as string;
-          }
-
-          const retryResponse = await fetch(url, {
-            method: "POST",
-            headers: retryHeaders, // Only auth headers, no Content-Type
-            body: formData,
-          });
-          return await this.handleResponse(retryResponse);
+          const newToken = localStorage.getItem("access_token");
+          return await uploadRequest(newToken || undefined);
         } catch (refreshError) {
           this.logout();
           throw refreshError;
