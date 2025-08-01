@@ -32,7 +32,16 @@ export default function Applications() {
       if (selectedOrganization) params.append('organization', selectedOrganization.id.toString());
       if (statusFilter !== 'all') params.append('status', statusFilter);
       
-      return apiService.request<PaginatedResponse<JobApplication>>(`/jobs/applications/?${params.toString()}`);
+      return apiService.request<PaginatedResponse<JobApplication>>(`/jobs/applications/`, {
+        method: 'POST',
+        body: JSON.stringify({ 
+          organization: selectedOrganization?.id,
+          status: statusFilter !== 'all' ? statusFilter : undefined 
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     },
     enabled: !!selectedOrganization,
   });
@@ -109,6 +118,8 @@ export default function Applications() {
   // Debug: Log the first application to see its structure
   if (applications.length > 0) {
     console.log('First application data:', applications[0]);
+    console.log('Cover letter available:', !!applications[0].cover_letter);
+    console.log('Resume available:', !!applications[0].resume);
   }
   
   // First filter by organization to ensure we only show applications for jobs 
