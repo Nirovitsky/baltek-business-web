@@ -165,8 +165,11 @@ export default function Messages() {
   useEffect(() => {
     const removeResyncCallback = addResyncCallback(() => {
       if (selectedRoom?.id) {
-        console.log("Resyncing messages for room", selectedRoom.id);
-        queryClient.invalidateQueries({ queryKey: ['/chat/messages/', selectedRoom.id] });
+        console.log("Resyncing messages for room", selectedRoom.id, "due to reconnection");
+        // Invalidate all message queries to ensure we get latest data
+        queryClient.invalidateQueries({ queryKey: ['/chat/messages/'] });
+        // Also invalidate room queries in case new rooms were created
+        queryClient.invalidateQueries({ queryKey: ['/chat/rooms/'] });
       }
     });
 

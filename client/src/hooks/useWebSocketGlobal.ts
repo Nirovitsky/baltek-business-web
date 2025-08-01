@@ -21,6 +21,7 @@ let reconnectAttempts = 0;
 let maxReconnectAttempts = 10;
 let lastSeenMessageId: number | null = null;
 let resyncCallbacks: Set<() => void> = new Set();
+let wasDisconnected = false;
 
 // Global WebSocket manager
 const WebSocketManager = {
@@ -56,10 +57,11 @@ const WebSocketManager = {
           messageQueue = []; // Clear queue after sending
         }
         
-        // Trigger message resync after reconnection
-        if (reconnectAttempts > 0) {
-          console.log("Triggering message resync after reconnection");
+        // Trigger message resync after reconnection (if we were previously disconnected)
+        if (wasDisconnected) {
+          console.log("Triggering message resync after reconnection - was previously disconnected");
           resyncCallbacks.forEach(callback => callback());
+          wasDisconnected = false;
         }
         
         // No need to send authentication message - token is in URL
@@ -110,6 +112,7 @@ const WebSocketManager = {
         console.log("WebSocket disconnected globally");
         globalConnected = false;
         globalSocket = null;
+        wasDisconnected = true; // Mark that we were disconnected
         
         // Notify all listeners
         globalListeners.forEach(listener => listener());
@@ -272,6 +275,7 @@ export function useWebSocketGlobal() {
       const token = localStorage.getItem('access_token');
       if (token) {
         reconnectAttempts = 0; // Reset attempts for manual reconnect
+        wasDisconnected = true; // Mark that we need to resync
         WebSocketManager.connect(token);
       }
     },

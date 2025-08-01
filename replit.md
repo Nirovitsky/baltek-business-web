@@ -28,6 +28,8 @@ The Baltek Business Dashboard is a React and Express-based application designed 
 - ✅ **Clean UI**: Removed "Sending message..." text, messages appear immediately without loading states
 - ✅ **Message Synchronization**: Automatic message refetch when reconnecting or switching rooms to catch missed messages
 - ✅ **Offline Resilience**: System handles offline scenarios by resyncing messages when connection is restored
+- ✅ **Disconnect Detection**: Tracks when user was disconnected and triggers message resync only when truly needed
+- ✅ **Complete Sync**: On reconnection, refreshes both messages and room data to ensure nothing is missed
 
 ## User Preferences
 - Preferred communication style: Simple, everyday language
