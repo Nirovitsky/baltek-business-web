@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Redirect } from "wouter";
+import { Redirect, useLocation } from "wouter";
 import {
   Card,
   CardContent,
@@ -50,7 +50,36 @@ type CreateOrganizationData = z.infer<typeof createOrganizationSchema>;
 
 export default function CreateOrganization() {
   const { toast } = useToast();
-  const { selectedOrganization, fetchOrganizations } = useAuth();
+  const { selectedOrganization, fetchOrganizations, organizations } = useAuth();
+  const [, setLocation] = useLocation();
+
+  const MAX_ORGANIZATIONS = 10;
+
+  // Check if user has reached maximum organizations
+  if (organizations.length >= MAX_ORGANIZATIONS) {
+    return (
+      <div className="auth-page">
+        <div className="auth-container max-w-md">
+          <div className="auth-card">
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto">
+                <Building2 className="w-8 h-8 text-destructive" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">Maximum Organizations Reached</h1>
+                <p className="text-muted-foreground mt-2">
+                  You can only create up to {MAX_ORGANIZATIONS} organizations. Please delete an existing organization to create a new one.
+                </p>
+              </div>
+              <Button onClick={() => setLocation('/')} className="w-full">
+                Back to Dashboard
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Fetch categories for dropdown
   const { data: categories } = useQuery({

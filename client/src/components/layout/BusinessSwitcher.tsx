@@ -17,11 +17,30 @@ import {
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { useLocation } from "wouter";
+import { useToast } from "@/hooks/use-toast";
 
 export default function BusinessSwitcher() {
   const [open, setOpen] = useState(false);
   const { selectedOrganization, organizations, switchOrganization } = useAuth();
   const [, setLocation] = useLocation();
+  const { toast } = useToast();
+
+  const MAX_ORGANIZATIONS = 10;
+
+  const handleCreateOrganization = () => {
+    if (organizations.length >= MAX_ORGANIZATIONS) {
+      toast({
+        title: "Maximum organizations reached",
+        description: `You can only create up to ${MAX_ORGANIZATIONS} organizations.`,
+        variant: "destructive",
+      });
+      setOpen(false);
+      return;
+    }
+
+    setOpen(false);
+    setLocation('/create-organization');
+  };
 
   // Always show the switcher as dropdown, even with one organization
   if (organizations.length === 0) {
@@ -114,15 +133,25 @@ export default function BusinessSwitcher() {
           <CommandSeparator />
           <CommandGroup>
             <CommandItem
-              onSelect={() => {
-                setOpen(false);
-                setLocation('/create-organization');
-              }}
-              className="text-primary cursor-pointer"
+              onSelect={handleCreateOrganization}
+              className={cn(
+                "cursor-pointer",
+                organizations.length >= MAX_ORGANIZATIONS 
+                  ? "text-muted-foreground" 
+                  : "text-primary"
+              )}
+              disabled={organizations.length >= MAX_ORGANIZATIONS}
             >
               <div className="flex items-center w-full">
                 <Plus className="mr-2 h-4 w-4" />
-                <span className="font-medium">Create New Organization</span>
+                <div className="flex flex-col">
+                  <span className="font-medium">Create New Organization</span>
+                  {organizations.length >= MAX_ORGANIZATIONS && (
+                    <span className="text-xs text-muted-foreground">
+                      Maximum {MAX_ORGANIZATIONS} organizations reached
+                    </span>
+                  )}
+                </div>
               </div>
             </CommandItem>
           </CommandGroup>
