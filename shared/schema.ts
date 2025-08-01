@@ -254,7 +254,14 @@ export const createJobApplicationSchema = jobApplicationSchema
 export const roomSchema = z.object({
   id: z.number(),
   name: z.string().optional(),
-  members: z.array(z.number()), // API returns array of user IDs, not user objects
+  members: z.array(z.object({
+    id: z.number(),
+    first_name: z.string(),
+    last_name: z.string(),
+    profession: z.string().optional(),
+    avatar: z.string().optional(),
+    is_online: z.boolean().optional(),
+  })), // API returns array of user objects, not just IDs
   last_message_text: z.string().optional(),
   last_message_date_created: z.string().optional(),
   unread_message_count: z.number().optional(),
