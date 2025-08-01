@@ -15,6 +15,7 @@ let globalConnected = false;
 let globalMessages: Message[] = [];
 let globalCurrentRoom: number | null = null;
 let globalListeners: Set<() => void> = new Set();
+let messageQueue: Array<{ roomId: number; content: string; attachment?: any }> = [];
 
 // Global WebSocket manager
 const WebSocketManager = {
@@ -33,6 +34,15 @@ const WebSocketManager = {
         console.log("WebSocket connected globally");
         globalConnected = true;
         globalSocket = ws;
+        
+        // Send queued messages
+        if (messageQueue.length > 0) {
+          console.log(`Sending ${messageQueue.length} queued messages`);
+          messageQueue.forEach(queuedMessage => {
+            WebSocketManager.sendMessage(queuedMessage.roomId, queuedMessage.content, queuedMessage.attachment);
+          });
+          messageQueue = []; // Clear queue after sending
+        }
         
         // No need to send authentication message - token is in URL
         
@@ -107,9 +117,15 @@ const WebSocketManager = {
   },
 
   sendMessage: (roomId: number, text: string, attachment?: { url: string; name: string; type: string; size: number }) => {
+    // Apply 1024 character limit
+    const trimmedText = text?.trim() || '';
+    const limitedText = trimmedText.length > 1024 ? trimmedText.substring(0, 1024) : trimmedText;
+    
     if (!globalSocket || globalSocket.readyState !== WebSocket.OPEN) {
-      console.error("WebSocket is not connected");
-      return false;
+      // Queue message for later sending
+      console.log("WebSocket not connected, queuing message");
+      messageQueue.push({ roomId, content: limitedText, attachment });
+      return true; // Return true to indicate message was queued
     }
 
     try {
@@ -117,7 +133,7 @@ const WebSocketManager = {
         type: "send_message",
         data: {
           room: roomId,
-          text: text?.trim() || '',
+          text: limitedText,
           ...(attachment && {
             attachment_url: attachment.url,
             attachment_name: attachment.name,
@@ -132,7 +148,9 @@ const WebSocketManager = {
       return true;
     } catch (error) {
       console.error("Failed to send message:", error);
-      return false;
+      // Queue message for retry
+      messageQueue.push({ roomId, content: limitedText, attachment });
+      return true; // Still return true as message was queued
     }
   },
 

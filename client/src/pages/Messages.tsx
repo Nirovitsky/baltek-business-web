@@ -36,6 +36,8 @@ export default function Messages() {
     sendMessage,
     joinRoom,
   } = useWebSocketGlobal();
+  
+  // Access messageQueue - we'll show a simplified queue indicator since it's internal
 
   // Fetch chat rooms
   const { data: roomsData, isLoading: roomsLoading } = useQuery({
@@ -478,7 +480,7 @@ export default function Messages() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-400">
           {filteredRooms.map((room) => (
             <div
               key={room.id}
@@ -619,7 +621,7 @@ export default function Messages() {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-gray-50/50 to-white/50">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 bg-gradient-to-b from-gray-50/50 to-white/50 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-400">
               {messagesLoading ? (
                 <div className="flex items-center justify-center h-full">
                   <p className="text-gray-500">Loading messages...</p>
@@ -652,7 +654,7 @@ export default function Messages() {
                           </Link>
                         )}
                         <div
-                          className={`px-4 py-2 rounded-lg shadow-sm ${
+                          className={`px-4 py-2 rounded-lg shadow-sm break-words max-w-full overflow-hidden ${
                             isOwn
                               ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
                               : "bg-white border border-gray-200 text-gray-900"
@@ -786,17 +788,27 @@ export default function Messages() {
                   </Button>
                 </div>
                 
-                <Input
-                  placeholder="Type your message..."
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-                  className="flex-1 bg-gray-50 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                  disabled={!connected}
-                />
+                <div className="flex-1 relative">
+                  <Input
+                    placeholder="Type your message..."
+                    value={newMessage}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Apply 1024 character limit
+                      if (value.length <= 1024) {
+                        setNewMessage(value);
+                      }
+                    }}
+                    onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+                    className="pr-16 bg-gray-50 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                  />
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                    {newMessage.length}/1024
+                  </div>
+                </div>
                 <Button
                   onClick={handleSendMessage}
-                  disabled={(!newMessage.trim() && !selectedFile) || !connected || uploadFileMutation.isPending}
+                  disabled={(!newMessage.trim() && !selectedFile) || uploadFileMutation.isPending}
                   className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-md"
                 >
                   {uploadFileMutation.isPending ? (
@@ -807,10 +819,10 @@ export default function Messages() {
                 </Button>
               </div>
               {!connected && (
-                <div className="flex items-center space-x-2 mt-2 p-2 bg-red-50 border border-red-200 rounded-md">
-                  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                  <p className="text-xs text-red-600 font-medium">
-                    Disconnected from chat server. Trying to reconnect...
+                <div className="flex items-center space-x-2 mt-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                  <p className="text-xs text-blue-700 font-medium">
+                    Disconnected from chat server. Messages will be queued and sent when reconnected.
                   </p>
                 </div>
               )}
