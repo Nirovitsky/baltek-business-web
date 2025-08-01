@@ -28,7 +28,10 @@ export default function BusinessSwitcher() {
   const MAX_ORGANIZATIONS = 10;
 
   const handleCreateOrganization = () => {
+    console.log('handleCreateOrganization called, organizations.length:', organizations.length, 'MAX_ORGANIZATIONS:', MAX_ORGANIZATIONS);
+    
     if (organizations.length >= MAX_ORGANIZATIONS) {
+      console.log('Maximum organizations reached, showing toast');
       toast({
         title: "Maximum organizations reached",
         description: `You can only create up to ${MAX_ORGANIZATIONS} organizations.`,
@@ -38,6 +41,7 @@ export default function BusinessSwitcher() {
       return;
     }
 
+    console.log('Navigating to /create-organization');
     setOpen(false);
     setLocation('/create-organization');
   };
@@ -131,30 +135,27 @@ export default function BusinessSwitcher() {
             ))}
           </CommandGroup>
           <CommandSeparator />
-          <CommandGroup>
-            <CommandItem
-              value="create-new-organization"
-              onSelect={handleCreateOrganization}
+          <div className="px-2 py-1">
+            <div
+              onClick={handleCreateOrganization}
               className={cn(
-                "cursor-pointer",
+                "flex items-center w-full px-2 py-1.5 rounded-sm text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors",
                 organizations.length >= MAX_ORGANIZATIONS 
                   ? "text-muted-foreground opacity-50 pointer-events-none" 
                   : "text-primary"
               )}
             >
-              <div className="flex items-center w-full">
-                <Plus className="mr-2 h-4 w-4" />
-                <div className="flex flex-col">
-                  <span className="font-medium">Create New Organization</span>
-                  {organizations.length >= MAX_ORGANIZATIONS && (
-                    <span className="text-xs text-muted-foreground">
-                      Maximum {MAX_ORGANIZATIONS} organizations reached
-                    </span>
-                  )}
-                </div>
+              <Plus className="mr-2 h-4 w-4" />
+              <div className="flex flex-col">
+                <span className="font-medium">Create New Organization</span>
+                {organizations.length >= MAX_ORGANIZATIONS && (
+                  <span className="text-xs text-muted-foreground">
+                    Maximum {MAX_ORGANIZATIONS} organizations reached
+                  </span>
+                )}
               </div>
-            </CommandItem>
-          </CommandGroup>
+            </div>
+          </div>
         </Command>
       </PopoverContent>
     </Popover>
