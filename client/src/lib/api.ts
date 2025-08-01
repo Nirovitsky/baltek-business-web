@@ -73,10 +73,16 @@ export class ApiService {
   }
 
   async login(credentials: { phone: string; password: string }) {
+    // Transform 8-digit phone to full format with country code
+    const fullPhone = credentials.phone.length === 8 ? `+993${credentials.phone}` : credentials.phone;
+    
     const response = await fetch(`${API_BASE_URL}/token/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(credentials),
+      body: JSON.stringify({
+        phone: fullPhone,
+        password: credentials.password
+      }),
     });
 
     if (!response.ok) {
