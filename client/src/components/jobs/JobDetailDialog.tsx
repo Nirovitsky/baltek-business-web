@@ -141,7 +141,7 @@ export default function JobDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-400">
         <DialogHeader>
           <DialogTitle>Job Details</DialogTitle>
           {job && (
@@ -292,8 +292,8 @@ export default function JobDetailDialog({
                   <CardContent>
                     <div className="flex flex-wrap gap-2">
                       {languages.map((lang, index) => (
-                        <Badge key={typeof lang === 'object' ? lang.id : index} variant="outline">
-                          {typeof lang === 'object' ? lang.name : `Language ${lang}`}
+                        <Badge key={index} variant="outline">
+                          Language {lang}
                         </Badge>
                       ))}
                     </div>
