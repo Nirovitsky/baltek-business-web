@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,10 +11,12 @@ import { useLocation } from "wouter";
 import type { JobApplication, PaginatedResponse } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format, parseISO, isValid } from "date-fns";
+import ApplicationDetailsModal from "@/components/modals/ApplicationDetailsModal";
 
 export default function RecentApplications() {
   const { selectedOrganization } = useAuth();
   const [, setLocation] = useLocation();
+  const [selectedApplication, setSelectedApplication] = useState<JobApplication | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ['/jobs/applications/', selectedOrganization?.id],
@@ -138,7 +141,7 @@ export default function RecentApplications() {
               <div 
                 key={application.id} 
                 className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-background transition-colors cursor-pointer"
-                onClick={() => setLocation('/applications')}
+                onClick={() => setSelectedApplication(application)}
               >
                 <div 
                   className="flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
@@ -166,7 +169,7 @@ export default function RecentApplications() {
                 </div>
                 <div className="flex-1">
                   <h4 
-                    className="font-medium text-foreground cursor-pointer hover:text-primary"
+                    className="font-medium text-foreground cursor-pointer hover:text-primary inline"
                     onClick={(e) => {
                       e.stopPropagation();
                       setLocation(`/profile/${application.owner?.id || application.id}`);
@@ -191,7 +194,7 @@ export default function RecentApplications() {
                     className="text-gray-400 w-4 h-4 cursor-pointer hover:text-primary"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setLocation('/applications');
+                      setSelectedApplication(application);
                     }}
                   />
                 </div>
@@ -200,6 +203,13 @@ export default function RecentApplications() {
           </div>
         )}
       </CardContent>
+      
+      {/* Application Details Modal */}
+      <ApplicationDetailsModal
+        application={selectedApplication}
+        isOpen={!!selectedApplication}
+        onClose={() => setSelectedApplication(null)}
+      />
     </Card>
   );
 }
