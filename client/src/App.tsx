@@ -6,7 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
 import { useAuth } from "@/hooks/useAuth";
 import { useWebSocketGlobal } from "@/hooks/useWebSocketGlobal";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 // Layout Components
 import Sidebar from "@/components/layout/Sidebar";
@@ -28,7 +28,8 @@ import Settings from "@/pages/Settings";
 import NotFound from "@/pages/not-found";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, hasOrganizations, checkAuth, fetchOrganizations, refreshProfile } = useAuth();
+  const { isAuthenticated, hasOrganizations, organizations, checkAuth, fetchOrganizations, refreshProfile } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
   
   // Initialize global WebSocket connection when authenticated
   const { connected } = useWebSocketGlobal();
@@ -39,11 +40,17 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (isAuthenticated) {
+      setIsLoading(true);
       // Fetch both user profile and organizations when authenticated
       Promise.all([
         refreshProfile(),
         fetchOrganizations()
-      ]).catch(error => console.error('Error fetching initial data:', error));
+      ]).then(() => {
+        setIsLoading(false);
+      }).catch(error => {
+        console.error('Error fetching initial data:', error);
+        setIsLoading(false);
+      });
     }
   }, [isAuthenticated, fetchOrganizations, refreshProfile]);
 
@@ -51,8 +58,21 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <Redirect to="/login" />;
   }
 
+  // Show loading while fetching organizations
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   // If authenticated but has no organizations, redirect to create organization
-  if (isAuthenticated && !hasOrganizations) {
+  console.log('ProtectedRoute check:', { isAuthenticated, hasOrganizations, organizationsLength: organizations.length });
+  if (isAuthenticated && !hasOrganizations && organizations.length === 0) {
     return <Redirect to="/create-organization" />;
   }
 
