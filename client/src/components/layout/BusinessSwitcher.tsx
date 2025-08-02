@@ -43,7 +43,19 @@ export default function BusinessSwitcher() {
 
     console.log('Navigating to /create-organization');
     setOpen(false);
-    setLocation('/create-organization');
+    
+    // Use setTimeout to ensure the popover closes before navigation
+    setTimeout(() => {
+      console.log('Executing navigation to /create-organization');
+      setLocation('/create-organization');
+      // Also try using window.location as backup after a brief delay
+      setTimeout(() => {
+        if (window.location.pathname !== '/create-organization') {
+          console.log('Wouter navigation failed, using window.location');
+          window.location.href = '/create-organization';
+        }
+      }, 50);
+    }, 100);
   };
 
   // Always show the switcher as dropdown, even with one organization
@@ -136,7 +148,10 @@ export default function BusinessSwitcher() {
           </CommandGroup>
           <CommandSeparator />
           <CommandItem
-            onSelect={handleCreateOrganization}
+            onSelect={() => {
+              console.log('CommandItem onSelect triggered');
+              handleCreateOrganization();
+            }}
             disabled={organizations.length >= MAX_ORGANIZATIONS}
             className={cn(
               "flex items-center cursor-pointer",
