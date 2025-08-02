@@ -422,7 +422,7 @@ export default function Applications() {
             setSelectedApplication(null);
             setPreviewUrl(null);
           }}>
-            <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-400">
+            <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto custom-scrollbar">
               <DialogHeader>
                 <DialogTitle className="flex items-center space-x-3">
                   <Avatar className="w-12 h-12">

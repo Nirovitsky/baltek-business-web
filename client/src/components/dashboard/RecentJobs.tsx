@@ -22,7 +22,7 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
   const { selectedOrganization } = useAuth();
   const [, setLocation] = useLocation();
   
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['/jobs/', selectedOrganization?.id],
     queryFn: () => {
       const params = new URLSearchParams();
@@ -33,6 +33,12 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
       return apiService.request<PaginatedResponse<Job>>(`/jobs/?${params.toString()}`);
     },
     enabled: !!selectedOrganization,
+    retry: (failureCount, error: any) => {
+      // Don't retry on 503 errors, they indicate backend unavailability
+      if (error?.status === 503) return false;
+      return failureCount < 2;
+    },
+    staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
   });
 
   if (isLoading) {
@@ -61,6 +67,29 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
                 </div>
               </div>
             ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Handle API errors gracefully
+  if (error && !isLoading) {
+    const errorStatus = (error as any)?.status;
+    return (
+      <Card className="shadow-sm border border">
+        <CardHeader className="border-b border">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-foreground">Recent Job Postings</h3>
+            <Button variant="ghost" size="sm" onClick={() => setLocation('/jobs')}>View All</Button>
+          </div>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="text-center py-8">
+            <p className="text-muted-foreground">
+              {errorStatus === 503 ? 'Service temporarily unavailable' : 'Unable to load job postings'}
+            </p>
+            <p className="text-sm text-gray-400 mt-2">Please try again in a moment</p>
           </div>
         </CardContent>
       </Card>
