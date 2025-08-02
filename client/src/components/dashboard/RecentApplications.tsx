@@ -135,7 +135,7 @@ export default function RecentApplications() {
         ) : (
           <div className="space-y-4">
             {filteredApplications.map((application) => (
-              <div key={application.id} className="flex items-center space-x-4 p-4 border border-gray-100 rounded-lg hover:bg-background transition-colors">
+              <div key={application.id} className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-background transition-colors">
                 <div 
                   className="flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
                   onClick={() => setLocation(`/profile/${application.owner?.id || application.id}`)}

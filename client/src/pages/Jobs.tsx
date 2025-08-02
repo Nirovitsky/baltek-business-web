@@ -164,7 +164,7 @@ export default function Jobs() {
                     </div>
                     
                     {/* Footer */}
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                    <div className="flex items-center justify-between pt-4 border-t">
                       <Skeleton className="h-5 w-16" />
                       <Skeleton className="h-3 w-24" />
                     </div>
@@ -284,7 +284,7 @@ export default function Jobs() {
                     )}
 
                     {/* Footer with status and date */}
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                    <div className="flex items-center justify-between pt-4 border-t">
                       <div className="flex items-center space-x-3">
                         <Badge 
                           variant="secondary" 

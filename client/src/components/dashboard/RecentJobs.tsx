@@ -47,7 +47,7 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
         <CardContent className="p-6">
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-start space-x-4 p-4 border border-gray-100 rounded-lg">
+              <div key={i} className="flex items-start space-x-4 p-4 border rounded-lg">
                 <div className="flex-1 space-y-2">
                   <Skeleton className="h-4 w-48" />
                   <Skeleton className="h-3 w-32" />
@@ -93,7 +93,7 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
               return (
                 <div 
                   key={job.id} 
-                  className="flex items-start space-x-4 p-4 border border-gray-100 rounded-lg hover:bg-background transition-colors cursor-pointer"
+                  className="flex items-start space-x-4 p-4 border rounded-lg hover:bg-background transition-colors cursor-pointer"
                   onClick={() => onJobClick?.(job.id)}
                 >
                   <div className="flex-1">
