@@ -135,10 +135,17 @@ export default function RecentApplications() {
         ) : (
           <div className="space-y-4">
             {filteredApplications.map((application) => (
-              <div key={application.id} className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-background transition-colors">
+              <div 
+                key={application.id} 
+                className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-background transition-colors cursor-pointer"
+                onClick={() => setLocation('/applications')}
+              >
                 <div 
                   className="flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
-                  onClick={() => setLocation(`/profile/${application.owner?.id || application.id}`)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setLocation(`/profile/${application.owner?.id || application.id}`);
+                  }}
                 >
                   <Avatar className="w-10 h-10">
                     <AvatarImage 
@@ -160,7 +167,10 @@ export default function RecentApplications() {
                 <div className="flex-1">
                   <h4 
                     className="font-medium text-foreground cursor-pointer hover:text-primary"
-                    onClick={() => setLocation(`/profile/${application.owner?.id || application.id}`)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setLocation(`/profile/${application.owner?.id || application.id}`);
+                    }}
                   >
                     {application.owner?.first_name && application.owner?.last_name 
                       ? `${application.owner.first_name} ${application.owner.last_name}`
@@ -179,7 +189,10 @@ export default function RecentApplications() {
                   </Badge>
                   <ChevronRight 
                     className="text-gray-400 w-4 h-4 cursor-pointer hover:text-primary"
-                    onClick={() => setLocation('/applications')}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setLocation('/applications');
+                    }}
                   />
                 </div>
               </div>

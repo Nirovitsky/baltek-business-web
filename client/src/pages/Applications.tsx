@@ -515,7 +515,7 @@ export default function Applications() {
                   </h3>
                   {(detailedApplication?.resume || selectedApplication.resume) ? (
                     <>
-                    <div className="bg-muted/50 rounded-lg p-4">
+                    <div className="bg-muted/50 border rounded-lg p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
                           <FileText className="w-5 h-5 text-primary" />
@@ -606,7 +606,7 @@ export default function Applications() {
                     )}
                     </>
                   ) : (
-                    <div className="bg-background rounded-lg p-4">
+                    <div className="bg-background border rounded-lg p-4">
                       <p className="text-sm text-muted-foreground italic">
                         No CV/resume uploaded by the applicant
                       </p>
