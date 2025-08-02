@@ -1,0 +1,64 @@
+chunk-RPCDYKBN.js?v=1f5dce87:14032 The above error occurred in the <div> component:
+
+    at div
+    at Badge (https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.replit.dev:5000/src/components/ui/badge.tsx:35:18)
+    at div
+    at div
+    at _c9 (https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.replit.dev:5000/src/components/ui/card.tsx:114:12)
+    at div
+    at _c (https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.replit.dev:5000/src/components/ui/card.tsx:20:11)
+    at div
+    at div
+    at div
+    at https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…unner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=1f5dce87:42:13
+    at https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…runner/workspace/node_modules/.vite/deps/chunk-SD42OOGP.js?v=1f5dce87:61:7
+    at https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…unner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=1f5dce87:79:13
+    at https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…unner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=1f5dce87:56:13
+    at https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…unner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=1f5dce87:42:13
+    at https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…runner/workspace/node_modules/.vite/deps/chunk-T6UD2AIQ.js?v=1f5dce87:57:5
+    at https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…nner/workspace/node_modules/.vite/deps/chunk-DLHUDZBO.js?v=1f5dce87:233:13
+    at https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…nner/workspace/node_modules/.vite/deps/chunk-DLHUDZBO.js?v=1f5dce87:156:58
+    at Presence (https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…unner/workspace/node_modules/.vite/deps/chunk-WIIJQEXM.js?v=1f5dce87:24:11)
+    at https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…nner/workspace/node_modules/.vite/deps/chunk-DLHUDZBO.js?v=1f5dce87:147:64
+    at https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…unner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=1f5dce87:79:13
+    at https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…unner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=1f5dce87:56:13
+    at https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…unner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=1f5dce87:42:13
+    at https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…nner/workspace/node_modules/.vite/deps/chunk-SD42OOGP.js?v=1f5dce87:260:22
+    at Presence (https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…unner/workspace/node_modules/.vite/deps/chunk-WIIJQEXM.js?v=1f5dce87:24:11)
+    at Provider (https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…unner/workspace/node_modules/.vite/deps/chunk-5AJU3CG7.js?v=1f5dce87:38:15)
+    at DialogPortal (https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…nner/workspace/node_modules/.vite/deps/chunk-DLHUDZBO.js?v=1f5dce87:109:11)
+    at _c3 (https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.replit.dev:5000/src/components/ui/dialog.tsx:52:12)
+    at Provider (https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…unner/workspace/node_modules/.vite/deps/chunk-5AJU3CG7.js?v=1f5dce87:38:15)
+    at Dialog (https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…runner/workspace/node_modules/.vite/deps/chunk-DLHUDZBO.js?v=1f5dce87:50:5)
+    at JobDetailDialog (https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.replit.dev:5000/src/components/jobs/JobDetailDialog.tsx:42:3)
+    at div
+    at Dashboard (https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.replit.dev:5000/src/pages/Dashboard.tsx:32:27)
+    at div
+    at div
+    at ProtectedRoute (https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.replit.dev:5000/src/App.tsx?v=UIZmqSvRMt8N4OUQ8f4Uv:42:27)
+    at Route (https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=1f5dce87:323:16)
+    at Switch (https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=1f5dce87:379:17)
+    at Router (https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.replit.dev:5000/src/App.tsx?v=UIZmqSvRMt8N4OUQ8f4Uv:96:49)
+    at Provider (https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…unner/workspace/node_modules/.vite/deps/chunk-5AJU3CG7.js?v=1f5dce87:38:15)
+    at TooltipProvider (https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…rkspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1f5dce87:61:5)
+    at QueryClientProvider (https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.repli…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1f5dce87:2805:3)
+    at ThemeProvider (https://1b64d0aa-40f8-4982-bfba-6e787e3b43f5-00-2f0auskihf43o.janeway.replit.dev:5000/src/components/theme-provider.tsx:25:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+chunk-RPCDYKBN.js?v=1f5dce87:9934 Uncaught Error: Objects are not valid as a React child (found: object with keys {id, name, code}). If you meant to render a collection of children, use an array instead.
+    at throwOnInvalidObjectType (chunk-RPCDYKBN.js?v=1f5dce87:9934:17)
+    at createChild (chunk-RPCDYKBN.js?v=1f5dce87:10110:15)
+    at reconcileChildrenArray (chunk-RPCDYKBN.js?v=1f5dce87:10282:33)
+    at reconcileChildFibers2 (chunk-RPCDYKBN.js?v=1f5dce87:10559:24)
+    at reconcileChildren (chunk-RPCDYKBN.js?v=1f5dce87:14290:37)
+    at updateHostComponent (chunk-RPCDYKBN.js?v=1f5dce87:14807:11)
+    at beginWork (chunk-RPCDYKBN.js?v=1f5dce87:15935:22)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=1f5dce87:19753:22)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=1f5dce87:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js?v=1f5dce87:19137:13)
+
+﻿
+

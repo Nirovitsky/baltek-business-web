@@ -51,7 +51,7 @@ export default function JobDetailDialog({
   // Extract location, category, and languages directly from job data (backend provides full objects)
   const location = typeof job?.location === 'object' && job.location ? job.location : null;
   const category = typeof job?.category === 'object' && job.category ? job.category : null;
-  const languages = job?.required_languages || [];
+  const languages = Array.isArray(job?.required_languages) ? job.required_languages : [];
 
   const archiveMutation = useMutation({
     mutationFn: () => apiService.request(`/jobs/${jobId}/`, {
@@ -293,7 +293,7 @@ export default function JobDetailDialog({
                     <div className="flex flex-wrap gap-2">
                       {languages.map((lang, index) => (
                         <Badge key={index} variant="outline">
-                          Language {lang}
+                          {typeof lang === 'object' && 'name' in lang ? lang.name : `Language ${lang}`}
                         </Badge>
                       ))}
                     </div>

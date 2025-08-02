@@ -186,7 +186,14 @@ export const jobSchema = z.object({
     .enum(["yearly", "monthly", "weekly", "daily", "hourly"])
     .optional(),
   currency: z.string().optional(),
-  required_languages: z.array(z.number()).optional(),
+  required_languages: z.array(z.union([
+    z.number(),
+    z.object({
+      id: z.number(),
+      name: z.string(),
+      code: z.string(),
+    })
+  ])).optional(),
   status: z.enum(["open", "archived", "expired"]),
   date_started: z.string(),
   date_ended: z.string().optional(),
