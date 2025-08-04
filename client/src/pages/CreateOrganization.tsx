@@ -161,8 +161,8 @@ export default function CreateOrganization() {
         website: formData.website || "",
         email: formData.email || "",
         phone: formData.phone || "",
-        category_id: formData.category_id,
-        location_id: formData.location_id,
+        category: formData.category_id,
+        location: formData.location_id,
         ...(logoUrl && { logo: logoUrl })
       };
 
@@ -378,7 +378,7 @@ export default function CreateOrganization() {
                           Category *
                         </Label>
                         <Select 
-                          value={formData.category_id.toString()} 
+                          value={formData.category_id > 0 ? formData.category_id.toString() : ""} 
                           onValueChange={(value) => handleSelectChange('category_id', value)}
                         >
                           <SelectTrigger className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200 bg-white dark:bg-gray-700">
@@ -400,7 +400,7 @@ export default function CreateOrganization() {
                           Location *
                         </Label>
                         <Select 
-                          value={formData.location_id.toString()} 
+                          value={formData.location_id > 0 ? formData.location_id.toString() : ""} 
                           onValueChange={(value) => handleSelectChange('location_id', value)}
                         >
                           <SelectTrigger className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200 bg-white dark:bg-gray-700">
