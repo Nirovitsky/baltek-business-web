@@ -30,9 +30,10 @@ export const useAuth = create<AuthState>((set, get) => ({
     set({ isLoading: true });
     try {
       await apiService.login(credentials);
-      set({ isAuthenticated: true, isLoading: false });
+      set({ isAuthenticated: true });
       // Fetch organizations after login
       await get().fetchOrganizations();
+      set({ isLoading: false });
     } catch (error) {
       set({ isLoading: false });
       throw error;
@@ -53,6 +54,10 @@ export const useAuth = create<AuthState>((set, get) => ({
   checkAuth: () => {
     const isAuthenticated = apiService.isAuthenticated();
     set({ isAuthenticated });
+    // If authenticated, fetch organizations to initialize state properly
+    if (isAuthenticated) {
+      get().fetchOrganizations();
+    }
   },
 
   switchOrganization: (organization: Organization) => {
