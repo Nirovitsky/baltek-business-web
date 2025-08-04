@@ -1,6 +1,7 @@
 import express, { type Express } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
+import multer from "multer";
 
 // API proxy endpoints to backend
 const API_BASE_URL = process.env.API_BASE_URL || "https://api.baltek.net";
@@ -276,9 +277,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const apiPath = req.originalUrl;
       const url = `${API_BASE_URL}${apiPath}`;
 
-      const headers: HeadersInit = {
-        "Content-Type": "application/json",
-      };
+      const headers: HeadersInit = {};
 
       // Forward authorization header if present
       const authHeader = req.headers.authorization;
@@ -286,13 +285,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         headers["Authorization"] = authHeader;
       }
 
+      let body;
+
+      // Handle different content types
+      if (req.method !== "GET" && req.method !== "HEAD") {
+        const contentType = req.headers['content-type'];
+        
+        if (contentType && contentType.includes('multipart/form-data')) {
+          // For multipart data, forward the original request body
+          body = req.body ? JSON.stringify(req.body) : undefined;
+          headers["Content-Type"] = "application/json";
+        } else if (contentType && contentType.includes('application/json')) {
+          // For JSON data
+          body = JSON.stringify(req.body);
+          headers["Content-Type"] = "application/json";
+        } else {
+          // For other data types
+          body = req.body ? JSON.stringify(req.body) : undefined;
+          headers["Content-Type"] = "application/json";
+        }
+      }
+
       const response = await fetch(url, {
         method: req.method,
         headers,
-        body:
-          req.method !== "GET" && req.method !== "HEAD"
-            ? JSON.stringify(req.body)
-            : undefined,
+        body,
       });
 
       // Forward response status and headers

@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building2, ArrowLeft, Upload, X, Sparkles, Users, Target, Zap, Loader2, Globe, Mail, Phone } from "lucide-react";
+import { Building2, ArrowLeft, Upload, X, Sparkles, Users, Target, Zap, Loader2, Globe, Mail, Phone, MapPin, Tag } from "lucide-react";
 import { apiService } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import type { Category, Location, PaginatedResponse } from "@shared/schema";
 
 export default function CreateOrganization() {
   const [, setLocation] = useLocation();
@@ -24,6 +27,8 @@ export default function CreateOrganization() {
     website: "",
     email: "",
     phone: "",
+    category_id: 0,
+    location_id: 0,
   });
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
@@ -62,6 +67,26 @@ export default function CreateOrganization() {
       [e.target.name]: e.target.value
     }));
   };
+
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [name]: parseInt(value)
+    }));
+  };
+
+  // Fetch categories and locations
+  const { data: categories } = useQuery({
+    queryKey: ['/categories/'],
+    queryFn: () => apiService.request<Category[]>('/categories/'),
+  });
+
+  const { data: locationsData } = useQuery({
+    queryKey: ['/locations/'],
+    queryFn: () => apiService.request<PaginatedResponse<Location>>('/locations/'),
+  });
+
+  const locations = locationsData?.results || [];
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -136,8 +161,8 @@ export default function CreateOrganization() {
         website: formData.website || "",
         email: formData.email || "",
         phone: formData.phone || "",
-        category_id: 1, // Use category_id instead of category
-        location_id: 1, // Use location_id instead of location
+        category_id: formData.category_id,
+        location_id: formData.location_id,
         ...(logoUrl && { logo: logoUrl })
       };
 
@@ -231,9 +256,6 @@ export default function CreateOrganization() {
                   <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
                     Organization Details
                   </CardTitle>
-                  <CardDescription className="text-gray-600 dark:text-gray-300">
-                    Fill in your organization information below
-                  </CardDescription>
                 </CardHeader>
 
                 <CardContent className="space-y-6">
@@ -349,6 +371,52 @@ export default function CreateOrganization() {
                       />
                     </div>
 
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center gap-2">
+                          <Tag className="w-4 h-4" />
+                          Category *
+                        </Label>
+                        <Select 
+                          value={formData.category_id.toString()} 
+                          onValueChange={(value) => handleSelectChange('category_id', value)}
+                        >
+                          <SelectTrigger className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200 bg-white dark:bg-gray-700">
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {categories?.map((category) => (
+                              <SelectItem key={category.id} value={category.id.toString()}>
+                                {category.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center gap-2">
+                          <MapPin className="w-4 h-4" />
+                          Location *
+                        </Label>
+                        <Select 
+                          value={formData.location_id.toString()} 
+                          onValueChange={(value) => handleSelectChange('location_id', value)}
+                        >
+                          <SelectTrigger className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200 bg-white dark:bg-gray-700">
+                            <SelectValue placeholder="Select location" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {locations?.map((location) => (
+                              <SelectItem key={location.id} value={location.id.toString()}>
+                                {location.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
                     <div className="space-y-2">
                       <Label className="text-sm font-semibold text-gray-700 dark:text-gray-200">Organization Logo</Label>
                       <div className="relative border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center hover:border-blue-400 dark:hover:border-blue-500 transition-all duration-200 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800">
@@ -404,7 +472,7 @@ export default function CreateOrganization() {
                       </Button>
                       <Button
                         type="submit"
-                        disabled={isLoading || !formData.official_name.trim()}
+                        disabled={isLoading || !formData.official_name.trim() || !formData.category_id || !formData.location_id}
                         className="flex-1 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
                       >
                         {isLoading ? (
