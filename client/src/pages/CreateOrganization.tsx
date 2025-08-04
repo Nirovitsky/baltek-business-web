@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building2, ArrowLeft, Upload, X, Sparkles, Users, Target, Zap, Loader2 } from "lucide-react";
+import { Building2, ArrowLeft, Upload, X, Sparkles, Users, Target, Zap, Loader2, Globe, Mail, Phone } from "lucide-react";
 import { apiService } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -18,7 +18,12 @@ export default function CreateOrganization() {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     official_name: "",
+    display_name: "",
     description: "",
+    about_us: "",
+    website: "",
+    email: "",
+    phone: "",
   });
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
@@ -125,7 +130,12 @@ export default function CreateOrganization() {
       // Create organization
       const organizationData = {
         official_name: formData.official_name,
+        display_name: formData.display_name || formData.official_name,
         description: formData.description,
+        about_us: formData.about_us,
+        website: formData.website,
+        email: formData.email,
+        phone: formData.phone,
         category: 1, // Default category
         location: 1, // Default location
         ...(logoUrl && { logo: logoUrl })
@@ -228,33 +238,114 @@ export default function CreateOrganization() {
 
                 <CardContent className="space-y-6">
                   <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="official_name" className="text-sm font-semibold text-gray-700 dark:text-gray-200">
-                        Organization Name *
-                      </Label>
-                      <Input
-                        id="official_name"
-                        name="official_name"
-                        value={formData.official_name}
-                        onChange={handleInputChange}
-                        placeholder="Enter your organization name"
-                        required
-                        className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200 bg-white dark:bg-gray-700"
-                      />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="official_name" className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                          Organization Name *
+                        </Label>
+                        <Input
+                          id="official_name"
+                          name="official_name"
+                          value={formData.official_name}
+                          onChange={handleInputChange}
+                          placeholder="Enter official organization name"
+                          required
+                          className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200 bg-white dark:bg-gray-700"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="display_name" className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                          Display Name
+                        </Label>
+                        <Input
+                          id="display_name"
+                          name="display_name"
+                          value={formData.display_name}
+                          onChange={handleInputChange}
+                          placeholder="Public display name (optional)"
+                          className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200 bg-white dark:bg-gray-700"
+                        />
+                      </div>
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="description" className="text-sm font-semibold text-gray-700 dark:text-gray-200">
-                        Description
+                        Short Description
                       </Label>
                       <Textarea
                         id="description"
                         name="description"
                         value={formData.description}
                         onChange={handleInputChange}
-                        placeholder="Tell us about your organization, mission, and values..."
+                        placeholder="Brief description of your organization..."
+                        rows={3}
+                        className="border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200 resize-none bg-white dark:bg-gray-700"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="about_us" className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                        About Us
+                      </Label>
+                      <Textarea
+                        id="about_us"
+                        name="about_us"
+                        value={formData.about_us}
+                        onChange={handleInputChange}
+                        placeholder="Tell us more about your organization, mission, values, and culture..."
                         rows={4}
                         className="border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200 resize-none bg-white dark:bg-gray-700"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="website" className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center gap-2">
+                          <Globe className="w-4 h-4" />
+                          Website
+                        </Label>
+                        <Input
+                          id="website"
+                          name="website"
+                          type="url"
+                          value={formData.website}
+                          onChange={handleInputChange}
+                          placeholder="https://example.com"
+                          className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200 bg-white dark:bg-gray-700"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="email" className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center gap-2">
+                          <Mail className="w-4 h-4" />
+                          Contact Email
+                        </Label>
+                        <Input
+                          id="email"
+                          name="email"
+                          type="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          placeholder="contact@example.com"
+                          className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200 bg-white dark:bg-gray-700"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="phone" className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center gap-2">
+                        <Phone className="w-4 h-4" />
+                        Phone Number
+                      </Label>
+                      <Input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        placeholder="+993 XX XXX XXX"
+                        className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200 bg-white dark:bg-gray-700"
                       />
                     </div>
 
