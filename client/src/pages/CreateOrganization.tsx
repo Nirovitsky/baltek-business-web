@@ -66,11 +66,11 @@ export default function CreateOrganization() {
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file size (5MB limit)
-      if (file.size > 5 * 1024 * 1024) {
+      // Validate file size (2MB limit to prevent server issues)
+      if (file.size > 2 * 1024 * 1024) {
         toast({
           title: "File too large",
-          description: "Logo must be smaller than 5MB",
+          description: "Logo must be smaller than 2MB",
           variant: "destructive",
         });
         return;
@@ -127,17 +127,17 @@ export default function CreateOrganization() {
         }
       }
 
-      // Create organization
+      // Create organization with proper field mapping
       const organizationData = {
         official_name: formData.official_name,
         display_name: formData.display_name || formData.official_name,
         description: formData.description,
         about_us: formData.about_us,
-        website: formData.website,
-        email: formData.email,
-        phone: formData.phone,
-        category: 1, // Default category
-        location: 1, // Default location
+        website: formData.website || "",
+        email: formData.email || "",
+        phone: formData.phone || "",
+        category_id: 1, // Use category_id instead of category
+        location_id: 1, // Use location_id instead of location
         ...(logoUrl && { logo: logoUrl })
       };
 
@@ -379,7 +379,7 @@ export default function CreateOrganization() {
                             </div>
                             <div>
                               <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">Upload your logo</p>
-                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">PNG, JPG up to 5MB</p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">PNG, JPG up to 2MB</p>
                             </div>
                           </div>
                         )}
