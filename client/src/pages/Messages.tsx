@@ -785,7 +785,7 @@ export default function Messages() {
                 </div>
               ) : (
                 allMessages.map((message) => {
-                  const isOwn = message.owner.id === user?.id;
+                  const isOwn = message.owner?.id === user?.id;
                   const isOptimistic = message.id < 0;
                   return (
                     <div
@@ -794,10 +794,10 @@ export default function Messages() {
                     >
                       <div className="flex items-end space-x-2 max-w-xs lg:max-w-md">
                         {!isOwn && (
-                          <Link href={`/profile/${message.owner.id}`}>
+                          <Link href={`/profile/${message.owner?.id || ''}`}>
                             <Avatar className="w-6 h-6 shadow-sm cursor-pointer hover:shadow-md transition-shadow">
                               <AvatarFallback className="bg-muted text-muted-foreground text-xs font-medium">
-                                {message.owner.first_name[0]}{message.owner.last_name[0]}
+                                {message.owner?.first_name?.[0] || ''}{message.owner?.last_name?.[0] || ''}
                               </AvatarFallback>
                             </Avatar>
                           </Link>
