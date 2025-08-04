@@ -1,78 +1,43 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { Redirect, useLocation } from "wouter";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { useState } from "react";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/useAuth";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Building2, ArrowLeft, Upload, X, Sparkles, Users, Target, Zap, Loader2 } from "lucide-react";
 import { apiService } from "@/lib/api";
-import { Building2, ArrowLeft, Upload, X } from "lucide-react";
-import { z } from "zod";
-import { useState, useRef } from "react";
-import type { Organization, Category, Location, PaginatedResponse } from "@shared/schema";
-
-const createOrganizationSchema = z.object({
-  official_name: z.string().min(1, "Organization name is required"),
-  display_name: z.string().optional(),
-  description: z.string().optional(),
-  about_us: z.string().optional(),
-  website: z.string().url().optional().or(z.literal("")),
-  email: z.string().email().optional().or(z.literal("")),
-  phone: z.string().optional(),
-  category_id: z.number().min(1, "Category is required"),
-  location_id: z.number().min(1, "Location is required"),
-  logo: z.any().optional(),
-});
-
-type CreateOrganizationData = z.infer<typeof createOrganizationSchema>;
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 export default function CreateOrganization() {
-  const { toast } = useToast();
-  const { selectedOrganization, fetchOrganizations, organizations } = useAuth();
   const [, setLocation] = useLocation();
+  const { fetchOrganizations, organizations } = useAuth();
+  const { toast } = useToast();
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    official_name: "",
+    description: "",
+  });
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const MAX_ORGANIZATIONS = 10;
 
   // Check if user has reached maximum organizations
   if (organizations.length >= MAX_ORGANIZATIONS) {
     return (
-      <div className="auth-page">
-        <div className="auth-container max-w-md">
-          <div className="auth-card">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-950 dark:via-slate-900 dark:to-gray-900 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md shadow-2xl border-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl">
+          <CardContent className="pt-6">
             <div className="text-center space-y-4">
-              <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto">
-                <Building2 className="w-8 h-8 text-destructive" />
+              <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto">
+                <Building2 className="w-8 h-8 text-red-600 dark:text-red-400" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">Maximum Organizations Reached</h1>
-                <p className="text-muted-foreground mt-2">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Maximum Organizations Reached</h1>
+                <p className="text-gray-600 dark:text-gray-300 mt-2">
                   You can only create up to {MAX_ORGANIZATIONS} organizations. Please delete an existing organization to create a new one.
                 </p>
               </div>
@@ -80,45 +45,32 @@ export default function CreateOrganization() {
                 Back to Dashboard
               </Button>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
-  // Fetch categories for dropdown
-  const { data: categories } = useQuery({
-    queryKey: ['/categories/'],
-    queryFn: () => apiService.request<Category[]>('/categories/'),
-  });
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
 
-  // Fetch locations for dropdown
-  const { data: locationsData } = useQuery({
-    queryKey: ['/locations/'],
-    queryFn: () => apiService.request<PaginatedResponse<Location>>('/locations/'),
-  });
-
-  const locations = locationsData?.results || [];
-
-  const form = useForm<CreateOrganizationData>({
-    resolver: zodResolver(createOrganizationSchema),
-    defaultValues: {
-      official_name: "",
-      display_name: "",
-      description: "",
-      about_us: "",
-      website: "",
-      email: "",
-      phone: "",
-      category_id: undefined,
-      location_id: undefined,
-      logo: null,
-    },
-  });
-
-  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
+      // Validate file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Logo must be smaller than 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+
       // Validate file type
       if (!file.type.startsWith('image/')) {
         toast({
@@ -129,19 +81,8 @@ export default function CreateOrganization() {
         return;
       }
 
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        toast({
-          title: "File too large",
-          description: "Please select an image smaller than 5MB",
-          variant: "destructive",
-        });
-        return;
-      }
-
       setLogoFile(file);
-      form.setValue('logo', file);
-
+      
       // Create preview
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -151,343 +92,250 @@ export default function CreateOrganization() {
     }
   };
 
-  const removeLogo = () => {
+  const clearLogo = () => {
     setLogoFile(null);
     setLogoPreview(null);
-    form.setValue('logo', null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
   };
 
-  const createMutation = useMutation({
-    mutationFn: async (data: CreateOrganizationData) => {
-      const { category_id, location_id, logo, ...rest } = data;
-      
-      // If there's a logo, upload it first
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
       let logoUrl = null;
+
+      // Upload logo if provided
       if (logoFile) {
-        const formData = new FormData();
-        formData.append('file', logoFile);
-        
+        const logoFormData = new FormData();
+        logoFormData.append('file', logoFile);
+
         try {
           const uploadResponse = await apiService.request<{ url: string }>('/upload/', {
             method: 'POST',
-            body: formData,
+            body: logoFormData,
             headers: {}, // Remove Content-Type to let browser set it with boundary
           });
           logoUrl = uploadResponse.url;
         } catch (error) {
           console.error('Logo upload failed:', error);
-          throw new Error('Failed to upload logo');
+          // Continue without logo if upload fails
         }
       }
 
-      // Create organization with logo URL
-      const apiData = {
-        ...rest,
-        category: category_id,
-        location: location_id,
-        ...(logoUrl && { logo: logoUrl }),
+      // Create organization
+      const organizationData = {
+        official_name: formData.official_name,
+        description: formData.description,
+        category: 1, // Default category
+        location: 1, // Default location
+        ...(logoUrl && { logo: logoUrl })
       };
-      
-      return apiService.request<Organization>('/organizations/', {
+
+      await apiService.request('/organizations/', {
         method: 'POST',
-        body: JSON.stringify(apiData),
+        body: JSON.stringify(organizationData),
       });
-    },
-    onSuccess: async () => {
+
       toast({
-        title: "Success",
-        description: "Organization created successfully! Welcome to baltek business.",
+        title: "Organization created",
+        description: "Your organization has been created successfully",
       });
-      // Refresh organizations to get the new one
+
+      // Refresh organizations and redirect
       await fetchOrganizations();
-      // Navigate to dashboard
       setLocation('/');
-    },
-    onError: (error: any) => {
-      console.error('Organization creation error:', error);
-      const errorMessage = error.message || error.detail || "Failed to create organization";
+      
+    } catch (error: any) {
+      console.error('Error creating organization:', error);
       toast({
         title: "Error",
-        description: errorMessage,
+        description: error.message || "Failed to create organization",
         variant: "destructive",
       });
-    },
-  });
-
-  // If user already has an organization, redirect to dashboard
-  if (selectedOrganization) {
-    return <Redirect to="/" />;
-  }
-
-  const onSubmit = (data: CreateOrganizationData) => {
-    createMutation.mutate(data);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="auth-page min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-2xl">
-        <CardHeader className="text-center">
-          <div className="flex items-center justify-between mb-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setLocation('/')}
-              className="p-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <div className="mx-auto w-16 h-16 bg-primary rounded-xl flex items-center justify-center">
-              <Building2 className="w-8 h-8 text-white" />
-            </div>
-            <div className="w-10"></div>
-          </div>
-          <CardTitle className="text-2xl font-bold">Create Your Organization</CardTitle>
-          <CardDescription>
-            Let's set up your organization profile to get started with baltek business
-          </CardDescription>
-        </CardHeader>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-950 dark:via-slate-900 dark:to-gray-900 relative overflow-hidden">
+      {/* Background decorations */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-indigo-600/20 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-purple-400/20 to-pink-600/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-cyan-300/10 to-blue-500/10 rounded-full blur-3xl"></div>
+      </div>
 
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="official_name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Organization Name*</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="Enter organization name" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="display_name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Display Name</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="Enter display name" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
+        <div className="w-full max-w-4xl">
+          <div className="grid lg:grid-cols-2 gap-8 items-center">
+            
+            {/* Left side - Hero content */}
+            <div className="space-y-8 text-center lg:text-left">
+              <div className="space-y-6">
+                <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium">
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Start Your Journey
+                </div>
+                <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
+                  Create Your
+                  <span className="block bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    Organization
+                  </span>
+                </h1>
+                <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-lg mx-auto lg:mx-0">
+                  Build your company profile and start managing job postings, applications, and candidate communications.
+                </p>
               </div>
 
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        {...field} 
-                        placeholder="Brief description of your organization"
-                        rows={3}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="about_us"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>About Us</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        {...field} 
-                        placeholder="Tell us more about your organization"
-                        rows={4}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Logo Upload Section */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                  Organization Logo
-                </label>
-                <div className="flex items-center gap-4">
-                  {logoPreview ? (
-                    <div className="relative">
-                      <img
-                        src={logoPreview}
-                        alt="Logo preview"
-                        className="w-20 h-20 object-cover rounded-lg border-2 border-dashed border-gray-300"
-                      />
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0"
-                        onClick={removeLogo}
-                      >
-                        <X className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  ) : (
-                    <div
-                      className="w-20 h-20 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 transition-colors"
-                      onClick={() => fileInputRef.current?.click()}
-                    >
-                      <Upload className="h-6 w-6 text-gray-400" />
-                      <span className="text-xs text-gray-500 text-center mt-1">Upload Logo</span>
-                    </div>
-                  )}
-                  <div className="flex-1">
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleLogoUpload}
-                      className="hidden"
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="w-full"
-                    >
-                      <Upload className="h-4 w-4 mr-2" />
-                      {logoFile ? 'Change Logo' : 'Upload Logo'}
-                    </Button>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Recommended: Square image, max 5MB
-                    </p>
+              {/* Feature highlights */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3 text-gray-700 dark:text-gray-300">
+                  <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                    <Users className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                   </div>
+                  <span className="font-medium">Manage team members and roles</span>
+                </div>
+                <div className="flex items-center space-x-3 text-gray-700 dark:text-gray-300">
+                  <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
+                    <Target className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                  </div>
+                  <span className="font-medium">Post and track job openings</span>
+                </div>
+                <div className="flex items-center space-x-3 text-gray-700 dark:text-gray-300">
+                  <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                    <Zap className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <span className="font-medium">Streamline hiring process</span>
                 </div>
               </div>
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="category_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Category*</FormLabel>
-                      <Select 
-                        onValueChange={(value) => field.onChange(Number(value))} 
-                        value={field.value?.toString()}
+            {/* Right side - Form */}
+            <div className="w-full">
+              <Card className="shadow-2xl border-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl">
+                <CardHeader className="text-center pb-6">
+                  <div className="mx-auto mb-4 w-14 h-14 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <Building2 className="h-7 w-7 text-white" />
+                  </div>
+                  <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
+                    Organization Details
+                  </CardTitle>
+                  <CardDescription className="text-gray-600 dark:text-gray-300">
+                    Fill in your organization information below
+                  </CardDescription>
+                </CardHeader>
+
+                <CardContent className="space-y-6">
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="official_name" className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                        Organization Name *
+                      </Label>
+                      <Input
+                        id="official_name"
+                        name="official_name"
+                        value={formData.official_name}
+                        onChange={handleInputChange}
+                        placeholder="Enter your organization name"
+                        required
+                        className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200 bg-white dark:bg-gray-700"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="description" className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                        Description
+                      </Label>
+                      <Textarea
+                        id="description"
+                        name="description"
+                        value={formData.description}
+                        onChange={handleInputChange}
+                        placeholder="Tell us about your organization, mission, and values..."
+                        rows={4}
+                        className="border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200 resize-none bg-white dark:bg-gray-700"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-semibold text-gray-700 dark:text-gray-200">Organization Logo</Label>
+                      <div className="relative border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center hover:border-blue-400 dark:hover:border-blue-500 transition-all duration-200 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800">
+                        {logoPreview ? (
+                          <div className="space-y-4">
+                            <div className="relative inline-block">
+                              <img
+                                src={logoPreview}
+                                alt="Logo preview"
+                                className="w-20 h-20 object-cover rounded-xl shadow-lg ring-4 ring-white dark:ring-gray-600"
+                              />
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                size="sm"
+                                onClick={clearLogo}
+                                className="absolute -top-2 -right-2 h-7 w-7 rounded-full p-0 shadow-lg"
+                              >
+                                <X className="h-3 w-3" />
+                              </Button>
+                            </div>
+                            <p className="text-sm font-medium text-blue-600 dark:text-blue-400">Click to change logo</p>
+                          </div>
+                        ) : (
+                          <div className="space-y-4">
+                            <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-xl flex items-center justify-center">
+                              <Upload className="h-7 w-7 text-blue-600 dark:text-blue-400" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">Upload your logo</p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">PNG, JPG up to 5MB</p>
+                            </div>
+                          </div>
+                        )}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleLogoChange}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex gap-4 pt-4">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setLocation('/')}
+                        className="flex-1 h-12 border-2 hover:bg-gray-50 dark:hover:bg-gray-700 font-medium"
                       >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select category" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {categories?.map((category) => (
-                            <SelectItem key={category.id} value={category.id.toString()}>
-                              {category.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="location_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Location*</FormLabel>
-                      <Select 
-                        onValueChange={(value) => field.onChange(Number(value))} 
-                        value={field.value?.toString()}
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Back
+                      </Button>
+                      <Button
+                        type="submit"
+                        disabled={isLoading || !formData.official_name.trim()}
+                        className="flex-1 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
                       >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select location" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {locations?.map((location) => (
-                            <SelectItem key={location.id} value={location.id.toString()}>
-                              {location.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="website"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Website</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="https://example.com" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="email" placeholder="contact@example.com" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter phone number" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button 
-                type="submit" 
-                className="w-full" 
-                disabled={createMutation.isPending}
-              >
-                {createMutation.isPending ? "Creating..." : "Create Organization"}
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+                        {isLoading ? (
+                          <div className="flex items-center">
+                            <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                            Creating...
+                          </div>
+                        ) : (
+                          <>
+                            <Building2 className="mr-2 h-4 w-4" />
+                            Create Organization
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
