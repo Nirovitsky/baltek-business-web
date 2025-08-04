@@ -72,7 +72,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   // If authenticated but has no organizations, redirect to create organization
   console.log('ProtectedRoute check:', { isAuthenticated, hasOrganizations, organizationsLength: organizations.length });
-  if (isAuthenticated && !hasOrganizations && organizations.length === 0) {
+  if (isAuthenticated && !hasOrganizations) {
     return <Redirect to="/create-organization" />;
   }
 
