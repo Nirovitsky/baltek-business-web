@@ -70,6 +70,7 @@ The Baltek Business Dashboard is a React and Express-based application designed 
 - ✅ **Required Fields Integration**: Added Category and Location select dropdowns with proper API integration and validation
 - ✅ **API Field Mapping Fix**: Corrected organization creation to send "category" and "location" fields instead of "category_id" and "location_id"
 - ✅ **Enhanced Login Flow**: Improved authentication redirect logic to properly check organization status after login and redirect users to dashboard or create-organization page accordingly
+- ✅ **Timestamp Migration**: Converted all date handling from DD.MM.YYYY format to Unix timestamps for backend compatibility
 
 ## User Preferences
 - Preferred communication style: Simple, everyday language

@@ -81,16 +81,26 @@ export default function Messages() {
     }
   }, [rooms, selectedRoom]);
 
-  // Helper function to parse European date format
-  const parseDate = (dateString: string): Date => {
-    if (typeof dateString === 'string' && dateString.includes('.') && dateString.includes(' ')) {
-      const [datePart, timePart] = dateString.split(' ');
+  // Helper function to parse timestamp or date format
+  const parseDate = (timestamp: number | string): Date => {
+    if (typeof timestamp === 'number') {
+      return new Date(timestamp * 1000); // Convert from seconds to milliseconds
+    }
+    
+    if (typeof timestamp === 'string' && /^\d+$/.test(timestamp)) {
+      return new Date(parseInt(timestamp) * 1000);
+    }
+    
+    // Fallback: handle other date formats
+    if (typeof timestamp === 'string' && timestamp.includes('.') && timestamp.includes(' ')) {
+      const [datePart, timePart] = timestamp.split(' ');
       const [day, month, year] = datePart.split('.');
       // Convert to ISO format: YYYY-MM-DDTHH:mm:ss
       const isoString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${timePart}`;
       return new Date(isoString);
     }
-    return new Date(dateString);
+    
+    return new Date(timestamp);
   };
 
   // Combine API messages, WebSocket messages, and optimistic messages

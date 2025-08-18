@@ -52,8 +52,8 @@ export default function CreateJob() {
       salary_payment_type: "monthly",
       currency: "TMT",
       required_languages: [],
-      date_started: new Date().toLocaleDateString('en-GB').replace(/\//g, '.'),
-      date_ended: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-GB').replace(/\//g, '.'),
+      date_started: Math.floor(Date.now() / 1000),
+      date_ended: Math.floor((Date.now() + 30 * 24 * 60 * 60 * 1000) / 1000),
       status: "open",
     },
   });
@@ -76,8 +76,8 @@ export default function CreateJob() {
         salary_payment_type: job.salary_payment_type || "monthly",
         currency: job.currency || "TMT",
         required_languages: job.required_languages || [],
-        date_started: job.date_started || new Date().toLocaleDateString('en-GB').replace(/\//g, '.'),
-        date_ended: job.date_ended || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-GB').replace(/\//g, '.'),
+        date_started: job.date_started || Math.floor(Date.now() / 1000),
+        date_ended: job.date_ended || Math.floor((Date.now() + 30 * 24 * 60 * 60 * 1000) / 1000),
         status: job.status || "open",
       });
     }

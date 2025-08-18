@@ -94,23 +94,20 @@ export default function RecentApplications() {
     }
   };
 
-  const formatApplicationDate = (dateString: string) => {
+  const formatApplicationDate = (timestamp: number | string) => {
     try {
-      // Handle European date format (DD.MM.YYYY HH:mm:ss)
-      const europeanFormat = /^(\d{2})\.(\d{2})\.(\d{4}) (\d{2}):(\d{2}):(\d{2})$/;
-      const europeanMatch = dateString.match(europeanFormat);
+      let date: Date;
       
-      if (europeanMatch) {
-        const [, day, month, year, hour, minute, second] = europeanMatch;
-        const isoString = `${year}-${month}-${day}T${hour}:${minute}:${second}Z`;
-        const date = parseISO(isoString);
-        if (isValid(date)) {
-          return format(date, 'MMM d, yyyy');
-        }
+      // Handle timestamp (number or string)
+      if (typeof timestamp === 'number') {
+        date = new Date(timestamp * 1000); // Convert from seconds to milliseconds
+      } else if (typeof timestamp === 'string' && /^\d+$/.test(timestamp)) {
+        date = new Date(parseInt(timestamp) * 1000);
+      } else {
+        // Fallback: try parsing as ISO string or other date format
+        date = parseISO(timestamp as string);
       }
       
-      // Try parsing as ISO string
-      const date = parseISO(dateString);
       if (isValid(date)) {
         return format(date, 'MMM d, yyyy');
       }

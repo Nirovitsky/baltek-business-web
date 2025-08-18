@@ -21,8 +21,8 @@ export const userExperienceSchema = z.object({
   organization_name: z.string(),
   position: z.string(),
   description: z.string(),
-  date_started: z.string(),
-  date_finished: z.string().nullable().optional(),
+  date_started: z.number(),
+  date_finished: z.number().nullable().optional(),
 });
 
 // User Education schema
@@ -40,8 +40,8 @@ export const userEducationSchema = z.object({
     }),
   ]),
   level: z.enum(["secondary", "undergraduate", "bachelor", "master", "doctorate"]),
-  date_started: z.string().nullable().optional(),
-  date_finished: z.string().nullable().optional(),
+  date_started: z.number().nullable().optional(),
+  date_finished: z.number().nullable().optional(),
 });
 
 // User Project schema
@@ -50,8 +50,8 @@ export const userProjectSchema = z.object({
   title: z.string(),
   description: z.string(),
   link: z.string().optional(),
-  date_started: z.string(),
-  date_finished: z.string().nullable().optional(),
+  date_started: z.number(),
+  date_finished: z.number().nullable().optional(),
 });
 
 // User Resume schema
@@ -59,7 +59,7 @@ export const userResumeSchema = z.object({
   id: z.number(),
   title: z.string(),
   file: z.string().nullable().optional(),
-  date_created: z.string(),
+  date_created: z.number(),
 });
 
 // User schemas
@@ -108,8 +108,8 @@ export const organizationSchema = z.object({
       name: z.string(),
     })
     .optional(),
-  created_at: z.string(),
-  updated_at: z.string(),
+  created_at: z.number(),
+  updated_at: z.number(),
 });
 
 export const organizationProjectSchema = z.object({
@@ -117,8 +117,8 @@ export const organizationProjectSchema = z.object({
   title: z.string(),
   description: z.string(),
   organization: z.number(),
-  created_at: z.string(),
-  updated_at: z.string(),
+  created_at: z.number(),
+  updated_at: z.number(),
 });
 
 // Location and Category schemas
@@ -195,10 +195,10 @@ export const jobSchema = z.object({
     })
   ])).optional(),
   status: z.enum(["open", "archived", "expired"]),
-  date_started: z.string(),
-  date_ended: z.string().optional(),
-  created_at: z.string(),
-  updated_at: z.string(),
+  date_started: z.number(),
+  date_ended: z.number().optional(),
+  created_at: z.number(),
+  updated_at: z.number(),
   applications_count: z.number().optional(),
 });
 
@@ -246,8 +246,8 @@ export const jobApplicationSchema = z.object({
   cover_letter: z.string().optional(),
   resume: z.string().optional(),
   room_id: z.number().nullable().optional(),
-  date_applied: z.string().optional(),
-  created_at: z.string().optional(),
+  date_applied: z.number().optional(),
+  created_at: z.number().optional(),
 });
 
 export const createJobApplicationSchema = jobApplicationSchema
@@ -266,7 +266,7 @@ export const roomSchema = z.object({
   name: z.string().optional(),
   members: z.array(z.number()), // API returns array of user IDs, not user objects
   last_message_text: z.string().optional(),
-  last_message_date_created: z.string().optional(),
+  last_message_date_created: z.number().optional(),
   unread_message_count: z.number().optional(),
   content_type: z.number().optional(),
   object_id: z.number().optional(),
@@ -289,7 +289,7 @@ export const messageSchema = z.object({
   attachment_name: z.string().optional(),
   attachment_type: z.string().optional(),
   attachment_size: z.number().optional(),
-  date_created: z.string(),
+  date_created: z.number(),
 });
 
 export const createMessageSchema = z.object({
@@ -306,7 +306,7 @@ export const bookmarkSchema = z.object({
   id: z.number(),
   job: z.number(),
   user: z.number(),
-  created_at: z.string(),
+  created_at: z.number(),
 });
 
 export const savedFilterSchema = z.object({
@@ -314,8 +314,8 @@ export const savedFilterSchema = z.object({
   name: z.string(),
   filters: z.record(z.any()),
   user: z.number(),
-  created_at: z.string(),
-  updated_at: z.string(),
+  created_at: z.number(),
+  updated_at: z.number(),
 });
 
 // Pagination schemas

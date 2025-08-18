@@ -113,10 +113,21 @@ export default function JobDetails() {
     ).join(' ');
   };
 
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return 'Not specified';
+  const formatDate = (timestamp?: number | string) => {
+    if (!timestamp) return 'Not specified';
     try {
-      const date = new Date(dateString);
+      let date: Date;
+      
+      // Handle timestamp (number or string)
+      if (typeof timestamp === 'number') {
+        date = new Date(timestamp * 1000); // Convert from seconds to milliseconds
+      } else if (typeof timestamp === 'string' && /^\d+$/.test(timestamp)) {
+        date = new Date(parseInt(timestamp) * 1000);
+      } else {
+        // Fallback: try parsing as other date format
+        date = new Date(timestamp as string);
+      }
+      
       if (isNaN(date.getTime())) return 'Not specified';
       return date.toLocaleDateString();
     } catch {
