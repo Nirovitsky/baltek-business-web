@@ -15,7 +15,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { Link } from "wouter";
 import FileUpload from "@/components/chat/FileUpload";
 import AttachmentPreview from "@/components/chat/AttachmentPreview";
-import type { Room, Message, PaginatedResponse } from "@shared/schema";
+import type { Room, Message, PaginatedResponse } from "@/types";
 
 export default function Messages() {
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);

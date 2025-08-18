@@ -21,7 +21,7 @@ import {
   Building2,
   Trash2
 } from "lucide-react";
-import type { Job } from "@shared/schema";
+import type { Job } from "@/types";
 
 export default function JobDetails() {
   const { id } = useParams<{ id: string }>();

@@ -21,7 +21,7 @@ import TopBar from "@/components/layout/TopBar";
 import { useToast } from "@/hooks/use-toast";
 
 // Use the existing User type from schema
-import type { User, UserExperience, UserEducation, UserProject, Room } from "@shared/schema";
+import type { User, UserExperience, UserEducation, UserProject, Room } from "@/types";
 
 export default function UserProfile() {
   const [match, params] = useRoute("/profile/:userId");

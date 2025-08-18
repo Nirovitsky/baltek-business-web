@@ -78,6 +78,9 @@ The Baltek Business Dashboard is a React and Express-based application designed 
 - ✅ **Notification API**: Created backend notification endpoints for CRUD operations and preference management
 - ✅ **Replit Migration Complete**: Successfully completed migration from Replit Agent to Replit environment with all functionality preserved
 - ✅ **Settings Cleanup**: Removed notifications section from settings page as requested
+- ✅ **Backend Removal**: Removed Express backend proxy completely - frontend now connects directly to external API (https://api.baltek.net/api)
+- ✅ **WebSocket Migration**: Updated all WebSocket connections to use external service (wss://api.baltek.net/ws/chat/)
+- ✅ **Types Migration**: Created local types file to replace shared schema, updated all imports from @shared/schema to @/types
 
 ## User Preferences
 - Preferred communication style: Simple, everyday language
@@ -98,15 +101,14 @@ The Baltek Business Dashboard is a React and Express-based application designed 
 - **Forms**: React Hook Form with Zod validation
 
 ### Backend Architecture
-- **Runtime**: Node.js with Express.js
-- **Language**: TypeScript with ES modules
-- **Real-time Communication**: WebSocket server for chat
-- **Session Management**: In-memory storage (with planned database integration)
+- **External API**: Direct connection to https://api.baltek.net/api/
+- **Real-time Communication**: External WebSocket service at wss://api.baltek.net/ws/chat/
+- **No Local Backend**: Frontend connects directly to external services
 
 ### Data Storage Strategy
-- **Current**: In-memory storage (MemStorage class) for development
-- **Planned**: PostgreSQL with Drizzle ORM
-- **Schema**: Defined in `shared/schema.ts`
+- **External API**: All data managed by external Baltek API backend
+- **Local Types**: Type definitions in `client/src/types/index.ts`
+- **No Local Storage**: All persistence handled by external services
 
 ### Key Features
 - **Authentication**: JWT-based with access/refresh tokens, Zustand for client-side state, protected routes.

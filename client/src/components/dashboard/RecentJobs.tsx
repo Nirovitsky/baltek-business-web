@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { apiService } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useLocation } from "wouter";
-import type { Job, PaginatedResponse } from "@shared/schema";
+import type { Job, PaginatedResponse } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const jobIcons: Record<string, any> = {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import type { Message } from "@shared/schema";
+import type { Message } from "@/types";
 
 interface WebSocketMessage {
   type: string;

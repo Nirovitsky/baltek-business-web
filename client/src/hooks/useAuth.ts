@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { apiService } from '@/lib/api';
-import type { LoginRequest, Organization, User } from '@shared/schema';
+import type { LoginRequest, Organization, User } from '@/types';
 
 interface AuthState {
   isAuthenticated: boolean;

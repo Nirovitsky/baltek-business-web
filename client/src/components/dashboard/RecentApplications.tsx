@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { apiService } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useLocation } from "wouter";
-import type { JobApplication, PaginatedResponse } from "@shared/schema";
+import type { JobApplication, PaginatedResponse } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format, parseISO, isValid } from "date-fns";
 import ApplicationDetailsModal from "@/components/modals/ApplicationDetailsModal";

@@ -16,7 +16,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
 import { User, Search, MessageCircle, FileText, Download, MapPin, Calendar, Briefcase, X, Eye } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import type { JobApplication, PaginatedResponse } from "@shared/schema";
+import type { JobApplication, PaginatedResponse } from "@/types";
 
 // Helper function to get status colors for applications
 const getStatusColor = (status: string) => {

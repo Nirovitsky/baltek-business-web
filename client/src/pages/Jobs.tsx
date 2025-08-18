@@ -13,7 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
 import { Edit, Trash2, Search, Eye, Briefcase, MapPin, Users, DollarSign, Calendar, Building2 } from "lucide-react";
-import type { Job, PaginatedResponse } from "@shared/schema";
+import type { Job, PaginatedResponse } from "@/types";
 
 export default function Jobs() {
   const [searchTerm, setSearchTerm] = useState("");

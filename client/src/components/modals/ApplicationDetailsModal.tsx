@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Briefcase, MapPin, MessageCircle, FileText, Calendar, Clock } from "lucide-react";
 import { useLocation } from "wouter";
 import { apiService } from "@/lib/api";
-import type { JobApplication } from "@shared/schema";
+import type { JobApplication } from "@/types";
 
 interface ApplicationDetailsModalProps {
   application: JobApplication | null;

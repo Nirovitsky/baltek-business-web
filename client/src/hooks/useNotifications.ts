@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import type { Notification, NotificationPreferences } from "@shared/schema";
+import type { Notification, NotificationPreferences } from "@/types";
 
 // Check if browser supports notifications
 const isNotificationSupported = () => {

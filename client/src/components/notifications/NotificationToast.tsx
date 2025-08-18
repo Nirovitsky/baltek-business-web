@@ -1,7 +1,7 @@
 import React from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { Notification } from "@shared/schema";
+import type { Notification } from "@/types";
 
 interface NotificationToastProps {
   notification: Notification;
