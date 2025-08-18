@@ -446,12 +446,23 @@ export default function Messages() {
     }
   }, [rooms, user?.id]); // Removed roomMemberData dependency to prevent loop
 
-  const filteredRooms = rooms.filter((room) => {
+  const filteredRooms = rooms.filter((room: Room) => {
+    if (!searchQuery.trim()) return true;
+    
     // Add null/undefined check for room.members
     if (!room.members || !Array.isArray(room.members)) {
       return false;
     }
 
+    const searchLower = searchQuery.toLowerCase();
+    const roomName = getRoomDisplayName(room).toLowerCase();
+    
+    // Search by room name first
+    if (roomName.includes(searchLower)) {
+      return true;
+    }
+
+    // Search by participant names (excluding current user)
     const participantNames = room.members
       .filter((memberId) => {
         // Ensure memberId is treated as a number
@@ -465,7 +476,7 @@ export default function Messages() {
       })
       .join(" ");
 
-    return participantNames.toLowerCase().includes(searchQuery.toLowerCase());
+    return participantNames.toLowerCase().includes(searchLower);
   });
 
   const scrollToBottom = () => {
@@ -501,6 +512,8 @@ export default function Messages() {
     // Fallback: show the room ID or participant count
     return (room.members && room.members.length > 1) ? `Chat Room ${room.id}` : "Chat Room";
   };
+
+
 
   // Helper function to get the other participant's numeric ID
   const getOtherParticipantId = (room: Room): number | null => {
