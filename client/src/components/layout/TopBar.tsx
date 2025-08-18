@@ -2,7 +2,6 @@ import { useLocation } from "wouter";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 
 interface TopBarProps {
   title: string;
@@ -30,7 +29,6 @@ export default function TopBar({
           )}
         </div>
         <div className="flex items-center space-x-4">
-          <NotificationCenter />
           <ThemeToggle />
           {showCreateButton && (
             <Button onClick={handleCreateJob} className="bg-primary hover:bg-primary/90">

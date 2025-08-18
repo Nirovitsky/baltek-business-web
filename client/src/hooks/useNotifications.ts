@@ -173,14 +173,58 @@ export function useNotifications() {
 
   const unreadCount = (notifications as Notification[]).filter((n: Notification) => !n.read).length;
 
+  // Mutations for notification actions
+  const markAsReadMutation = useMutation({
+    mutationFn: async (notificationId: number) => {
+      return apiRequest(`/api/notifications/${notificationId}/mark-read/`, {
+        method: 'POST',
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/notifications/'] });
+    },
+  });
+
+  const markAllAsReadMutation = useMutation({
+    mutationFn: async () => {
+      return apiRequest('/api/notifications/mark-all-read/', {
+        method: 'POST',
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/notifications/'] });
+      toast({
+        title: "All notifications marked as read",
+      });
+    },
+  });
+
+  const deleteNotificationMutation = useMutation({
+    mutationFn: async (notificationId: number) => {
+      return apiRequest(`/api/notifications/${notificationId}/`, {
+        method: 'DELETE',
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/notifications/'] });
+    },
+  });
+
   return {
     notifications,
     preferences,
     permission,
     unreadCount,
     isSupported: isNotificationSupported(),
+    isLoading: false,
     requestPermission,
     updatePreferences: updatePreferencesMutation.mutate,
     isUpdatingPreferences: updatePreferencesMutation.isPending,
+    markAsRead: markAsReadMutation.mutate,
+    markAllAsRead: markAllAsReadMutation.mutate,
+    deleteNotification: deleteNotificationMutation.mutate,
+    isMarkingAsRead: markAsReadMutation.isPending,
+    isMarkingAllAsRead: markAllAsReadMutation.isPending,
+    isDeletingNotification: deleteNotificationMutation.isPending,
   };
 }

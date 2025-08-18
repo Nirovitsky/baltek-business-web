@@ -5,13 +5,17 @@ import {
   Users,
   MessageCircle,
   Building2,
-  Settings, UserCircle
+  Settings, 
+  UserCircle,
+  Bell
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import BusinessSwitcher from "./BusinessSwitcher";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useNotifications } from "@/hooks/useNotifications";
 
 const navigationItems = [
   {
@@ -35,6 +39,12 @@ const navigationItems = [
     icon: MessageCircle,
   },
   {
+    name: "Notifications",
+    href: "/notifications",
+    icon: Bell,
+    showBadge: true,
+  },
+  {
     name: "Organization",
     href: "/organization",
     icon: Building2,
@@ -49,6 +59,7 @@ const navigationItems = [
 export default function Sidebar() {
   const [location] = useLocation();
   const { logout, selectedOrganization, user } = useAuth();
+  const { unreadCount } = useNotifications();
 
   return (
     <div className="w-64 bg-sidebar shadow-lg border-r border-sidebar-border flex flex-col">
@@ -67,14 +78,21 @@ export default function Sidebar() {
             <Link key={item.href} href={item.href}>
               <div
                 className={cn(
-                  "flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors cursor-pointer",
+                  "flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg transition-colors cursor-pointer",
                   isActive
                     ? "bg-primary/10 text-primary border-l-4 border-primary"
                     : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                 )}
               >
-                <Icon className="w-5 h-5 mr-3" />
-                <span>{item.name}</span>
+                <div className="flex items-center">
+                  <Icon className="mr-3 h-5 w-5" />
+                  {item.name}
+                </div>
+                {item.showBadge && unreadCount > 0 && (
+                  <Badge variant="destructive" className="ml-auto bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </Badge>
+                )}
               </div>
             </Link>
           );

@@ -20,6 +20,7 @@ import CreateJob from "@/pages/CreateJob";
 import JobDetails from "@/pages/JobDetails";
 import Applications from "@/pages/Applications";
 import Messages from "@/pages/Messages";
+import Notifications from "@/pages/Notifications";
 import Users from "@/pages/Users";
 import UserProfile from "@/pages/UserProfile";
 import Organization from "@/pages/Organization";
@@ -138,6 +139,12 @@ function Router() {
       <Route path="/messages">
         <ProtectedRoute>
           <Messages />
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/notifications">
+        <ProtectedRoute>
+          <Notifications />
         </ProtectedRoute>
       </Route>
 
