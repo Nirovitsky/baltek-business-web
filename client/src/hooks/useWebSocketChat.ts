@@ -27,32 +27,20 @@ export function useWebSocketChat() {
     if (!token || !isAuthenticated) return;
 
     try {
-      // Use local WebSocket server - handle Replit environment
-      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-      let wsUrl: string;
-      
-      if (window.location.hostname === 'localhost') {
-        // Local development
-        wsUrl = `${protocol}//localhost:5000/ws`;
-      } else {
-        // Production/Replit environment
-        wsUrl = `${protocol}//${window.location.host}/ws`;
-      }
+      // Use external WebSocket server at Baltek API
+      const encodedToken = encodeURIComponent(token);
+      const wsUrl = `wss://api.baltek.net/ws/chat/?token=${encodedToken}`;
       
       console.log('Connecting to WebSocket:', wsUrl);
       const ws = new WebSocket(wsUrl);
 
-      // Send authentication after connection
+      // Connection established with token in URL - no need to send auth message
       ws.onopen = () => {
         console.log("WebSocket connected");
         setConnected(true);
         reconnectAttemptsRef.current = 0;
         
-        // Authenticate with the server
-        ws.send(JSON.stringify({
-          type: 'authenticate',
-          token: token
-        }));
+        // No need to send authentication message - token is in URL
       };
 
 

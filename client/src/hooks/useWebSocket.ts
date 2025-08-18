@@ -15,16 +15,12 @@ export function useWebSocket({ onMessage, reconnectInterval = 3000 }: UseWebSock
   const connect = () => {
     if (!isAuthenticated) return;
 
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    let wsUrl: string;
+    // Use external WebSocket server at Baltek API
+    const token = localStorage.getItem('access_token');
+    if (!token) return;
     
-    if (window.location.hostname === 'localhost') {
-      // Local development
-      wsUrl = `${protocol}//localhost:5000/ws`;
-    } else {
-      // Production/Replit environment
-      wsUrl = `${protocol}//${window.location.host}/ws`;
-    }
+    const encodedToken = encodeURIComponent(token);
+    const wsUrl = `wss://api.baltek.net/ws/chat/?token=${encodedToken}`;
     
     console.log('Connecting to WebSocket:', wsUrl);
     wsRef.current = new WebSocket(wsUrl);
@@ -33,14 +29,7 @@ export function useWebSocket({ onMessage, reconnectInterval = 3000 }: UseWebSock
       setIsConnected(true);
       console.log('WebSocket connected');
       
-      // Authenticate with WebSocket
-      const token = localStorage.getItem('access_token');
-      if (token && wsRef.current) {
-        wsRef.current.send(JSON.stringify({
-          type: 'authenticate',
-          token,
-        }));
-      }
+      // No need to send authentication message - token is in URL
     };
 
     wsRef.current.onmessage = (event) => {

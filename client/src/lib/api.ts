@@ -1,6 +1,6 @@
 import { queryClient } from "./queryClient";
 
-const API_BASE_URL = "/api";
+const API_BASE_URL = "https://api.baltek.net/api";
 
 export interface ApiError {
   message: string;
