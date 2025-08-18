@@ -50,8 +50,14 @@ export default function Profile() {
   
   // Fetch full user profile from API
   const { data: profile, isLoading } = useQuery({
-    queryKey: ["/users/me/"],
-    queryFn: () => apiService.request<UserType>("/users/me/"),
+    queryKey: ["/users", user?.id],
+    queryFn: () => {
+      if (!user?.id) {
+        throw new Error('No user ID available');
+      }
+      return apiService.request<UserType>(`/users/${user.id}/`);
+    },
+    enabled: !!user?.id,
   });
 
   const form = useForm<ProfileUpdate>({
@@ -81,7 +87,7 @@ export default function Profile() {
         body: JSON.stringify(data),
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/users/me/"] });
+      queryClient.invalidateQueries({ queryKey: ["/users", user?.id] });
       setIsEditing(false);
       toast({
         title: "Profile updated",
