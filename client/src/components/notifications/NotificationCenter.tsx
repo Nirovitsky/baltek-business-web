@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Bell, Check, X, ExternalLink, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
@@ -12,57 +11,30 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { useNotifications } from "@/hooks/useNotifications";
 import type { Notification } from "@/types";
 import { formatDistanceToNow } from "date-fns";
 
 export function NotificationCenter() {
   const [isOpen, setIsOpen] = useState(false);
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
 
-  // Fetch notifications
-  const { data: notifications = [], isLoading } = useQuery({
-    queryKey: ["/api/notifications/"],
-    enabled: true,
-  });
-
-  // Mark notification as read
-  const markAsReadMutation = useMutation({
-    mutationFn: (notificationId: number) =>
-      apiRequest(`/api/notifications/${notificationId}/mark-read/`, "POST"),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/notifications/"] });
-    },
-  });
-
-  // Mark all as read
-  const markAllAsReadMutation = useMutation({
-    mutationFn: () =>
-      apiRequest("/api/notifications/mark-all-read/", "POST"),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/notifications/"] });
-      toast({
-        title: "All notifications marked as read",
-      });
-    },
-  });
-
-  // Delete notification
-  const deleteNotificationMutation = useMutation({
-    mutationFn: (notificationId: number) =>
-      apiRequest(`/api/notifications/${notificationId}/`, "DELETE"),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/notifications/"] });
-    },
-  });
+  // Use the notifications hook for all data and actions
+  const { 
+    notifications, 
+    isLoading, 
+    markAsRead, 
+    markAllAsRead, 
+    deleteNotification,
+    isMarkingAsRead,
+    isMarkingAllAsRead,
+    isDeletingNotification
+  } = useNotifications();
 
   const unreadCount = (notifications as Notification[]).filter((n: Notification) => !n.read).length;
 
   const handleNotificationClick = (notification: Notification) => {
     if (!notification.read) {
-      markAsReadMutation.mutate(notification.id);
+      markAsRead(notification.id);
     }
     
     if (notification.action_url) {
@@ -91,13 +63,7 @@ export function NotificationCenter() {
     }
   };
 
-  const formatTimeAgo = (timestamp: number) => {
-    try {
-      return formatDistanceToNow(new Date(timestamp * 1000), { addSuffix: true });
-    } catch (error) {
-      return "Recently";
-    }
-  };
+
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -132,8 +98,8 @@ export function NotificationCenter() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => markAllAsReadMutation.mutate()}
-              disabled={markAllAsReadMutation.isPending}
+              onClick={() => markAllAsRead()}
+              disabled={isMarkingAllAsRead}
               data-testid="mark-all-read"
             >
               <Check className="h-4 w-4 mr-1" />
@@ -183,7 +149,7 @@ export function NotificationCenter() {
                           {notification.message}
                         </p>
                         <p className="text-muted-foreground text-xs mt-2">
-                          {formatTimeAgo(notification.created_at)}
+                          {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
                         </p>
                       </div>
                       
@@ -204,7 +170,7 @@ export function NotificationCenter() {
                   className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                   onClick={(e) => {
                     e.stopPropagation();
-                    deleteNotificationMutation.mutate(notification.id);
+                    deleteNotification(notification.id);
                   }}
                   data-testid={`delete-notification-${notification.id}`}
                 >
