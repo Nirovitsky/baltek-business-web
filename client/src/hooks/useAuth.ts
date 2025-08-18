@@ -67,11 +67,11 @@ export const useAuth = create<AuthState>((set, get) => ({
 
   fetchOrganizations: async () => {
     try {
-      const response = await apiService.request<{results: Organization[]}>('/organizations/?owned=true');
+      const response = await apiService.request<Organization[]>('/organizations/?owned=true');
       console.log('Fetched organizations:', response); // Debug log
       
-      // Extract organizations from the paginated response
-      const organizations = response.results || [];
+      // Handle direct array response
+      const organizations = Array.isArray(response) ? response : [];
       
       if (organizations.length > 0) {
         // Set first organization as selected

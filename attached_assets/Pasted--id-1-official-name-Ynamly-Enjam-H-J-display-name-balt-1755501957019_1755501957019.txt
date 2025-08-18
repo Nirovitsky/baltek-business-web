@@ -1,0 +1,62 @@
+[
+    {
+        "id": 1,
+        "official_name": "Ynamly Enjam H.J.",
+        "display_name": "baltek",
+        "logo": "https://api.baltek.net/media/organization/1471ac00-719a-4e1c-a819-9768036b5843.png"
+    },
+    {
+        "id": 19,
+        "official_name": "Lam, Summers and Rodriguez",
+        "display_name": "Lam, Summers and Rodriguez",
+        "logo": "https://api.baltek.net/media/organization/89489635-1369-4677-b6b9-2cc0dd2ed548.png"
+    },
+    {
+        "id": 31,
+        "official_name": "Weaver-Wilson",
+        "display_name": "Weaver-Wilson",
+        "logo": "https://api.baltek.net/media/organization/1a0d0ecd-a697-499d-8879-20651e64494c.png"
+    },
+    {
+        "id": 49,
+        "official_name": "djdhdh",
+        "display_name": "djdhdh",
+        "logo": "https://api.baltek.net/media/organization/7e6c3409-15dd-4878-88e8-c8ed477d7260.png"
+    },
+    {
+        "id": 22,
+        "official_name": "Aguirre Group",
+        "display_name": "Aguirre Group",
+        "logo": "https://api.baltek.net/media/organization/edb4546b-39f6-4082-b51b-5ab51695156d.png"
+    },
+    {
+        "id": 20,
+        "official_name": "Thompson-Cunningham",
+        "display_name": "Thompson-Cunningham",
+        "logo": "https://api.baltek.net/media/organization/bc3dfd9f-35e3-426b-925b-b7fe47b34479.png"
+    },
+    {
+        "id": 29,
+        "official_name": "Larsen-Watkins",
+        "display_name": "Larsen-Watkins",
+        "logo": "https://api.baltek.net/media/organization/499ca815-0797-44f6-a8d1-c71600613d07.png"
+    },
+    {
+        "id": 26,
+        "official_name": "Rogers, Rivera and Conner",
+        "display_name": "",
+        "logo": "https://api.baltek.net/media/organization/33b10b1e-7e88-4f8c-9774-d2c15ee7d5f9.png"
+    },
+    {
+        "id": 28,
+        "official_name": "Pruitt-Smith",
+        "display_name": "",
+        "logo": "https://api.baltek.net/media/organization/fe8a5f63-77e0-444b-94fd-61c105680c34.png"
+    },
+    {
+        "id": 23,
+        "official_name": "Griffin Ltd",
+        "display_name": "Griffin Ltd",
+        "logo": "https://api.baltek.net/media/organization/5c9f1359-7909-4c23-8a79-07325f1eae0e.png"
+    }
+]
