@@ -25,7 +25,7 @@ import { Building2 } from "lucide-react";
 
 export default function Login() {
   const { toast } = useToast();
-  const { login, isAuthenticated, isLoading } = useAuth();
+  const { login, isAuthenticated, isLoading, hasOrganizations } = useAuth();
 
   const form = useForm<LoginRequest>({
     resolver: zodResolver(loginSchema),
@@ -35,8 +35,22 @@ export default function Login() {
     },
   });
 
+  // Redirect authenticated users based on organization status
   if (isAuthenticated) {
-    return <Redirect to="/" />;
+    // If still loading organization data, don't redirect yet
+    if (isLoading) {
+      return (
+        <div className="auth-page min-h-screen flex items-center justify-center bg-background">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Checking your account...</p>
+          </div>
+        </div>
+      );
+    }
+    
+    // Redirect based on organization status
+    return <Redirect to={hasOrganizations ? "/" : "/create-organization"} />;
   }
 
   const onSubmit = async (data: LoginRequest) => {
