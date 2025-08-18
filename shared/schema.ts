@@ -318,6 +318,53 @@ export const savedFilterSchema = z.object({
   updated_at: z.number(),
 });
 
+// Notification schemas
+export const notificationSchema = z.object({
+  id: z.number(),
+  type: z.enum([
+    "new_application",
+    "application_status_update", 
+    "new_message",
+    "job_published",
+    "job_expired",
+    "interview_scheduled",
+    "system_alert"
+  ]),
+  title: z.string(),
+  message: z.string(),
+  read: z.boolean(),
+  created_at: z.number(),
+  updated_at: z.number(),
+  user: z.number(),
+  related_object_id: z.number().optional(),
+  related_object_type: z.enum(["job", "application", "message", "interview"]).optional(),
+  action_url: z.string().optional(),
+});
+
+export const createNotificationSchema = notificationSchema
+  .omit({ id: true, created_at: true, updated_at: true, read: true })
+  .extend({
+    read: z.boolean().optional(),
+  });
+
+export const notificationPreferencesSchema = z.object({
+  id: z.number(),
+  user: z.number(),
+  email_notifications: z.boolean(),
+  push_notifications: z.boolean(),
+  new_applications: z.boolean(),
+  application_updates: z.boolean(),
+  new_messages: z.boolean(),
+  job_updates: z.boolean(),
+  interview_reminders: z.boolean(),
+  system_alerts: z.boolean(),
+  created_at: z.number(),
+  updated_at: z.number(),
+});
+
+export const updateNotificationPreferencesSchema = notificationPreferencesSchema
+  .omit({ id: true, user: true, created_at: true, updated_at: true });
+
 // Pagination schemas
 export const paginatedSchema = <T extends z.ZodType<any>>(itemSchema: T) =>
   z.object({
@@ -348,6 +395,10 @@ export type Room = z.infer<typeof roomSchema>;
 export type Message = z.infer<typeof messageSchema>;
 export type CreateMessage = z.infer<typeof createMessageSchema>;
 export type Bookmark = z.infer<typeof bookmarkSchema>;
+export type Notification = z.infer<typeof notificationSchema>;
+export type CreateNotification = z.infer<typeof createNotificationSchema>;
+export type NotificationPreferences = z.infer<typeof notificationPreferencesSchema>;
+export type UpdateNotificationPreferences = z.infer<typeof updateNotificationPreferencesSchema>;
 export type SavedFilter = z.infer<typeof savedFilterSchema>;
 
 export type PaginatedResponse<T> = {

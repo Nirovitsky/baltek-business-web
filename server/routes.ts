@@ -1,7 +1,7 @@
 import express, { type Express } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
-import multer from "multer";
+import notificationRoutes from "./routes/notifications";
 
 // API proxy endpoints to backend
 const API_BASE_URL = process.env.API_BASE_URL || "https://api.baltek.net";
@@ -189,6 +189,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Internal server error" });
     }
   });
+
+  // Register notification routes
+  app.use("/api/notifications", notificationRoutes);
+  app.use("/api", notificationRoutes);
 
   // File upload endpoint (simulated for now)
   app.post("/api/chat/upload", async (req, res) => {

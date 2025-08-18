@@ -71,6 +71,11 @@ The Baltek Business Dashboard is a React and Express-based application designed 
 - ✅ **API Field Mapping Fix**: Corrected organization creation to send "category" and "location" fields instead of "category_id" and "location_id"
 - ✅ **Enhanced Login Flow**: Improved authentication redirect logic to properly check organization status after login and redirect users to dashboard or create-organization page accordingly
 - ✅ **Timestamp Migration**: Converted all date handling from DD.MM.YYYY format to Unix timestamps for backend compatibility
+- ✅ **Notifications System**: Implemented comprehensive notification system with real-time notifications, browser push notifications, email preferences, and notification center in header
+- ✅ **Notification Center**: Added notification bell icon with badge in TopBar, dropdown with all notifications, mark as read/delete functionality
+- ✅ **Notification Settings**: Enhanced Settings page with detailed notification preferences including type-specific controls
+- ✅ **Push Notifications**: Added browser notification support with permission management and real-time delivery
+- ✅ **Notification API**: Created backend notification endpoints for CRUD operations and preference management
 
 ## User Preferences
 - Preferred communication style: Simple, everyday language
