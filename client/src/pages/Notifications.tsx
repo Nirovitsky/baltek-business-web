@@ -93,7 +93,7 @@ export default function Notifications() {
             
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground">
-                {formatDistanceToNow(new Date(notification.created_at * 1000), { addSuffix: true })}
+                {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
               </span>
               
               <div className="flex items-center space-x-2">
@@ -189,7 +189,7 @@ export default function Notifications() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={markAllAsRead}
+                onClick={() => markAllAsRead()}
                 disabled={isMarkingAllAsRead}
                 className="flex items-center space-x-2"
               >

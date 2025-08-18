@@ -10,6 +10,12 @@ The Baltek Business Dashboard is a React and Express-based application for HR ma
 - Backend URL: https://api.baltek.net/api/
 - Authentication: Phone number + password (not username)
 
+## Recent Changes (January 2025)
+- **Notifications System Fixed**: Replaced non-existent API endpoints (`/api/notifications/`, `/api/notification-preferences/`) with local storage implementation
+- **Date Handling**: Updated notification date formatting to use ISO strings instead of Unix timestamps
+- **Migration Completed**: Successfully migrated from Replit Agent to standard Replit environment
+- **Authentication Updated**: Replaced `/me` endpoint with `/users/{id}` pattern throughout application
+
 ## System Architecture
 
 ### Frontend Architecture
