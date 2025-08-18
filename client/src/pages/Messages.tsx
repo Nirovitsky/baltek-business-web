@@ -247,7 +247,8 @@ export default function Messages() {
           id: user?.id || 0,
           first_name: user?.first_name || 'You',
           last_name: user?.last_name || '',
-        },
+          phone: user?.phone || '',
+        } as any,
         attachment_url: uploadedFile.url,
         attachment_name: uploadedFile.name,
         attachment_type: undefined,
@@ -285,7 +286,8 @@ export default function Messages() {
           id: user?.id || 0,
           first_name: user?.first_name || 'You',
           last_name: user?.last_name || '',
-        },
+          phone: user?.phone || '',
+        } as any,
         attachment_url: undefined,
         attachment_name: undefined,
         attachment_type: undefined,
@@ -417,15 +419,15 @@ export default function Messages() {
       
       // Fetch job application data for rooms that reference job applications
       const jobDataPromises = rooms
-        .filter(room => room.object_id && room.content_type === 14) // Assuming content_type 14 is job application
-        .filter(room => !roomJobData[room.object_id!]) // Only fetch if we don't have the data
+        .filter(room => (room as any).object_id && (room as any).content_type === 14) // Assuming content_type 14 is job application
+        .filter(room => !roomJobData[(room as any).object_id!]) // Only fetch if we don't have the data
         .map(async (room) => {
           try {
-            const applicationData = await apiService.request<any>(`/jobs/applications/${room.object_id}/`);
+            const applicationData = await apiService.request<any>(`/jobs/applications/${(room as any).object_id}/`);
             if (applicationData?.job) {
               setRoomJobData(prev => ({
                 ...prev,
-                [room.object_id!]: {
+                [(room as any).object_id!]: {
                   id: applicationData.job.id,
                   title: applicationData.job.title
                 }
@@ -445,6 +447,11 @@ export default function Messages() {
   }, [rooms, user?.id]); // Removed roomMemberData dependency to prevent loop
 
   const filteredRooms = rooms.filter((room) => {
+    // Add null/undefined check for room.members
+    if (!room.members || !Array.isArray(room.members)) {
+      return false;
+    }
+
     const participantNames = room.members
       .filter((memberId) => {
         // Ensure memberId is treated as a number
@@ -469,7 +476,7 @@ export default function Messages() {
     if (room.name) return room.name;
 
     // If this is a 1-on-1 chat and we only have the current user, show their name
-    if (room.members.length === 1 && user) {
+    if (room.members && room.members.length === 1 && user) {
       return `${user.first_name} ${user.last_name}`;
     }
 
@@ -478,7 +485,7 @@ export default function Messages() {
     
     if (otherParticipantId) {
       const memberData = roomMemberData[otherParticipantId];
-      const jobData = room.object_id ? roomJobData[room.object_id] : null;
+      const jobData = (room as any).object_id ? roomJobData[(room as any).object_id] : null;
       
       if (memberData) {
         const userName = `${memberData.first_name} ${memberData.last_name}`;
@@ -492,7 +499,7 @@ export default function Messages() {
     }
     
     // Fallback: show the room ID or participant count
-    return room.members.length > 1 ? `Chat Room ${room.id}` : "Chat Room";
+    return (room.members && room.members.length > 1) ? `Chat Room ${room.id}` : "Chat Room";
   };
 
   // Helper function to get the other participant's numeric ID
@@ -525,7 +532,7 @@ export default function Messages() {
 
   const getRoomAvatar = (room: Room) => {
     // If this is a 1-on-1 chat and we only have the current user, show their initials
-    if (room.members.length === 1 && user) {
+    if (room.members && room.members.length === 1 && user) {
       const firstInitial = user.first_name?.[0]?.toUpperCase() || '';
       const lastInitial = user.last_name?.[0]?.toUpperCase() || '';
       return firstInitial + lastInitial || 'U';
@@ -676,7 +683,7 @@ export default function Messages() {
                       {(() => {
                         const otherParticipantId = getOtherParticipantId(room);
                         const memberData = otherParticipantId ? roomMemberData[otherParticipantId] : null;
-                        const jobData = room.object_id ? roomJobData[room.object_id] : null;
+                        const jobData = (room as any).object_id ? roomJobData[(room as any).object_id] : null;
                         
                         if (memberData) {
                           return (
@@ -704,9 +711,9 @@ export default function Messages() {
                       })()}
                     </div>
                     <span className="text-xs text-muted-foreground">
-                      {room.last_message_text
+                      {(room as any).last_message_text
                         ? new Date(
-                            room.last_message_date_created ?? "",
+                            (room as any).last_message_date_created ?? "",
                           ).toLocaleTimeString([], {
                             hour: "2-digit",
                             minute: "2-digit",
@@ -715,7 +722,7 @@ export default function Messages() {
                     </span>
                   </div>
                   <p className="text-sm text-muted-foreground truncate mt-1">
-                    {room.last_message_text || "No messages yet"}
+                    {(room as any).last_message_text || "No messages yet"}
                   </p>
                 </div>
               </div>
@@ -759,18 +766,18 @@ export default function Messages() {
                       {getRoomDisplayName(selectedRoom)}
                     </h2>
                     <p className="text-sm text-muted-foreground">
-                      {selectedRoom.members.length} participant
-                      {selectedRoom.members.length !== 1 ? "s" : ""}
+                      {selectedRoom.members?.length || 0} participant
+                      {(selectedRoom.members?.length || 0) !== 1 ? "s" : ""}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center space-x-2">
                   {selectedRoom.members
-                    .filter((memberId) => memberId !== user?.id)
+                    ?.filter((memberId) => Number(memberId) !== user?.id)
                     .map((memberId) => (
                       <div
-                        key={memberId}
+                        key={String(memberId)}
                         className="flex items-center space-x-1 text-sm text-muted-foreground"
                       ></div>
                     ))}
