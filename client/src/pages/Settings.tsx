@@ -5,23 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { LogOut, Settings as SettingsIcon, Bell, Shield, Globe, Palette } from "lucide-react";
+import { LogOut, Settings as SettingsIcon, Shield, Globe, Palette } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "@/components/theme-provider";
-import { useNotifications } from "@/hooks/useNotifications";
+
 
 export default function Settings() {
   const { logout } = useAuth();
   const { toast } = useToast();
   const { theme, setTheme } = useTheme();
-  const { 
-    preferences, 
-    permission, 
-    requestPermission, 
-    updatePreferences, 
-    isUpdatingPreferences 
-  } = useNotifications();
+
 
   const handleLogout = () => {
     logout();
@@ -93,146 +87,7 @@ export default function Settings() {
             </CardContent>
           </Card>
 
-          {/* Notifications Section */}
-          <Card className="shadow-md">
-            <CardHeader className="pb-4">
-              <div className="flex items-center space-x-2">
-                <Bell className="w-5 h-5 text-primary" />
-                <CardTitle>Notifications</CardTitle>
-              </div>
-              <CardDescription>
-                Manage how you receive notifications
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Email Notifications */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                    <Bell className="w-5 h-5 text-primary" />
-                  </div>
-                  <div className="space-y-1">
-                    <Label htmlFor="email-notifications">Email Notifications</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Receive updates and alerts via email
-                    </p>
-                  </div>
-                </div>
-                <Switch
-                  id="email-notifications"
-                  checked={(preferences as any)?.email_notifications ?? true}
-                  onCheckedChange={(checked) => updatePreferences({ email_notifications: checked })}
-                  disabled={isUpdatingPreferences}
-                />
-              </div>
 
-              <Separator />
-
-              {/* Push Notifications */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center">
-                    <Bell className="w-5 h-5 text-green-600" />
-                  </div>
-                  <div className="space-y-1">
-                    <Label htmlFor="push-notifications">Push Notifications</Label>
-                    <p className="text-sm text-muted-foreground">
-                      {permission === "granted" ? "Browser notifications enabled" : 
-                       permission === "denied" ? "Browser notifications blocked" :
-                       "Click to enable browser notifications"}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  {permission !== "granted" && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={requestPermission}
-                      className="text-xs"
-                    >
-                      Enable
-                    </Button>
-                  )}
-                  <Switch
-                    id="push-notifications"
-                    checked={(preferences as any)?.push_notifications ?? false}
-                    onCheckedChange={(checked) => updatePreferences({ push_notifications: checked })}
-                    disabled={isUpdatingPreferences || permission !== "granted"}
-                  />
-                </div>
-              </div>
-
-              <Separator />
-
-              {/* Detailed Notification Preferences */}
-              <div className="space-y-4">
-                <h4 className="text-sm font-medium">Notification Types</h4>
-                
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="new-applications" className="text-sm">
-                      New Applications
-                    </Label>
-                    <Switch
-                      id="new-applications"
-                      checked={(preferences as any)?.new_applications ?? true}
-                      onCheckedChange={(checked) => updatePreferences({ new_applications: checked })}
-                      disabled={isUpdatingPreferences}
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="application-updates" className="text-sm">
-                      Application Updates
-                    </Label>
-                    <Switch
-                      id="application-updates"
-                      checked={(preferences as any)?.application_updates ?? true}
-                      onCheckedChange={(checked) => updatePreferences({ application_updates: checked })}
-                      disabled={isUpdatingPreferences}
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="new-messages" className="text-sm">
-                      New Messages
-                    </Label>
-                    <Switch
-                      id="new-messages"
-                      checked={(preferences as any)?.new_messages ?? true}
-                      onCheckedChange={(checked) => updatePreferences({ new_messages: checked })}
-                      disabled={isUpdatingPreferences}
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="job-updates" className="text-sm">
-                      Job Updates
-                    </Label>
-                    <Switch
-                      id="job-updates"
-                      checked={(preferences as any)?.job_updates ?? true}
-                      onCheckedChange={(checked) => updatePreferences({ job_updates: checked })}
-                      disabled={isUpdatingPreferences}
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="system-alerts" className="text-sm">
-                      System Alerts
-                    </Label>
-                    <Switch
-                      id="system-alerts"
-                      checked={(preferences as any)?.system_alerts ?? true}
-                      onCheckedChange={(checked) => updatePreferences({ system_alerts: checked })}
-                      disabled={isUpdatingPreferences}
-                    />
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
 
           {/* Security Section */}
           <Card className="shadow-md">
