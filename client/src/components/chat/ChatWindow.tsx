@@ -7,7 +7,7 @@ import { Send, User } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiService } from "@/lib/api";
 import { useWebSocket } from "@/hooks/useWebSocket";
-import type { Message, Room, PaginatedResponse } from "@shared/schema";
+import type { Message, Room, PaginatedResponse } from "@/types";
 
 interface ChatWindowProps {
   roomId: number;

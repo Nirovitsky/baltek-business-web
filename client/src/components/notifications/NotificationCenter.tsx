@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import type { Notification } from "@shared/schema";
+import type { Notification } from "@/types";
 import { formatDistanceToNow } from "date-fns";
 
 export function NotificationCenter() {

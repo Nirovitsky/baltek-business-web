@@ -22,7 +22,7 @@ import {
   Archive,
   Eye
 } from "lucide-react";
-import type { Job, Location, Category, Language } from "@shared/schema";
+import type { Job, Location, Category, Language } from "@/types";
 
 interface JobDetailDialogProps {
   jobId: number | null;

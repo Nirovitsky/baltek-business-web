@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import JobForm from "../jobs/JobForm";
-import type { Job } from "@shared/schema";
+import type { Job } from "@/types";
 
 interface JobModalProps {
   open: boolean;

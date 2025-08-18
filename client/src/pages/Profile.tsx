@@ -31,7 +31,7 @@ import {
   Plus
 } from "lucide-react";
 import { z } from "zod";
-import type { User as UserType, UserExperience, UserEducation, UserProject, UserResume } from "@shared/schema";
+import type { User as UserType, UserExperience, UserEducation, UserProject, UserResume } from "@/types";
 
 const profileUpdateSchema = z.object({
   first_name: z.string().min(1, "First name is required"),

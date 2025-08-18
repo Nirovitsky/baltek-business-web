@@ -1,6 +1,16 @@
 // Types for the Baltek Business Dashboard
 // These types match the external API structure
 
+import { z } from "zod";
+
+// Auth schemas
+export const loginSchema = z.object({
+  phone: z.string().min(1, "Phone number is required"),
+  password: z.string().min(1, "Password is required"),
+});
+
+export type LoginRequest = z.infer<typeof loginSchema>;
+
 export interface User {
   id: number;
   first_name: string;
@@ -18,13 +28,14 @@ export interface Organization {
   official_name: string;
   display_name?: string;
   description?: string;
+  about_us?: string;
   logo?: string;
   website?: string;
   email?: string;
   phone?: string;
   address?: string;
-  category?: string;
-  location?: string;
+  category?: string | { id: number; name: string };
+  location?: string | { id: number; name: string };
   employee_count?: string;
   founded_year?: number;
   created_at?: string;
@@ -150,6 +161,14 @@ export interface UserProject {
   end_date?: string;
 }
 
+export interface UserResume {
+  id: number;
+  user: number;
+  file_url: string;
+  filename: string;
+  uploaded_at: string;
+}
+
 export interface Message {
   id: number;
   room: number;
@@ -166,6 +185,7 @@ export interface Room {
   id: number;
   name?: string;
   participants: User[];
+  members?: User[];
   job?: Job;
   application?: JobApplication;
   last_message?: Message;
@@ -176,8 +196,11 @@ export interface Notification {
   id: number;
   type: string;
   title: string;
+  message: string;
   description?: string;
   is_read: boolean;
+  read: boolean;
+  action_url?: string;
   created_at: string;
   data?: any;
 }
@@ -200,14 +223,6 @@ export interface PaginatedResponse<T> {
   previous?: string;
   results: T[];
 }
-
-export interface LoginRequest {
-  phone: string;
-  password: string;
-}
-
-// Zod schemas for validation
-import { z } from "zod";
 
 export const createJobSchema = z.object({
   title: z.string().min(1, "Title is required"),

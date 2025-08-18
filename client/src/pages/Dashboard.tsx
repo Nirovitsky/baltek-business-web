@@ -10,7 +10,7 @@ import JobDetailDialog from "@/components/jobs/JobDetailDialog";
 import { Briefcase, Users, Clock, UserCheck } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
-import type { Job, JobApplication, PaginatedResponse } from "@shared/schema";
+import type { Job, JobApplication, PaginatedResponse } from "@/types";
 
 export default function Dashboard() {
   const [, setLocation] = useLocation();

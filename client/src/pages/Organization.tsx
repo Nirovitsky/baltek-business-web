@@ -17,7 +17,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
 import { Building2, Globe, MapPin, Upload, X } from "lucide-react";
 import { z } from "zod";
-import type { Organization } from "@shared/schema";
+import type { Organization } from "@/types";
 
 const organizationUpdateSchema = z.object({
   official_name: z.string().min(1, "Organization name is required"),

@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { loginSchema, type LoginRequest } from "@shared/schema";
+import { loginSchema, type LoginRequest } from "@/types";
 import { Building2 } from "lucide-react";
 
 export default function Login() {

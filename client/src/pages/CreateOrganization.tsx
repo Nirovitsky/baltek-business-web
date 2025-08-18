@@ -11,7 +11,7 @@ import { Building2, Upload, X, Sparkles, Users, Target, Zap, Loader2, Globe, Mai
 import { apiService } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import type { Category, Location, PaginatedResponse } from "@shared/schema";
+import type { Category, Location, PaginatedResponse } from "@/types";
 
 export default function CreateOrganization() {
   const [, setLocation] = useLocation();
