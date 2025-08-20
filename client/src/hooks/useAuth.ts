@@ -114,11 +114,8 @@ export const useAuth = create<AuthState>((set, get) => ({
 
   refreshProfile: async () => {
     try {
-      const { user: currentUser } = get();
-      if (!currentUser?.id) {
-        throw new Error('No user ID available');
-      }
-      const user = await apiService.request<User>(`/users/${currentUser.id}/`);
+      // Fetch current user profile without needing user ID
+      const user = await apiService.request<User>(`/users/me/`);
       set({ user });
       // Don't return the user to match the Promise<void> return type
     } catch (error) {

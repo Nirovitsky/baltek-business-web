@@ -49,6 +49,8 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
         console.error('Error fetching user profile:', error);
         setIsLoading(false);
       });
+    } else {
+      setIsLoading(false);
     }
   }, [isAuthenticated]); // Remove refreshProfile dependency
 
