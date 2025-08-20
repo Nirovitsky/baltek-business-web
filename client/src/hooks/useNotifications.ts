@@ -205,7 +205,7 @@ export function useNotifications() {
     return () => clearInterval(interval);
   }, []);
 
-  const unreadCount = notifications.filter((n: Notification) => !(n.read || n.is_read)).length;
+  const unreadCount = notifications.filter((n: Notification) => !n.read && !n.is_read).length;
 
   // Mutations for notification actions using the API
   const markAsReadMutation = useMutation({
@@ -217,9 +217,8 @@ export function useNotifications() {
       });
     },
     onSuccess: () => {
-      // Invalidate and refetch notifications immediately
+      // Invalidate notifications to refetch updated data
       queryClient.invalidateQueries({ queryKey: ['/notifications/'] });
-      queryClient.refetchQueries({ queryKey: ['/notifications/'] });
     },
   });
 
@@ -238,7 +237,6 @@ export function useNotifications() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/notifications/'] });
-      queryClient.refetchQueries({ queryKey: ['/notifications/'] });
       toast({
         title: "All notifications marked as read",
       });
@@ -253,7 +251,6 @@ export function useNotifications() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/notifications/'] });
-      queryClient.refetchQueries({ queryKey: ['/notifications/'] });
     },
   });
 
