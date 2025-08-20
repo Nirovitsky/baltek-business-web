@@ -29,7 +29,7 @@ import Settings from "@/pages/Settings";
 import NotFound from "@/pages/not-found";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, hasOrganizations, organizations, checkAuth, fetchOrganizations, refreshProfile } = useAuth();
+  const { isAuthenticated, hasOrganizations, organizations, checkAuth, refreshProfile } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   
   // Initialize global WebSocket connection when authenticated
@@ -42,18 +42,15 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (isAuthenticated) {
       setIsLoading(true);
-      // Fetch both user profile and organizations when authenticated
-      Promise.all([
-        refreshProfile(),
-        fetchOrganizations()
-      ]).then(() => {
+      // Only fetch user profile, organizations are handled by checkAuth
+      refreshProfile().then(() => {
         setIsLoading(false);
       }).catch(error => {
-        console.error('Error fetching initial data:', error);
+        console.error('Error fetching user profile:', error);
         setIsLoading(false);
       });
     }
-  }, [isAuthenticated, fetchOrganizations, refreshProfile]);
+  }, [isAuthenticated, refreshProfile]);
 
   if (!isAuthenticated) {
     return <Redirect to="/login" />;

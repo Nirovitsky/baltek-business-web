@@ -15,7 +15,7 @@ import type { Category, Location, PaginatedResponse } from "@/types";
 
 export default function CreateOrganization() {
   const [, setLocation] = useLocation();
-  const { fetchOrganizations, organizations } = useAuth();
+  const { refreshOrganizations, organizations } = useAuth();
   const { toast } = useToast();
   
   const [currentStep, setCurrentStep] = useState(1);
@@ -212,7 +212,7 @@ export default function CreateOrganization() {
       });
 
       // Refresh organizations and redirect
-      await fetchOrganizations();
+      await refreshOrganizations();
       setLocation('/');
       
     } catch (error: any) {

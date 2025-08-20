@@ -9,11 +9,13 @@ interface AuthState {
   organizations: Organization[];
   user: User | null;
   hasOrganizations: boolean;
+  organizationsFetched: boolean; // Track if organizations have been fetched
   login: (credentials: LoginRequest) => Promise<void>;
   logout: () => void;
   checkAuth: () => void;
   switchOrganization: (organization: Organization) => void;
-  fetchOrganizations: () => Promise<void>;
+  fetchOrganizations: (force?: boolean) => Promise<void>;
+  refreshOrganizations: () => Promise<void>; // Force refresh organizations
   refreshProfile: () => Promise<void>;
   updateSelectedOrganization: (updatedOrg: Organization) => void;
 }
@@ -25,6 +27,7 @@ export const useAuth = create<AuthState>((set, get) => ({
   organizations: [],
   user: null,
   hasOrganizations: false,
+  organizationsFetched: false,
 
   login: async (credentials: LoginRequest) => {
     set({ isLoading: true });
@@ -47,6 +50,7 @@ export const useAuth = create<AuthState>((set, get) => ({
       selectedOrganization: null, 
       organizations: [],
       hasOrganizations: false,
+      organizationsFetched: false,
       user: null
     });
   },
@@ -54,8 +58,8 @@ export const useAuth = create<AuthState>((set, get) => ({
   checkAuth: () => {
     const isAuthenticated = apiService.isAuthenticated();
     set({ isAuthenticated });
-    // If authenticated, fetch organizations to initialize state properly
-    if (isAuthenticated) {
+    // Only fetch organizations if authenticated and not already fetched
+    if (isAuthenticated && !get().organizationsFetched) {
       get().fetchOrganizations();
     }
   },
@@ -65,7 +69,12 @@ export const useAuth = create<AuthState>((set, get) => ({
     set({ selectedOrganization: organization });
   },
 
-  fetchOrganizations: async () => {
+  fetchOrganizations: async (force = false) => {
+    // Skip if already fetched and not forced
+    if (!force && get().organizationsFetched) {
+      return;
+    }
+
     try {
       const response = await apiService.request<Organization[]>('/organizations/?owned=true');
       console.log('Fetched organizations:', response); // Debug log
@@ -91,14 +100,14 @@ export const useAuth = create<AuthState>((set, get) => ({
         localStorage.setItem('selected_organization', JSON.stringify(selectedOrganization));
         
         console.log('Setting organizations:', organizations, 'Selected:', selectedOrganization); // Debug log
-        set({ organizations, selectedOrganization, hasOrganizations: true });
+        set({ organizations, selectedOrganization, hasOrganizations: true, organizationsFetched: true });
       } else {
         console.log('No organizations found for user');
-        set({ organizations: [], selectedOrganization: null, hasOrganizations: false });
+        set({ organizations: [], selectedOrganization: null, hasOrganizations: false, organizationsFetched: true });
       }
     } catch (error) {
       console.error('Failed to fetch organizations:', error);
-      set({ organizations: [], selectedOrganization: null, hasOrganizations: false });
+      set({ organizations: [], selectedOrganization: null, hasOrganizations: false, organizationsFetched: true });
     }
   },
 
@@ -115,6 +124,12 @@ export const useAuth = create<AuthState>((set, get) => ({
       console.error('Failed to fetch user profile:', error);
       throw error;
     }
+  },
+
+  refreshOrganizations: async () => {
+    // Force refresh by setting organizationsFetched to false and calling fetch
+    set({ organizationsFetched: false });
+    await get().fetchOrganizations(true);
   },
 
   updateSelectedOrganization: (updatedOrg: Organization) => {

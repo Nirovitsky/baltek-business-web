@@ -11,11 +11,13 @@ The Baltek Business Dashboard is a React and Express-based application for HR ma
 - Authentication: Phone number + password (not username)
 
 ## Recent Changes (January 2025)
+- **Migration Completed**: Successfully migrated from Replit Agent to standard Replit environment
+- **Performance Optimization**: Fixed redundant organization API calls by implementing caching in authentication hook
+- **API Efficiency**: Organizations now fetch only once at login instead of multiple redundant requests to `/organizations/?owned=true`
+- **Authentication Updated**: Replaced `/me` endpoint with `/users/{id}` pattern throughout application
 - **Notifications System Implemented**: Created real-time notification system using actual backend data from job applications and chat messages
 - **Real Data Integration**: Notifications now generated from `/api/jobs/applications/` and `/api/chat/messages/` endpoints
 - **Date Handling**: Updated notification date formatting to use ISO strings instead of Unix timestamps
-- **Migration Completed**: Successfully migrated from Replit Agent to standard Replit environment
-- **Authentication Updated**: Replaced `/me` endpoint with `/users/{id}` pattern throughout application
 - **No Mock Data**: Removed all mock/placeholder data, using only authentic data from authorized API sources
 
 ## System Architecture
