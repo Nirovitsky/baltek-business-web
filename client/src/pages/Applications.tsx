@@ -91,81 +91,10 @@ export default function Applications() {
     },
   });
 
-  // Use shared rooms query with same key as Messages page to avoid duplication
-  const { data: roomsData } = useQuery({
-    queryKey: ["/chat/rooms/"],
-    queryFn: () => apiService.request<{results: any[]}>('/chat/rooms/'),
-    staleTime: 2 * 60 * 1000, // Keep data fresh for 2 minutes
-  });
 
-  const createChatRoomMutation = useMutation({
-    mutationFn: (applicationId: number) => 
-      apiService.request(`/jobs/applications/${applicationId}/create_room/`, {
-        method: 'POST',
-      }),
-    onSuccess: (roomData: any) => {
-      // Invalidate rooms query to get fresh data
-      queryClient.invalidateQueries({ queryKey: ['/chat/rooms/'] });
-      toast({
-        title: "Success",
-        description: "Opening chat room...",
-      });
-      // Navigate to the chat room
-      if (roomData?.id) {
-        setLocation(`/messages#room-${roomData.id}`);
-      } else {
-        // Fallback: refresh rooms and find the new one
-        setTimeout(() => {
-          setLocation('/messages');
-        }, 1000);
-      }
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to create chat room",
-        variant: "destructive",
-      });
-    },
-  });
 
   const handleStatusChange = (applicationId: number, newStatus: string) => {
     updateApplicationMutation.mutate({ id: applicationId, status: newStatus });
-  };
-
-  const handleCreateChatRoom = (application: JobApplication) => {
-    if (!roomsData?.results) {
-      // If rooms data is not loaded, create new room
-      createChatRoomMutation.mutate(application.id);
-      return;
-    }
-
-    console.log('Checking rooms for user:', application.owner.id);
-    console.log('Available rooms:', roomsData.results);
-    
-    const existingRoom = roomsData.results.find((room: any) => {
-      console.log(`Room ${room.id} members:`, room.members);
-      // Members are stored as numeric IDs
-      return room.members.some((memberId: number) => {
-        const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
-        console.log(`Comparing member ${numericMemberId} with user ${application.owner.id}`);
-        return numericMemberId === application.owner.id;
-      });
-    });
-    
-    console.log('Found existing room:', existingRoom);
-    
-    if (existingRoom) {
-      // Navigate to existing room
-      toast({
-        title: "Success",
-        description: "Opening existing chat room...",
-      });
-      setLocation(`/messages#room-${existingRoom.id}`);
-    } else {
-      // Create new room via application
-      createChatRoomMutation.mutate(application.id);
-    }
   };
 
   // Sort applications by ID in descending order (newest first, since higher ID = more recent)
@@ -173,36 +102,14 @@ export default function Applications() {
     [...data.results].sort((a, b) => b.id - a.id) : 
     [];
   
-  // Debug: Log the first application to see its structure
-  if (applications.length > 0) {
-    console.log('First application data:', applications[0]);
-    console.log('Cover letter available:', !!applications[0].cover_letter);
-    console.log('Resume available:', !!applications[0].resume);
-  }
-  
-  // Debug: Log detailed application data when fetched
-  if (detailedApplication) {
-    console.log('Detailed application data:', detailedApplication);
-    console.log('Detailed cover letter:', detailedApplication.cover_letter);
-    console.log('Detailed resume:', detailedApplication.resume);
-  }
-  
-  // First filter by organization to ensure we only show applications for jobs 
-  // that belong to the selected organization
-  const organizationFilteredApplications = applications.filter(app => {
-    // If the application has job organization info, check it matches
-    if (app.job?.organization && selectedOrganization) {
-      return app.job.organization.id === selectedOrganization.id;
-    }
-    // Otherwise rely on backend filtering
-    return true;
-  });
+  // Filter applications by search term and status
+  const organizationFilteredApplications = applications;
   
   // Then apply search filter
   const filteredApplications = organizationFilteredApplications.filter(app => 
     searchTerm === "" || 
-    (`${app.owner.first_name} ${app.owner.last_name}`.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (app.job.title.toLowerCase().includes(searchTerm.toLowerCase()))
+    (`${app.owner?.first_name || ''} ${app.owner?.last_name || ''}`.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (typeof app.job === 'object' && app.job.title?.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   return (
@@ -325,15 +232,15 @@ export default function Applications() {
                             className="w-10 h-10 flex-shrink-0"
                             onClick={(e) => {
                               e.stopPropagation();
-                              setLocation(`/profile/${application.owner.id}`);
+                              setLocation(`/profile/${application.owner?.id || ''}`);
                             }}
                           >
                             <AvatarImage 
-                              src={application.owner.avatar} 
-                              alt={`${application.owner.first_name} ${application.owner.last_name}`}
+                              src={application.owner?.avatar} 
+                              alt={`${application.owner?.first_name || ''} ${application.owner?.last_name || ''}`}
                             />
                             <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold">
-                              {application.owner.first_name?.[0]}{application.owner.last_name?.[0]}
+                              {application.owner?.first_name?.[0]}{application.owner?.last_name?.[0]}
                             </AvatarFallback>
                           </Avatar>
                           
@@ -342,15 +249,15 @@ export default function Applications() {
                               className="font-medium text-foreground cursor-pointer hover:text-primary transition-colors"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setLocation(`/profile/${application.owner.id}`);
+                                setLocation(`/profile/${application.owner?.id || ''}`);
                               }}
                             >
-                              {`${application.owner.first_name} ${application.owner.last_name}`}
+                              {`${application.owner?.first_name || ''} ${application.owner?.last_name || ''}`}
                             </div>
-                            {application.owner.profession && (
+                            {application.owner?.email && (
                               <div className="text-sm text-muted-foreground flex items-center space-x-1">
                                 <Briefcase className="w-3 h-3 flex-shrink-0" />
-                                <span className="truncate">{application.owner.profession}</span>
+                                <span className="truncate">{application.owner.email}</span>
                               </div>
                             )}
                           </div>
@@ -358,14 +265,14 @@ export default function Applications() {
                       </TableCell>
                       
                       <TableCell>
-                        <div className="font-medium">{application.job.title}</div>
-                        <div className="text-sm text-muted-foreground">{application.job.organization?.name || 'Organization'}</div>
+                        <div className="font-medium">{typeof application.job === 'object' ? application.job.title : 'Job Title'}</div>
+                        <div className="text-sm text-muted-foreground">{typeof application.job === 'object' && application.job.organization && typeof application.job.organization === 'object' ? (application.job.organization as any).name || 'Organization' : 'Organization'}</div>
                       </TableCell>
                       
                       <TableCell>
                         <div className="flex items-center space-x-1 text-sm text-muted-foreground">
                           <MapPin className="w-3 h-3 flex-shrink-0" />
-                          <span>{application.job.location?.name || 'Not specified'}</span>
+                          <span>{typeof application.job === 'object' && application.job.location && typeof application.job.location === 'object' ? (application.job.location as any).name || 'Location' : 'Not specified'}</span>
                         </div>
                       </TableCell>
                       
@@ -400,19 +307,7 @@ export default function Applications() {
                             </SelectContent>
                           </Select>
                           
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleCreateChatRoom(application);
-                            }}
-                            disabled={createChatRoomMutation.isPending}
-                            className="h-8 px-2 text-xs"
-                          >
-                            <MessageCircle className="w-3 h-3 mr-1" />
-                            Message
-                          </Button>
+
                         </div>
                       </TableCell>
                     </TableRow>
@@ -434,19 +329,19 @@ export default function Applications() {
                 <DialogTitle className="flex items-center space-x-3">
                   <Avatar className="w-12 h-12">
                     <AvatarImage 
-                      src={selectedApplication.owner.avatar} 
-                      alt={`${selectedApplication.owner.first_name} ${selectedApplication.owner.last_name}`}
+                      src={selectedApplication.owner?.avatar} 
+                      alt={`${selectedApplication.owner?.first_name || ''} ${selectedApplication.owner?.last_name || ''}`}
                     />
                     <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold">
-                      {selectedApplication.owner.first_name?.[0]}{selectedApplication.owner.last_name?.[0]}
+                      {selectedApplication.owner?.first_name?.[0]}{selectedApplication.owner?.last_name?.[0]}
                     </AvatarFallback>
                   </Avatar>
                   <div>
                     <h2 className="text-xl font-bold text-foreground">
-                      {`${selectedApplication.owner.first_name} ${selectedApplication.owner.last_name}`}
+                      {`${selectedApplication.owner?.first_name || ''} ${selectedApplication.owner?.last_name || ''}`}
                     </h2>
                     <p className="text-sm text-muted-foreground">
-                      Application for {selectedApplication.job.title}
+                      Application for {typeof selectedApplication.job === 'object' ? selectedApplication.job.title : 'Job'}
                     </p>
                   </div>
                 </DialogTitle>
@@ -466,15 +361,15 @@ export default function Applications() {
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-foreground">Contact Information</h3>
                     <div className="space-y-2">
-                      {selectedApplication.owner.profession && (
+                      {selectedApplication.owner?.email && (
                         <div className="flex items-center space-x-2">
                           <Briefcase className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-sm">{selectedApplication.owner.profession}</span>
+                          <span className="text-sm">{selectedApplication.owner.email}</span>
                         </div>
                       )}
                       <div className="flex items-center space-x-2">
                         <MapPin className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-sm">{selectedApplication.job.location.name}</span>
+                        <span className="text-sm">{typeof selectedApplication.job === 'object' && selectedApplication.job.location && typeof selectedApplication.job.location === 'object' ? (selectedApplication.job.location as any).name || 'Location' : 'Not specified'}</span>
                       </div>
                     </div>
                   </div>
@@ -547,7 +442,7 @@ export default function Applications() {
                                 const url = window.URL.createObjectURL(blob);
                                 const link = document.createElement('a');
                                 link.href = url;
-                                link.download = `${selectedApplication.owner.first_name}_${selectedApplication.owner.last_name}_CV.pdf`;
+                                link.download = `${selectedApplication.owner?.first_name || 'user'}_${selectedApplication.owner?.last_name || 'cv'}_CV.pdf`;
                                 document.body.appendChild(link);
                                 link.click();
                                 document.body.removeChild(link);
@@ -642,21 +537,13 @@ export default function Applications() {
                       </SelectContent>
                     </Select>
                     
-                    <Button
-                      variant="outline"
-                      onClick={() => handleCreateChatRoom(selectedApplication)}
-                      disabled={createChatRoomMutation.isPending}
-                      className="flex items-center space-x-2"
-                    >
-                      <MessageCircle className="w-4 h-4" />
-                      <span>Start Conversation</span>
-                    </Button>
+
                   </div>
                   
                   <div className="flex items-center space-x-3">
                     <Button
                       variant="ghost"
-                      onClick={() => setLocation(`/profile/${selectedApplication.owner.id}`)}
+                      onClick={() => setLocation(`/profile/${selectedApplication.owner?.id || ''}`)}
                       className="text-muted-foreground hover:text-foreground"
                     >
                       View Full Profile

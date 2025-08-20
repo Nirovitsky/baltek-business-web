@@ -104,9 +104,11 @@ export interface CreateJob {
 
 export interface JobApplication {
   id: number;
-  job: number;
+  job: number | Job;
   user: number;
+  owner?: User;
   cover_letter?: string;
+  resume?: string;
   status: string;
   applied_at: string;
   updated_at?: string;
