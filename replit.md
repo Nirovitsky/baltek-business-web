@@ -14,6 +14,8 @@ The Baltek Business Dashboard is a React and Express-based application for HR ma
 - **Migration Completed**: Successfully migrated from Replit Agent to standard Replit environment
 - **Performance Optimization**: Fixed redundant organization API calls by implementing caching in authentication hook
 - **API Efficiency**: Organizations now fetch only once at login instead of multiple redundant requests to `/organizations/?owned=true`
+- **Notifications Performance**: Optimized notifications system to prevent redundant API calls to `/api/jobs/applications/` and `/api/chat/messages/` on every page visit
+- **Query Caching**: Implemented proper TanStack Query caching with 5-minute stale time and disabled refetch on mount/focus for notifications
 - **Authentication Updated**: Replaced `/me` endpoint with `/users/{id}` pattern throughout application
 - **Notifications System Implemented**: Created real-time notification system using actual backend data from job applications and chat messages
 - **Real Data Integration**: Notifications now generated from `/api/jobs/applications/` and `/api/chat/messages/` endpoints

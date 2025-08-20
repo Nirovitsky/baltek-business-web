@@ -54,18 +54,26 @@ export function useNotifications() {
     };
   });
 
-  // Fetch recent job applications
+  // Fetch recent job applications with improved caching
   const { data: applications = [] } = useQuery({
     queryKey: ["/api/jobs/applications/"],
     enabled: localPreferences.new_applications,
-    refetchInterval: 30000, // Check every 30 seconds
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
+    refetchOnWindowFocus: false, // Don't refetch on window focus
+    refetchOnMount: false, // Don't refetch on component mount if data exists
+    refetchInterval: 2 * 60 * 1000, // Check every 2 minutes instead of 30 seconds
   });
 
-  // Fetch recent chat messages
+  // Fetch recent chat messages with improved caching
   const { data: messagesData } = useQuery({
     queryKey: ["/api/chat/messages/"],
     enabled: localPreferences.new_messages,
-    refetchInterval: 30000, // Check every 30 seconds
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
+    refetchOnWindowFocus: false, // Don't refetch on window focus
+    refetchOnMount: false, // Don't refetch on component mount if data exists
+    refetchInterval: 2 * 60 * 1000, // Check every 2 minutes instead of 30 seconds
   });
 
   // Extract messages from paginated response
