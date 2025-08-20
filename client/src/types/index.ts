@@ -56,13 +56,13 @@ export interface Job {
   currency?: string;
   employment_type: string;
   experience_level: string;
-  location: string | number;
-  category: string | number;
+  location: string | number | { id: number; name: string };
+  category: string | number | { id: number; name: string };
   language: string;
   is_active: boolean;
   created_at: string;
   updated_at?: string;
-  organization: number;
+  organization: number | { id: number; official_name: string };
   applications_count?: number;
   job_type?: string;
   workplace_type?: string;

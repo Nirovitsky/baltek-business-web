@@ -28,7 +28,7 @@ export default function Jobs() {
     queryKey: ['/jobs/', selectedOrganization?.id, searchTerm, statusFilter],
     queryFn: () => {
       const params = new URLSearchParams();
-      params.append('owned', 'true');
+      if (selectedOrganization) params.append('organization', selectedOrganization.id.toString());
       if (searchTerm) params.append('search', searchTerm);
       if (statusFilter !== 'all') {
         params.append('status', statusFilter);
@@ -197,8 +197,8 @@ export default function Jobs() {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {jobs.map((job) => {
               // Extract location and organization data safely
-              const location = typeof job.location === 'object' && job.location ? job.location : null;
-              const organization = typeof job.organization === 'object' && job.organization ? job.organization : null;
+              const location = typeof job.location === 'object' && job.location && 'name' in job.location ? job.location : null;
+              const organization = typeof job.organization === 'object' && job.organization && 'official_name' in job.organization ? job.organization : null;
               
               return (
                 <Card 
@@ -213,7 +213,7 @@ export default function Jobs() {
                         <h3 className="text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
                           {job.title}
                         </h3>
-                        {organization && 'official_name' in organization && (
+                        {organization && (
                           <div className="flex items-center text-sm text-muted-foreground mb-2">
                             <Building2 className="w-4 h-4 mr-1" />
                             {organization.official_name}
@@ -237,7 +237,7 @@ export default function Jobs() {
                            job.job_type === 'part_time' ? 'Part Time' : 'Contract'}
                         </span>
                       </div>
-                      {location && 'name' in location && (
+                      {location && (
                         <div className="flex items-center text-sm text-muted-foreground">
                           <MapPin className="w-4 h-4 mr-2 text-primary flex-shrink-0" />
                           <span>{location.name}</span>
