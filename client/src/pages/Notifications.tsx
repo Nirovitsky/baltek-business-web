@@ -75,15 +75,15 @@ export default function Notifications() {
     >
       <div className="flex items-start justify-between space-x-3">
         <div className="flex items-start space-x-3 flex-1">
-          <div className="text-lg">{getIcon(notification.type)}</div>
+          <div className="text-lg">{getIcon(notification.type || 'default')}</div>
           
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-2 mb-1">
               <h4 className="font-medium text-foreground text-sm">
                 {notification.title}
               </h4>
-              <Badge variant="secondary" className={`text-xs ${getTypeColor(notification.type)}`}>
-                {notification.type.replace('_', ' ').toUpperCase()}
+              <Badge variant="secondary" className={`text-xs ${getTypeColor(notification.type || 'default')}`}>
+                {(notification.type || 'notification').replace('_', ' ').toUpperCase()}
               </Badge>
             </div>
             
