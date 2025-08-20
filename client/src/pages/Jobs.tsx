@@ -28,7 +28,7 @@ export default function Jobs() {
     queryKey: ['/jobs/', selectedOrganization?.id, searchTerm, statusFilter],
     queryFn: () => {
       const params = new URLSearchParams();
-      if (selectedOrganization) params.append('organization', selectedOrganization.id.toString());
+      params.append('owned', 'true');
       if (searchTerm) params.append('search', searchTerm);
       if (statusFilter !== 'all') {
         params.append('status', statusFilter);
@@ -213,7 +213,7 @@ export default function Jobs() {
                         <h3 className="text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
                           {job.title}
                         </h3>
-                        {organization && (
+                        {organization && 'official_name' in organization && (
                           <div className="flex items-center text-sm text-muted-foreground mb-2">
                             <Building2 className="w-4 h-4 mr-1" />
                             {organization.official_name}
@@ -237,7 +237,7 @@ export default function Jobs() {
                            job.job_type === 'part_time' ? 'Part Time' : 'Contract'}
                         </span>
                       </div>
-                      {location && (
+                      {location && 'name' in location && (
                         <div className="flex items-center text-sm text-muted-foreground">
                           <MapPin className="w-4 h-4 mr-2 text-primary flex-shrink-0" />
                           <span>{location.name}</span>
@@ -288,7 +288,7 @@ export default function Jobs() {
                       <div className="flex items-center space-x-3">
                         <Badge 
                           variant="secondary" 
-                          className={`${getStatusColor(job.status)} border`}
+                          className={`${getStatusColor(job.status || 'open')} border`}
                         >
 {(() => {
                             // Debug: log the actual status value from backend
