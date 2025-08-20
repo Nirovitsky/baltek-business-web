@@ -72,3 +72,16 @@ export function useOrganizations() {
     uploadFile: uploadFileMutation,
   };
 }
+
+// Separate hook to fetch organization by ID
+export function useOrganizationById(id: number | undefined) {
+  return useQuery({
+    queryKey: ['/api/organizations/', id],
+    queryFn: () => apiService.request<Organization>(`/organizations/${id}/`),
+    enabled: !!id,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+  });
+}

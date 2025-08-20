@@ -14,7 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { useOrganizations } from "@/hooks/useOrganizations";
+import { useOrganizations, useOrganizationById } from "@/hooks/useOrganizations";
 import { apiService } from "@/lib/api";
 import { Building2, Globe, MapPin, Upload, X } from "lucide-react";
 import { z } from "zod";
@@ -45,6 +45,16 @@ export default function Organization() {
   const queryClient = useQueryClient();
   const { selectedOrganization } = useAuth();
   const { updateOrganization, uploadFile } = useOrganizations();
+  
+  // Fetch organization details by ID
+  const { 
+    data: organizationDetails, 
+    isLoading: isLoadingDetails,
+    error: detailsError 
+  } = useOrganizationById(selectedOrganization?.id);
+  
+  // Use detailed organization data or fallback to selectedOrganization
+  const currentOrganization = organizationDetails || selectedOrganization;
 
 
 
@@ -62,32 +72,32 @@ export default function Organization() {
     },
   });
 
-  // Update form when selectedOrganization changes
+  // Update form when currentOrganization changes
   useEffect(() => {
-    if (selectedOrganization) {
+    if (currentOrganization) {
       form.reset({
-        official_name: selectedOrganization.official_name,
-        display_name: selectedOrganization.display_name || "",
-        description: selectedOrganization.description || "",
-        about_us: selectedOrganization.about_us || "",
-        website: selectedOrganization.website || "",
-        location_id: selectedOrganization.location?.id,
-        category_id: selectedOrganization.category?.id,
-        email: selectedOrganization.email || "",
-        phone: selectedOrganization.phone || "",
-        logo: selectedOrganization.logo || "",
+        official_name: currentOrganization.official_name,
+        display_name: currentOrganization.display_name || "",
+        description: currentOrganization.description || "",
+        about_us: currentOrganization.about_us || "",
+        website: currentOrganization.website || "",
+        location_id: typeof currentOrganization.location === 'object' ? currentOrganization.location?.id : undefined,
+        category_id: typeof currentOrganization.category === 'object' ? currentOrganization.category?.id : undefined,
+        email: currentOrganization.email || "",
+        phone: currentOrganization.phone || "",
+        logo: currentOrganization.logo || "",
       });
     }
-  }, [selectedOrganization, form]);
+  }, [currentOrganization, form]);
 
 
 
   const onSubmit = async (data: OrganizationUpdate) => {
-    if (!selectedOrganization) return;
+    if (!currentOrganization) return;
     
     try {
       const updatedOrg = await updateOrganization.mutateAsync({ 
-        id: selectedOrganization.id, 
+        id: currentOrganization.id, 
         data 
       });
       
@@ -110,18 +120,18 @@ export default function Organization() {
   };
 
   const handleCancel = () => {
-    if (selectedOrganization) {
+    if (currentOrganization) {
       form.reset({
-        official_name: selectedOrganization.official_name,
-        display_name: selectedOrganization.display_name || "",
-        description: selectedOrganization.description || "",
-        about_us: selectedOrganization.about_us || "",
-        website: selectedOrganization.website || "",
-        location_id: selectedOrganization.location?.id,
-        category_id: selectedOrganization.category?.id,
-        email: selectedOrganization.email || "",
-        phone: selectedOrganization.phone || "",
-        logo: selectedOrganization.logo || "",
+        official_name: currentOrganization.official_name,
+        display_name: currentOrganization.display_name || "",
+        description: currentOrganization.description || "",
+        about_us: currentOrganization.about_us || "",
+        website: currentOrganization.website || "",
+        location_id: typeof currentOrganization.location === 'object' ? currentOrganization.location?.id : undefined,
+        category_id: typeof currentOrganization.category === 'object' ? currentOrganization.category?.id : undefined,
+        email: currentOrganization.email || "",
+        phone: currentOrganization.phone || "",
+        logo: currentOrganization.logo || "",
       });
     }
     setLogoFile(null);
@@ -164,7 +174,7 @@ export default function Organization() {
   };
 
   const handleLogoUpload = async () => {
-    if (!logoFile || !selectedOrganization) return;
+    if (!logoFile || !currentOrganization) return;
 
     setIsUploading(true);
     try {
@@ -176,7 +186,7 @@ export default function Organization() {
       
       // Update organization with the new logo URL
       const updatedOrg = await updateOrganization.mutateAsync({
-        id: selectedOrganization.id,
+        id: currentOrganization.id,
         data: { logo: uploadResult.url }
       });
 
@@ -224,7 +234,7 @@ export default function Organization() {
             </CardHeader>
 
             <CardContent>
-              {!selectedOrganization ? (
+              {!currentOrganization || isLoadingDetails ? (
                 <div className="text-center py-8">
                   <Building2 className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                   <p className="text-muted-foreground">No organization selected</p>
@@ -256,10 +266,10 @@ export default function Organization() {
                                   <X className="h-3 w-3" />
                                 </button>
                               </>
-                            ) : selectedOrganization?.logo ? (
+                            ) : currentOrganization?.logo ? (
                               <img 
-                                src={selectedOrganization.logo} 
-                                alt={selectedOrganization.official_name} 
+                                src={currentOrganization.logo} 
+                                alt={currentOrganization.official_name} 
                                 className="object-cover w-full h-full rounded-xl"
                               />
                             ) : (
@@ -356,10 +366,10 @@ export default function Organization() {
                                       <Input 
                                         {...field}
                                         type="text"
-                                        value={selectedOrganization?.category?.name || ""}
+                                        value={typeof currentOrganization?.category === 'object' ? currentOrganization?.category?.name || "" : ""}
                                         onChange={(e) => {
                                           // Keep the field's onChange to maintain form state
-                                          field.onChange(selectedOrganization?.category?.id);
+                                          field.onChange(typeof currentOrganization?.category === 'object' ? currentOrganization?.category?.id : undefined);
                                         }}
                                         placeholder="Organization category"
                                       />
@@ -381,10 +391,10 @@ export default function Organization() {
                                         <Input 
                                           {...field}
                                           type="text"
-                                          value={selectedOrganization?.location?.name || ""}
+                                          value={typeof currentOrganization?.location === 'object' ? currentOrganization?.location?.name || "" : ""}
                                           onChange={(e) => {
                                             // Keep the field's onChange to maintain form state
-                                            field.onChange(selectedOrganization?.location?.id);
+                                            field.onChange(typeof currentOrganization?.location === 'object' ? currentOrganization?.location?.id : undefined);
                                           }}
 
                                           placeholder="Location"
