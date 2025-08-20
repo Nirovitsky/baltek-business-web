@@ -55,8 +55,8 @@ export function useNotifications() {
 
   // Fetch notifications from the actual API endpoint
   const { data: notificationsData, isLoading: notificationsLoading } = useQuery({
-    queryKey: ['/api/notifications/'],
-    queryFn: () => apiService.request<PaginatedResponse<Notification>>('/api/notifications/'),
+    queryKey: ['/notifications/'],
+    queryFn: () => apiService.request<PaginatedResponse<Notification>>('/notifications/'),
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
     gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
     refetchOnWindowFocus: false, // Don't refetch on window focus
@@ -210,7 +210,7 @@ export function useNotifications() {
   // Mutations for notification actions using the API
   const markAsReadMutation = useMutation({
     mutationFn: async (notificationId: number) => {
-      return apiService.request(`/api/notifications/${notificationId}/`, {
+      return apiService.request(`/notifications/${notificationId}/`, {
         method: 'PATCH',
         body: JSON.stringify({ is_read: true }),
         headers: { 'Content-Type': 'application/json' }
@@ -218,7 +218,7 @@ export function useNotifications() {
     },
     onSuccess: () => {
       // Invalidate notifications to refetch updated data
-      queryClient.invalidateQueries({ queryKey: ['/api/notifications/'] });
+      queryClient.invalidateQueries({ queryKey: ['/notifications/'] });
     },
   });
 
@@ -227,7 +227,7 @@ export function useNotifications() {
       // If there's a bulk mark all read endpoint, use it, otherwise mark individually
       const unreadNotifications = notifications.filter((n: Notification) => !n.read && !n.is_read);
       const promises = unreadNotifications.map((notification: Notification) => 
-        apiService.request(`/api/notifications/${notification.id}/`, {
+        apiService.request(`/notifications/${notification.id}/`, {
           method: 'PATCH',
           body: JSON.stringify({ is_read: true }),
           headers: { 'Content-Type': 'application/json' }
@@ -236,7 +236,7 @@ export function useNotifications() {
       return Promise.all(promises);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/notifications/'] });
+      queryClient.invalidateQueries({ queryKey: ['/notifications/'] });
       toast({
         title: "All notifications marked as read",
       });
@@ -245,12 +245,12 @@ export function useNotifications() {
 
   const deleteNotificationMutation = useMutation({
     mutationFn: async (notificationId: number) => {
-      return apiService.request(`/api/notifications/${notificationId}/`, {
+      return apiService.request(`/notifications/${notificationId}/`, {
         method: 'DELETE'
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/notifications/'] });
+      queryClient.invalidateQueries({ queryKey: ['/notifications/'] });
     },
   });
 
