@@ -39,8 +39,8 @@ export default function Notifications() {
     isDeletingNotification
   } = useNotifications();
 
-  const unreadNotifications = (notifications as any[])?.filter((n: any) => !n.read) || [];
-  const readNotifications = (notifications as any[])?.filter((n: any) => n.read) || [];
+  const unreadNotifications = (notifications as any[])?.filter((n: any) => !n.is_read) || [];
+  const readNotifications = (notifications as any[])?.filter((n: any) => n.is_read) || [];
   
   const filteredNotifications = filter === 'unread' 
     ? unreadNotifications 
@@ -343,7 +343,7 @@ export default function Notifications() {
                 >
                   <NotificationItem 
                     notification={notification} 
-                    isUnread={!notification.read}
+                    isUnread={!notification.is_read}
                   />
                 </div>
               ))}

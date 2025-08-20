@@ -174,7 +174,7 @@ export function useNotifications() {
   useEffect(() => {
     if (!Array.isArray(notifications)) return;
 
-    const unreadNotifications = notifications.filter((n: Notification) => !n.read && !n.is_read);
+    const unreadNotifications = notifications.filter((n: Notification) => !n.is_read);
     
     // Only show notifications for very recent ones (last 5 minutes)
     const recentNotifications = unreadNotifications.filter((n: Notification) => {
@@ -205,7 +205,7 @@ export function useNotifications() {
     return () => clearInterval(interval);
   }, []);
 
-  const unreadCount = notifications.filter((n: Notification) => !n.read && !n.is_read).length;
+  const unreadCount = notifications.filter((n: Notification) => !n.is_read).length;
 
   // Mutations for notification actions using the API
   const markAsReadMutation = useMutation({
@@ -225,7 +225,7 @@ export function useNotifications() {
   const markAllAsReadMutation = useMutation({
     mutationFn: async () => {
       // If there's a bulk mark all read endpoint, use it, otherwise mark individually
-      const unreadNotifications = notifications.filter((n: Notification) => !n.read && !n.is_read);
+      const unreadNotifications = notifications.filter((n: Notification) => !n.is_read);
       const promises = unreadNotifications.map((notification: Notification) => 
         apiService.request(`/notifications/${notification.id}/`, {
           method: 'PATCH',

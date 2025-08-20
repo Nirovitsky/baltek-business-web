@@ -30,10 +30,10 @@ export function NotificationCenter() {
     isDeletingNotification
   } = useNotifications();
 
-  const unreadCount = (notifications as Notification[]).filter((n: Notification) => !n.read).length;
+  const unreadCount = (notifications as Notification[]).filter((n: Notification) => !n.is_read).length;
 
   const handleNotificationClick = (notification: Notification) => {
-    if (!notification.read) {
+    if (!notification.is_read) {
       markAsRead(notification.id);
     }
     
@@ -125,7 +125,7 @@ export function NotificationCenter() {
               <div
                 key={notification.id}
                 className={`relative group border-b last:border-b-0 ${
-                  !notification.read ? "bg-accent/50" : ""
+                  !notification.is_read ? "bg-accent/50" : ""
                 }`}
               >
                 <DropdownMenuItem
@@ -158,7 +158,7 @@ export function NotificationCenter() {
                       )}
                     </div>
                     
-                    {!notification.read && (
+                    {!notification.is_read && (
                       <div className="absolute top-3 right-3 w-2 h-2 bg-primary rounded-full"></div>
                     )}
                   </div>
