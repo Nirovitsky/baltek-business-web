@@ -264,26 +264,10 @@ export default function Organization() {
             </CardHeader>
 
             <CardContent>
-              {isLoading ? (
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Skeleton className="h-4 w-24" />
-                      <Skeleton className="h-10 w-full" />
-                    </div>
-                    <div className="space-y-2">
-                      <Skeleton className="h-4 w-24" />
-                      <Skeleton className="h-10 w-full" />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Skeleton className="h-4 w-24" />
-                    <Skeleton className="h-24 w-full" />
-                  </div>
-                </div>
-              ) : !selectedOrganization ? (
+              {!selectedOrganization ? (
                 <div className="text-center py-8">
-                  <p className="text-muted-foreground">No organization found</p>
+                  <Building2 className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                  <p className="text-muted-foreground">No organization selected</p>
                   <p className="text-sm text-gray-400 mt-2">
                     Create an organization to manage your business profile
                   </p>
