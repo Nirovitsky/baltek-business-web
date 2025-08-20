@@ -37,7 +37,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     checkAuth();
-  }, [checkAuth]);
+  }, []); // Remove checkAuth dependency to prevent repeated calls
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -50,7 +50,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
         setIsLoading(false);
       });
     }
-  }, [isAuthenticated, refreshProfile]);
+  }, [isAuthenticated]); // Remove refreshProfile dependency
 
   if (!isAuthenticated) {
     return <Redirect to="/login" />;

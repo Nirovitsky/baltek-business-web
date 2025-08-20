@@ -14,7 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { useOrganizations, useOrganizationById } from "@/hooks/useOrganizations";
+import { useOrganizationMutations, useOrganizationById } from "@/hooks/useOrganizations";
 import { apiService } from "@/lib/api";
 import { Building2, Globe, MapPin, Upload, X } from "lucide-react";
 import { z } from "zod";
@@ -44,7 +44,7 @@ export default function Organization() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { selectedOrganization } = useAuth();
-  const { updateOrganization, uploadFile } = useOrganizations();
+  const { updateOrganization, uploadFile } = useOrganizationMutations();
   
   // Fetch organization details by ID
   const { 

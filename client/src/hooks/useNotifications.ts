@@ -57,11 +57,11 @@ export function useNotifications() {
   const { data: notificationsData, isLoading: notificationsLoading } = useQuery({
     queryKey: ['/notifications/'],
     queryFn: () => apiService.request<PaginatedResponse<Notification>>('/notifications/'),
-    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
-    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
+    staleTime: 10 * 60 * 1000, // Consider data fresh for 10 minutes 
+    gcTime: 30 * 60 * 1000, // Keep in cache for 30 minutes
     refetchOnWindowFocus: false, // Don't refetch on window focus
-    refetchOnMount: false, // Don't refetch on component mount if data exists
-    refetchInterval: 2 * 60 * 1000, // Check every 2 minutes instead of 30 seconds
+    refetchOnMount: false, // Don't refetch on component mount if data exists  
+    refetchInterval: false, // Disable automatic polling - only refetch manually
   });
 
   // Extract notifications from API response

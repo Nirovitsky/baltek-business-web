@@ -85,3 +85,36 @@ export function useOrganizationById(id: number | undefined) {
     refetchOnMount: false,
   });
 }
+
+// Hook for organization mutations only (no list fetching)
+export function useOrganizationMutations() {
+  const queryClient = useQueryClient();
+
+  // Update organization mutation
+  const updateOrganizationMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: any }) =>
+      apiService.request(`/organizations/${id}/`, {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      // Invalidate organization details and list
+      queryClient.invalidateQueries({ queryKey: ['/api/organizations/'] });
+    },
+  });
+
+  // Upload file mutation (for logos, etc.)
+  const uploadFileMutation = useMutation({
+    mutationFn: (formData: FormData) =>
+      apiService.request<{ url: string }>('/upload/', {
+        method: 'POST',
+        body: formData,
+        headers: {}, // Let browser set Content-Type with boundary
+      }),
+  });
+
+  return {
+    updateOrganization: updateOrganizationMutation,
+    uploadFile: uploadFileMutation,
+  };
+}
