@@ -29,7 +29,7 @@ import Settings from "@/pages/Settings";
 import NotFound from "@/pages/not-found";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, hasOrganizations, organizations, checkAuth, refreshProfile } = useAuth();
+  const { isAuthenticated, hasOrganizations, organizations, checkAuth, refreshProfile, organizationsFetched } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   
   // Initialize global WebSocket connection when authenticated
@@ -56,8 +56,8 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <Redirect to="/login" />;
   }
 
-  // Show loading while fetching organizations
-  if (isLoading) {
+  // Show loading while fetching organizations or user profile
+  if (isLoading || !organizationsFetched) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
@@ -68,9 +68,10 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // If authenticated but has no organizations, redirect to create organization
-  console.log('ProtectedRoute check:', { isAuthenticated, hasOrganizations, organizationsLength: organizations.length });
-  if (isAuthenticated && !hasOrganizations) {
+  // Only redirect to create-organization if organizations have been fetched and user has none
+  // This prevents redirecting before we actually know if they have organizations
+  console.log('ProtectedRoute check:', { isAuthenticated, hasOrganizations, organizationsLength: organizations.length, organizationsFetched });
+  if (isAuthenticated && organizationsFetched && !hasOrganizations) {
     return <Redirect to="/create-organization" />;
   }
 
