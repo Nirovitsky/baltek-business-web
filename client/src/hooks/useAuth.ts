@@ -9,15 +9,16 @@ interface AuthState {
   organizations: Organization[];
   user: User | null;
   hasOrganizations: boolean;
-  organizationsFetched: boolean; // Track if organizations have been fetched
+  organizationsFetched: boolean;
   login: (credentials: LoginRequest) => Promise<void>;
   logout: () => void;
   checkAuth: () => void;
   switchOrganization: (organization: Organization) => void;
   fetchOrganizations: (force?: boolean) => Promise<void>;
-  refreshOrganizations: () => Promise<void>; // Force refresh organizations
+  refreshOrganizations: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   updateSelectedOrganization: (updatedOrg: Organization) => void;
+  setUser: (user: User | null) => void;
 }
 
 export const useAuth = create<AuthState>((set, get) => ({
@@ -139,5 +140,9 @@ export const useAuth = create<AuthState>((set, get) => ({
     );
     localStorage.setItem('selected_organization', JSON.stringify(updatedOrg));
     set({ organizations: updatedOrgs, selectedOrganization: updatedOrg });
+  },
+
+  setUser: (user: User | null) => {
+    set({ user });
   },
 }));

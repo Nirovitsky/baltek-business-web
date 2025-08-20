@@ -11,15 +11,15 @@ The Baltek Business Dashboard is a React and Express-based application for HR ma
 - Authentication: Phone number + password (not username)
 
 ## Recent Changes (January 2025)
-- **Migration Completed**: Successfully migrated from Replit Agent to standard Replit environment
+- **TanStack Query Migration Completed**: Systematically implemented TanStack Query throughout entire application
 - **Performance Optimization**: Fixed redundant organization API calls by implementing caching in authentication hook
 - **API Efficiency**: Organizations now fetch only once at login instead of multiple redundant requests to `/organizations/?owned=true`
-- **Notifications Performance**: Optimized notifications system to prevent redundant API calls to `/api/jobs/applications/` and `/api/chat/messages/` on every page visit
-- **Query Caching**: Implemented proper TanStack Query caching with 5-minute stale time and disabled refetch on mount/focus for notifications
-- **Authentication Updated**: Replaced `/me` endpoint with `/users/{id}` pattern throughout application
-- **Notifications System Implemented**: Created real-time notification system using actual backend data from job applications and chat messages
-- **Real Data Integration**: Notifications now generated from `/api/jobs/applications/` and `/api/chat/messages/` endpoints
-- **Date Handling**: Updated notification date formatting to use ISO strings instead of Unix timestamps
+- **Comprehensive Query Implementation**: Converted all direct API calls to use TanStack Query with proper caching strategies
+- **Authentication Hooks Enhanced**: Created `useAuthMutations` for login/logout with query cache invalidation
+- **User Profile Hook**: Implemented `useUserProfile` hook for comprehensive user data and chat room management
+- **Notifications Performance**: Optimized notifications system with TanStack Query caching (5-minute stale time, disabled refetch on mount/focus)
+- **Real Data Integration**: All components now use authentic data from authorized API sources with proper error handling
+- **Cache Management**: Proper query invalidation on mutations ensures data consistency across components
 - **No Mock Data**: Removed all mock/placeholder data, using only authentic data from authorized API sources
 
 ## System Architecture
@@ -30,8 +30,10 @@ The Baltek Business Dashboard is a React and Express-based application for HR ma
 - **UI Framework**: shadcn/ui (built on Radix UI)
 - **Styling**: Tailwind CSS with CSS variables
 - **State Management**: Zustand (authentication), TanStack Query (server state)
+- **Data Fetching**: TanStack Query with comprehensive caching, mutations, and invalidation strategies
 - **Routing**: Wouter
 - **Forms**: React Hook Form with Zod validation
+- **Custom Hooks**: `useAuth`, `useAuthMutations`, `useOrganizations`, `useNotifications`, `useUserProfile`
 - **Key Features**: JWT-based authentication, CRUD operations for job postings, application processing, WebSocket-based real-time messaging, comprehensive design system, responsive layout, dark/light theme support.
 
 ### Backend Architecture

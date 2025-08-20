@@ -37,34 +37,24 @@ type OrganizationUpdate = z.infer<typeof organizationUpdateSchema>;
 
 export default function Organization() {
   const [isEditing, setIsEditing] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string>("");
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { selectedOrganization, fetchOrganizations } = useAuth();
+  const { selectedOrganization } = useAuth();
 
-  // Ensure we have the latest organization data
-  useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true);
-      try {
-        await fetchOrganizations();
-      } catch (error) {
-        console.error('Failed to fetch organization data:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load organization data",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  // Upload file mutation
+  const uploadFileMutation = useMutation({
+    mutationFn: (formData: FormData) =>
+      apiService.request<{ url: string }>('/upload/', {
+        method: 'POST',
+        body: formData,
+        headers: {}, // Let browser set Content-Type with boundary
+      }),
+  });
 
-    loadData();
-  }, [fetchOrganizations, toast]);
+
 
   const form = useForm<OrganizationUpdate>({
     resolver: zodResolver(organizationUpdateSchema),
@@ -109,6 +99,8 @@ export default function Organization() {
       });
     },
     onSuccess: (updatedOrg) => {
+      // Invalidate organizations query to refresh data
+      queryClient.invalidateQueries({ queryKey: ['/api/organizations/', 'owned'] });
       // Update the organization in the auth store
       const { updateSelectedOrganization } = useAuth.getState();
       updateSelectedOrganization(updatedOrg);

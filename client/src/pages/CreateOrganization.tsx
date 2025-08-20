@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,8 +15,9 @@ import type { Category, Location, PaginatedResponse } from "@/types";
 
 export default function CreateOrganization() {
   const [, setLocation] = useLocation();
-  const { refreshOrganizations, organizations } = useAuth();
+  const { organizations } = useAuth();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +36,41 @@ export default function CreateOrganization() {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
 
   const MAX_ORGANIZATIONS = 10;
+
+  // Upload file mutation
+  const uploadFileMutation = useMutation({
+    mutationFn: (formData: FormData) =>
+      apiService.request<{ url: string }>('/upload/', {
+        method: 'POST',
+        body: formData,
+        headers: {}, // Let browser set Content-Type with boundary
+      }),
+  });
+
+  // Create organization mutation
+  const createOrganizationMutation = useMutation({
+    mutationFn: (organizationData: any) =>
+      apiService.request('/organizations/', {
+        method: 'POST',
+        body: JSON.stringify(organizationData),
+      }),
+    onSuccess: () => {
+      // Invalidate organizations query to refresh data
+      queryClient.invalidateQueries({ queryKey: ['/api/organizations/', 'owned'] });
+      toast({
+        title: "Organization created",
+        description: "Your organization has been created successfully",
+      });
+      setLocation('/');
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create organization",
+        variant: "destructive",
+      });
+    },
+  });
 
   // Fetch categories
   const { data: categories = [] } = useQuery<Category[]>({
@@ -175,11 +211,7 @@ export default function CreateOrganization() {
         logoFormData.append('file', logoFile);
 
         try {
-          const uploadResponse = await apiService.request<{ url: string }>('/upload/', {
-            method: 'POST',
-            body: logoFormData,
-            headers: {}, // Remove Content-Type to let browser set it with boundary
-          });
+          const uploadResponse = await uploadFileMutation.mutateAsync(logoFormData);
           logoUrl = uploadResponse.url;
         } catch (error) {
           console.error('Logo upload failed:', error);
@@ -201,27 +233,11 @@ export default function CreateOrganization() {
         ...(logoUrl && { logo: logoUrl })
       };
 
-      await apiService.request('/organizations/', {
-        method: 'POST',
-        body: JSON.stringify(organizationData),
-      });
-
-      toast({
-        title: "Organization created",
-        description: "Your organization has been created successfully",
-      });
-
-      // Refresh organizations and redirect
-      await refreshOrganizations();
-      setLocation('/');
+      await createOrganizationMutation.mutateAsync(organizationData);
       
     } catch (error: any) {
       console.error('Error creating organization:', error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to create organization",
-        variant: "destructive",
-      });
+      // Error handling is done in the mutation onError callback
     } finally {
       setIsLoading(false);
     }

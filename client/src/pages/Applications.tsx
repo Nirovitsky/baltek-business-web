@@ -91,12 +91,20 @@ export default function Applications() {
     },
   });
 
+  // Query for chat rooms
+  const { data: roomsData } = useQuery({
+    queryKey: ['/chat/rooms/'],
+    queryFn: () => apiService.request<{results: any[]}>('/chat/rooms/'),
+  });
+
   const createChatRoomMutation = useMutation({
     mutationFn: (applicationId: number) => 
       apiService.request(`/jobs/applications/${applicationId}/create_room/`, {
         method: 'POST',
       }),
     onSuccess: (roomData: any) => {
+      // Invalidate rooms query to get fresh data
+      queryClient.invalidateQueries({ queryKey: ['/chat/rooms/'] });
       toast({
         title: "Success",
         description: "Opening chat room...",
@@ -124,39 +132,37 @@ export default function Applications() {
     updateApplicationMutation.mutate({ id: applicationId, status: newStatus });
   };
 
-  const handleCreateChatRoom = async (application: JobApplication) => {
-    try {
-      // First check if there's already a chat room with this user
-      const roomsResponse = await apiService.request<{results: any[]}>('/chat/rooms/');
-      console.log('Checking rooms for user:', application.owner.id);
-      console.log('Available rooms:', roomsResponse.results);
-      
-      const existingRoom = roomsResponse.results.find((room: any) => {
-        console.log(`Room ${room.id} members:`, room.members);
-        // Members are stored as numeric IDs
-        return room.members.some((memberId: number) => {
-          const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
-          console.log(`Comparing member ${numericMemberId} with user ${application.owner.id}`);
-          return numericMemberId === application.owner.id;
-        });
+  const handleCreateChatRoom = (application: JobApplication) => {
+    if (!roomsData?.results) {
+      // If rooms data is not loaded, create new room
+      createChatRoomMutation.mutate(application.id);
+      return;
+    }
+
+    console.log('Checking rooms for user:', application.owner.id);
+    console.log('Available rooms:', roomsData.results);
+    
+    const existingRoom = roomsData.results.find((room: any) => {
+      console.log(`Room ${room.id} members:`, room.members);
+      // Members are stored as numeric IDs
+      return room.members.some((memberId: number) => {
+        const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
+        console.log(`Comparing member ${numericMemberId} with user ${application.owner.id}`);
+        return numericMemberId === application.owner.id;
       });
-      
-      console.log('Found existing room:', existingRoom);
-      
-      if (existingRoom) {
-        // Navigate to existing room
-        toast({
-          title: "Success",
-          description: "Opening existing chat room...",
-        });
-        setLocation(`/messages#room-${existingRoom.id}`);
-      } else {
-        // Create new room via application
-        createChatRoomMutation.mutate(application.id);
-      }
-    } catch (error) {
-      console.error('Error finding chat room:', error);
-      // Fallback to creating new room
+    });
+    
+    console.log('Found existing room:', existingRoom);
+    
+    if (existingRoom) {
+      // Navigate to existing room
+      toast({
+        title: "Success",
+        description: "Opening existing chat room...",
+      });
+      setLocation(`/messages#room-${existingRoom.id}`);
+    } else {
+      // Create new room via application
       createChatRoomMutation.mutate(application.id);
     }
   };
