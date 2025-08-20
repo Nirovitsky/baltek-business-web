@@ -1,7 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import type { Notification, NotificationPreferences, JobApplication, Message } from "@/types";
+import { apiService } from "@/lib/api";
+import type { Notification, NotificationPreferences, JobApplication, Message, PaginatedResponse } from "@/types";
 
 // Check if browser supports notifications
 const isNotificationSupported = () => {
