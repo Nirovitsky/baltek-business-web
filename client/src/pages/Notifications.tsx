@@ -34,7 +34,7 @@ export default function Notifications() {
     markAllAsRead,
     isMarkingAsRead,
     isMarkingAllAsRead
-  } = useNotifications();
+  } = useNotifications(true); // Enable notifications fetching on notifications page
 
   const unreadNotifications = (notifications as any[])?.filter((n: any) => !n.is_read) || [];
   const readNotifications = (notifications as any[])?.filter((n: any) => n.is_read) || [];

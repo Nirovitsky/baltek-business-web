@@ -22,7 +22,7 @@ const requestNotificationPermission = async (): Promise<NotificationPermission> 
   return Notification.permission;
 };
 
-export function useNotifications() {
+export function useNotifications(enabled: boolean = true) {
   const [permission, setPermission] = useState<NotificationPermission>(
     isNotificationSupported() ? Notification.permission : "denied"
   );
@@ -57,6 +57,7 @@ export function useNotifications() {
   const { data: notificationsData, isLoading: notificationsLoading } = useQuery({
     queryKey: ['/notifications/'],
     queryFn: () => apiService.request<PaginatedResponse<Notification>>('/notifications/'),
+    enabled: enabled, // Only fetch when explicitly enabled
     staleTime: 10 * 60 * 1000, // Consider data fresh for 10 minutes 
     gcTime: 30 * 60 * 1000, // Keep in cache for 30 minutes
     refetchOnWindowFocus: false, // Don't refetch on window focus

@@ -59,7 +59,7 @@ const navigationItems = [
 export default function Sidebar() {
   const [location] = useLocation();
   const { logout, selectedOrganization, user } = useAuth();
-  const { unreadCount } = useNotifications();
+  const { unreadCount } = useNotifications(false); // Don't fetch notifications in sidebar
 
   return (
     <div className="w-64 bg-sidebar shadow-lg border-r border-sidebar-border flex flex-col">
