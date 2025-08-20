@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Bell, Check, X, ExternalLink, Trash2 } from "lucide-react";
+import { Bell, Check, X, ExternalLink } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,11 +23,9 @@ export function NotificationCenter() {
     notifications, 
     isLoading, 
     markAsRead, 
-    markAllAsRead, 
-    deleteNotification,
+    markAllAsRead,
     isMarkingAsRead,
-    isMarkingAllAsRead,
-    isDeletingNotification
+    isMarkingAllAsRead
   } = useNotifications();
 
   const unreadCount = (notifications as Notification[]).filter((n: Notification) => !n.is_read).length;
@@ -164,18 +162,6 @@ export function NotificationCenter() {
                   </div>
                 </DropdownMenuItem>
                 
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteNotification(notification.id);
-                  }}
-                  data-testid={`delete-notification-${notification.id}`}
-                >
-                  <Trash2 className="h-3 w-3" />
-                </Button>
               </div>
             ))
           )}

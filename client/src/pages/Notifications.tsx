@@ -9,7 +9,6 @@ import {
   Bell, 
   Check, 
   CheckCheck, 
-  Trash2, 
   ExternalLink, 
   Users, 
   MessageCircle, 
@@ -32,11 +31,9 @@ export default function Notifications() {
     notifications, 
     isLoading, 
     markAsRead, 
-    markAllAsRead, 
-    deleteNotification,
+    markAllAsRead,
     isMarkingAsRead,
-    isMarkingAllAsRead,
-    isDeletingNotification
+    isMarkingAllAsRead
   } = useNotifications();
 
   const unreadNotifications = (notifications as any[])?.filter((n: any) => !n.is_read) || [];
@@ -176,15 +173,6 @@ export default function Notifications() {
                 </Button>
               )}
               
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => deleteNotification(notification.id)}
-                disabled={isDeletingNotification}
-                className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-200 opacity-0 group-hover:opacity-100"
-              >
-                <Trash2 className="h-3 w-3" />
-              </Button>
             </div>
           </div>
         </div>
