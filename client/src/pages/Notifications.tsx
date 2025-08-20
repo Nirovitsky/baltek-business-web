@@ -22,8 +22,8 @@ export default function Notifications() {
     isDeletingNotification
   } = useNotifications();
 
-  const unreadNotifications = (notifications as any[])?.filter((n: any) => !n.read) || [];
-  const readNotifications = (notifications as any[])?.filter((n: any) => n.read) || [];
+  const unreadNotifications = (notifications as any[])?.filter((n: any) => !n.read && !n.is_read) || [];
+  const readNotifications = (notifications as any[])?.filter((n: any) => n.read || n.is_read) || [];
 
   const getTypeColor = (type: string) => {
     switch (type) {
