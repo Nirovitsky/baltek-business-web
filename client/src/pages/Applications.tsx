@@ -91,10 +91,11 @@ export default function Applications() {
     },
   });
 
-  // Query for chat rooms
+  // Use shared rooms query with same key as Messages page to avoid duplication
   const { data: roomsData } = useQuery({
-    queryKey: ['/chat/rooms/'],
+    queryKey: ["/chat/rooms/"],
     queryFn: () => apiService.request<{results: any[]}>('/chat/rooms/'),
+    staleTime: 2 * 60 * 1000, // Keep data fresh for 2 minutes
   });
 
   const createChatRoomMutation = useMutation({

@@ -14,6 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
+import { useReferenceData } from "@/hooks/useReferencedData";
 import { createJobSchema, type CreateJob, type Job, type Category, type Location, type Language, type PaginatedResponse } from "@/types";
 import { useEffect } from "react";
 
@@ -83,23 +84,15 @@ export default function CreateJob() {
     }
   }, [job, form, selectedOrganization]);
 
-  // Fetch categories, locations, and languages for selects
-  const { data: categories } = useQuery({
-    queryKey: ['/categories/'],
-    queryFn: () => apiService.request<Category[]>('/categories/'),
-  });
-
-  const { data: locationsData } = useQuery({
-    queryKey: ['/locations/'],
-    queryFn: () => apiService.request<PaginatedResponse<Location>>('/locations/'),
-  });
+  // Use shared reference data to avoid duplication with other components
+  const { categories, locations } = useReferenceData();
 
   const { data: languagesData } = useQuery({
     queryKey: ['/languages/'],
     queryFn: () => apiService.request<PaginatedResponse<Language>>('/languages/'),
+    staleTime: 15 * 60 * 1000, // Languages don't change often
   });
 
-  const locations = locationsData?.results || [];
   const languages = languagesData?.results || [];
 
   const createMutation = useMutation({

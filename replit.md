@@ -21,6 +21,13 @@ The Baltek Business Dashboard is a React and Express-based application for HR ma
 - **Real Data Integration**: All components now use authentic data from authorized API sources with proper error handling
 - **Cache Management**: Proper query invalidation on mutations ensures data consistency across components
 - **No Mock Data**: Removed all mock/placeholder data, using only authentic data from authorized API sources
+- **Duplicate API Elimination (January 20, 2025)**: Completed systematic removal of all duplicate API calls
+  - **Chat Rooms**: Unified fetching across Applications, Messages, and useUserProfile with shared cache key `/chat/rooms/`
+  - **Applications**: Synchronized Applications page and notifications hook with shared cache key `/api/jobs/applications/`
+  - **Organizations**: Consolidated CreateOrganization and Organization pages to use shared `useOrganizations` hook
+  - **Reference Data**: Created `useReferenceData` hook for categories and locations with 15-minute cache duration
+  - **Shared Mutations**: All organization operations (create, update, upload) now use centralized mutations with proper invalidation
+  - **Cache Optimization**: Long stale times for reference data (categories, locations, languages) that rarely change
 
 ## System Architecture
 

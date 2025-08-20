@@ -10,14 +10,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Building2, Upload, X, Sparkles, Users, Target, Zap, Loader2, Globe, Mail, Phone, MapPin, Tag, ArrowRight, ArrowLeft, CheckCircle } from "lucide-react";
 import { apiService } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
+import { useOrganizations } from "@/hooks/useOrganizations";
+import { useReferenceData } from "@/hooks/useReferencedData";
 import { useToast } from "@/hooks/use-toast";
 import type { Category, Location, PaginatedResponse } from "@/types";
 
 export default function CreateOrganization() {
   const [, setLocation] = useLocation();
-  const { organizations } = useAuth();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const { organizations, createOrganization, uploadFile } = useOrganizations();
   
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,51 +38,10 @@ export default function CreateOrganization() {
 
   const MAX_ORGANIZATIONS = 10;
 
-  // Upload file mutation
-  const uploadFileMutation = useMutation({
-    mutationFn: (formData: FormData) =>
-      apiService.request<{ url: string }>('/upload/', {
-        method: 'POST',
-        body: formData,
-        headers: {}, // Let browser set Content-Type with boundary
-      }),
-  });
 
-  // Create organization mutation
-  const createOrganizationMutation = useMutation({
-    mutationFn: (organizationData: any) =>
-      apiService.request('/organizations/', {
-        method: 'POST',
-        body: JSON.stringify(organizationData),
-      }),
-    onSuccess: () => {
-      // Invalidate organizations query to refresh data
-      queryClient.invalidateQueries({ queryKey: ['/api/organizations/', 'owned'] });
-      toast({
-        title: "Organization created",
-        description: "Your organization has been created successfully",
-      });
-      setLocation('/');
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to create organization",
-        variant: "destructive",
-      });
-    },
-  });
 
-  // Fetch categories
-  const { data: categories = [] } = useQuery<Category[]>({
-    queryKey: ['/api/categories/'],
-  });
-
-  // Fetch locations
-  const { data: locationsResponse } = useQuery<PaginatedResponse<Location>>({
-    queryKey: ['/api/locations/'],
-  });
-  const locations = locationsResponse?.results || [];
+  // Use shared reference data to avoid duplication
+  const { categories, locations, isLoading: isLoadingRefData } = useReferenceData();
 
   // Check if user has reached maximum organizations
   if (organizations.length >= MAX_ORGANIZATIONS) {
@@ -211,7 +171,7 @@ export default function CreateOrganization() {
         logoFormData.append('file', logoFile);
 
         try {
-          const uploadResponse = await uploadFileMutation.mutateAsync(logoFormData);
+          const uploadResponse = await uploadFile.mutateAsync(logoFormData);
           logoUrl = uploadResponse.url;
         } catch (error) {
           console.error('Logo upload failed:', error);
@@ -233,7 +193,13 @@ export default function CreateOrganization() {
         ...(logoUrl && { logo: logoUrl })
       };
 
-      await createOrganizationMutation.mutateAsync(organizationData);
+      await createOrganization.mutateAsync(organizationData);
+      
+      toast({
+        title: "Organization created",
+        description: "Your organization has been created successfully",
+      });
+      setLocation('/');
       
     } catch (error: any) {
       console.error('Error creating organization:', error);

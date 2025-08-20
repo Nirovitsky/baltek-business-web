@@ -18,10 +18,11 @@ export function useUserProfile(userId?: string) {
     enabled: !!userId,
   });
 
-  // Fetch chat rooms to check for existing conversations
+  // Use shared rooms query with same key as other components to avoid duplication
   const { data: roomsData } = useQuery({
-    queryKey: ['/chat/rooms/'],
+    queryKey: ["/chat/rooms/"],
     queryFn: () => apiService.request<PaginatedResponse<Room>>('/chat/rooms/'),
+    staleTime: 2 * 60 * 1000, // Keep data fresh for 2 minutes
   });
 
   // Create chat room mutation

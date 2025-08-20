@@ -54,9 +54,9 @@ export function useNotifications() {
     };
   });
 
-  // Fetch recent job applications with improved caching
+  // Use shared applications query with same key as Applications page to avoid duplication
   const { data: applications = [] } = useQuery({
-    queryKey: ["/api/jobs/applications/"],
+    queryKey: ['/api/jobs/applications/'], // Use same key as Applications page
     enabled: localPreferences.new_applications,
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
     gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
@@ -65,9 +65,10 @@ export function useNotifications() {
     refetchInterval: 2 * 60 * 1000, // Check every 2 minutes instead of 30 seconds
   });
 
-  // Fetch recent chat messages with improved caching
+  // Use shared messages query - only fetch for notifications, not duplicating Messages page queries
   const { data: messagesData } = useQuery({
-    queryKey: ["/api/chat/messages/"],
+    queryKey: ["/api/chat/messages/"], // Different key to avoid conflict with room-specific queries
+    queryFn: () => apiService.request<PaginatedResponse<any>>('/chat/messages/'),
     enabled: localPreferences.new_messages,
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
     gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes

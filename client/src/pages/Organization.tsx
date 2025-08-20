@@ -14,6 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { useOrganizations } from "@/hooks/useOrganizations";
 import { apiService } from "@/lib/api";
 import { Building2, Globe, MapPin, Upload, X } from "lucide-react";
 import { z } from "zod";
@@ -43,16 +44,7 @@ export default function Organization() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { selectedOrganization } = useAuth();
-
-  // Upload file mutation
-  const uploadFileMutation = useMutation({
-    mutationFn: (formData: FormData) =>
-      apiService.request<{ url: string }>('/upload/', {
-        method: 'POST',
-        body: formData,
-        headers: {}, // Let browser set Content-Type with boundary
-      }),
-  });
+  const { updateOrganization, uploadFile } = useOrganizations();
 
 
 
@@ -88,39 +80,33 @@ export default function Organization() {
     }
   }, [selectedOrganization, form]);
 
-  const updateMutation = useMutation({
-    mutationFn: (data: OrganizationUpdate) => {
-      if (!selectedOrganization) {
-        throw new Error('No organization selected');
-      }
-      return apiService.request<Organization>(`/organizations/${selectedOrganization.id}/`, {
-        method: 'PATCH',
-        body: JSON.stringify(data),
+
+
+  const onSubmit = async (data: OrganizationUpdate) => {
+    if (!selectedOrganization) return;
+    
+    try {
+      const updatedOrg = await updateOrganization.mutateAsync({ 
+        id: selectedOrganization.id, 
+        data 
       });
-    },
-    onSuccess: (updatedOrg) => {
-      // Invalidate organizations query to refresh data
-      queryClient.invalidateQueries({ queryKey: ['/api/organizations/', 'owned'] });
+      
       // Update the organization in the auth store
       const { updateSelectedOrganization } = useAuth.getState();
       updateSelectedOrganization(updatedOrg);
+      
       toast({
         title: "Success",
         description: "Organization updated successfully",
       });
       setIsEditing(false);
-    },
-    onError: (error: any) => {
+    } catch (error: any) {
       toast({
         title: "Error",
         description: error.message || "Failed to update organization",
         variant: "destructive",
       });
-    },
-  });
-
-  const onSubmit = (data: OrganizationUpdate) => {
-    updateMutation.mutate(data);
+    }
   };
 
   const handleCancel = () => {
@@ -182,43 +168,17 @@ export default function Organization() {
 
     setIsUploading(true);
     try {
-      // First upload the file to get the URL
+      // Upload file using shared hook
       const formData = new FormData();
-      formData.append('path', logoFile);
-
-      const uploadResponse = await fetch('/api/files/', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-        },
-        body: formData,
-      });
-
-      if (!uploadResponse.ok) {
-        const errorData = await uploadResponse.json().catch(() => ({}));
-        throw new Error(errorData.path?.[0] || errorData.detail || 'Failed to upload file');
-      }
-
-      const uploadResult = await uploadResponse.json();
+      formData.append('file', logoFile);
       
-      // Update organization with the new logo URL using FormData
-      const logoFormData = new FormData();
-      logoFormData.append('logo', uploadResult.path);
+      const uploadResult = await uploadFile.mutateAsync(formData);
       
-      const response = await fetch(`/api/organizations/${selectedOrganization.id}/`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-        },
-        body: logoFormData,
+      // Update organization with the new logo URL
+      const updatedOrg = await updateOrganization.mutateAsync({
+        id: selectedOrganization.id,
+        data: { logo: uploadResult.url }
       });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.logo?.[0] || errorData.detail || 'Failed to update organization logo');
-      }
-
-      const updatedOrg = await response.json();
 
       // Update form and auth state
       form.setValue('logo', updatedOrg.logo || '');
