@@ -93,7 +93,17 @@ export default function Notifications() {
             
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground">
-                {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
+                {(() => {
+                  try {
+                    const date = new Date(notification.created_at);
+                    if (isNaN(date.getTime())) {
+                      return 'Recently';
+                    }
+                    return formatDistanceToNow(date, { addSuffix: true });
+                  } catch {
+                    return 'Recently';
+                  }
+                })()}
               </span>
               
               <div className="flex items-center space-x-2">
