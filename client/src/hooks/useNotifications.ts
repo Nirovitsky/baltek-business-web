@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { apiService } from "@/lib/api";
-import type { Notification, NotificationPreferences, JobApplication, Message, PaginatedResponse } from "@/types";
+import type { Notification, NotificationPreferences, PaginatedResponse } from "@/types";
 
 // Check if browser supports notifications
 const isNotificationSupported = () => {
@@ -27,10 +27,8 @@ export function useNotifications() {
     isNotificationSupported() ? Notification.permission : "denied"
   );
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   
-  // Track processed items to avoid duplicate notifications
-  const [processedApplications, setProcessedApplications] = useState<Set<number>>(new Set());
-  const [processedMessages, setProcessedMessages] = useState<Set<number>>(new Set());
 
   // Use local storage for preferences since API endpoint doesn't exist
   const [localPreferences, setLocalPreferences] = useState<NotificationPreferences>(() => {
@@ -55,10 +53,10 @@ export function useNotifications() {
     };
   });
 
-  // Use shared applications query with same key as Applications page to avoid duplication
-  const { data: applications = [] } = useQuery({
-    queryKey: ['/api/jobs/applications/'], // Use same key as Applications page
-    enabled: localPreferences.new_applications,
+  // Fetch notifications from the actual API endpoint
+  const { data: notificationsData, isLoading: notificationsLoading } = useQuery({
+    queryKey: ['/api/notifications/'],
+    queryFn: () => apiService.request<PaginatedResponse<Notification>>('/api/notifications/'),
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
     gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
     refetchOnWindowFocus: false, // Don't refetch on window focus
@@ -66,81 +64,9 @@ export function useNotifications() {
     refetchInterval: 2 * 60 * 1000, // Check every 2 minutes instead of 30 seconds
   });
 
-  // Use shared messages query - only fetch for notifications, not duplicating Messages page queries
-  const { data: messagesData } = useQuery({
-    queryKey: ["/api/chat/messages/"], // Different key to avoid conflict with room-specific queries
-    queryFn: () => apiService.request<PaginatedResponse<any>>('/chat/messages/'),
-    enabled: localPreferences.new_messages,
-    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
-    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
-    refetchOnWindowFocus: false, // Don't refetch on window focus
-    refetchOnMount: false, // Don't refetch on component mount if data exists
-    refetchInterval: 2 * 60 * 1000, // Check every 2 minutes instead of 30 seconds
-  });
+  // Extract notifications from API response
+  const notifications = (notificationsData as any)?.results || [];
 
-  // Extract messages from paginated response
-  const messages = (messagesData as any)?.results || [];
-
-  // Generate notifications from real data
-  const [generatedNotifications, setGeneratedNotifications] = useState<Notification[]>([]);
-
-  // Process new applications and generate notifications
-  useEffect(() => {
-    if (!localPreferences.new_applications || !Array.isArray(applications)) return;
-
-    const newApplications = (applications as any[]).filter((app: any) => {
-      // Only show applications from the last 24 hours
-      const applicationTime = new Date(app.date_created || app.created_at).getTime();
-      const twentyFourHoursAgo = Date.now() - 24 * 60 * 60 * 1000;
-      
-      return applicationTime > twentyFourHoursAgo && !processedApplications.has(app.id);
-    });
-
-    newApplications.forEach((app: any) => {
-      const notification: Notification = {
-        id: Date.now() + app.id, // Generate unique ID
-        type: "new_application",
-        title: "New Job Application",
-        message: `New application received for ${app.job?.title || 'a job position'}`,
-        read: false,
-        is_read: false,
-        action_url: `/applications`,
-        created_at: app.date_created || app.created_at,
-      };
-
-      setGeneratedNotifications(prev => [notification, ...prev]);
-      setProcessedApplications(prev => new Set([...Array.from(prev), app.id]));
-    });
-  }, [applications, localPreferences.new_applications, processedApplications]);
-
-  // Process new messages and generate notifications
-  useEffect(() => {
-    if (!localPreferences.new_messages || !Array.isArray(messages)) return;
-
-    const newMessages = (messages as any[]).filter((msg: any) => {
-      // Only show messages from the last hour
-      const messageTime = new Date(msg.date_created).getTime();
-      const oneHourAgo = Date.now() - 60 * 60 * 1000;
-      
-      return messageTime > oneHourAgo && !processedMessages.has(msg.id);
-    });
-
-    newMessages.forEach((msg: any) => {
-      const notification: Notification = {
-        id: Date.now() + msg.id + 1000000, // Generate unique ID
-        type: "new_message",
-        title: "New Message",
-        message: `New message from ${msg.owner?.first_name || 'a user'}`,
-        read: false,
-        is_read: false,
-        action_url: `/messages?room=${msg.room}`,
-        created_at: msg.date_created,
-      };
-
-      setGeneratedNotifications(prev => [notification, ...prev]);
-      setProcessedMessages(prev => new Set([...Array.from(prev), msg.id]));
-    });
-  }, [messages, localPreferences.new_messages, processedMessages]);
 
   // Update notification preferences using local storage
   const updatePreferencesMutation = useMutation({
@@ -243,9 +169,12 @@ export function useNotifications() {
     [localPreferences, toast]
   );
 
-  // Process new notifications
+
+  // Process new notifications for browser/toast alerts
   useEffect(() => {
-    const unreadNotifications = generatedNotifications.filter((n: Notification) => !n.read);
+    if (!Array.isArray(notifications)) return;
+
+    const unreadNotifications = notifications.filter((n: Notification) => !n.read && !n.is_read);
     
     // Only show notifications for very recent ones (last 5 minutes)
     const recentNotifications = unreadNotifications.filter((n: Notification) => {
@@ -262,7 +191,7 @@ export function useNotifications() {
       showToastNotification(notification);
       showBrowserNotification(notification);
     });
-  }, [generatedNotifications, showToastNotification, showBrowserNotification]);
+  }, [notifications, showToastNotification, showBrowserNotification]);
 
   // Monitor permission changes
   useEffect(() => {
@@ -276,26 +205,38 @@ export function useNotifications() {
     return () => clearInterval(interval);
   }, []);
 
-  const unreadCount = generatedNotifications.filter((n: Notification) => !n.read).length;
+  const unreadCount = notifications.filter((n: Notification) => !n.read && !n.is_read).length;
 
-  // Mutations for notification actions using local storage
+  // Mutations for notification actions using the API
   const markAsReadMutation = useMutation({
     mutationFn: async (notificationId: number) => {
-      setGeneratedNotifications(prev => 
-        prev.map(n => n.id === notificationId ? { ...n, read: true, is_read: true } : n)
-      );
-      return Promise.resolve();
+      return apiService.request(`/api/notifications/${notificationId}/`, {
+        method: 'PATCH',
+        body: JSON.stringify({ is_read: true }),
+        headers: { 'Content-Type': 'application/json' }
+      });
+    },
+    onSuccess: () => {
+      // Invalidate notifications to refetch updated data
+      queryClient.invalidateQueries({ queryKey: ['/api/notifications/'] });
     },
   });
 
   const markAllAsReadMutation = useMutation({
     mutationFn: async () => {
-      setGeneratedNotifications(prev => 
-        prev.map(n => ({ ...n, read: true, is_read: true }))
+      // If there's a bulk mark all read endpoint, use it, otherwise mark individually
+      const unreadNotifications = notifications.filter((n: Notification) => !n.read && !n.is_read);
+      const promises = unreadNotifications.map((notification: Notification) => 
+        apiService.request(`/api/notifications/${notification.id}/`, {
+          method: 'PATCH',
+          body: JSON.stringify({ is_read: true }),
+          headers: { 'Content-Type': 'application/json' }
+        })
       );
-      return Promise.resolve();
+      return Promise.all(promises);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/notifications/'] });
       toast({
         title: "All notifications marked as read",
       });
@@ -304,20 +245,22 @@ export function useNotifications() {
 
   const deleteNotificationMutation = useMutation({
     mutationFn: async (notificationId: number) => {
-      setGeneratedNotifications(prev => 
-        prev.filter(n => n.id !== notificationId)
-      );
-      return Promise.resolve();
+      return apiService.request(`/api/notifications/${notificationId}/`, {
+        method: 'DELETE'
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/notifications/'] });
     },
   });
 
   return {
-    notifications: generatedNotifications,
+    notifications,
     preferences: localPreferences,
     permission,
     unreadCount,
     isSupported: isNotificationSupported(),
-    isLoading: false,
+    isLoading: notificationsLoading,
     requestPermission,
     updatePreferences: updatePreferencesMutation.mutate,
     isUpdatingPreferences: updatePreferencesMutation.isPending,
