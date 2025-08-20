@@ -510,15 +510,15 @@ export default function Organization() {
                         type="button" 
                         variant="outline"
                         onClick={handleCancel}
-                        disabled={updateMutation.isPending}
+                        disabled={updateOrganization.isPending}
                       >
                         Cancel
                       </Button>
                       <Button 
                         type="submit" 
-                        disabled={updateMutation.isPending}
+                        disabled={updateOrganization.isPending}
                       >
-                        {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
+                        {updateOrganization.isPending ? 'Saving...' : 'Save Changes'}
                       </Button>
                     </div>
                   </form>
