@@ -378,9 +378,14 @@ export default function Messages() {
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0">
                         <Avatar className="h-10 w-10">
-                          <AvatarImage src={room.content_object?.owner?.avatar} />
-                          <AvatarFallback>
-                            <User className="h-5 w-5" />
+                          <AvatarImage 
+                            src={room.content_object?.owner?.avatar} 
+                            alt={`${room.content_object?.owner?.first_name} ${room.content_object?.owner?.last_name}`}
+                          />
+                          <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300">
+                            {room.content_object?.owner?.first_name?.[0]?.toUpperCase() || 
+                             room.content_object?.owner?.last_name?.[0]?.toUpperCase() || 
+                             <User className="h-5 w-5" />}
                           </AvatarFallback>
                         </Avatar>
                       </div>
@@ -433,9 +438,14 @@ export default function Messages() {
                 <div className="border-b bg-white dark:bg-background p-4">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10">
-                      <AvatarImage src={selectedConversationData.content_object?.owner?.avatar} />
-                      <AvatarFallback>
-                        <User className="h-5 w-5" />
+                      <AvatarImage 
+                        src={selectedConversationData.content_object?.owner?.avatar} 
+                        alt={`${selectedConversationData.content_object?.owner?.first_name} ${selectedConversationData.content_object?.owner?.last_name}`}
+                      />
+                      <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300">
+                        {selectedConversationData.content_object?.owner?.first_name?.[0]?.toUpperCase() || 
+                         selectedConversationData.content_object?.owner?.last_name?.[0]?.toUpperCase() || 
+                         <User className="h-5 w-5" />}
                       </AvatarFallback>
                     </Avatar>
                     <div>
@@ -444,7 +454,7 @@ export default function Messages() {
                         {selectedConversationData.content_object?.owner?.last_name}
                       </p>
                       <p className="text-sm text-gray-500">
-                        {selectedConversationData.content_object?.job?.title}
+                        Applied for {selectedConversationData.content_object?.job?.title}
                       </p>
                     </div>
                   </div>
