@@ -70,8 +70,8 @@ export default function RecentApplications() {
   // for jobs that belong to the selected organization
   const filteredApplications = applications.filter(app => {
     // If the application has job organization info, check it matches
-    if (app.job?.organization && selectedOrganization) {
-      return app.job.organization.id === selectedOrganization.id;
+    if (typeof app.job === 'object' && app.job?.organization && selectedOrganization) {
+      return (app.job.organization as any).id === selectedOrganization.id;
     }
     // Otherwise rely on backend filtering
     return true;
@@ -177,10 +177,10 @@ export default function RecentApplications() {
                       : `Candidate #${application.id}`}
                   </h4>
                   <p className="text-sm text-muted-foreground">
-                    Applied for {application.job?.title || `Job #${application.job}`}
+                    Applied for {typeof application.job === 'object' ? application.job.title : `Job #${application.job}`}
                   </p>
                   <p className="text-xs text-gray-400">
-                    Applied on {formatApplicationDate(application.date_applied || application.created_at || '')}
+                    Applied on {formatApplicationDate((application as any).date_applied || (application as any).created_at || '')}
                   </p>
                 </div>
                 <div className="flex items-center space-x-2">

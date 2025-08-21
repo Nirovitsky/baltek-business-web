@@ -94,7 +94,7 @@ export default function ApplicationDetailsModal({
                   : `Candidate #${application.id}`}
               </h2>
               <p className="text-sm text-muted-foreground">
-                Application for {application.job?.title || `Job #${application.job}`}
+                Application for {typeof application.job === 'object' ? application.job.title : `Job #${application.job}`}
               </p>
             </div>
           </DialogTitle>
@@ -113,15 +113,15 @@ export default function ApplicationDetailsModal({
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-foreground">Contact Information</h3>
                 <div className="space-y-2">
-                  {detailedApplication?.owner?.profession && (
+                  {(detailedApplication?.owner as any)?.profession && (
                     <div className="flex items-center space-x-2">
                       <Briefcase className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm">{detailedApplication.owner.profession}</span>
+                      <span className="text-sm">{(detailedApplication.owner as any).profession}</span>
                     </div>
                   )}
                   <div className="flex items-center space-x-2">
                     <MapPin className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm">{application.job?.location?.name || 'Location not specified'}</span>
+                    <span className="text-sm">{typeof application.job === 'object' && application.job?.location ? (typeof application.job.location === 'object' ? (application.job.location as any).name : application.job.location) : 'Location not specified'}</span>
                   </div>
                 </div>
               </div>
@@ -134,7 +134,7 @@ export default function ApplicationDetailsModal({
                   </Badge>
                   <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                     <Calendar className="w-4 h-4" />
-                    <span>Applied on {formatDate(application.date_applied || application.created_at || '')}</span>
+                    <span>Applied on {formatDate((application as any).date_applied || (application as any).created_at || '')}</span>
                   </div>
                 </div>
               </div>
