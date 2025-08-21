@@ -39,6 +39,7 @@ export default function Messages() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [sendingMessage, setSendingMessage] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   // WebSocket connection for real-time messaging
   const {
@@ -422,7 +423,7 @@ export default function Messages() {
                     </div>
                     <input
                       type="file"
-                      ref={useRef<HTMLInputElement>(null)}
+                      ref={fileInputRef}
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) handleFileSelect(file);
@@ -436,8 +437,7 @@ export default function Messages() {
                       variant="ghost"
                       disabled={sendingMessage || !connected}
                       onClick={() => {
-                        const input = document.querySelector('input[type="file"]') as HTMLInputElement;
-                        input?.click();
+                        fileInputRef.current?.click();
                       }}
                     >
                       <Paperclip className="h-4 w-4" />
