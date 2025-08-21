@@ -25,7 +25,8 @@ import {
   Search, 
   User, 
   Loader2,
-  Paperclip 
+  Paperclip,
+  Check
 } from "lucide-react";
 import type { ChatMessage, ChatRoom, MessageAttachment } from "@/types";
 
@@ -40,6 +41,7 @@ export default function Messages() {
   const [sendingMessage, setSendingMessage] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [uploadingFile, setUploadingFile] = useState(false);
+  const [uploadedAttachment, setUploadedAttachment] = useState<{id: number, name: string, url: string} | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -120,39 +122,13 @@ export default function Messages() {
   // Handle sending messages
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if ((!messageInput.trim() && !selectedFile) || !selectedConversation) return;
+    if ((!messageInput.trim() && !uploadedAttachment) || !selectedConversation) return;
 
     setSendingMessage(true);
     
     try {
-      let attachmentId: number | undefined;
-      
-      // Upload file first if there is one
-      if (selectedFile) {
-        setUploadingFile(true);
-        setUploadProgress(0);
-        
-        const upload = uploadFile(selectedFile, (progress) => {
-          setUploadProgress(progress);
-        });
-        
-        try {
-          const result = await upload.promise;
-          attachmentId = result.id;
-          setUploadProgress(100);
-        } catch (uploadError) {
-          console.error("File upload failed:", uploadError);
-          toast({
-            title: "File upload failed",
-            description: "Could not upload your file. Please try again.",
-            variant: "destructive",
-          });
-          throw uploadError; // Re-throw to prevent message sending
-        } finally {
-          setUploadingFile(false);
-          setUploadProgress(0);
-        }
-      }
+      // Use the already uploaded attachment if available
+      const attachmentId = uploadedAttachment?.id;
       
       // Send message via WebSocket
       const success = sendMessage(
@@ -164,6 +140,7 @@ export default function Messages() {
       if (success) {
         setMessageInput("");
         setSelectedFile(null);
+        setUploadedAttachment(null);
         setTimeout(scrollToBottom, 100);
       } else {
         toast({
@@ -184,14 +161,55 @@ export default function Messages() {
     }
   };
 
-  // Handle file selection
-  const handleFileSelect = (file: File) => {
+  // Handle file selection and immediate upload
+  const handleFileSelect = async (file: File) => {
     console.log('File selected:', file.name, 'Size:', file.size, 'Type:', file.type);
     setSelectedFile(file);
+    setUploadedAttachment(null);
+    
+    // Start uploading immediately
+    setUploadingFile(true);
+    setUploadProgress(0);
+    
+    try {
+      const upload = uploadFile(file, (progress) => {
+        setUploadProgress(progress);
+      });
+      
+      const result = await upload.promise;
+      console.log('Upload successful:', result);
+      
+      setUploadedAttachment({
+        id: result.id,
+        name: file.name,
+        url: result.path || result.file_url || result.url
+      });
+      setUploadProgress(100);
+      
+      toast({
+        title: "File uploaded",
+        description: `${file.name} is ready to send`,
+      });
+      
+    } catch (uploadError) {
+      console.error("File upload failed:", uploadError);
+      toast({
+        title: "Upload failed",
+        description: "Could not upload your file. Please try again.",
+        variant: "destructive",
+      });
+      // Clear the selected file on upload failure
+      setSelectedFile(null);
+    } finally {
+      setUploadingFile(false);
+      setTimeout(() => setUploadProgress(0), 1000); // Clear progress after a delay
+    }
   };
 
   const handleRemoveFile = () => {
     setSelectedFile(null);
+    setUploadedAttachment(null);
+    setUploadProgress(0);
   };
 
   // Handle room selection
@@ -199,6 +217,7 @@ export default function Messages() {
     setSelectedConversation(room.id);
     setMessageInput("");
     setSelectedFile(null);
+    setUploadedAttachment(null);
     
     // Join room via WebSocket
     joinRoom(room.id);
@@ -471,6 +490,14 @@ export default function Messages() {
                         </div>
                       </div>
                     )}
+                    {uploadedAttachment && !uploadingFile && (
+                      <div className="mt-2 p-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                        <div className="flex items-center gap-2 text-sm text-green-700 dark:text-green-300">
+                          <Check className="h-4 w-4" />
+                          <span>File uploaded and ready to send</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
                 
@@ -508,10 +535,10 @@ export default function Messages() {
                     </Button>
                     <Button
                       type="submit"
-                      disabled={(!messageInput.trim() && !selectedFile) || sendingMessage || uploadingFile || !connected}
+                      disabled={(!messageInput.trim() && !uploadedAttachment) || sendingMessage || uploadingFile || !connected}
                       title={!connected ? "Not connected" : uploadingFile ? "Uploading file..." : "Send message"}
                     >
-                      {sendingMessage || uploadingFile ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                      {sendingMessage ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                     </Button>
                   </div>
                 </form>
