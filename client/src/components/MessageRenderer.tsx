@@ -16,18 +16,38 @@ export default function MessageRenderer({ message, currentUser, onRetry }: Messa
   
   // Format timestamp
   const formatTime = (timestamp: number) => {
-    const date = new Date(timestamp * 1000); // Convert from Unix timestamp
-    const now = new Date();
-    const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+    if (!timestamp) return '';
     
-    if (diffInDays === 0) {
-      return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    } else if (diffInDays === 1) {
-      return "Yesterday";
-    } else if (diffInDays < 7) {
-      return date.toLocaleDateString([], { weekday: "short" });
-    } else {
-      return date.toLocaleDateString([], { month: "short", day: "numeric" });
+    try {
+      const date = new Date(timestamp * 1000); // Convert from Unix timestamp
+      
+      if (isNaN(date.getTime())) return '';
+      
+      // Debug logging - remove this later
+      console.log('MessageRenderer formatTime:', { 
+        timestamp, 
+        dateString: date.toISOString(),
+        formatted: date.toLocaleDateString([], { month: "short", day: "numeric" })
+      });
+      
+      const now = new Date();
+      const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+      
+      // For messages in the future (like your timestamps), treat them as today
+      if (diffInDays < 0) {
+        return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      } else if (diffInDays === 0) {
+        return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      } else if (diffInDays === 1) {
+        return "Yesterday";
+      } else if (diffInDays < 7) {
+        return date.toLocaleDateString([], { weekday: "short" });
+      } else {
+        return date.toLocaleDateString([], { month: "short", day: "numeric" });
+      }
+    } catch (error) {
+      console.error('MessageRenderer formatTime error:', error, timestamp);
+      return '';
     }
   };
 

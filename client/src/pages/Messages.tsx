@@ -96,10 +96,20 @@ export default function Messages() {
       
       if (isNaN(date.getTime())) return '';
       
+      // Debug logging - remove this later
+      console.log('Messages formatTime:', { 
+        timestamp, 
+        dateString: date.toISOString(),
+        formatted: date.toLocaleDateString([], { month: "short", day: "numeric" })
+      });
+      
       const now = new Date();
       const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
 
-      if (diffInDays === 0) {
+      // For future dates, treat as today to show time
+      if (diffInDays < 0) {
+        return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      } else if (diffInDays === 0) {
         return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
       } else if (diffInDays === 1) {
         return "Yesterday";
@@ -108,7 +118,8 @@ export default function Messages() {
       } else {
         return date.toLocaleDateString([], { month: "short", day: "numeric" });
       }
-    } catch {
+    } catch (error) {
+      console.error('Messages formatTime error:', error, timestamp);
       return '';
     }
   };
