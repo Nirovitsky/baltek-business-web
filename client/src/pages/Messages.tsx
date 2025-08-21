@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import TopBar from "@/components/layout/TopBar";
 import MessageRenderer from "@/components/MessageRenderer";
 import { useChatRooms, useChatMessages, useUploadFile } from "@/hooks/useChatHooks";
@@ -379,7 +379,7 @@ export default function Messages() {
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0">
                         {room.content_object?.owner?.id ? (
-                          <Link href={`/user/${room.content_object.owner.id}`}>
+                          <Link to={`/user/${room.content_object.owner.id}`}>
                             <Avatar className="h-10 w-10 hover:ring-2 hover:ring-blue-500 transition-all cursor-pointer">
                               <AvatarImage 
                                 src={room.content_object?.owner?.avatar} 
@@ -455,7 +455,7 @@ export default function Messages() {
                 <div className="border-b bg-white dark:bg-background p-4">
                   <div className="flex items-center gap-3">
                     {selectedConversationData.content_object?.owner?.id ? (
-                      <Link href={`/user/${selectedConversationData.content_object.owner.id}`}>
+                      <Link to={`/user/${selectedConversationData.content_object.owner.id}`}>
                         <Avatar className="h-10 w-10 hover:ring-2 hover:ring-blue-500 transition-all cursor-pointer">
                           <AvatarImage 
                             src={selectedConversationData.content_object?.owner?.avatar} 

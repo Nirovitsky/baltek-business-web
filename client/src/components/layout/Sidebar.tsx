@@ -1,4 +1,4 @@
-import { Link, useLocation } from "wouter";
+import { Link, useLocation } from "react-router-dom";
 import {
   BarChart3,
   Briefcase,
@@ -57,7 +57,7 @@ const navigationItems = [
 ];
 
 export default function Sidebar() {
-  const [location] = useLocation();
+  const location = useLocation();
   const { logout, selectedOrganization, user } = useAuth();
   const { unreadCount } = useNotifications(false); // Don't fetch notifications in sidebar
 
@@ -71,11 +71,11 @@ export default function Sidebar() {
       {/* Navigation Menu */}
       <nav className="flex-1 px-4 py-6 space-y-2">
         {navigationItems.map((item) => {
-          const isActive = location === item.href || (item.href !== "/" && location.startsWith(item.href));
+          const isActive = location.pathname === item.href || (item.href !== "/" && location.pathname.startsWith(item.href));
           const Icon = item.icon;
 
           return (
-            <Link key={item.href} href={item.href}>
+            <Link key={item.href} to={item.href}>
               <div
                 className={cn(
                   "flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg transition-colors cursor-pointer",

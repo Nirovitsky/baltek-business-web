@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'wouter';
+import { Link } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -180,7 +180,7 @@ export default function MessageRenderer({ message, currentUser, onRetry }: Messa
   return (
     <div className={`flex gap-3 mb-4 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
       {!isOwn && message.senderInfo?.id && (
-        <Link href={`/user/${message.senderInfo.id}`}>
+        <Link to={`/user/${message.senderInfo.id}`}>
           <Avatar className="h-8 w-8 flex-shrink-0 hover:ring-2 hover:ring-blue-500 transition-all cursor-pointer">
             <AvatarImage 
               src={message.senderInfo?.avatar} 

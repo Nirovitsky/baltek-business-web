@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import TopBar from "@/components/layout/TopBar";
 
@@ -19,7 +19,7 @@ export default function Jobs() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const { selectedOrganization } = useAuth();
   const queryClient = useQueryClient();
@@ -61,15 +61,15 @@ export default function Jobs() {
   });
 
   const handleCreateJob = () => {
-    setLocation('/jobs/create');
+    navigate('/jobs/create');
   };
 
   const handleEditJob = (job: Job) => {
-    setLocation(`/jobs/edit/${job.id}`);
+    navigate(`/jobs/edit/${job.id}`);
   };
 
   const handleViewJob = (jobId: number) => {
-    setLocation(`/jobs/${jobId}`);
+    navigate(`/jobs/${jobId}`);
   };
 
   const handleDeleteJob = (jobId: number) => {

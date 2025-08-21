@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useLocation, useParams } from "wouter";
+import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Briefcase, MapPin, Users, Calendar, DollarSign, GraduationCap, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,7 +22,7 @@ export default function CreateJob() {
   const { toast } = useToast();
   const { selectedOrganization } = useAuth();
   const queryClient = useQueryClient();
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
   const { id } = useParams<{ id?: string }>();
   
   const isEditing = Boolean(id);

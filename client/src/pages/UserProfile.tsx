@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams, Link } from 'wouter';
+import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -43,7 +43,7 @@ export default function UserProfile() {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-background">
         <div className="max-w-4xl mx-auto p-6">
-          <Link href="/messages">
+          <Link to="/messages">
             <Button variant="ghost" className="mb-6">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Messages
@@ -75,7 +75,7 @@ export default function UserProfile() {
     <div className="min-h-screen bg-gray-50 dark:bg-background">
       <div className="max-w-4xl mx-auto p-6">
         {/* Header */}
-        <Link href="/messages">
+        <Link to="/messages">
           <Button variant="ghost" className="mb-6">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Messages

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import TopBar from "@/components/layout/TopBar";
 import EditOrganizationModal from "@/components/modals/EditOrganizationModal";
 
@@ -113,7 +113,7 @@ export default function Organization() {
                 <p className="text-muted-foreground dark:text-muted-foreground/60 mb-4">
                   Please create an organization or select an existing one from the sidebar.
                 </p>
-                <Link href="/create-organization">
+                <Link to="/create-organization">
                   <Button>
                     <Building2 className="h-4 w-4 mr-2" />
                     Create Organization
@@ -164,7 +164,7 @@ export default function Organization() {
                     )}
                   </div>
                   <div className="flex gap-2">
-                    <Link href="/jobs">
+                    <Link to="/jobs">
                       <Button size="sm" variant="outline">
                         <Building2 className="h-3 w-3 mr-1.5" />
                         View Jobs

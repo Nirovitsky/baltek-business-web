@@ -1,4 +1,4 @@
-import { useParams, useLocation } from "wouter";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,7 +25,7 @@ import type { Job } from "@/types";
 
 export default function JobDetails() {
   const { id } = useParams<{ id: string }>();
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -72,7 +72,7 @@ export default function JobDetails() {
         title: "Success",
         description: "Job deleted successfully",
       });
-      setLocation('/jobs');
+      navigate('/jobs');
     },
     onError: (error: any) => {
       toast({
@@ -185,7 +185,7 @@ export default function JobDetails() {
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <p className="text-muted-foreground mb-4">The job posting has been removed or doesn't exist.</p>
-            <Button onClick={() => setLocation('/jobs')} className="bg-primary hover:bg-blue-700">
+            <Button onClick={() => navigate('/jobs')} className="bg-primary hover:bg-blue-700">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Jobs
             </Button>
@@ -204,7 +204,7 @@ export default function JobDetails() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setLocation('/jobs')}
+              onClick={() => navigate('/jobs')}
               className="text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -213,7 +213,7 @@ export default function JobDetails() {
             <div className="flex items-center space-x-3">
               <Button
                 variant="outline"
-                onClick={() => setLocation(`/jobs/edit/${job.id}`)}
+                onClick={() => navigate(`/jobs/edit/${job.id}`)}
                 className="text-primary border-primary hover:bg-primary hover:text-white"
               >
                 <Edit className="h-4 w-4 mr-2" />

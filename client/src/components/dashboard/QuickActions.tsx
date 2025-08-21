@@ -1,4 +1,4 @@
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, ClipboardList, MessageCircle } from "lucide-react";
 
@@ -11,10 +11,10 @@ export default function QuickActions({
   onReviewApplications, 
   onOpenMessages 
 }: QuickActionsProps) {
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
 
   const handleCreateJob = () => {
-    setLocation('/jobs/create');
+    navigate('/jobs/create');
   };
   const actions = [
     {

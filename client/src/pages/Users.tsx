@@ -1,4 +1,4 @@
-import { useRoute } from "wouter";
+import { useMatch } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +15,7 @@ import {
   ArrowLeft 
 } from "lucide-react";
 import { apiService } from "@/lib/api";
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 import TopBar from "@/components/layout/TopBar";
 
 interface UserProfile {
@@ -32,9 +32,9 @@ interface UserProfile {
 }
 
 export default function Users() {
-  const [match, params] = useRoute("/users/:id");
-  const [, setLocation] = useLocation();
-  const userId = params?.id;
+  const match = useMatch("/users/:id");
+  const navigate = useNavigate();
+  const userId = match?.params.id;
 
   const { data: user, isLoading, error } = useQuery({
     queryKey: ['/users/', userId],
@@ -49,7 +49,7 @@ export default function Users() {
         <main className="flex-1 overflow-y-auto p-6">
           <div className="text-center">
             <p className="text-muted-foreground">User not found</p>
-            <Button onClick={() => setLocation('/dashboard')} className="mt-4">
+            <Button onClick={() => navigate('/dashboard')} className="mt-4">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Dashboard
             </Button>
@@ -90,7 +90,7 @@ export default function Users() {
         <main className="flex-1 overflow-y-auto p-6">
           <div className="text-center">
             <p className="text-red-500">Error loading user profile</p>
-            <Button onClick={() => setLocation('/dashboard')} className="mt-4">
+            <Button onClick={() => navigate('/dashboard')} className="mt-4">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Dashboard
             </Button>
@@ -111,7 +111,7 @@ export default function Users() {
         <div className="max-w-4xl mx-auto space-y-6">
           <Button 
             variant="ghost" 
-            onClick={() => setLocation('/dashboard')}
+            onClick={() => navigate('/dashboard')}
             className="mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />

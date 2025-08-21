@@ -4,7 +4,7 @@ import { Code, TrendingUp, Palette } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { apiService } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 import type { Job, PaginatedResponse } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -20,7 +20,7 @@ interface RecentJobsProps {
 
 export default function RecentJobs({ onJobClick }: RecentJobsProps) {
   const { selectedOrganization } = useAuth();
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
   
   const { data, isLoading, error } = useQuery({
     queryKey: ['/jobs/', selectedOrganization?.id],
@@ -81,7 +81,7 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
         <CardHeader className="border-b border">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-foreground">Recent Job Postings</h3>
-            <Button variant="ghost" size="sm" onClick={() => setLocation('/jobs')}>View All</Button>
+            <Button variant="ghost" size="sm" onClick={() => navigate('/jobs')}>View All</Button>
           </div>
         </CardHeader>
         <CardContent className="p-6">
@@ -103,7 +103,7 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
       <CardHeader className="border-b border">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-foreground">Recent Job Postings</h3>
-          <Button variant="ghost" size="sm" onClick={() => setLocation('/jobs')}>View All</Button>
+          <Button variant="ghost" size="sm" onClick={() => navigate('/jobs')}>View All</Button>
         </div>
       </CardHeader>
       <CardContent className="p-6">

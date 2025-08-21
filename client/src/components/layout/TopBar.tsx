@@ -1,4 +1,4 @@
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -14,10 +14,10 @@ export default function TopBar({
   description, 
   showCreateButton = true 
 }: TopBarProps) {
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
 
   const handleCreateJob = () => {
-    setLocation('/jobs/create');
+    navigate('/jobs/create');
   };
   return (
     <header className="bg-background border-b border-border px-6 py-4">

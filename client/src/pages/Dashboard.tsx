@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import TopBar from "@/components/layout/TopBar";
 import StatsCard from "@/components/dashboard/StatsCard";
@@ -13,7 +13,7 @@ import { apiService } from "@/lib/api";
 import type { Job, JobApplication, PaginatedResponse } from "@/types";
 
 export default function Dashboard() {
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
   const [isJobDetailOpen, setIsJobDetailOpen] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState<number | null>(null);
   const { selectedOrganization } = useAuth();
@@ -56,11 +56,11 @@ export default function Dashboard() {
 
 
   const handleReviewApplications = () => {
-    setLocation('/applications');
+    navigate('/applications');
   };
 
   const handleOpenMessages = () => {
-    setLocation('/messages');
+    navigate('/messages');
   };
 
   const handleJobClick = (jobId: number) => {

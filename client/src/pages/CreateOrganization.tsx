@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import type { Category, Location, PaginatedResponse } from "@/types";
 
 export default function CreateOrganization() {
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const { organizations, createOrganization, uploadFile } = useOrganizations();
   
@@ -59,7 +59,7 @@ export default function CreateOrganization() {
                   You can only create up to {MAX_ORGANIZATIONS} organizations. Please delete an existing organization to create a new one.
                 </p>
               </div>
-              <Button onClick={() => setLocation('/')} className="w-full">
+              <Button onClick={() => navigate('/')} className="w-full">
                 Back to Dashboard
               </Button>
             </div>

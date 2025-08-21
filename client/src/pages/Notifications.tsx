@@ -22,10 +22,10 @@ import {
 } from "lucide-react";
 import { useNotifications } from "@/hooks/useNotifications";
 import { formatDistanceToNow } from "date-fns";
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 
 export default function Notifications() {
-  const [_, setLocation] = useLocation();
+  const navigate = useNavigate();
   const [filter, setFilter] = useState<'all' | 'unread' | 'read'>('all');
   const { 
     notifications, 

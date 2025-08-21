@@ -16,13 +16,13 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 export default function BusinessSwitcher() {
   const [open, setOpen] = useState(false);
   const { selectedOrganization, organizations, switchOrganization } = useAuth();
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
   const { toast } = useToast();
 
   const MAX_ORGANIZATIONS = 10;
@@ -47,7 +47,7 @@ export default function BusinessSwitcher() {
     // Use setTimeout to ensure the popover closes before navigation
     setTimeout(() => {
       console.log('Executing navigation to /create-organization');
-      setLocation('/create-organization');
+      navigate('/create-organization');
       // Also try using window.location as backup after a brief delay
       setTimeout(() => {
         if (window.location.pathname !== '/create-organization') {

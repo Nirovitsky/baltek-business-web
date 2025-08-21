@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Redirect } from "wouter";
+import { Navigate } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -50,7 +50,7 @@ export default function Login() {
     }
     
     // Redirect based on organization status
-    return <Redirect to={hasOrganizations ? "/" : "/create-organization"} />;
+    return <Navigate to={hasOrganizations ? "/" : "/create-organization"} replace />;
   }
 
   const onSubmit = async (data: LoginRequest) => {

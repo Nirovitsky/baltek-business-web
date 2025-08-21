@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Briefcase, MapPin, MessageCircle, FileText, Calendar, Clock } from "lucide-react";
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 import { apiService } from "@/lib/api";
 import type { JobApplication } from "@/types";
 
@@ -21,7 +21,7 @@ export default function ApplicationDetailsModal({
   isOpen, 
   onClose 
 }: ApplicationDetailsModalProps) {
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const { data: detailedApplication, isLoading: isLoadingDetails } = useQuery({
@@ -63,7 +63,7 @@ export default function ApplicationDetailsModal({
   };
 
   const handleSendMessage = () => {
-    setLocation(`/profile/${application.owner?.id}`);
+    navigate(`/profile/${application.owner?.id}`);
     onClose();
   };
 
@@ -182,7 +182,7 @@ export default function ApplicationDetailsModal({
               <Button 
                 variant="outline"
                 onClick={() => {
-                  setLocation(`/profile/${application.owner?.id}`);
+                  navigate(`/profile/${application.owner?.id}`);
                   onClose();
                 }}
               >

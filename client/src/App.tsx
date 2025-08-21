@@ -1,4 +1,4 @@
-import { Switch, Route, Redirect } from "wouter";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
@@ -55,7 +55,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }, [isAuthenticated]); // Remove refreshProfile dependency
 
   if (!isAuthenticated) {
-    return <Redirect to="/login" />;
+    return <Navigate to="/login" replace />;
   }
 
   // Show loading while fetching organizations or user profile
@@ -74,7 +74,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   // This prevents redirecting before we actually know if they have organizations
   console.log('ProtectedRoute check:', { isAuthenticated, hasOrganizations, organizationsLength: organizations.length, organizationsFetched });
   if (isAuthenticated && organizationsFetched && !hasOrganizations) {
-    return <Redirect to="/create-organization" />;
+    return <Navigate to="/create-organization" replace />;
   }
 
   return (
@@ -87,118 +87,152 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Router() {
+function AppRoutes() {
   const { isAuthenticated, hasOrganizations, isLoading } = useAuth();
 
   return (
-    <Switch>
-      <Route path="/login">
-        <Login />
-      </Route>
+    <Routes>
+      <Route path="/login" element={<Login />} />
       
-      <Route path="/create-organization">
-        {!isAuthenticated ? <Redirect to="/login" /> : <CreateOrganization />}
-      </Route>
+      <Route 
+        path="/create-organization" 
+        element={!isAuthenticated ? <Navigate to="/login" replace /> : <CreateOrganization />} 
+      />
       
-      <Route path="/">
-        <ProtectedRoute>
-          <Dashboard />
-        </ProtectedRoute>
-      </Route>
+      <Route 
+        path="/" 
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } 
+      />
       
-      <Route path="/jobs">
-        <ProtectedRoute>
-          <Jobs />
-        </ProtectedRoute>
-      </Route>
+      <Route 
+        path="/jobs" 
+        element={
+          <ProtectedRoute>
+            <Jobs />
+          </ProtectedRoute>
+        } 
+      />
 
-      <Route path="/jobs/create">
-        <ProtectedRoute>
-          <CreateJob />
-        </ProtectedRoute>
-      </Route>
+      <Route 
+        path="/jobs/create" 
+        element={
+          <ProtectedRoute>
+            <CreateJob />
+          </ProtectedRoute>
+        } 
+      />
 
-      <Route path="/jobs/edit/:id">
-        <ProtectedRoute>
-          <CreateJob />
-        </ProtectedRoute>
-      </Route>
+      <Route 
+        path="/jobs/edit/:id" 
+        element={
+          <ProtectedRoute>
+            <CreateJob />
+          </ProtectedRoute>
+        } 
+      />
       
-      <Route path="/jobs/:id">
-        <ProtectedRoute>
-          <JobDetails />
-        </ProtectedRoute>
-      </Route>
+      <Route 
+        path="/jobs/:id" 
+        element={
+          <ProtectedRoute>
+            <JobDetails />
+          </ProtectedRoute>
+        } 
+      />
       
-      <Route path="/applications">
-        <ProtectedRoute>
-          <Applications />
-        </ProtectedRoute>
-      </Route>
+      <Route 
+        path="/applications" 
+        element={
+          <ProtectedRoute>
+            <Applications />
+          </ProtectedRoute>
+        } 
+      />
       
-      <Route path="/messages">
-        <ProtectedRoute>
-          <Messages />
-        </ProtectedRoute>
-      </Route>
+      <Route 
+        path="/messages" 
+        element={
+          <ProtectedRoute>
+            <Messages />
+          </ProtectedRoute>
+        } 
+      />
 
-      <Route path="/notifications">
-        <ProtectedRoute>
-          <Notifications />
-        </ProtectedRoute>
-      </Route>
+      <Route 
+        path="/notifications" 
+        element={
+          <ProtectedRoute>
+            <Notifications />
+          </ProtectedRoute>
+        } 
+      />
 
-      <Route path="/users/:id">
-        <ProtectedRoute>
-          <Users />
-        </ProtectedRoute>
-      </Route>
+      <Route 
+        path="/users/:id" 
+        element={
+          <ProtectedRoute>
+            <Users />
+          </ProtectedRoute>
+        } 
+      />
 
-      <Route path="/user/:userId">
-        <ProtectedRoute>
-          <UserProfile />
-        </ProtectedRoute>
-      </Route>
+      <Route 
+        path="/user/:userId" 
+        element={
+          <ProtectedRoute>
+            <UserProfile />
+          </ProtectedRoute>
+        } 
+      />
       
-      <Route path="/organization">
-        <ProtectedRoute>
-          <Organization />
-        </ProtectedRoute>
-      </Route>
+      <Route 
+        path="/organization" 
+        element={
+          <ProtectedRoute>
+            <Organization />
+          </ProtectedRoute>
+        } 
+      />
       
-      <Route path="/profile">
-        <ProtectedRoute>
-          <Profile />
-        </ProtectedRoute>
-      </Route>
+      <Route 
+        path="/profile" 
+        element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        } 
+      />
 
-      <Route path="/settings">
-        <ProtectedRoute>
-          <Settings />
-        </ProtectedRoute>
-      </Route>
+      <Route 
+        path="/settings" 
+        element={
+          <ProtectedRoute>
+            <Settings />
+          </ProtectedRoute>
+        } 
+      />
 
-      <Route path="/settings">
-        <ProtectedRoute>
-          <Settings />
-        </ProtectedRoute>
-      </Route>
-
-      <Route component={NotFound} />
-    </Switch>
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="light" storageKey="baltek-ui-theme">
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
-      </QueryClientProvider>
-    </ThemeProvider>
+    <BrowserRouter>
+      <ThemeProvider defaultTheme="light" storageKey="baltek-ui-theme">
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <Toaster />
+            <AppRoutes />
+          </TooltipProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
+    </BrowserRouter>
   );
 }
 
