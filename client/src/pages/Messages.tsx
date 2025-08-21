@@ -31,7 +31,7 @@ import {
 import type { ChatMessage, ChatRoom, MessageAttachment } from "@/types";
 
 export default function Messages() {
-  const { user } = useAuth();
+  const { user, selectedOrganization } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedConversation, setSelectedConversation] = useState<number | null>(null);
@@ -54,12 +54,12 @@ export default function Messages() {
     joinRoom,
   } = useWebSocketGlobal();
 
-  // Fetch chat rooms using correct endpoint
+  // Fetch chat rooms filtered by selected organization
   const {
     data: chatRooms,
     isLoading: roomsLoading,
     error: roomsError,
-  } = useChatRooms();
+  } = useChatRooms(selectedOrganization?.id);
 
   // Fetch messages for selected room using correct endpoint
   const {
@@ -247,6 +247,10 @@ export default function Messages() {
     setSelectedFile(null);
     setUploadedAttachment(null);
     
+    // Debug log to verify organization filtering
+    console.log('Selected room organization:', room.content_object?.job?.organization?.display_name);
+    console.log('Current selected organization:', selectedOrganization?.display_name);
+    
     // Join room via WebSocket
     joinRoom(room.id);
     
@@ -281,7 +285,7 @@ export default function Messages() {
       <div className="flex-1 flex flex-col overflow-hidden">
         <TopBar 
           title="Messages"
-          description="Communicate with job seekers"
+          description={`Communicate with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
           showCreateButton={false}
         />
         <div className="flex-1 flex">
@@ -305,7 +309,7 @@ export default function Messages() {
       <div className="flex-1 flex flex-col overflow-hidden">
         <TopBar 
           title="Messages"
-          description="Communicate with job seekers"
+          description={`Communicate with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
           showCreateButton={false}
         />
         <div className="flex-1 flex items-center justify-center">
@@ -325,7 +329,7 @@ export default function Messages() {
     <div className="flex-1 flex flex-col overflow-hidden">
       <TopBar 
         title="Messages"
-        description="Communicate with job seekers"
+        description={`Communicate with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
         showCreateButton={false}
       />
       

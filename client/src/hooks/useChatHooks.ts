@@ -2,14 +2,28 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiService } from "@/lib/api";
 import type { User, ChatRoom, ChatMessage, PaginatedResponse } from "@/types";
 
-// Chat rooms hook
-export function useChatRooms() {
+// Chat rooms hook with optional organization filtering
+export function useChatRooms(organizationId?: number) {
   return useQuery({
-    queryKey: ['/chat/rooms/'],
+    queryKey: ['/chat/rooms/', organizationId],
     queryFn: () => apiService.request<PaginatedResponse<ChatRoom>>('/chat/rooms/'),
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    select: (data) => {
+      if (!organizationId) return data;
+      
+      // Filter rooms to only show ones for the specified organization
+      const filteredResults = data.results.filter((room: ChatRoom) => 
+        room.content_object?.job?.organization?.id === organizationId
+      );
+      
+      return {
+        ...data,
+        results: filteredResults,
+        count: filteredResults.length
+      };
+    }
   });
 }
 
