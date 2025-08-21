@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'wouter';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -178,7 +179,22 @@ export default function MessageRenderer({ message, currentUser, onRetry }: Messa
 
   return (
     <div className={`flex gap-3 mb-4 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
-      {!isOwn && (
+      {!isOwn && message.senderInfo?.id && (
+        <Link href={`/user/${message.senderInfo.id}`}>
+          <Avatar className="h-8 w-8 flex-shrink-0 hover:ring-2 hover:ring-blue-500 transition-all cursor-pointer">
+            <AvatarImage 
+              src={message.senderInfo?.avatar} 
+              alt={`${message.senderInfo?.first_name || 'User'} avatar`}
+            />
+            <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300">
+              {message.senderInfo?.first_name?.[0]?.toUpperCase() || 
+               message.senderInfo?.last_name?.[0]?.toUpperCase() || 
+               'U'}
+            </AvatarFallback>
+          </Avatar>
+        </Link>
+      )}
+      {!isOwn && !message.senderInfo?.id && (
         <Avatar className="h-8 w-8 flex-shrink-0">
           <AvatarImage 
             src={message.senderInfo?.avatar} 

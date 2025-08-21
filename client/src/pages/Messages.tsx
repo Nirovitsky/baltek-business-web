@@ -377,17 +377,33 @@ export default function Messages() {
                   >
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0">
-                        <Avatar className="h-10 w-10">
-                          <AvatarImage 
-                            src={room.content_object?.owner?.avatar} 
-                            alt={`${room.content_object?.owner?.first_name} ${room.content_object?.owner?.last_name}`}
-                          />
-                          <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300">
-                            {room.content_object?.owner?.first_name?.[0]?.toUpperCase() || 
-                             room.content_object?.owner?.last_name?.[0]?.toUpperCase() || 
-                             <User className="h-5 w-5" />}
-                          </AvatarFallback>
-                        </Avatar>
+                        {room.content_object?.owner?.id ? (
+                          <Link href={`/user/${room.content_object.owner.id}`}>
+                            <Avatar className="h-10 w-10 hover:ring-2 hover:ring-blue-500 transition-all cursor-pointer">
+                              <AvatarImage 
+                                src={room.content_object?.owner?.avatar} 
+                                alt={`${room.content_object?.owner?.first_name} ${room.content_object?.owner?.last_name}`}
+                              />
+                              <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300">
+                                {room.content_object?.owner?.first_name?.[0]?.toUpperCase() || 
+                                 room.content_object?.owner?.last_name?.[0]?.toUpperCase() || 
+                                 <User className="h-5 w-5" />}
+                              </AvatarFallback>
+                            </Avatar>
+                          </Link>
+                        ) : (
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage 
+                              src={room.content_object?.owner?.avatar} 
+                              alt={`${room.content_object?.owner?.first_name} ${room.content_object?.owner?.last_name}`}
+                            />
+                            <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300">
+                              {room.content_object?.owner?.first_name?.[0]?.toUpperCase() || 
+                               room.content_object?.owner?.last_name?.[0]?.toUpperCase() || 
+                               <User className="h-5 w-5" />}
+                            </AvatarFallback>
+                          </Avatar>
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
@@ -437,17 +453,33 @@ export default function Messages() {
               {selectedConversationData && (
                 <div className="border-b bg-white dark:bg-background p-4">
                   <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage 
-                        src={selectedConversationData.content_object?.owner?.avatar} 
-                        alt={`${selectedConversationData.content_object?.owner?.first_name} ${selectedConversationData.content_object?.owner?.last_name}`}
-                      />
-                      <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300">
-                        {selectedConversationData.content_object?.owner?.first_name?.[0]?.toUpperCase() || 
-                         selectedConversationData.content_object?.owner?.last_name?.[0]?.toUpperCase() || 
-                         <User className="h-5 w-5" />}
-                      </AvatarFallback>
-                    </Avatar>
+                    {selectedConversationData.content_object?.owner?.id ? (
+                      <Link href={`/user/${selectedConversationData.content_object.owner.id}`}>
+                        <Avatar className="h-10 w-10 hover:ring-2 hover:ring-blue-500 transition-all cursor-pointer">
+                          <AvatarImage 
+                            src={selectedConversationData.content_object?.owner?.avatar} 
+                            alt={`${selectedConversationData.content_object?.owner?.first_name} ${selectedConversationData.content_object?.owner?.last_name}`}
+                          />
+                          <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300">
+                            {selectedConversationData.content_object?.owner?.first_name?.[0]?.toUpperCase() || 
+                             selectedConversationData.content_object?.owner?.last_name?.[0]?.toUpperCase() || 
+                             <User className="h-5 w-5" />}
+                          </AvatarFallback>
+                        </Avatar>
+                      </Link>
+                    ) : (
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage 
+                          src={selectedConversationData.content_object?.owner?.avatar} 
+                          alt={`${selectedConversationData.content_object?.owner?.first_name} ${selectedConversationData.content_object?.owner?.last_name}`}
+                        />
+                        <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300">
+                          {selectedConversationData.content_object?.owner?.first_name?.[0]?.toUpperCase() || 
+                           selectedConversationData.content_object?.owner?.last_name?.[0]?.toUpperCase() || 
+                           <User className="h-5 w-5" />}
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
                     <div>
                       <p className="font-medium">
                         {selectedConversationData.content_object?.owner?.first_name}{' '}

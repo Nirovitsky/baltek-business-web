@@ -1,390 +1,282 @@
-import { useQuery } from "@tanstack/react-query";
-import { useRoute, useLocation } from "wouter";
-import { 
-  ArrowLeft, 
-  Mail, 
-  Phone, 
-  Calendar, 
-  Briefcase, 
-  GraduationCap, 
-  FolderOpen,
-  User as UserIcon
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import React from 'react';
+import { useParams, Link } from 'wouter';
+import { useQuery } from '@tanstack/react-query';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { apiService } from "@/lib/api";
-import { Link } from "wouter";
-import TopBar from "@/components/layout/TopBar";
-import { useToast } from "@/hooks/use-toast";
-
-// Use the existing User type from schema
-import type { User, UserExperience, UserEducation, UserProject, Room } from "@/types";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { ArrowLeft, MapPin, Calendar, Briefcase, GraduationCap, ExternalLink, Phone, Mail, Globe } from 'lucide-react';
+import { User } from '@/types';
 
 export default function UserProfile() {
-  const [match, params] = useRoute("/profile/:userId");
-  const userId = params?.userId;
-  const [, setLocation] = useLocation();
-  const { toast } = useToast();
+  const { userId } = useParams();
 
-  const { data: userProfile, isLoading, error } = useQuery({
-    queryKey: ["/users/", userId],
-    queryFn: () => apiService.request<User>(`/users/${userId}/`),
+  const { data: user, isLoading, error } = useQuery({
+    queryKey: [`/api/users/${userId}/`],
     enabled: !!userId,
-  });
-
-
-
-  if (!match || !userId) {
-    return (
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar title="User Profile" description="User not found" />
-        <main className="flex-1 overflow-y-auto p-6">
-          <div className="text-center">
-            <p className="text-muted-foreground">User not found</p>
-            <Link href="/dashboard">
-              <Button className="mt-4">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Dashboard
-              </Button>
-            </Link>
-          </div>
-        </main>
-      </div>
-    );
-  }
+  }) as { data: any; isLoading: boolean; error: any };
 
   if (isLoading) {
     return (
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar title="User Profile" description="Loading user information..." />
-        <main className="flex-1 overflow-y-auto p-6">
-          <div className="max-w-4xl mx-auto space-y-6">
-            {/* Profile Header Skeleton */}
-            <div className="flex items-center space-x-4 mb-6">
-              <Skeleton className="w-20 h-20 rounded-full" />
-              <div className="space-y-2">
-                <Skeleton className="h-8 w-64" />
-                <Skeleton className="h-5 w-48" />
-                <Skeleton className="h-4 w-32" />
+      <div className="min-h-screen bg-gray-50 dark:bg-background">
+        <div className="max-w-4xl mx-auto p-6">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-1/4 mb-6"></div>
+            <div className="bg-white dark:bg-card rounded-lg p-6 shadow-sm">
+              <div className="flex items-start gap-6">
+                <div className="w-32 h-32 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
+                <div className="flex-1">
+                  <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-1/3 mb-2"></div>
+                  <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/2 mb-4"></div>
+                  <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4"></div>
+                </div>
               </div>
             </div>
-            
-            {/* Content Skeletons */}
-            <Card>
-              <CardHeader>
-                <Skeleton className="h-6 w-48" />
-                <Skeleton className="h-4 w-64" />
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-4 w-1/2" />
-                </div>
-              </CardContent>
-            </Card>
           </div>
-        </main>
+        </div>
       </div>
     );
   }
 
-  if (!userProfile) {
+  if (error || !user) {
     return (
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar title="User Profile" description="Profile not found" />
-        <main className="flex-1 overflow-y-auto p-6">
-          <div className="max-w-4xl mx-auto">
-            <Card>
-              <CardContent className="text-center py-8">
-                <h2 className="text-2xl font-bold text-foreground mb-2">Profile not found</h2>
-                <p className="text-muted-foreground mb-4">The user profile you're looking for doesn't exist.</p>
-                <Link href="/dashboard">
-                  <Button>
-                    <ArrowLeft className="w-4 h-4 mr-2" />
-                    Back to Dashboard
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          </div>
-        </main>
+      <div className="min-h-screen bg-gray-50 dark:bg-background">
+        <div className="max-w-4xl mx-auto p-6">
+          <Link href="/messages">
+            <Button variant="ghost" className="mb-6">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Messages
+            </Button>
+          </Link>
+          <Card>
+            <CardContent className="p-6">
+              <p className="text-center text-gray-500">User profile not found or could not be loaded.</p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }
 
-
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '';
+    try {
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long'
+      });
+    } catch (error) {
+      return dateString;
+    }
+  };
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <TopBar 
-        title="User Profile" 
-        description={`Profile of ${userProfile.first_name} ${userProfile.last_name}`}
-        showCreateButton={false}
-      />
-
-      <main className="flex-1 overflow-y-auto p-6">
-        <div className="max-w-4xl mx-auto space-y-6">
-          {/* Back Button */}
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="flex items-center space-x-2 mb-4"
-            onClick={() => window.history.back()}
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back</span>
+    <div className="min-h-screen bg-gray-50 dark:bg-background">
+      <div className="max-w-4xl mx-auto p-6">
+        {/* Header */}
+        <Link href="/messages">
+          <Button variant="ghost" className="mb-6">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Messages
           </Button>
+        </Link>
 
-          {/* Personal Information Card */}
-          <Card>
-            <CardContent className="pt-6">
-              <div className="space-y-6">
-                {/* Profile Header with Avatar */}
-                <div className="flex items-center space-x-4 pb-4 border-b">
-                  <Avatar className="w-16 h-16">
-                    {userProfile.avatar ? (
-                      <AvatarImage src={userProfile.avatar} alt={`${userProfile.first_name} ${userProfile.last_name}`} />
-                    ) : (
-                      <AvatarFallback className="text-lg bg-gradient-to-br from-blue-400 to-indigo-500 text-white">
-                        {(userProfile.first_name?.[0] || "") + (userProfile.last_name?.[0] || "")}
-                      </AvatarFallback>
-                    )}
-                  </Avatar>
-                  <div className="flex-1">
-                    <h1 className="text-xl font-bold text-foreground">
-                      {userProfile.first_name} {userProfile.last_name}
-                    </h1>
-                    {userProfile.profession && (
-                      <p className="text-muted-foreground">{userProfile.profession}</p>
-                    )}
-
-                  </div>
-                  <Button 
-                    className="bg-gradient-to-r from-blue-500 to-blue-600"
-                    onClick={async () => {
-                      try {
-                        // Find existing chat room with this user
-                        const response = await apiService.request<{results: Room[]}>('/chat/rooms/');
-                        console.log('Checking rooms for user:', userProfile.id);
-                        console.log('Available rooms:', response.results);
-                        
-                        const existingRoom = response.results.find((room: Room) => {
-                          console.log(`Room ${room.id} members:`, room.members);
-                          // Members are stored as numeric IDs, not objects
-                          return room.members.some((memberId: number) => {
-                            const numericMemberId = typeof memberId === 'number' ? memberId : parseInt(String(memberId));
-                            console.log(`Comparing member ${numericMemberId} with user ${userProfile.id}`);
-                            return numericMemberId === userProfile.id;
-                          });
-                        });
-                        
-                        console.log('Found existing room:', existingRoom);
-                        
-                        if (existingRoom) {
-                          // Navigate to existing room
-                          toast({
-                            title: "Success",
-                            description: "Opening existing chat room...",
-                          });
-                          setLocation(`/messages#room-${existingRoom.id}`);
-                        } else {
-                          // Since there's no API to create rooms directly from user profiles,
-                          // explain that a room needs to be created through job applications
-                          toast({
-                            title: "No existing conversation",
-                            description: `To start a conversation with ${userProfile.first_name} ${userProfile.last_name}, they need to apply for a job first.`,
-                            variant: "destructive",
-                          });
-                        }
-                      } catch (error) {
-                        console.error('Error finding chat room:', error);
-                        toast({
-                          title: "Error",
-                          description: "Unable to access chat rooms at this time. Please try again later.",
-                          variant: "destructive",
-                        });
-                      }
-                    }}
-                  >
-                    <Mail className="w-4 h-4 mr-2" />
-                    Send Message
-                  </Button>
+        {/* Profile Header */}
+        <Card className="mb-6">
+          <CardContent className="p-6">
+            <div className="flex flex-col md:flex-row items-start gap-6">
+              <Avatar className="w-32 h-32">
+                <AvatarImage src={user.avatar} alt={`${user.first_name} ${user.last_name}`} />
+                <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 text-2xl">
+                  {user.first_name?.[0]?.toUpperCase() || user.last_name?.[0]?.toUpperCase() || 'U'}
+                </AvatarFallback>
+              </Avatar>
+              
+              <div className="flex-1">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                  {user.first_name} {user.last_name}
+                </h1>
+                
+                {user.profession && (
+                  <p className="text-xl text-gray-600 dark:text-gray-300 mb-3">{user.profession}</p>
+                )}
+                
+                <div className="flex flex-wrap gap-4 text-sm text-gray-500 dark:text-gray-400 mb-4">
+                  {user.location && (
+                    <div className="flex items-center gap-1">
+                      <MapPin className="h-4 w-4" />
+                      <span>{typeof user.location === 'object' ? user.location.name : user.location}</span>
+                    </div>
+                  )}
+                  
+                  {user.date_joined && (
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-4 w-4" />
+                      <span>Joined {formatDate(user.date_joined)}</span>
+                    </div>
+                  )}
+                  
+                  {user.is_online !== undefined && (
+                    <Badge variant={user.is_online ? "default" : "secondary"}>
+                      {user.is_online ? "Online" : "Offline"}
+                    </Badge>
+                  )}
                 </div>
 
-                {/* Personal Details Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-foreground">First Name</label>
-                    <p className="text-foreground">{userProfile.first_name || "Not provided"}</p>
+                {/* Contact Information */}
+                {(user.email || user.phone || user.website) && (
+                  <div className="flex flex-wrap gap-4 mb-4">
+                    {user.email && (
+                      <a 
+                        href={`mailto:${user.email}`}
+                        className="flex items-center gap-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                      >
+                        <Mail className="h-4 w-4" />
+                        <span className="text-sm">{user.email}</span>
+                      </a>
+                    )}
+                    
+                    {user.phone && (
+                      <a 
+                        href={`tel:${user.phone}`}
+                        className="flex items-center gap-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                      >
+                        <Phone className="h-4 w-4" />
+                        <span className="text-sm">{user.phone}</span>
+                      </a>
+                    )}
+                    
+                    {user.website && (
+                      <a 
+                        href={user.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                      >
+                        <Globe className="h-4 w-4" />
+                        <span className="text-sm">Website</span>
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    )}
                   </div>
+                )}
 
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-foreground">Last Name</label>
-                    <p className="text-foreground">{userProfile.last_name || "Not provided"}</p>
-                  </div>
+                {user.bio && (
+                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{user.bio}</p>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-foreground">Email</label>
-                    <p className="text-foreground">{userProfile.email || "Not provided"}</p>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-foreground">Phone</label>
-                    <p className="text-foreground">{userProfile.phone}</p>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-foreground">Profession</label>
-                    <p className="text-foreground">{userProfile.profession || "Not provided"}</p>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-foreground">Gender</label>
-                    <p className="text-foreground">
-                      {userProfile.gender === "m" ? "Male" : userProfile.gender === "f" ? "Female" : "Not provided"}
-                    </p>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-foreground">Date of Birth</label>
-                    <p className="text-foreground">
-                      {userProfile.date_of_birth ? userProfile.date_of_birth : "Not provided"}
-                    </p>
-                  </div>
-
-
-                </div>
+        {/* Skills */}
+        {user.skills && user.skills.length > 0 && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Skills</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {user.skills.map((skill: any, index: number) => (
+                  <Badge key={index} variant="secondary">
+                    {typeof skill === 'object' ? skill.name : skill}
+                  </Badge>
+                ))}
               </div>
             </CardContent>
           </Card>
+        )}
 
-          {/* Experience Section */}
-          {userProfile.experiences && userProfile.experiences.length > 0 && (
-            <Card>
-              <CardHeader>
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                    <Briefcase className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <CardTitle>Work Experience</CardTitle>
-                    <CardDescription>Professional experience and career history</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {userProfile.experiences.map((experience) => (
-                    <div key={experience.id} className="border-l-2 border-blue-200 pl-4">
-                      <h4 className="font-semibold text-foreground">{experience.position}</h4>
-                      <p className="text-primary font-medium">{experience.organization_name}</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {experience.date_started} - {
-                          experience.date_finished || "Present"
-                        }
-                      </p>
-                      {experience.description && (
-                        <p className="text-foreground mt-2">{experience.description}</p>
-                      )}
+        {/* Experience */}
+        {user.experiences && user.experiences.length > 0 && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Briefcase className="h-5 w-5" />
+                Work Experience
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {user.experiences.map((exp: any, index: number) => (
+                  <div key={index}>
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h3 className="font-semibold text-gray-900 dark:text-white">{exp.position}</h3>
+                        <p className="text-blue-600 dark:text-blue-400">{exp.company}</p>
+                      </div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                        {formatDate(exp.start_date)} - {exp.is_current ? 'Present' : formatDate(exp.end_date)}
+                      </div>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
+                    {exp.description && (
+                      <p className="text-gray-700 dark:text-gray-300">{exp.description}</p>
+                    )}
+                    {index < user.experiences.length - 1 && <Separator className="mt-4" />}
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
-          {/* Education Section */}
-          {userProfile.educations && userProfile.educations.length > 0 && (
-            <Card>
-              <CardHeader>
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                    <GraduationCap className="w-6 h-6 text-green-600" />
-                  </div>
-                  <div>
-                    <CardTitle>Education</CardTitle>
-                    <CardDescription>Educational background and qualifications</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {userProfile.educations.map((education) => (
-                    <div key={education.id} className="border-l-2 border-green-200 pl-4">
-                      <h4 className="font-semibold text-foreground capitalize">{education.level}</h4>
-                      <p className="text-green-600 font-medium">
-                        {typeof education.university === 'object' && education.university?.name
-                          ? education.university.name
-                          : `University ID: ${education.university}`}
-                      </p>
-                      {typeof education.university === 'object' && education.university?.location?.name && (
-                        <p className="text-sm text-muted-foreground">
-                          Location: {education.university.location.name}
-                        </p>
-                      )}
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {education.date_started || "Not specified"} - {
-                          education.date_finished || "Present"
-                        }
-                      </p>
+        {/* Education */}
+        {user.education && user.education.length > 0 && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <GraduationCap className="h-5 w-5" />
+                Education
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {user.education.map((edu: any, index: number) => (
+                  <div key={index}>
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h3 className="font-semibold text-gray-900 dark:text-white">{edu.degree}</h3>
+                        <p className="text-blue-600 dark:text-blue-400">{edu.institution}</p>
+                        {edu.field_of_study && (
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{edu.field_of_study}</p>
+                        )}
+                      </div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                        {formatDate(edu.start_date)} - {edu.is_current ? 'Present' : formatDate(edu.end_date)}
+                      </div>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Projects Section */}
-          {userProfile.projects && userProfile.projects.length > 0 && (
-            <Card>
-              <CardHeader>
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <FolderOpen className="w-6 h-6 text-purple-600" />
+                    {index < user.education.length - 1 && <Separator className="mt-4" />}
                   </div>
-                  <div>
-                    <CardTitle>Projects</CardTitle>
-                    <CardDescription>Personal and professional projects</CardDescription>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Languages */}
+        {user.languages && user.languages.length > 0 && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Languages</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {user.languages.map((lang: any, index: number) => (
+                  <div key={index} className="flex justify-between items-center">
+                    <span className="font-medium">
+                      {typeof lang === 'object' ? lang.name : lang}
+                    </span>
+                    {typeof lang === 'object' && lang.level && (
+                      <Badge variant="outline">{lang.level}</Badge>
+                    )}
                   </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {userProfile.projects.map((project) => (
-                    <div key={project.id} className="border-l-2 border-purple-200 pl-4">
-                      <h4 className="font-semibold text-foreground">{project.title}</h4>
-                      {project.link && (
-                        <a 
-                          href={project.link} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-purple-600 hover:text-purple-800 text-sm"
-                        >
-                          View Project →
-                        </a>
-                      )}
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {project.date_started} - {
-                          project.date_finished || "Ongoing"
-                        }
-                      </p>
-                      <p className="text-foreground mt-2">{project.description}</p>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-
-
-
-        </div>
-      </main>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 }

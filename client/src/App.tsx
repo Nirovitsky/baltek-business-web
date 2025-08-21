@@ -154,7 +154,7 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
-      <Route path="/profile/:userId">
+      <Route path="/user/:userId">
         <ProtectedRoute>
           <UserProfile />
         </ProtectedRoute>
