@@ -1,29 +1,23 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import type { User, ChatRoom, ChatMessage } from "@/types";
+import { apiService } from "@/lib/api";
+import type { User, ChatRoom, ChatMessage, PaginatedResponse } from "@/types";
 
 // Chat rooms hook
 export function useChatRooms() {
   return useQuery({
-    queryKey: ['/api/chat/rooms/'],
-    queryFn: async () => {
-      const response = await apiRequest('GET', 'https://api.baltek.net/api/chat/rooms/');
-      return response.json();
-    },
+    queryKey: ['/chat/rooms/'],
+    queryFn: () => apiService.request<PaginatedResponse<ChatRoom>>('/chat/rooms/'),
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 }
 
-// Chat messages hook
+// Chat messages hook  
 export function useChatMessages(roomId?: number) {
   return useQuery({
-    queryKey: ['/api/chat/messages/', roomId],
-    queryFn: async () => {
-      const response = await apiRequest('GET', `https://api.baltek.net/api/chat/messages/?room=${roomId}`);
-      return response.json();
-    },
+    queryKey: ['/chat/messages/', roomId],
+    queryFn: () => apiService.request<PaginatedResponse<ChatMessage>>(`/chat/messages/?room=${roomId}`),
     enabled: !!roomId,
     retry: 2,
     retryDelay: 1000,
@@ -71,8 +65,8 @@ export function useUploadFile() {
           reject(new Error('Upload aborted'));
         });
         
-        // Get auth token for the request - using the same token key as the app
-        const token = localStorage.getItem('baltek_access_token');
+        // Get auth token for the request
+        const token = localStorage.getItem('access_token');
         
         xhr.open('POST', 'https://api.baltek.net/api/files/', true);
         if (token) {
