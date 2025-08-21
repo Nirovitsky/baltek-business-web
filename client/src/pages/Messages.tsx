@@ -182,10 +182,13 @@ export default function Messages() {
     queryClient.invalidateQueries({ queryKey: ['/api/chat/messages/', room.id] });
   };
 
-  // Auto scroll when messages change
+  // Auto scroll when messages change (with slight delay to ensure DOM updates)
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, wsMessages]);
+    const timer = setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [messages, wsMessages, selectedConversation]);
 
   // Combine API messages with WebSocket messages
   const allMessages = selectedConversation === currentRoom 

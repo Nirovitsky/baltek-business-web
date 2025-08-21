@@ -29,9 +29,9 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       title: job?.title || "",
       description: job?.description || "",
       requirements: job?.requirements || "",
-      category: job?.category || 1,
-      organization: job?.organization || selectedOrganization?.id || 1,
-      location: job?.location || 1,
+      category: typeof job?.category === 'number' ? job.category : (typeof job?.category === 'object' ? job.category.id : 1),
+      organization: typeof job?.organization === 'number' ? job.organization : (typeof job?.organization === 'object' ? job.organization.id : selectedOrganization?.id || 1),
+      location: typeof job?.location === 'number' ? job.location : (typeof job?.location === 'object' ? job.location.id : 1),
       job_type: job?.job_type || "full_time",
       workplace_type: job?.workplace_type || "remote",
       min_education_level: job?.min_education_level || "secondary",
@@ -39,8 +39,8 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       salary_to: job?.salary_to || 0,
       salary_payment_type: job?.salary_payment_type || "monthly",
       required_languages: job?.required_languages || [],
-      date_started: job?.date_started || new Date().toLocaleDateString('en-GB').replace(/\//g, '.'),
-      date_ended: job?.date_ended || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-GB').replace(/\//g, '.'),
+      date_started: job?.date_started || Math.floor(Date.now() / 1000),
+      date_ended: job?.date_ended || Math.floor((Date.now() + 30 * 24 * 60 * 60 * 1000) / 1000),
       status: job?.status || "open",
     },
   });
@@ -126,8 +126,8 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
     const formattedData = {
       ...data,
       organization: selectedOrganization.id,
-      date_started: data.date_started || new Date().toLocaleDateString('en-GB').replace(/\//g, '.'),
-      date_ended: data.date_ended || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-GB').replace(/\//g, '.'),
+      date_started: typeof data.date_started === 'number' ? data.date_started : Math.floor(Date.now() / 1000),
+      date_ended: typeof data.date_ended === 'number' ? data.date_ended : Math.floor((Date.now() + 30 * 24 * 60 * 60 * 1000) / 1000),
     };
 
     console.log('Submitting job data:', formattedData);
