@@ -374,7 +374,7 @@ export default function Messages() {
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0">
                         <Avatar className="h-10 w-10">
-                          <AvatarImage src={room.content_object?.user?.avatar} />
+                          <AvatarImage src={room.content_object?.owner?.avatar} />
                           <AvatarFallback>
                             <User className="h-5 w-5" />
                           </AvatarFallback>
@@ -383,9 +383,9 @@ export default function Messages() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
                           <p className="font-medium text-sm truncate">
-                            {room.content_object?.user?.first_name && room.content_object?.user?.last_name 
-                              ? `${room.content_object.user.first_name} ${room.content_object.user.last_name} - ${room.content_object?.title || 'Job Application'}`
-                              : room.content_object?.title || 'Job Application'
+                            {room.content_object?.owner?.first_name && room.content_object?.owner?.last_name 
+                              ? `${room.content_object.owner.first_name} ${room.content_object.owner.last_name} - ${room.content_object?.job?.title || 'Job Application'}`
+                              : room.content_object?.job?.title || 'Job Application'
                             }
                           </p>
                           {room.unread_message_count > 0 && (
@@ -429,18 +429,18 @@ export default function Messages() {
                 <div className="border-b bg-white dark:bg-background p-4">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10">
-                      <AvatarImage src={selectedConversationData.content_object?.user?.avatar} />
+                      <AvatarImage src={selectedConversationData.content_object?.owner?.avatar} />
                       <AvatarFallback>
                         <User className="h-5 w-5" />
                       </AvatarFallback>
                     </Avatar>
                     <div>
                       <p className="font-medium">
-                        {selectedConversationData.content_object?.user?.first_name}{' '}
-                        {selectedConversationData.content_object?.user?.last_name}
+                        {selectedConversationData.content_object?.owner?.first_name}{' '}
+                        {selectedConversationData.content_object?.owner?.last_name}
                       </p>
                       <p className="text-sm text-gray-500">
-                        {selectedConversationData.content_object?.title}
+                        {selectedConversationData.content_object?.job?.title}
                       </p>
                     </div>
                   </div>
