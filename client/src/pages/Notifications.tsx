@@ -81,7 +81,7 @@ export default function Notifications() {
 
   const handleNotificationAction = (notification: any) => {
     if (notification.action_url) {
-      setLocation(notification.action_url);
+      navigate(notification.action_url);
     }
   };
 

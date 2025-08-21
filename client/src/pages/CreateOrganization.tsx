@@ -199,7 +199,7 @@ export default function CreateOrganization() {
         title: "Organization created",
         description: "Your organization has been created successfully",
       });
-      setLocation('/');
+      navigate('/');
       
     } catch (error: any) {
       console.error('Error creating organization:', error);

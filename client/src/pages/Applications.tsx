@@ -232,7 +232,7 @@ export default function Applications() {
                             className="w-10 h-10 flex-shrink-0"
                             onClick={(e) => {
                               e.stopPropagation();
-                              setLocation(`/profile/${application.owner?.id || ''}`);
+                              navigate(`/profile/${application.owner?.id || ''}`);
                             }}
                           >
                             <AvatarImage 
@@ -249,7 +249,7 @@ export default function Applications() {
                               className="font-medium text-foreground cursor-pointer hover:text-primary transition-colors"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setLocation(`/profile/${application.owner?.id || ''}`);
+                                navigate(`/profile/${application.owner?.id || ''}`);
                               }}
                             >
                               {`${application.owner?.first_name || ''} ${application.owner?.last_name || ''}`}
@@ -543,7 +543,7 @@ export default function Applications() {
                   <div className="flex items-center space-x-3">
                     <Button
                       variant="ghost"
-                      onClick={() => setLocation(`/profile/${selectedApplication.owner?.id || ''}`)}
+                      onClick={() => navigate(`/profile/${selectedApplication.owner?.id || ''}`)}
                       className="text-muted-foreground hover:text-foreground"
                     >
                       View Full Profile

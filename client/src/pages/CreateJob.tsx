@@ -108,7 +108,7 @@ export default function CreateJob() {
         title: "Success",
         description: "Job posting created successfully",
       });
-      setLocation('/jobs');
+      navigate('/jobs');
     },
     onError: (error: any) => {
       toast({
@@ -133,7 +133,7 @@ export default function CreateJob() {
         title: "Success",
         description: "Job posting updated successfully",
       });
-      setLocation('/jobs');
+      navigate('/jobs');
     },
     onError: (error: any) => {
       toast({
@@ -178,7 +178,7 @@ export default function CreateJob() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setLocation('/jobs')}
+                onClick={() => navigate('/jobs')}
                 className="mr-4 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
@@ -588,7 +588,7 @@ export default function CreateJob() {
                 <Button 
                   type="button" 
                   variant="outline"
-                  onClick={() => setLocation('/jobs')}
+                  onClick={() => navigate('/jobs')}
                   disabled={isLoading}
                   className="px-6"
                 >
