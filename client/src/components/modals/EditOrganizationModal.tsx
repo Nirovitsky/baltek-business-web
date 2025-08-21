@@ -13,14 +13,23 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useOrganizationMutations } from "@/hooks/useOrganizations";
-import { Building2, Globe, Upload, X, Save } from "lucide-react";
-import type { Organization } from "@/types";
+import { Building2, Globe, Upload, X, Save, Plus, Trash2, Calendar } from "lucide-react";
+import type { Organization, Project } from "@/types";
+
+const projectSchema = z.object({
+  id: z.number().optional(),
+  organization: z.number().optional(),
+  title: z.string().min(1, "Project title is required"),
+  description: z.string().optional(),
+  link: z.string().optional(),
+  date_started: z.string().optional(),
+  date_finished: z.string().optional(),
+});
 
 const organizationUpdateSchema = z.object({
   official_name: z.string().min(1, "Organization name is required"),
@@ -32,7 +41,7 @@ const organizationUpdateSchema = z.object({
   website: z.string().url().optional().or(z.literal("")),
   about_us: z.string().optional(),
   location: z.number().optional(),
-  is_public: z.boolean().optional(),
+  projects: z.array(projectSchema).optional(),
 });
 
 type OrganizationUpdate = z.infer<typeof organizationUpdateSchema>;
@@ -51,6 +60,7 @@ export default function EditOrganizationModal({
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string>("");
   const [isUploading, setIsUploading] = useState(false);
+  const [projects, setProjects] = useState<Project[]>([]);
   const { toast } = useToast();
   const { updateOrganization, uploadFile } = useOrganizationMutations();
 
@@ -66,13 +76,16 @@ export default function EditOrganizationModal({
       website: "",
       about_us: "",
       location: undefined,
-      is_public: true,
+      projects: [],
     },
   });
 
   // Update form when organization changes
   useEffect(() => {
     if (organization) {
+      const initialProjects = organization.projects || [];
+      setProjects(initialProjects);
+      
       form.reset({
         official_name: organization.official_name,
         display_name: organization.display_name || "",
@@ -85,16 +98,22 @@ export default function EditOrganizationModal({
         about_us: organization.about_us || "",
         location: typeof organization.location === 'number' ? organization.location : 
                  typeof organization.location === 'object' ? organization.location?.id : undefined,
-        is_public: organization.is_public ?? true,
+        projects: initialProjects,
       });
     }
   }, [organization, form]);
 
   const onSubmit = async (data: OrganizationUpdate) => {
     try {
+      // Include projects in the update data
+      const updateData = {
+        ...data,
+        projects: projects,
+      };
+      
       const updatedOrg = await updateOrganization.mutateAsync({ 
         id: organization.id, 
-        data 
+        data: updateData 
       }) as Organization;
       
       // Update the organization in the auth store
@@ -182,6 +201,31 @@ export default function EditOrganizationModal({
   const removeLogo = () => {
     setLogoFile(null);
     setLogoPreview("");
+  };
+
+  // Project management functions
+  const addProject = () => {
+    const newProject: Project = {
+      id: Date.now(), // temporary ID for new projects
+      organization: organization.id,
+      title: "",
+      description: "",
+      link: "",
+      date_started: "",
+      date_finished: "",
+    };
+    setProjects([...projects, newProject]);
+  };
+
+  const updateProject = (index: number, field: keyof Project, value: string | number) => {
+    const updatedProjects = [...projects];
+    updatedProjects[index] = { ...updatedProjects[index], [field]: value };
+    setProjects(updatedProjects);
+  };
+
+  const removeProject = (index: number) => {
+    const updatedProjects = projects.filter((_, i) => i !== index);
+    setProjects(updatedProjects);
   };
 
   // Get organization initials for avatar fallback
@@ -381,29 +425,104 @@ export default function EditOrganizationModal({
               )}
             />
 
-            {/* Visibility Setting */}
-            <FormField
-              control={form.control}
-              name="is_public"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">
-                      Public Profile
-                    </FormLabel>
-                    <p className="text-sm text-muted-foreground">
-                      Make your organization visible to job seekers
-                    </p>
+            {/* Projects Section */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">Projects</h3>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm"
+                  onClick={addProject}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Project
+                </Button>
+              </div>
+
+              {projects.map((project, index) => (
+                <div key={project.id || index} className="border rounded-lg p-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-medium">Project {index + 1}</h4>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeProject(index)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium">Project Title*</label>
+                      <Input
+                        value={project.title}
+                        onChange={(e) => updateProject(index, 'title', e.target.value)}
+                        placeholder="Enter project title"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-sm font-medium">Project Link</label>
+                      <Input
+                        value={project.link || ""}
+                        onChange={(e) => updateProject(index, 'link', e.target.value)}
+                        placeholder="https://project-url.com"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium">Description</label>
+                    <Textarea
+                      value={project.description || ""}
+                      onChange={(e) => updateProject(index, 'description', e.target.value)}
+                      placeholder="Describe the project..."
+                      rows={2}
                     />
-                  </FormControl>
-                </FormItem>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium">Start Date</label>
+                      <Input
+                        type="date"
+                        value={project.date_started || ""}
+                        onChange={(e) => updateProject(index, 'date_started', e.target.value)}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-sm font-medium">End Date</label>
+                      <Input
+                        type="date"
+                        value={project.date_finished || ""}
+                        onChange={(e) => updateProject(index, 'date_finished', e.target.value)}
+                        placeholder="Leave empty if ongoing"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {projects.length === 0 && (
+                <div className="text-center py-8 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg">
+                  <Calendar className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                  <p className="text-gray-500 dark:text-gray-400 mb-4">No projects added yet</p>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={addProject}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Your First Project
+                  </Button>
+                </div>
               )}
-            />
+            </div>
 
             <div className="flex justify-end space-x-4 pt-4">
               <Button 
