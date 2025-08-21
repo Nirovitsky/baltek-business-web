@@ -80,6 +80,34 @@ export default function Messages() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // Helper function to infer content type from file name/path
+  const inferContentType = (fileName: string, filePath: string): string => {
+    if (!fileName && !filePath) return 'application/octet-stream';
+    
+    const name = fileName || filePath;
+    const extension = name.toLowerCase().split('.').pop();
+    
+    const mimeTypes: { [key: string]: string } = {
+      // Images
+      'jpg': 'image/jpeg', 'jpeg': 'image/jpeg', 'png': 'image/png',
+      'gif': 'image/gif', 'webp': 'image/webp', 'svg': 'image/svg+xml',
+      'heic': 'image/heic', 'heif': 'image/heif',
+      // Videos
+      'mp4': 'video/mp4', 'webm': 'video/webm', 'avi': 'video/avi', 'mov': 'video/quicktime',
+      // Audio
+      'mp3': 'audio/mpeg', 'wav': 'audio/wav', 'm4a': 'audio/m4a', 'ogg': 'audio/ogg',
+      // Documents
+      'pdf': 'application/pdf', 'txt': 'text/plain',
+      'doc': 'application/msword', 'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'xls': 'application/vnd.ms-excel', 'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'ppt': 'application/vnd.ms-powerpoint', 'pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      // Archives
+      'zip': 'application/zip', 'rar': 'application/x-rar-compressed',
+    };
+    
+    return mimeTypes[extension || ''] || 'application/octet-stream';
+  };
+
   const formatTime = (timestamp: number | string | null) => {
     if (!timestamp) return '';
     
@@ -436,6 +464,11 @@ export default function Messages() {
                 ) : (
                   <div className="space-y-4">
                     {allMessages.map((message: any, index: number) => {
+                      // Debug log for messages with attachments
+                      if (message.attachments && message.attachments.length > 0) {
+                        console.log('Message with attachments:', message.id, message.attachments);
+                      }
+                      
                       // Convert to ChatMessage format
                       const chatMessage: ChatMessage = {
                         id: message.id,
@@ -443,15 +476,21 @@ export default function Messages() {
                         owner: message.owner?.id || message.owner,
                         text: message.text || "",
                         status: "delivered",
-                        attachments: message.attachment_url ? [{
-                          id: message.id,
-                          file_name: message.attachment_name || "File",
-                          file_url: message.attachment_url,
-                          content_type: message.attachment_type,
-                          size: message.attachment_size,
-                        }] : [],
+                        attachments: message.attachments && message.attachments.length > 0 ? 
+                          message.attachments.map((att: any) => ({
+                            id: att.id,
+                            file_name: att.name,
+                            file_url: att.path,
+                            content_type: inferContentType(att.name, att.path),
+                            size: att.size || null,
+                          })) : [],
                         date_created: message.date_created,
                       };
+                      
+                      // Debug log converted message
+                      if (chatMessage.attachments.length > 0) {
+                        console.log('Converted message attachments:', chatMessage.attachments);
+                      }
                       
                       return (
                         <MessageRenderer
