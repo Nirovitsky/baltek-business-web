@@ -1,284 +1,205 @@
-import React from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, MapPin, Calendar, Briefcase, GraduationCap, ExternalLink, Phone, Mail, Globe } from 'lucide-react';
-import { User } from '@/types';
-import { apiService } from '@/lib/api';
+import { Skeleton } from "@/components/ui/skeleton";
+import { 
+  User, 
+  MapPin, 
+  Mail, 
+  Phone, 
+  Calendar, 
+  Briefcase,
+  ArrowLeft 
+} from "lucide-react";
+import { apiService } from "@/lib/api";
+import { useNavigate } from "react-router-dom";
+import TopBar from "@/components/layout/TopBar";
+
+interface UserProfile {
+  id: number;
+  first_name: string;
+  last_name: string;
+  email?: string;
+  phone?: string;
+  location?: string;
+  bio?: string;
+  experience?: string;
+  skills?: string[];
+  created_at: string;
+}
 
 export default function UserProfile() {
   const { userId } = useParams();
+  const navigate = useNavigate();
 
   const { data: user, isLoading, error } = useQuery({
-    queryKey: [`/users/${userId}/`],
-    queryFn: () => apiService.request<User>(`/users/${userId}/`),
+    queryKey: ['/users/', userId],
+    queryFn: () => apiService.request<UserProfile>(`/users/${userId}/`),
     enabled: !!userId,
   });
 
+  if (!userId) {
+    return (
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <TopBar title="User Profile" description="User not found" />
+        <main className="flex-1 overflow-y-auto p-6">
+          <div className="text-center">
+            <p className="text-muted-foreground">User not found</p>
+            <Button onClick={() => navigate('/dashboard')} className="mt-4">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Dashboard
+            </Button>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-background">
-        <div className="max-w-4xl mx-auto p-6">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-1/4 mb-6"></div>
-            <div className="bg-white dark:bg-card rounded-lg p-6 shadow-sm">
-              <div className="flex items-start gap-6">
-                <div className="w-32 h-32 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
-                <div className="flex-1">
-                  <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-1/3 mb-2"></div>
-                  <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/2 mb-4"></div>
-                  <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4"></div>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <TopBar title="User Profile" description="Loading user information..." />
+        <main className="flex-1 overflow-y-auto p-6">
+          <div className="max-w-4xl mx-auto space-y-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-start space-x-4">
+                  <Skeleton className="w-20 h-20 rounded-full" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-6 w-48" />
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-4 w-40" />
+                  </div>
                 </div>
-              </div>
-            </div>
+              </CardHeader>
+            </Card>
           </div>
-        </div>
+        </main>
       </div>
     );
   }
 
   if (error || !user) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-background">
-        <div className="max-w-4xl mx-auto p-6">
-          <Link to="/messages">
-            <Button variant="ghost" className="mb-6">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Messages
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <TopBar title="User Profile" description="Error loading user" />
+        <main className="flex-1 overflow-y-auto p-6">
+          <div className="text-center">
+            <p className="text-red-500">Error loading user profile</p>
+            <Button onClick={() => navigate('/dashboard')} className="mt-4">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Dashboard
             </Button>
-          </Link>
-          <Card>
-            <CardContent className="p-6">
-              <p className="text-center text-gray-500">User profile not found or could not be loaded.</p>
-            </CardContent>
-          </Card>
-        </div>
+          </div>
+        </main>
       </div>
     );
   }
 
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long'
-      });
-    } catch (error) {
-      return dateString;
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-background">
-      <div className="max-w-4xl mx-auto p-6">
-        {/* Header */}
-        <Link to="/messages">
-          <Button variant="ghost" className="mb-6">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Messages
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <TopBar 
+        title="User Profile" 
+        description={`${user.first_name} ${user.last_name}`}
+      />
+      
+      <main className="flex-1 overflow-y-auto p-6">
+        <div className="max-w-4xl mx-auto space-y-6">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate('/dashboard')}
+            className="mb-4"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Dashboard
           </Button>
-        </Link>
 
-        {/* Profile Header */}
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            <div className="flex flex-col md:flex-row items-start gap-6">
-              <Avatar className="w-32 h-32">
-                <AvatarImage src={user.avatar} alt={`${user.first_name} ${user.last_name}`} />
-                <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 text-2xl">
-                  {user.first_name?.[0]?.toUpperCase() || user.last_name?.[0]?.toUpperCase() || 'U'}
-                </AvatarFallback>
-              </Avatar>
-              
-              <div className="flex-1">
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                  {user.first_name} {user.last_name}
-                </h1>
-                
-                {user.profession && (
-                  <p className="text-xl text-gray-600 dark:text-gray-300 mb-3">{user.profession}</p>
-                )}
-                
-                <div className="flex flex-wrap gap-4 text-sm text-gray-500 dark:text-gray-400 mb-4">
-                  {user.location && (
-                    <div className="flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      <span>{typeof user.location === 'object' ? user.location.name : user.location}</span>
-                    </div>
-                  )}
-                  
-                  {user.date_joined && (
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      <span>Joined {formatDate(user.date_joined)}</span>
-                    </div>
-                  )}
-                  
-                  {user.is_online !== undefined && (
-                    <Badge variant={user.is_online ? "default" : "secondary"}>
-                      {user.is_online ? "Online" : "Offline"}
-                    </Badge>
-                  )}
+          {/* User Profile Card */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-start space-x-4">
+                <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
+                  <User className="text-primary w-10 h-10" />
                 </div>
-
-                {/* Contact Information */}
-                {(user.email || user.phone || user.website) && (
-                  <div className="flex flex-wrap gap-4 mb-4">
+                <div className="flex-1">
+                  <CardTitle className="text-2xl">
+                    {user.first_name} {user.last_name}
+                  </CardTitle>
+                  <div className="flex items-center space-x-4 mt-2 text-sm text-muted-foreground">
                     {user.email && (
-                      <a 
-                        href={`mailto:${user.email}`}
-                        className="flex items-center gap-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-                      >
-                        <Mail className="h-4 w-4" />
-                        <span className="text-sm">{user.email}</span>
-                      </a>
+                      <div className="flex items-center space-x-1">
+                        <Mail className="w-4 h-4" />
+                        <span>{user.email}</span>
+                      </div>
                     )}
-                    
                     {user.phone && (
-                      <a 
-                        href={`tel:${user.phone}`}
-                        className="flex items-center gap-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-                      >
-                        <Phone className="h-4 w-4" />
-                        <span className="text-sm">{user.phone}</span>
-                      </a>
+                      <div className="flex items-center space-x-1">
+                        <Phone className="w-4 h-4" />
+                        <span>{user.phone}</span>
+                      </div>
                     )}
-                    
-                    {user.website && (
-                      <a 
-                        href={user.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-                      >
-                        <Globe className="h-4 w-4" />
-                        <span className="text-sm">Website</span>
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
+                    {user.location && (
+                      <div className="flex items-center space-x-1">
+                        <MapPin className="w-4 h-4" />
+                        <span>{user.location}</span>
+                      </div>
                     )}
                   </div>
-                )}
-
-                {user.bio && (
-                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{user.bio}</p>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Skills */}
-        {user.skills && user.skills.length > 0 && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Skills</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {user.skills.map((skill: any, index: number) => (
-                  <Badge key={index} variant="secondary">
-                    {typeof skill === 'object' ? skill.name : skill}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Experience */}
-        {user.experiences && user.experiences.length > 0 && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Briefcase className="h-5 w-5" />
-                Work Experience
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                {user.experiences.map((exp: any, index: number) => (
-                  <div key={index}>
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white">{exp.position}</h3>
-                        <p className="text-blue-600 dark:text-blue-400">{exp.company}</p>
-                      </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {formatDate(exp.start_date)} - {exp.is_current ? 'Present' : formatDate(exp.end_date)}
-                      </div>
-                    </div>
-                    {exp.description && (
-                      <p className="text-gray-700 dark:text-gray-300">{exp.description}</p>
-                    )}
-                    {index < user.experiences.length - 1 && <Separator className="mt-4" />}
+                  <div className="flex items-center space-x-1 mt-2 text-sm text-muted-foreground">
+                    <Calendar className="w-4 h-4" />
+                    <span>Joined {new Date(user.created_at).toLocaleDateString()}</span>
                   </div>
-                ))}
+                </div>
               </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Education */}
-        {user.education && user.education.length > 0 && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <GraduationCap className="h-5 w-5" />
-                Education
-              </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {user.education.map((edu: any, index: number) => (
-                  <div key={index}>
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white">{edu.degree}</h3>
-                        <p className="text-blue-600 dark:text-blue-400">{edu.institution}</p>
-                        {edu.field_of_study && (
-                          <p className="text-sm text-gray-600 dark:text-gray-400">{edu.field_of_study}</p>
-                        )}
-                      </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {formatDate(edu.start_date)} - {edu.is_current ? 'Present' : formatDate(edu.end_date)}
-                      </div>
-                    </div>
-                    {index < user.education.length - 1 && <Separator className="mt-4" />}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
+            
+            {user.bio && (
+              <CardContent>
+                <Separator className="mb-4" />
+                <h3 className="font-medium text-foreground mb-2">About</h3>
+                <p className="text-muted-foreground">{user.bio}</p>
+              </CardContent>
+            )}
           </Card>
-        )}
 
-        {/* Languages */}
-        {user.languages && user.languages.length > 0 && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Languages</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {user.languages.map((lang: any, index: number) => (
-                  <div key={index} className="flex justify-between items-center">
-                    <span className="font-medium">
-                      {typeof lang === 'object' ? lang.name : lang}
-                    </span>
-                    {typeof lang === 'object' && lang.level && (
-                      <Badge variant="outline">{lang.level}</Badge>
-                    )}
+          {/* Experience and Skills */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {user.experience && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Briefcase className="w-5 h-5" />
+                    <span>Experience</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">{user.experience}</p>
+                </CardContent>
+              </Card>
+            )}
+
+            {user.skills && user.skills.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Skills</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {user.skills.map((skill, index) => (
+                      <Badge key={index} variant="secondary">
+                        {skill}
+                      </Badge>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-      </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </div>
+      </main>
     </div>
   );
 }
