@@ -23,10 +23,20 @@ export default function FileUpload({
 
   const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
   const ALLOWED_TYPES = [
-    'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+    // Images
+    'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
+    // Documents
     'application/pdf', 'text/plain', 'application/msword',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'video/mp4', 'video/webm', 'audio/mpeg', 'audio/wav'
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    // Archives
+    'application/zip', 'application/x-rar-compressed',
+    // Media
+    'video/mp4', 'video/webm', 'video/avi', 'video/mov',
+    'audio/mpeg', 'audio/wav', 'audio/mp3', 'audio/m4a', 'audio/ogg'
   ];
 
   const validateFile = (file: File): boolean => {
@@ -137,7 +147,7 @@ export default function FileUpload({
             Choose File
           </Button>
           <p className="text-xs text-muted-foreground mt-2">
-            Max 10MB • Images, Documents, Videos, Audio
+            Max 10MB • Images, Videos, Audio, Documents, Archives
           </p>
         </div>
       )}

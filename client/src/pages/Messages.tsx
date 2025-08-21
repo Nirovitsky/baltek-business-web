@@ -38,6 +38,8 @@ export default function Messages() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [sendingMessage, setSendingMessage] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [uploadingFile, setUploadingFile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -127,9 +129,29 @@ export default function Messages() {
       
       // Upload file first if there is one
       if (selectedFile) {
-        const upload = uploadFile(selectedFile);
-        const result = await upload.promise;
-        attachmentId = result.id;
+        setUploadingFile(true);
+        setUploadProgress(0);
+        
+        const upload = uploadFile(selectedFile, (progress) => {
+          setUploadProgress(progress);
+        });
+        
+        try {
+          const result = await upload.promise;
+          attachmentId = result.id;
+          setUploadProgress(100);
+        } catch (uploadError) {
+          console.error("File upload failed:", uploadError);
+          toast({
+            title: "File upload failed",
+            description: "Could not upload your file. Please try again.",
+            variant: "destructive",
+          });
+          throw uploadError; // Re-throw to prevent message sending
+        } finally {
+          setUploadingFile(false);
+          setUploadProgress(0);
+        }
       }
       
       // Send message via WebSocket
@@ -432,8 +454,22 @@ export default function Messages() {
                       onFileSelect={handleFileSelect}
                       selectedFile={selectedFile}
                       onRemoveFile={handleRemoveFile}
-                      disabled={sendingMessage}
+                      disabled={sendingMessage || uploadingFile}
                     />
+                    {uploadingFile && (
+                      <div className="mt-2">
+                        <div className="flex items-center justify-between text-sm text-muted-foreground mb-1">
+                          <span>Uploading file...</span>
+                          <span>{uploadProgress}%</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div 
+                            className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+                            style={{ width: `${uploadProgress}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
                 
@@ -455,24 +491,26 @@ export default function Messages() {
                         if (file) handleFileSelect(file);
                       }}
                       className="hidden"
-                      accept="image/*,application/pdf,.doc,.docx,.txt"
+                      accept="image/*,video/*,audio/*,application/pdf,.doc,.docx,.txt,.zip,.rar"
                     />
                     <Button
                       type="button"
                       size="sm"
                       variant="ghost"
-                      disabled={sendingMessage || !connected}
+                      disabled={sendingMessage || uploadingFile || !connected}
                       onClick={() => {
                         fileInputRef.current?.click();
                       }}
+                      title="Attach file"
                     >
                       <Paperclip className="h-4 w-4" />
                     </Button>
                     <Button
                       type="submit"
-                      disabled={(!messageInput.trim() && !selectedFile) || sendingMessage || !connected}
+                      disabled={(!messageInput.trim() && !selectedFile) || sendingMessage || uploadingFile || !connected}
+                      title={!connected ? "Not connected" : uploadingFile ? "Uploading file..." : "Send message"}
                     >
-                      {sendingMessage ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                      {sendingMessage || uploadingFile ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                     </Button>
                   </div>
                 </form>

@@ -2,7 +2,7 @@ import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check, CheckCheck, Clock, AlertTriangle, RotateCcw, Download } from 'lucide-react';
+import { Check, CheckCheck, Clock, AlertTriangle, RotateCcw, Download, FileText, Image, Video, Music, File } from 'lucide-react';
 import type { ChatMessage, User } from '@/types';
 
 interface MessageRendererProps {
@@ -70,41 +70,108 @@ export default function MessageRenderer({ message, currentUser, onRetry }: Messa
   // Render attachment
   const renderAttachment = (attachment: any) => {
     const isImage = attachment.content_type?.startsWith('image/');
+    const isVideo = attachment.content_type?.startsWith('video/');
+    const isAudio = attachment.content_type?.startsWith('audio/');
+    const isPdf = attachment.content_type === 'application/pdf';
     
+    const formatFileSize = (bytes: number) => {
+      if (!bytes) return '';
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    };
+
+    const getFileIcon = () => {
+      if (isImage) return <Image className="h-4 w-4 text-green-500" />;
+      if (isVideo) return <Video className="h-4 w-4 text-blue-500" />;
+      if (isAudio) return <Music className="h-4 w-4 text-purple-500" />;
+      if (isPdf) return <FileText className="h-4 w-4 text-red-500" />;
+      return <File className="h-4 w-4 text-gray-500" />;
+    };
+    
+    // Handle image attachments
     if (isImage && attachment.file_url) {
       return (
-        <img
-          key={attachment.id}
-          src={attachment.file_url}
-          alt={attachment.file_name}
-          className="max-w-xs max-h-64 rounded-lg object-cover cursor-pointer"
-          onClick={() => window.open(attachment.file_url, '_blank')}
-        />
+        <div key={attachment.id} className="max-w-xs">
+          <img
+            src={attachment.file_url}
+            alt={attachment.file_name || 'Image'}
+            className="max-w-full max-h-64 rounded-lg object-cover cursor-pointer border"
+            onClick={() => window.open(attachment.file_url, '_blank')}
+          />
+          {attachment.file_name && (
+            <p className="text-xs text-gray-500 mt-1 truncate">{attachment.file_name}</p>
+          )}
+        </div>
+      );
+    }
+
+    // Handle video attachments
+    if (isVideo && attachment.file_url) {
+      return (
+        <div key={attachment.id} className="max-w-xs">
+          <video
+            controls
+            className="max-w-full max-h-64 rounded-lg border"
+            preload="metadata"
+          >
+            <source src={attachment.file_url} type={attachment.content_type} />
+            Your browser does not support the video tag.
+          </video>
+          {attachment.file_name && (
+            <p className="text-xs text-gray-500 mt-1 truncate">{attachment.file_name}</p>
+          )}
+        </div>
+      );
+    }
+
+    // Handle audio attachments
+    if (isAudio && attachment.file_url) {
+      return (
+        <div key={attachment.id} className="max-w-xs">
+          <audio controls className="w-full">
+            <source src={attachment.file_url} type={attachment.content_type} />
+            Your browser does not support the audio tag.
+          </audio>
+          {attachment.file_name && (
+            <p className="text-xs text-gray-500 mt-1 truncate">{attachment.file_name}</p>
+          )}
+        </div>
       );
     }
     
+    // Handle other file types (PDF, documents, etc.)
     return (
       <div
         key={attachment.id}
-        className="flex items-center gap-2 p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 max-w-xs"
+        className="flex items-center gap-3 p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 max-w-xs hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+        onClick={() => attachment.file_url && window.open(attachment.file_url, '_blank')}
       >
-        <div className="flex-1 min-w-0">
-          <p className="font-medium text-sm truncate">{attachment.file_name}</p>
-          {attachment.size && (
-            <p className="text-xs text-gray-500">
-              {(attachment.size / 1024 / 1024).toFixed(1)} MB
-            </p>
-          )}
+        <div className="flex-shrink-0">
+          {getFileIcon()}
         </div>
-        {attachment.file_url && (
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => window.open(attachment.file_url, '_blank')}
-          >
-            <Download className="h-4 w-4" />
-          </Button>
-        )}
+        <div className="flex-1 min-w-0">
+          <p className="font-medium text-sm truncate">
+            {attachment.file_name || attachment.name || 'File'}
+          </p>
+          <div className="flex items-center gap-2 mt-1">
+            {attachment.content_type && (
+              <Badge variant="secondary" className="text-xs px-1 py-0">
+                {attachment.content_type.split('/')[1]?.toUpperCase() || 'FILE'}
+              </Badge>
+            )}
+            {attachment.size && (
+              <span className="text-xs text-gray-500">
+                {formatFileSize(attachment.size)}
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="flex-shrink-0">
+          <Download className="h-4 w-4 text-gray-400" />
+        </div>
       </div>
     );
   };
