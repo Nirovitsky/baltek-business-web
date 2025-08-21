@@ -180,15 +180,22 @@ export default function MessageRenderer({ message, currentUser, onRetry }: Messa
     <div className={`flex gap-3 mb-4 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
       {!isOwn && (
         <Avatar className="h-8 w-8 flex-shrink-0">
-          <AvatarImage src={(message.owner as any)?.avatar} alt="User avatar" />
-          <AvatarFallback>{getUserInitials(message.owner)}</AvatarFallback>
+          <AvatarImage 
+            src={message.senderInfo?.avatar} 
+            alt={`${message.senderInfo?.first_name || 'User'} avatar`}
+          />
+          <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300">
+            {message.senderInfo?.first_name?.[0]?.toUpperCase() || 
+             message.senderInfo?.last_name?.[0]?.toUpperCase() || 
+             'U'}
+          </AvatarFallback>
         </Avatar>
       )}
       
       <div className={`flex flex-col max-w-[70%] ${isOwn ? 'items-end' : 'items-start'}`}>
         {!isOwn && (
           <div className="text-xs text-gray-500 mb-1">
-            {(message.owner as any)?.first_name || 'User'}
+            {message.senderInfo?.first_name || 'User'}
           </div>
         )}
         

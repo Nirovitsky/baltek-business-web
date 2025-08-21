@@ -43,6 +43,14 @@ export interface ChatMessage {
   date_created: number;
   isOptimistic?: boolean;
   error?: string;
+  senderInfo?: {
+    id: number;
+    first_name: string;
+    last_name: string;
+    avatar?: string;
+    profession?: string;
+    is_online?: boolean;
+  };
 }
 
 export interface MessageAttachment {
