@@ -699,25 +699,6 @@ export default function Organization() {
                   )}
                 </div>
 
-                {/* Current Jobs Section */}
-                <div className="bg-white dark:bg-background rounded-lg shadow-sm border dark:border-gray-700 p-6">
-                  <h2 className="text-xl font-bold text-foreground dark:text-foreground mb-4 flex items-center gap-2">
-                    <Briefcase className="h-5 w-5" />
-                    Current Job Openings
-                  </h2>
-                  
-                  <div className="text-center py-8">
-                    <p className="text-muted-foreground dark:text-muted-foreground/60 italic mb-4">
-                      Job listings will appear here once posted.
-                    </p>
-                    <Link href="/create-job">
-                      <Button>
-                        <Briefcase className="h-4 w-4 mr-2" />
-                        Post New Job
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
               </>
             )}
         </div>
