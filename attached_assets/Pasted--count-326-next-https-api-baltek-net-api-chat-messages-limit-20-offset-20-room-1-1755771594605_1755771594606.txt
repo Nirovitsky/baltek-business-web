@@ -1,0 +1,193 @@
+{
+    "count": 326,
+    "next": "https://api.baltek.net/api/chat/messages/?limit=20&offset=20&room=1",
+    "previous": null,
+    "results": [
+        {
+            "id": 401,
+            "room": 1,
+            "owner": 1,
+            "text": "barcelona]",
+            "status": "delivered",
+            "attachments": [],
+            "date_created": 1755770815
+        },
+        {
+            "id": 400,
+            "room": 1,
+            "owner": 1,
+            "text": "testy",
+            "status": "read",
+            "attachments": [],
+            "date_created": 1755767362
+        },
+        {
+            "id": 399,
+            "room": 1,
+            "owner": 1,
+            "text": "t",
+            "status": "read",
+            "attachments": [
+                {
+                    "id": 75,
+                    "path": "https://api.baltek.net/media/file/79f95e0d-69c1-4bee-910c-3ff73a1d238c.pdf",
+                    "name": "8.pdf"
+                }
+            ],
+            "date_created": 1755692092
+        },
+        {
+            "id": 398,
+            "room": 1,
+            "owner": 1,
+            "text": "why",
+            "status": "read",
+            "attachments": [],
+            "date_created": 1755691992
+        },
+        {
+            "id": 397,
+            "room": 1,
+            "owner": 1,
+            "text": "hi",
+            "status": "read",
+            "attachments": [],
+            "date_created": 1755691987
+        },
+        {
+            "id": 396,
+            "room": 1,
+            "owner": 1,
+            "text": "test",
+            "status": "read",
+            "attachments": [],
+            "date_created": 1755691980
+        },
+        {
+            "id": 394,
+            "room": 1,
+            "owner": 1,
+            "text": "hello",
+            "status": "read",
+            "attachments": [],
+            "date_created": 1755686010
+        },
+        {
+            "id": 393,
+            "room": 1,
+            "owner": 1,
+            "text": "test",
+            "status": "read",
+            "attachments": [],
+            "date_created": 1755685989
+        },
+        {
+            "id": 392,
+            "room": 1,
+            "owner": 1,
+            "text": "test",
+            "status": "read",
+            "attachments": [],
+            "date_created": 1755685805
+        },
+        {
+            "id": 391,
+            "room": 1,
+            "owner": 1,
+            "text": "t",
+            "status": "read",
+            "attachments": [],
+            "date_created": 1755685802
+        },
+        {
+            "id": 377,
+            "room": 1,
+            "owner": 2,
+            "text": "hello",
+            "status": "read",
+            "attachments": [],
+            "date_created": 1755348426
+        },
+        {
+            "id": 376,
+            "room": 1,
+            "owner": 2,
+            "text": "hello",
+            "status": "read",
+            "attachments": [],
+            "date_created": 1755348190
+        },
+        {
+            "id": 375,
+            "room": 1,
+            "owner": 2,
+            "text": "hi",
+            "status": "read",
+            "attachments": [],
+            "date_created": 1755348188
+        },
+        {
+            "id": 374,
+            "room": 1,
+            "owner": 1,
+            "text": "t",
+            "status": "read",
+            "attachments": [],
+            "date_created": 1755348166
+        },
+        {
+            "id": 373,
+            "room": 1,
+            "owner": 1,
+            "text": "test",
+            "status": "read",
+            "attachments": [],
+            "date_created": 1755348160
+        },
+        {
+            "id": 372,
+            "room": 1,
+            "owner": 2,
+            "text": "why",
+            "status": "read",
+            "attachments": [],
+            "date_created": 1755345369
+        },
+        {
+            "id": 371,
+            "room": 1,
+            "owner": 2,
+            "text": "hi",
+            "status": "read",
+            "attachments": [],
+            "date_created": 1755345363
+        },
+        {
+            "id": 370,
+            "room": 1,
+            "owner": 2,
+            "text": "hi",
+            "status": "read",
+            "attachments": [],
+            "date_created": 1755345125
+        },
+        {
+            "id": 363,
+            "room": 1,
+            "owner": 1,
+            "text": "tt",
+            "status": "read",
+            "attachments": [],
+            "date_created": 1755344366
+        },
+        {
+            "id": 362,
+            "room": 1,
+            "owner": 1,
+            "text": "hii",
+            "status": "read",
+            "attachments": [],
+            "date_created": 1755344342
+        }
+    ]
+}

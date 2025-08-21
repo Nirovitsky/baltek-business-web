@@ -96,24 +96,15 @@ export default function Messages() {
       
       if (isNaN(date.getTime())) return '';
       
-      // Debug logging - remove this later
-      console.log('Messages formatTime:', { 
-        timestamp, 
-        dateString: date.toISOString(),
-        formatted: date.toLocaleDateString([], { month: "short", day: "numeric" })
-      });
-      
       const now = new Date();
       const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
 
-      // For future dates, treat as today to show time
-      if (diffInDays < 0) {
-        return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-      } else if (diffInDays === 0) {
+      // Always show time for messages from today (including future timestamps)
+      if (Math.abs(diffInDays) <= 0) {
         return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
       } else if (diffInDays === 1) {
         return "Yesterday";
-      } else if (diffInDays < 7) {
+      } else if (diffInDays < 7 && diffInDays > 0) {
         return date.toLocaleDateString([], { weekday: "short" });
       } else {
         return date.toLocaleDateString([], { month: "short", day: "numeric" });
@@ -201,10 +192,10 @@ export default function Messages() {
     return () => clearTimeout(timer);
   }, [messages, wsMessages, selectedConversation]);
 
-  // Combine API messages with WebSocket messages
+  // Combine API messages with WebSocket messages and sort by date
   const allMessages = selectedConversation === currentRoom 
-    ? [...(messages?.results || []), ...wsMessages] 
-    : messages?.results || [];
+    ? [...(messages?.results || []), ...wsMessages].sort((a, b) => a.date_created - b.date_created)
+    : (messages?.results || []).sort((a, b) => a.date_created - b.date_created);
 
   const filteredRooms = chatRooms?.results?.filter((room: ChatRoom) => {
     if (!searchQuery) return true;

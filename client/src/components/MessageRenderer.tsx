@@ -23,24 +23,15 @@ export default function MessageRenderer({ message, currentUser, onRetry }: Messa
       
       if (isNaN(date.getTime())) return '';
       
-      // Debug logging - remove this later
-      console.log('MessageRenderer formatTime:', { 
-        timestamp, 
-        dateString: date.toISOString(),
-        formatted: date.toLocaleDateString([], { month: "short", day: "numeric" })
-      });
-      
       const now = new Date();
       const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
       
-      // For messages in the future (like your timestamps), treat them as today
-      if (diffInDays < 0) {
-        return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-      } else if (diffInDays === 0) {
+      // Always show time for messages from today (including future timestamps)
+      if (Math.abs(diffInDays) <= 0) {
         return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
       } else if (diffInDays === 1) {
         return "Yesterday";
-      } else if (diffInDays < 7) {
+      } else if (diffInDays < 7 && diffInDays > 0) {
         return date.toLocaleDateString([], { weekday: "short" });
       } else {
         return date.toLocaleDateString([], { month: "short", day: "numeric" });
