@@ -186,6 +186,7 @@ export default function Messages() {
 
   // Handle file selection
   const handleFileSelect = (file: File) => {
+    console.log('File selected:', file.name, 'Size:', file.size, 'Type:', file.type);
     setSelectedFile(file);
   };
 

@@ -30,8 +30,16 @@ export function useUploadFile() {
   
   return {
     uploadFile: (file: File, onProgress?: (progress: number) => void): { promise: Promise<any>, abort: () => void } => {
+      console.log('Uploading file:', file.name, 'Size:', file.size, 'Type:', file.type);
+      
       const formData = new FormData();
       formData.append('file', file);
+      
+      // Debug FormData content
+      console.log('FormData entries:', Array.from(formData.entries()).map(([key, value]) => [
+        key, 
+        value instanceof File ? `File: ${value.name} (${value.size} bytes)` : value
+      ]));
       
       const controller = new AbortController();
       
@@ -46,14 +54,19 @@ export function useUploadFile() {
         });
         
         xhr.addEventListener('load', () => {
+          console.log('Upload response status:', xhr.status);
+          console.log('Upload response:', xhr.responseText);
+          
           if (xhr.status >= 200 && xhr.status < 300) {
             try {
               resolve(JSON.parse(xhr.responseText));
             } catch (error) {
+              console.error('Failed to parse response:', xhr.responseText);
               reject(new Error('Invalid response format'));
             }
           } else {
-            reject(new Error(`Upload failed with status ${xhr.status}`));
+            console.error('Upload failed:', xhr.status, xhr.responseText);
+            reject(new Error(`Upload failed with status ${xhr.status}: ${xhr.responseText}`));
           }
         });
         
