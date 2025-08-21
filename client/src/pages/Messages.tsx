@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link } from "wouter";
 import TopBar from "@/components/layout/TopBar";
 import MessageRenderer from "@/components/MessageRenderer";
 import { useChatRooms, useChatMessages, useUploadFile } from "@/hooks/useChatHooks";
