@@ -8,14 +8,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, MapPin, Calendar, Briefcase, GraduationCap, ExternalLink, Phone, Mail, Globe } from 'lucide-react';
 import { User } from '@/types';
+import { apiService } from '@/lib/api';
 
 export default function UserProfile() {
   const { userId } = useParams();
 
   const { data: user, isLoading, error } = useQuery({
-    queryKey: [`/api/users/${userId}/`],
+    queryKey: [`/users/${userId}/`],
+    queryFn: () => apiService.request<User>(`/users/${userId}/`),
     enabled: !!userId,
-  }) as { data: any; isLoading: boolean; error: any };
+  });
 
   if (isLoading) {
     return (
