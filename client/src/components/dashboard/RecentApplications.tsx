@@ -144,7 +144,7 @@ export default function RecentApplications() {
                   className="flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigate(`/profile/${application.owner?.id || application.id}`);
+                    navigate(`/user/${application.owner?.id || application.id}`);
                   }}
                 >
                   <Avatar className="w-10 h-10">
@@ -169,7 +169,7 @@ export default function RecentApplications() {
                     className="font-medium text-foreground cursor-pointer hover:text-primary inline"
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/profile/${application.owner?.id || application.id}`);
+                      navigate(`/user/${application.owner?.id || application.id}`);
                     }}
                   >
                     {application.owner?.first_name && application.owner?.last_name 

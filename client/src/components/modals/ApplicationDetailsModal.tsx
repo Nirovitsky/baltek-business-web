@@ -63,7 +63,7 @@ export default function ApplicationDetailsModal({
   };
 
   const handleSendMessage = () => {
-    navigate(`/profile/${application.owner?.id}`);
+    navigate(`/user/${application.owner?.id}`);
     onClose();
   };
 
@@ -182,7 +182,7 @@ export default function ApplicationDetailsModal({
               <Button 
                 variant="outline"
                 onClick={() => {
-                  navigate(`/profile/${application.owner?.id}`);
+                  navigate(`/user/${application.owner?.id}`);
                   onClose();
                 }}
               >
