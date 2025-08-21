@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
+import TopBar from "@/components/layout/TopBar";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { useOrganizationMutations, useOrganizationById, useOrganizations } from "@/hooks/useOrganizations";
+import { useOrganizationMutations, useOrganizationById } from "@/hooks/useOrganizations";
 import { 
   Building2, 
   MapPin, 
@@ -22,14 +23,11 @@ import {
   Mail, 
   Phone,
   FolderOpen,
-  ExternalLink,
-  Calendar,
   Briefcase,
   Edit3,
   Save,
   X,
-  Upload,
-  ArrowLeft
+  Upload
 } from "lucide-react";
 import { z } from "zod";
 import type { Organization } from "@/types";
@@ -49,164 +47,46 @@ const organizationUpdateSchema = z.object({
 
 type OrganizationUpdate = z.infer<typeof organizationUpdateSchema>;
 
-// Organization Suggestions Component
-function OrganizationSuggestions({ currentOrgId }: { currentOrgId: number | undefined }) {
-  const { organizations, isLoading } = useOrganizations();
-
-  const suggestions = organizations?.filter((org: Organization) => 
-    org.id !== currentOrgId
-  ).slice(0, 8) || [];
-
-  const getOrgInitials = (name?: string) => {
-    if (!name) return 'ORG';
-    return name
-      .split(' ')
-      .map(word => word.charAt(0))
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
-  return (
-    <div className="bg-white dark:bg-background rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden w-full">
-      <div className="px-6 py-4 bg-gradient-to-r from-primary/5 to-blue-50 dark:from-primary/10 dark:to-blue-900/20 border-b border-gray-200 dark:border-gray-700">
-        <h3 className="text-lg font-semibold text-foreground dark:text-foreground flex items-center gap-2">
-          <Building2 className="h-5 w-5 text-primary" />
-          Other Organizations
-        </h3>
-      </div>
-      
-      {isLoading ? (
-        <div>
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i}>
-              <div className="flex items-center gap-4 p-4">
-                <Skeleton className="h-12 w-12 rounded-full ring-2 ring-gray-100" />
-                <div className="flex-1">
-                  <Skeleton className="h-4 w-32 mb-2" />
-                  <Skeleton className="h-3 w-24 mb-2" />
-                  <Skeleton className="h-3 w-20" />
-                </div>
-                <Skeleton className="h-4 w-4" />
-              </div>
-              <hr className="border-gray-200 dark:border-gray-700" />
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div>
-          {suggestions.map((org: Organization) => (
-            <div key={org.id}>
-              <div className="flex items-center gap-4 p-4 hover:bg-muted dark:hover:bg-gray-700/50 transition-all duration-200 cursor-pointer group">
-                <Avatar className="h-12 w-12 ring-2 ring-gray-100 dark:ring-gray-600 group-hover:ring-primary/30 transition-all duration-200">
-                  <AvatarImage src={org.logo} alt={org.display_name || org.official_name} />
-                  <AvatarFallback className="bg-gradient-to-br from-primary/10 to-primary/20 text-primary text-sm font-bold border border-primary/20">
-                    {getOrgInitials(org.display_name || org.official_name)}
-                  </AvatarFallback>
-                </Avatar>
-                
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-semibold text-foreground dark:text-foreground truncate group-hover:text-primary transition-colors text-sm">
-                    {org.display_name || org.official_name}
-                  </h4>
-                  
-                  <div className="flex items-center gap-1 mt-1">
-                    <Building2 className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-xs text-muted-foreground dark:text-muted-foreground/60 font-medium">
-                      {typeof org.category === 'object' ? org.category?.name : org.category || "Business Services"}
-                    </span>
-                  </div>
-                  
-                  {org.location && (
-                    <div className="flex items-center gap-1 mt-2">
-                      <MapPin className="h-3 w-3 text-muted-foreground/60" />
-                      <p className="text-xs text-muted-foreground dark:text-muted-foreground/60 truncate">
-                        {typeof org.location === 'object' ? org.location.name : org.location}
-                      </p>
-                    </div>
-                  )}
-                </div>
-                
-                <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                  <ExternalLink className="h-4 w-4 text-muted-foreground/60 group-hover:text-primary" />
-                </div>
-              </div>
-              <hr className="border-gray-200 dark:border-gray-700" />
-            </div>
-          ))}
-          
-          {suggestions.length === 0 && (
-            <div className="p-8 text-center">
-              <div className="bg-muted dark:bg-gray-700 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
-                <Building2 className="h-8 w-8 text-muted-foreground/60" />
-              </div>
-              <p className="text-sm text-muted-foreground dark:text-muted-foreground/60 font-medium mb-1">
-                No other organizations available
-              </p>
-              <p className="text-xs text-muted-foreground dark:text-muted-foreground">
-                Check back later for more organizations
-              </p>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
 
 // Loading Skeleton
 function OrganizationProfileSkeleton() {
   return (
-    <div className="min-h-screen bg-muted dark:bg-gray-900">
-      <div className="container mx-auto px-6 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
-            <Card>
-              <CardHeader>
-                <div className="flex items-start gap-6">
-                  <Skeleton className="h-20 w-20 rounded-full" />
-                  <div className="flex-1">
-                    <Skeleton className="h-8 w-64 mb-2" />
-                    <Skeleton className="h-4 w-48 mb-2" />
-                    <div className="flex gap-4">
-                      <Skeleton className="h-4 w-32" />
-                      <Skeleton className="h-4 w-24" />
-                    </div>
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <TopBar 
+        title="Organization"
+        description="Manage your organization profile"
+        showCreateButton={false}
+      />
+      
+      <main className="flex-1 overflow-y-auto p-6">
+        <div className="max-w-4xl mx-auto space-y-6">
+          <Card>
+            <CardHeader>
+              <div className="flex items-start gap-6">
+                <Skeleton className="h-20 w-20 rounded-full" />
+                <div className="flex-1">
+                  <Skeleton className="h-8 w-64 mb-2" />
+                  <Skeleton className="h-4 w-48 mb-2" />
+                  <div className="flex gap-4">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-4 w-24" />
                   </div>
                 </div>
-              </CardHeader>
-            </Card>
-            {Array.from({ length: 2 }).map((_, i) => (
-              <Card key={i}>
-                <CardHeader>
-                  <Skeleton className="h-6 w-32" />
-                </CardHeader>
-                <CardContent>
-                  <Skeleton className="h-32 w-full" />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          <div>
-            <Card>
+              </div>
+            </CardHeader>
+          </Card>
+          {Array.from({ length: 2 }).map((_, i) => (
+            <Card key={i}>
               <CardHeader>
                 <Skeleton className="h-6 w-32" />
               </CardHeader>
-              <CardContent className="space-y-4">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <Skeleton className="h-10 w-10 rounded-full" />
-                    <div className="flex-1">
-                      <Skeleton className="h-4 w-24 mb-1" />
-                      <Skeleton className="h-3 w-16" />
-                    </div>
-                  </div>
-                ))}
+              <CardContent>
+                <Skeleton className="h-32 w-full" />
               </CardContent>
             </Card>
-          </div>
+          ))}
         </div>
-      </div>
+      </main>
     </div>
   );
 }
@@ -405,35 +285,47 @@ export default function Organization() {
 
   if (detailsError || !currentOrganization) {
     return (
-      <div className="min-h-screen bg-muted dark:bg-gray-900">
-        <div className="container mx-auto px-6 py-6">
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="text-center">
-              <h1 className="text-2xl font-bold text-foreground dark:text-foreground mb-2">
-                Organization Not Found
-              </h1>
-              <p className="text-muted-foreground dark:text-muted-foreground/60 mb-4">
-                Please create an organization or select an existing one from the sidebar.
-              </p>
-              <Link href="/create-organization">
-                <Button>
-                  <Building2 className="h-4 w-4 mr-2" />
-                  Create Organization
-                </Button>
-              </Link>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <TopBar 
+          title="Organization"
+          description="Manage your organization profile"
+          showCreateButton={false}
+        />
+        
+        <main className="flex-1 overflow-y-auto p-6">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center justify-center min-h-[400px]">
+              <div className="text-center">
+                <h1 className="text-2xl font-bold text-foreground dark:text-foreground mb-2">
+                  Organization Not Found
+                </h1>
+                <p className="text-muted-foreground dark:text-muted-foreground/60 mb-4">
+                  Please create an organization or select an existing one from the sidebar.
+                </p>
+                <Link href="/create-organization">
+                  <Button>
+                    <Building2 className="h-4 w-4 mr-2" />
+                    Create Organization
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
+        </main>
       </div>
     );
   }
 
   return (
-    <div className="h-full overflow-y-auto bg-muted dark:bg-gray-900">
-      <div className="container mx-auto px-6 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Organization Info */}
-          <div className="lg:col-span-2 space-y-6">
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <TopBar 
+        title="Organization"
+        description="Manage your organization profile"
+        showCreateButton={false}
+      />
+
+      <main className="flex-1 overflow-y-auto p-6">
+        <div className="max-w-4xl mx-auto space-y-6">
             {/* Basic Information */}
             <div className="bg-white dark:bg-background rounded-lg shadow-sm border dark:border-gray-700 p-6">
               <div className="flex items-start gap-6">
@@ -828,14 +720,8 @@ export default function Organization() {
                 </div>
               </>
             )}
-          </div>
-
-          {/* Right Column - Suggested Organizations */}
-          <div className="lg:col-span-1 lg:min-w-[400px]">
-            <OrganizationSuggestions currentOrgId={currentOrganization?.id} />
-          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
