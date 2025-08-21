@@ -491,7 +491,7 @@ export default function Messages() {
                         if (file) handleFileSelect(file);
                       }}
                       className="hidden"
-                      accept="image/*,video/*,audio/*,application/pdf,.doc,.docx,.txt,.zip,.rar"
+                      accept="image/*,video/*,audio/*,application/pdf,.doc,.docx,.txt,.zip,.rar,.heic,.heif"
                     />
                     <Button
                       type="button"
