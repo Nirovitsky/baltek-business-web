@@ -408,7 +408,7 @@ export default function Messages() {
                           content_type: message.attachment_type,
                           size: message.attachment_size,
                         }] : [],
-                        date_created: new Date(message.date_created).getTime() / 1000,
+                        date_created: message.date_created,
                       };
                       
                       return (
