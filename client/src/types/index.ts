@@ -23,6 +23,16 @@ export interface User {
   is_active?: boolean;
 }
 
+export interface Project {
+  id: number;
+  organization: number;
+  title: string;
+  description?: string;
+  link?: string;
+  date_started?: string;
+  date_finished?: string;
+}
+
 export interface Organization {
   id: number;
   official_name: string;
@@ -34,8 +44,10 @@ export interface Organization {
   email?: string;
   phone?: string;
   address?: string;
-  category?: string | { id: number; name: string };
-  location?: string | { id: number; name: string };
+  category?: string | number | { id: number; name: string };
+  location?: string | number | { id: number; name: string };
+  is_public?: boolean;
+  projects?: Project[];
   employee_count?: string;
   founded_year?: number;
   created_at?: string;
