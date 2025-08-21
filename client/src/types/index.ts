@@ -33,6 +33,36 @@ export interface Project {
   date_finished?: string;
 }
 
+export interface ChatMessage {
+  id: number | string;
+  room: number;
+  owner: number;
+  text: string;
+  status: "sending" | "delivered" | "failed" | "read";
+  attachments: MessageAttachment[];
+  date_created: number;
+  isOptimistic?: boolean;
+  error?: string;
+}
+
+export interface MessageAttachment {
+  id: number;
+  file_name: string;
+  file_url?: string;
+  content_type?: string;
+  size?: number;
+}
+
+export interface ChatRoom {
+  id: number;
+  content_type: string;
+  object_id: number;
+  content_object: any;
+  unread_message_count: number;
+  last_message_text: string | null;
+  last_message_date_created: number | null;
+}
+
 export interface Organization {
   id: number;
   official_name: string;
@@ -183,7 +213,7 @@ export interface UserResume {
   uploaded_at: string;
 }
 
-export interface Message {
+export interface RoomMessage {
   id: number;
   room: number;
   text: string;
@@ -202,7 +232,7 @@ export interface Room {
   members?: User[];
   job?: Job;
   application?: JobApplication;
-  last_message?: Message;
+  last_message?: RoomMessage;
   created_at: string;
 }
 

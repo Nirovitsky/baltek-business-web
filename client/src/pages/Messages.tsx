@@ -15,7 +15,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { Link } from "wouter";
 import FileUpload from "@/components/chat/FileUpload";
 import AttachmentPreview from "@/components/chat/AttachmentPreview";
-import type { Room, Message, PaginatedResponse } from "@/types";
+import type { Room, RoomMessage, PaginatedResponse } from "@/types";
 
 export default function Messages() {
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
@@ -24,7 +24,7 @@ export default function Messages() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [sendingMessage, setSendingMessage] = useState(false);
-  const [optimisticMessages, setOptimisticMessages] = useState<Message[]>([]);
+  const [optimisticMessages, setOptimisticMessages] = useState<RoomMessage[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
   const { toast } = useToast();
@@ -57,7 +57,7 @@ export default function Messages() {
     queryKey: ["/chat/messages/", selectedRoom?.id],
     queryFn: () => {
       if (!selectedRoom) return null;
-      return apiService.request<PaginatedResponse<Message>>(
+      return apiService.request<PaginatedResponse<RoomMessage>>(
         `/chat/messages/?room=${selectedRoom.id}`,
       );
     },
@@ -238,7 +238,7 @@ export default function Messages() {
 
     if (uploadedFile) {
       // File is already uploaded, send via WebSocket with attachment ID
-      const optimisticMessage: Message = {
+      const optimisticMessage: RoomMessage = {
         id: -Date.now(), // Negative ID for optimistic messages
         text: newMessage.trim() || '',
         date_created: new Date().toISOString(),
@@ -277,7 +277,7 @@ export default function Messages() {
       }
     } else {
       // Create optimistic message immediately
-      const optimisticMessage: Message = {
+      const optimisticMessage: RoomMessage = {
         id: -Date.now(), // Negative ID for optimistic messages
         text: newMessage.trim(),
         date_created: new Date().toISOString(),
