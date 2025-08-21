@@ -76,19 +76,40 @@ export default function Messages() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const formatTime = (timestamp: string) => {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+  const formatTime = (timestamp: number | string | null) => {
+    if (!timestamp) return '';
+    
+    try {
+      let date: Date;
+      
+      // Handle Unix timestamp (number or string number)
+      if (typeof timestamp === 'number') {
+        date = new Date(timestamp * 1000); // Convert from seconds to milliseconds
+      } else if (typeof timestamp === 'string' && /^\d+$/.test(timestamp)) {
+        date = new Date(parseInt(timestamp) * 1000);
+      } else if (typeof timestamp === 'string') {
+        // Fallback for ISO strings or other formats
+        date = new Date(timestamp);
+      } else {
+        return '';
+      }
+      
+      if (isNaN(date.getTime())) return '';
+      
+      const now = new Date();
+      const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
 
-    if (diffInDays === 0) {
-      return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    } else if (diffInDays === 1) {
-      return "Yesterday";
-    } else if (diffInDays < 7) {
-      return date.toLocaleDateString([], { weekday: "short" });
-    } else {
-      return date.toLocaleDateString([], { month: "short", day: "numeric" });
+      if (diffInDays === 0) {
+        return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      } else if (diffInDays === 1) {
+        return "Yesterday";
+      } else if (diffInDays < 7) {
+        return date.toLocaleDateString([], { weekday: "short" });
+      } else {
+        return date.toLocaleDateString([], { month: "short", day: "numeric" });
+      }
+    } catch {
+      return '';
     }
   };
 
@@ -305,7 +326,7 @@ export default function Messages() {
                         )}
                         {room.last_message_date_created && (
                           <p className="text-xs text-gray-400 mt-1">
-                            {formatTime(new Date(room.last_message_date_created * 1000).toISOString())}
+                            {formatTime(room.last_message_date_created)}
                           </p>
                         )}
                       </div>
