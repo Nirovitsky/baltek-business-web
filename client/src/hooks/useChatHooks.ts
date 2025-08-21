@@ -33,7 +33,7 @@ export function useUploadFile() {
       console.log('Uploading file:', file.name, 'Size:', file.size, 'Type:', file.type);
       
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('path', file);
       
       // Debug FormData content
       console.log('FormData entries:', Array.from(formData.entries()).map(([key, value]) => [
