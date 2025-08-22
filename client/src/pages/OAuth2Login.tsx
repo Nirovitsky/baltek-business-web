@@ -25,15 +25,6 @@ export default function OAuth2Login() {
     }
   };
 
-  // Auto-redirect to OAuth2 authorization immediately
-  useEffect(() => {
-    // Small delay to show the UI briefly before redirect
-    const timer = setTimeout(() => {
-      handleLogin();
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
@@ -50,7 +41,7 @@ export default function OAuth2Login() {
 
         <CardContent className="space-y-4">
           <div className="text-center text-sm text-muted-foreground">
-            You will be redirected to the secure Baltek authentication page to sign in.
+            Click the button below to sign in with your Baltek account.
           </div>
 
           <Button onClick={handleLogin} className="w-full">
