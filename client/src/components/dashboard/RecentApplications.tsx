@@ -19,29 +19,14 @@ export default function RecentApplications() {
   const [selectedApplication, setSelectedApplication] = useState<JobApplication | null>(null);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['/jobs/applications/', selectedOrganization?.id],
-    queryFn: async () => {
+    queryKey: ['/jobs/applications/'],
+    queryFn: () => {
       const params = new URLSearchParams();
       params.append('limit', '4');
       params.append('ordering', '-created_at'); // Get most recent first
-      
-      // Try with organization filter first
-      if (selectedOrganization) {
-        try {
-          params.append('organization', selectedOrganization.id.toString());
-          return await apiService.request<PaginatedResponse<JobApplication>>(`/jobs/applications/?${params.toString()}`);
-        } catch (error: any) {
-          console.warn('Failed to fetch applications with organization filter, trying without:', error);
-          // If organization filter fails, try without it
-          params.delete('organization');
-          return await apiService.request<PaginatedResponse<JobApplication>>(`/jobs/applications/?${params.toString()}`);
-        }
-      } else {
-        return await apiService.request<PaginatedResponse<JobApplication>>(`/jobs/applications/?${params.toString()}`);
-      }
+      return apiService.request<PaginatedResponse<JobApplication>>(`/jobs/applications/?${params.toString()}`);
     },
-    enabled: true, // Always enable, let the queryFn handle the logic
-    retry: false, // Don't retry on error since we handle it in queryFn
+    enabled: true,
   });
 
   if (isLoading) {
