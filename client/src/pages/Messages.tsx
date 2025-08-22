@@ -34,15 +34,21 @@ import type { ChatMessage, ChatRoom, MessageAttachment } from "@/types";
 export default function Messages() {
   const { user, selectedOrganization } = useAuth();
   
-  // Fetch current user profile
-  const { data: currentUser } = useQuery({
-    queryKey: ['/users/me/'],
-    queryFn: () => apiService.request<User>('/users/me/'),
-    enabled: true,
-  });
+  // Try to decode user info from token
+  const getUserFromToken = () => {
+    const token = localStorage.getItem('access_token');
+    if (!token) return null;
+    
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return { id: payload.user_id, ...payload };
+    } catch (error) {
+      return null;
+    }
+  };
   
-  // Use currentUser instead of user for message ownership
-  const activeUser = currentUser || user;
+  const tokenUser = getUserFromToken();
+  const activeUser = user || tokenUser;
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedConversation, setSelectedConversation] = useState<number | null>(null);
@@ -530,17 +536,6 @@ export default function Messages() {
                       const applicant = selectedConversationData?.content_object?.owner;
                       const messageOwnerId = message.owner?.id || message.owner;
                       
-                      // Debug message ownership and auth state
-                      console.log('Message debug:', {
-                        messageId: message.id,
-                        messageOwnerId: messageOwnerId,
-                        currentUserId: activeUser?.id,
-                        isCurrentUser: messageOwnerId === activeUser?.id,
-                        messageOwnerRaw: message.owner,
-                        text: message.text?.substring(0, 20),
-                        activeUser: activeUser,
-                        selectedOrg: selectedOrganization?.id
-                      });
                       
                       // Convert to ChatMessage format
                       const chatMessage: ChatMessage = {
@@ -562,10 +557,6 @@ export default function Messages() {
                         date_created: message.date_created,
                       };
                       
-                      // Debug log converted message
-                      if (chatMessage.attachments.length > 0) {
-                        console.log('Converted message attachments:', chatMessage.attachments);
-                      }
                       
                       return (
                         <MessageRenderer
