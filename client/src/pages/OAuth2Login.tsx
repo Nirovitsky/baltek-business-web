@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { oauth2Service } from "@/lib/oauth2";
 import { useAuth } from "@/hooks/useAuth";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 export default function OAuth2Login() {
   const navigate = useNavigate();
   const { isAuthenticated, hasOrganizations } = useAuth();
+  const [isSigningIn, setIsSigningIn] = useState(false);
 
   // Redirect authenticated users
   useEffect(() => {
@@ -19,9 +20,11 @@ export default function OAuth2Login() {
 
   const handleLogin = async () => {
     try {
+      setIsSigningIn(true);
       await oauth2Service.initiateLogin();
     } catch (error) {
       console.error('Failed to initiate login:', error);
+      setIsSigningIn(false);
     }
   };
 
@@ -44,9 +47,9 @@ export default function OAuth2Login() {
             Click the button below to sign in with your Baltek account.
           </div>
 
-          <Button onClick={handleLogin} className="w-full">
+          <Button onClick={handleLogin} className="w-full" disabled={isSigningIn}>
             <ExternalLink className="w-4 h-4 mr-2" />
-            Sign In with Baltek
+            {isSigningIn ? "Signing in..." : "Sign In with Baltek"}
           </Button>
 
           <div className="text-xs text-center text-muted-foreground">
