@@ -123,6 +123,7 @@ export class OAuth2Service {
         state: state,
         code_challenge: codeChallenge,
         code_challenge_method: "S256",
+        prompt: "login", // Force fresh authentication every time
       });
 
       const authUrl = `${config.authorization_endpoint}?${params.toString()}`;
