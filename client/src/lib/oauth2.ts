@@ -406,7 +406,7 @@ export class OAuth2Service {
     options: RequestInit = {},
     retryWithRefresh = true
   ): Promise<T> {
-    const url = endpoint.startsWith("http") ? endpoint : `${API_BASE_URL}/${endpoint}`;
+    const url = endpoint.startsWith("http") ? endpoint : `${API_BASE_URL}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
     const headers = {
       "Content-Type": "application/json",
       ...this.getAuthHeaders(),
