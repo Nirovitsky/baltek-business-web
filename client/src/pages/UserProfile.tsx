@@ -190,7 +190,7 @@ export default function UserProfile() {
                   <div className="flex flex-wrap gap-2">
                     {user.skills.map((skill, index) => (
                       <Badge key={index} variant="secondary">
-                        {typeof skill === 'string' ? skill : skill.name || skill}
+                        {typeof skill === 'string' ? skill : skill.name}
                       </Badge>
                     ))}
                   </div>
