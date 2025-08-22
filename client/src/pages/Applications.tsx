@@ -48,14 +48,15 @@ export default function Applications() {
   const navigate = useNavigate();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['/jobs/applications/', statusFilter],
+    queryKey: ['/jobs/applications/', statusFilter, selectedOrganization?.id],
     queryFn: () => {
       const params = new URLSearchParams();
       if (statusFilter !== 'all') params.append('status', statusFilter);
+      if (selectedOrganization) params.append('organization', selectedOrganization.id.toString());
       
       return apiService.request<PaginatedResponse<JobApplication>>(`/jobs/applications/?${params.toString()}`);
     },
-    enabled: true,
+    enabled: !!selectedOrganization,
   });
 
   // Query for detailed application data when viewing details
@@ -101,32 +102,8 @@ export default function Applications() {
     [...data.results].sort((a, b) => b.id - a.id) : 
     [];
   
-  // Filter applications to only show jobs from the current organization
-  const organizationFilteredApplications = applications.filter(application => {
-    // If no organization is selected, show all applications
-    if (!selectedOrganization) return true;
-    
-    // Check if the job belongs to the current organization
-    if (typeof application.job === 'object' && application.job?.organization) {
-      const jobOrganization = application.job.organization;
-      
-      // Handle case where organization is an object with id
-      if (typeof jobOrganization === 'object' && jobOrganization.id) {
-        return jobOrganization.id === selectedOrganization.id;
-      }
-      
-      // Handle case where organization is just an ID number
-      if (typeof jobOrganization === 'number') {
-        return jobOrganization === selectedOrganization.id;
-      }
-    }
-    
-    // If we can't determine the organization, exclude the application
-    return false;
-  });
-  
-  // Then apply search filter
-  const filteredApplications = organizationFilteredApplications.filter(app => 
+  // Apply search filter
+  const filteredApplications = applications.filter(app => 
     searchTerm === "" || 
     (`${app.owner?.first_name || ''} ${app.owner?.last_name || ''}`.toLowerCase().includes(searchTerm.toLowerCase())) ||
     (typeof app.job === 'object' && app.job.title?.toLowerCase().includes(searchTerm.toLowerCase()))
