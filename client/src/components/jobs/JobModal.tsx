@@ -16,21 +16,27 @@ export default function JobModal({ open, onOpenChange, job, onSuccess }: JobModa
     if (open) {
       document.body.style.height = '100vh';
       document.body.style.overflow = 'hidden';
+      document.body.style.overscrollBehavior = 'none';
       document.documentElement.style.height = '100vh';
       document.documentElement.style.overflow = 'hidden';
+      document.documentElement.style.overscrollBehavior = 'none';
     } else {
       document.body.style.height = '';
       document.body.style.overflow = '';
+      document.body.style.overscrollBehavior = '';
       document.documentElement.style.height = '';
       document.documentElement.style.overflow = '';
+      document.documentElement.style.overscrollBehavior = '';
     }
     
     // Cleanup on unmount
     return () => {
       document.body.style.height = '';
       document.body.style.overflow = '';
+      document.body.style.overscrollBehavior = '';
       document.documentElement.style.height = '';
       document.documentElement.style.overflow = '';
+      document.documentElement.style.overscrollBehavior = '';
     };
   }, [open]);
   return (
