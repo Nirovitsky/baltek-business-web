@@ -220,7 +220,7 @@ function AppRoutes() {
 function App() {
   return (
     <BrowserRouter>
-      <ThemeProvider defaultTheme="light" storageKey="baltek-ui-theme">
+      <ThemeProvider defaultTheme="system" storageKey="baltek-ui-theme">
         <QueryClientProvider client={queryClient}>
           <TooltipProvider>
             <Toaster />
