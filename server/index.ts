@@ -7,13 +7,17 @@ async function startServer() {
   try {
     console.log("[server] Starting Vite development server...");
     
+    const port = parseInt(process.env.PORT || '5000', 10);
+    const host = process.env.HOST || '0.0.0.0';
+    const nodeEnv = process.env.NODE_ENV || 'development';
+    
     // Create Vite server directly (not in middleware mode)
     const server = await createServer({
       configFile: "./vite.config.ts",
       root: "./client",
       server: {
-        port: parseInt(process.env.PORT || '5000', 10),
-        host: "0.0.0.0",
+        port,
+        host,
         strictPort: true,
       },
       optimizeDeps: {
@@ -27,8 +31,9 @@ async function startServer() {
     
     console.log(`[server] Frontend serving on port ${server.config.server.port}`);
     console.log(`[server] Local: http://localhost:${server.config.server.port}/`);
-    console.log(`[server] Mode: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`[server] API: External (https://api.baltek.net/api)`);
+    console.log(`[server] Network: http://${host}:${server.config.server.port}/`);
+    console.log(`[server] Mode: ${nodeEnv}`);
+    console.log(`[server] API: External (${process.env.VITE_API_BASE_URL || 'https://api.baltek.net/api'})`);
     
     // Handle process termination
     process.on('SIGTERM', async () => {

@@ -38,9 +38,9 @@ export default function OAuth2Login() {
           <div className="mx-auto w-16 h-16 bg-primary rounded-xl flex items-center justify-center mb-4">
             <Building2 className="w-8 h-8 text-white" />
           </div>
-          <CardTitle className="text-2xl font-bold">baltek business</CardTitle>
+          <CardTitle className="text-2xl font-bold">{import.meta.env.VITE_APP_NAME || "baltek business"}</CardTitle>
           <CardDescription>
-            Secure authentication powered by OAuth2
+            {import.meta.env.VITE_APP_DESCRIPTION || "Secure authentication powered by OAuth2"}
           </CardDescription>
         </CardHeader>
 

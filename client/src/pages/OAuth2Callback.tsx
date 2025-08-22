@@ -96,7 +96,7 @@ export default function OAuth2Callback() {
           <div className="mx-auto w-16 h-16 bg-primary rounded-xl flex items-center justify-center mb-4">
             <Building2 className="w-8 h-8 text-white" />
           </div>
-          <h2 className="text-2xl font-bold text-foreground">baltek business</h2>
+          <h2 className="text-2xl font-bold text-foreground">{import.meta.env.VITE_APP_NAME || "baltek business"}</h2>
           <p className="text-muted-foreground mt-2">
             {isProcessing ? "Completing sign in..." : "Redirecting..."}
           </p>

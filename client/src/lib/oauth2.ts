@@ -1,14 +1,15 @@
 import { queryClient } from "./queryClient";
 
-const API_BASE_URL = "https://api.baltek.net/api";
-const OAUTH2_BASE_URL = `${API_BASE_URL}/oauth2`;
+// Environment configuration
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://api.baltek.net/api";
+const OAUTH2_BASE_URL = import.meta.env.VITE_OAUTH2_BASE_URL || `${API_BASE_URL}/oauth2`;
 
 // OAuth2 Configuration
 const OAUTH2_CONFIG = {
-  clientId: "baltek-business-app", // This should match your OAuth2 application in backend
+  clientId: import.meta.env.VITE_OAUTH2_CLIENT_ID || "baltek-business-app",
   redirectUri: `${window.location.origin}/oauth/callback`,
-  scope: "read write",
-  responseType: "code",
+  scope: import.meta.env.VITE_OAUTH2_SCOPE || "read write",
+  responseType: import.meta.env.VITE_OAUTH2_RESPONSE_TYPE || "code",
 };
 
 export interface TokenResponse {
