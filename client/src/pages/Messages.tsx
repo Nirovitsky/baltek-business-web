@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import TopBar from "@/components/layout/TopBar";
 import MessageRenderer from "@/components/MessageRenderer";
+import ImageModal from "@/components/ImageModal";
 import { useChatRooms, useChatMessages, useUploadFile } from "@/hooks/useChatHooks";
 import { useWebSocketGlobal } from "@/hooks/useWebSocketGlobal";
 import FileUpload from "@/components/chat/FileUpload";
@@ -61,6 +62,7 @@ export default function Messages() {
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [uploadingFile, setUploadingFile] = useState(false);
   const [uploadedAttachment, setUploadedAttachment] = useState<{id: number, name: string, url: string} | null>(null);
+  const [imageModal, setImageModal] = useState<{ src: string; alt: string } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -565,6 +567,7 @@ export default function Messages() {
                           key={`${message.id}-${index}`}
                           message={chatMessage}
                           currentUser={activeUser}
+                          onImageClick={(src, alt) => setImageModal({ src, alt })}
                         />
                       );
                     })}
@@ -684,6 +687,15 @@ export default function Messages() {
           )}
         </div>
       </div>
+      
+      {imageModal && (
+        <ImageModal
+          src={imageModal.src}
+          alt={imageModal.alt}
+          isOpen={!!imageModal}
+          onClose={() => setImageModal(null)}
+        />
+      )}
     </div>
   );
 }

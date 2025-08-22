@@ -1,20 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Check, CheckCheck, Clock, AlertTriangle, RotateCcw, Download, FileText, Image, Video, Music, File } from 'lucide-react';
-import ImageModal from './ImageModal';
 import type { ChatMessage, User } from '@/types';
 
 interface MessageRendererProps {
   message: ChatMessage;
   currentUser: User | null;
   onRetry?: (messageId: string | number) => void;
+  onImageClick?: (src: string, alt: string) => void;
 }
 
-export default function MessageRenderer({ message, currentUser, onRetry }: MessageRendererProps) {
-  const [imageModal, setImageModal] = useState<{ src: string; alt: string } | null>(null);
+export default function MessageRenderer({ message, currentUser, onRetry, onImageClick }: MessageRendererProps) {
   const isOwn = message.owner === currentUser?.id;
   
   // Format timestamp
@@ -103,7 +102,7 @@ export default function MessageRenderer({ message, currentUser, onRetry }: Messa
               src={attachment.file_url}
               alt={attachment.file_name || 'Image'}
               className="max-w-full max-h-64 object-cover cursor-pointer transition-transform duration-200 group-hover:scale-105"
-              onClick={() => setImageModal({ src: attachment.file_url, alt: attachment.file_name || 'Image' })}
+              onClick={() => onImageClick?.(attachment.file_url, attachment.file_name || 'Image')}
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200" />
           </div>
@@ -325,15 +324,6 @@ export default function MessageRenderer({ message, currentUser, onRetry }: Messa
           </div>
         )}
       </div>
-      
-      {imageModal && (
-        <ImageModal
-          src={imageModal.src}
-          alt={imageModal.alt}
-          isOpen={!!imageModal}
-          onClose={() => setImageModal(null)}
-        />
-      )}
     </div>
   );
 }
