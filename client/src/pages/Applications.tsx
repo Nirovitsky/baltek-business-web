@@ -101,8 +101,29 @@ export default function Applications() {
     [...data.results].sort((a, b) => b.id - a.id) : 
     [];
   
-  // Filter applications by search term and status
-  const organizationFilteredApplications = applications;
+  // Filter applications to only show jobs from the current organization
+  const organizationFilteredApplications = applications.filter(application => {
+    // If no organization is selected, show all applications
+    if (!selectedOrganization) return true;
+    
+    // Check if the job belongs to the current organization
+    if (typeof application.job === 'object' && application.job?.organization) {
+      const jobOrganization = application.job.organization;
+      
+      // Handle case where organization is an object with id
+      if (typeof jobOrganization === 'object' && jobOrganization.id) {
+        return jobOrganization.id === selectedOrganization.id;
+      }
+      
+      // Handle case where organization is just an ID number
+      if (typeof jobOrganization === 'number') {
+        return jobOrganization === selectedOrganization.id;
+      }
+    }
+    
+    // If we can't determine the organization, exclude the application
+    return false;
+  });
   
   // Then apply search filter
   const filteredApplications = organizationFilteredApplications.filter(app => 
