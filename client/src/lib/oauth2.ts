@@ -359,7 +359,6 @@ export class OAuth2Service {
       if (config.end_session_endpoint) {
         const logoutParams = new URLSearchParams({
           client_id: OAUTH2_CONFIG.clientId,
-          post_logout_redirect_uri: `${window.location.origin}/login`,
         });
 
         // Include id_token_hint if available (recommended for better logout experience)
@@ -369,7 +368,15 @@ export class OAuth2Service {
 
         const logoutUrl = `${config.end_session_endpoint}?${logoutParams.toString()}`;
         console.log('Initiating OAuth2 logout:', logoutUrl);
-        window.location.href = logoutUrl;
+        
+        // Open logout in a new window/tab to avoid navigation issues
+        // Then redirect locally after a short delay
+        window.open(logoutUrl, '_blank');
+        
+        // Redirect to login page after initiating server logout
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 1000);
       } else {
         // Fallback to local redirect if no logout endpoint
         window.location.href = '/login';
