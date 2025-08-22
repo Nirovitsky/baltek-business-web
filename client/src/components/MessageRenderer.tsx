@@ -186,9 +186,12 @@ export default function MessageRenderer({ message, currentUser, onRetry }: Messa
     );
   };
 
-  return (
-    <div className={`flex gap-3 mb-4 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
-      {!isOwn && message.senderInfo?.id && (
+  // Helper functions
+  const renderAvatar = () => {
+    if (isOwn) return null;
+    
+    if (message.senderInfo?.id) {
+      return (
         <Link to={`/user/${message.senderInfo.id}`}>
           <Avatar className="h-8 w-8 flex-shrink-0 hover:ring-2 hover:ring-blue-500 transition-all cursor-pointer">
             <AvatarImage 
@@ -202,20 +205,99 @@ export default function MessageRenderer({ message, currentUser, onRetry }: Messa
             </AvatarFallback>
           </Avatar>
         </Link>
+      );
+    }
+    
+    return (
+      <Avatar className="h-8 w-8 flex-shrink-0">
+        <AvatarImage 
+          src={message.senderInfo?.avatar} 
+          alt={`${message.senderInfo?.first_name || 'User'} avatar`}
+        />
+        <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300">
+          {message.senderInfo?.first_name?.[0]?.toUpperCase() || 
+           message.senderInfo?.last_name?.[0]?.toUpperCase() || 
+           'U'}
+        </AvatarFallback>
+      </Avatar>
+    );
+  };
+
+  const renderMessageMetadata = (showRetry = true) => (
+    <div className={`flex items-center gap-1 mt-1 text-xs text-gray-500 ${
+      isOwn ? 'flex-row-reverse' : 'flex-row'
+    }`}>
+      <span>{formatTime(message.date_created)}</span>
+      {renderStatusIcon()}
+      
+      {message.status === 'failed' && onRetry && showRetry && (
+        <Button
+          size="sm"
+          variant="ghost"
+          className="h-auto p-1 text-xs"
+          onClick={() => onRetry(message.id)}
+        >
+          <RotateCcw className="h-3 w-3 mr-1" />
+          Retry
+        </Button>
       )}
-      {!isOwn && !message.senderInfo?.id && (
-        <Avatar className="h-8 w-8 flex-shrink-0">
-          <AvatarImage 
-            src={message.senderInfo?.avatar} 
-            alt={`${message.senderInfo?.first_name || 'User'} avatar`}
-          />
-          <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300">
-            {message.senderInfo?.first_name?.[0]?.toUpperCase() || 
-             message.senderInfo?.last_name?.[0]?.toUpperCase() || 
-             'U'}
-          </AvatarFallback>
-        </Avatar>
-      )}
+    </div>
+  );
+
+  const hasText = message.text && message.text.trim();
+  const hasAttachments = message.attachments && message.attachments.length > 0;
+
+  // If message has both text and attachments, show them as separate bubbles
+  if (hasText && hasAttachments) {
+    return (
+      <div className="space-y-2 mb-4">
+        {/* Text bubble */}
+        <div className={`flex gap-3 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
+          {renderAvatar()}
+          <div className={`flex flex-col max-w-[70%] ${isOwn ? 'items-end' : 'items-start'}`}>
+            {!isOwn && (
+              <div className="text-xs text-gray-500 mb-1">
+                {message.senderInfo?.first_name || 'User'}
+              </div>
+            )}
+            
+            <div className={`rounded-lg px-3 py-2 ${
+              isOwn 
+                ? 'bg-blue-500 text-white' 
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
+            }`}>
+              <div className="whitespace-pre-wrap break-words">
+                {message.text}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Attachments bubble */}
+        <div className={`flex gap-3 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
+          {!isOwn && <div className="w-8" />} {/* Spacer for alignment */}
+          <div className={`flex flex-col max-w-[70%] ${isOwn ? 'items-end' : 'items-start'}`}>
+            <div className="space-y-2">
+              {message.attachments.map(renderAttachment)}
+            </div>
+            
+            {renderMessageMetadata()}
+            
+            {message.error && (
+              <div className="text-xs text-red-500 mt-1 max-w-xs">
+                {message.error}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Single bubble for text only or attachments only
+  return (
+    <div className={`flex gap-3 mb-4 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
+      {renderAvatar()}
       
       <div className={`flex flex-col max-w-[70%] ${isOwn ? 'items-end' : 'items-start'}`}>
         {!isOwn && (
@@ -224,42 +306,25 @@ export default function MessageRenderer({ message, currentUser, onRetry }: Messa
           </div>
         )}
         
-        <div className={`rounded-lg px-3 py-2 ${
-          isOwn 
-            ? 'bg-blue-500 text-white' 
-            : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
-        }`}>
-          {message.text && (
+        {hasText && (
+          <div className={`rounded-lg px-3 py-2 ${
+            isOwn 
+              ? 'bg-blue-500 text-white' 
+              : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
+          }`}>
             <div className="whitespace-pre-wrap break-words">
               {message.text}
             </div>
-          )}
-          
-          {message.attachments && message.attachments.length > 0 && (
-            <div className={`space-y-2 ${message.text ? 'mt-2' : ''}`}>
-              {message.attachments.map(renderAttachment)}
-            </div>
-          )}
-        </div>
+          </div>
+        )}
         
-        <div className={`flex items-center gap-1 mt-1 text-xs text-gray-500 ${
-          isOwn ? 'flex-row-reverse' : 'flex-row'
-        }`}>
-          <span>{formatTime(message.date_created)}</span>
-          {renderStatusIcon()}
-          
-          {message.status === 'failed' && onRetry && (
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-auto p-1 text-xs"
-              onClick={() => onRetry(message.id)}
-            >
-              <RotateCcw className="h-3 w-3 mr-1" />
-              Retry
-            </Button>
-          )}
-        </div>
+        {hasAttachments && !hasText && (
+          <div className="space-y-2">
+            {message.attachments.map(renderAttachment)}
+          </div>
+        )}
+        
+        {renderMessageMetadata()}
         
         {message.error && (
           <div className="text-xs text-red-500 mt-1 max-w-xs">
