@@ -29,9 +29,15 @@ import Settings from "@/pages/Settings";
 import NotFound from "@/pages/not-found";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, hasOrganizations, organizations, checkAuth, organizationsFetched } = useAuth();
+  const {
+    isAuthenticated,
+    hasOrganizations,
+    organizations,
+    checkAuth,
+    organizationsFetched,
+  } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Initialize global WebSocket connection when authenticated
   const { connected } = useWebSocketGlobal();
 
@@ -67,7 +73,12 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   // Only redirect to create-organization if organizations have been fetched and user has none
   // This prevents redirecting before we actually know if they have organizations
-  console.log('ProtectedRoute check:', { isAuthenticated, hasOrganizations, organizationsLength: organizations.length, organizationsFetched });
+  console.log("ProtectedRoute check:", {
+    isAuthenticated,
+    hasOrganizations,
+    organizationsLength: organizations.length,
+    organizationsFetched,
+  });
   if (isAuthenticated && organizationsFetched && !hasOrganizations) {
     return <Navigate to="/create-organization" replace />;
   }
@@ -75,9 +86,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return (
     <div className="dashboard-layout flex h-screen bg-background overflow-hidden">
       <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {children}
-      </div>
+      <div className="flex-1 flex flex-col overflow-hidden">{children}</div>
     </div>
   );
 }
@@ -88,120 +97,125 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<OAuth2Login />} />
-      <Route path="/oauth/callback" element={<OAuth2Callback />} />
-      
-      <Route 
-        path="/create-organization" 
-        element={!isAuthenticated ? <Navigate to="/login" replace /> : <CreateOrganization />} 
+      <Route path="/oauth2/callback" element={<OAuth2Callback />} />
+
+      <Route
+        path="/create-organization"
+        element={
+          !isAuthenticated ? (
+            <Navigate to="/login" replace />
+          ) : (
+            <CreateOrganization />
+          )
+        }
       />
-      
-      <Route 
-        path="/" 
+
+      <Route
+        path="/"
         element={
           <ProtectedRoute>
             <Dashboard />
           </ProtectedRoute>
-        } 
+        }
       />
-      
-      <Route 
-        path="/jobs" 
+
+      <Route
+        path="/jobs"
         element={
           <ProtectedRoute>
             <Jobs />
           </ProtectedRoute>
-        } 
+        }
       />
 
-      <Route 
-        path="/jobs/create" 
+      <Route
+        path="/jobs/create"
         element={
           <ProtectedRoute>
             <CreateJob />
           </ProtectedRoute>
-        } 
+        }
       />
 
-      <Route 
-        path="/jobs/edit/:id" 
+      <Route
+        path="/jobs/edit/:id"
         element={
           <ProtectedRoute>
             <CreateJob />
           </ProtectedRoute>
-        } 
+        }
       />
-      
-      <Route 
-        path="/jobs/:id" 
+
+      <Route
+        path="/jobs/:id"
         element={
           <ProtectedRoute>
             <JobDetails />
           </ProtectedRoute>
-        } 
+        }
       />
-      
-      <Route 
-        path="/applications" 
+
+      <Route
+        path="/applications"
         element={
           <ProtectedRoute>
             <Applications />
           </ProtectedRoute>
-        } 
+        }
       />
-      
-      <Route 
-        path="/chat" 
+
+      <Route
+        path="/chat"
         element={
           <ProtectedRoute>
             <Chat />
           </ProtectedRoute>
-        } 
+        }
       />
 
-      <Route 
-        path="/notifications" 
+      <Route
+        path="/notifications"
         element={
           <ProtectedRoute>
             <Notifications />
           </ProtectedRoute>
-        } 
+        }
       />
 
-
-      <Route 
-        path="/user/:userId" 
+      <Route
+        path="/user/:userId"
         element={
           <ProtectedRoute>
             <UserProfile />
           </ProtectedRoute>
-        } 
+        }
       />
-      
-      <Route 
-        path="/organization" 
+
+      <Route
+        path="/organization"
         element={
           <ProtectedRoute>
             <Organization />
           </ProtectedRoute>
-        } 
+        }
       />
-      
-      <Route 
-        path="/profile" 
+
+      <Route
+        path="/profile"
         element={
           <ProtectedRoute>
             <Profile />
           </ProtectedRoute>
-        } 
+        }
       />
 
-      <Route 
-        path="/settings" 
+      <Route
+        path="/settings"
         element={
           <ProtectedRoute>
             <Settings />
           </ProtectedRoute>
-        } 
+        }
       />
 
       <Route path="*" element={<NotFound />} />
