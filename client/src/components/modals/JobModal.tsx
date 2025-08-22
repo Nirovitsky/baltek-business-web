@@ -14,14 +14,23 @@ export default function JobModal({ open, onOpenChange, job, onSuccess }: JobModa
   // Prevent body scroll when modal is open
   useEffect(() => {
     if (open) {
+      document.body.style.height = '100vh';
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.height = '100vh';
+      document.documentElement.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.height = '';
+      document.body.style.overflow = '';
+      document.documentElement.style.height = '';
+      document.documentElement.style.overflow = '';
     }
     
     // Cleanup on unmount
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.height = '';
+      document.body.style.overflow = '';
+      document.documentElement.style.height = '';
+      document.documentElement.style.overflow = '';
     };
   }, [open]);
   return (
