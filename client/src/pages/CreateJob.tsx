@@ -47,9 +47,9 @@ export default function CreateJob() {
       location: 1,
       job_type: "full_time",
       workplace_type: "on_site",
-      min_education_level: undefined,
-      salary_from: undefined,
-      salary_to: undefined,
+      min_education_level: "",
+      salary_from: 0,
+      salary_to: 0,
       salary_payment_type: "monthly",
       currency: "TMT",
       required_languages: [],
@@ -111,9 +111,25 @@ export default function CreateJob() {
       navigate('/jobs');
     },
     onError: (error: any) => {
+      console.error("Job creation error:", error);
+      let errorMessage = "Failed to create job posting";
+      
+      if (error.message) {
+        errorMessage = error.message;
+      } else if (typeof error === 'object' && error !== null) {
+        // Handle validation errors from the API
+        const errors = Object.entries(error).map(([field, messages]) => {
+          if (Array.isArray(messages)) {
+            return `${field}: ${messages.join(', ')}`;
+          }
+          return `${field}: ${messages}`;
+        }).join('; ');
+        errorMessage = errors || errorMessage;
+      }
+      
       toast({
         title: "Error",
-        description: error.message || "Failed to create job posting",
+        description: errorMessage,
         variant: "destructive",
       });
     },
@@ -148,16 +164,30 @@ export default function CreateJob() {
     if (!selectedOrganization?.id) {
       toast({
         title: "Error",
-        description: "No organization found. Please contact support.",
+        description: "No organization selected. Please select an organization first.",
         variant: "destructive",
       });
       return;
     }
 
+    // Clean the data to ensure proper formatting
     const submitData = {
       ...data,
       organization: selectedOrganization.id,
+      description: data.description.trim(),
+      requirements: data.requirements ? data.requirements.trim() : "",
+      // Ensure min_education_level is not sent if empty
+      min_education_level: data.min_education_level || undefined,
     };
+
+    // Remove empty/undefined values that shouldn't be sent
+    Object.keys(submitData).forEach(key => {
+      if (submitData[key as keyof typeof submitData] === "" || submitData[key as keyof typeof submitData] === undefined) {
+        delete submitData[key as keyof typeof submitData];
+      }
+    });
+
+    console.log("Submitting job data:", submitData);
 
     if (isEditing) {
       updateMutation.mutate(submitData);
@@ -240,8 +270,12 @@ export default function CreateJob() {
                             {...field}
                             placeholder="Describe the role, responsibilities, and what makes this position exciting..."
                             className="min-h-[120px] mt-1"
+                            maxLength={1024}
                           />
                         </FormControl>
+                        <FormDescription className="text-xs text-muted-foreground text-right">
+                          {field.value?.length || 0}/1024 characters
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -313,11 +347,17 @@ export default function CreateJob() {
                             {...field}
                             placeholder="List the required skills, experience, and qualifications..."
                             className="min-h-[100px] mt-1"
+                            maxLength={1024}
                           />
                         </FormControl>
-                        <FormDescription className="text-xs text-muted-foreground">
-                          Optional: Detailed requirements for this position
-                        </FormDescription>
+                        <div className="flex justify-between">
+                          <FormDescription className="text-xs text-muted-foreground">
+                            Optional: Detailed requirements for this position
+                          </FormDescription>
+                          <FormDescription className="text-xs text-muted-foreground">
+                            {field.value?.length || 0}/1024 characters
+                          </FormDescription>
+                        </div>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -401,9 +441,10 @@ export default function CreateJob() {
                             </FormControl>
                             <SelectContent>
                               <SelectItem value="secondary">Secondary Education</SelectItem>
+                              <SelectItem value="undergraduate">Undergraduate</SelectItem>
                               <SelectItem value="bachelor">Bachelor's Degree</SelectItem>
                               <SelectItem value="master">Master's Degree</SelectItem>
-                              <SelectItem value="phd">PhD</SelectItem>
+                              <SelectItem value="doctorate">Doctorate/PhD</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />

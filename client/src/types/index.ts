@@ -272,8 +272,8 @@ export interface PaginatedResponse<T> {
 
 export const createJobSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
-  requirements: z.string().optional(),
+  description: z.string().min(1, "Description is required").max(1024, "Description must be 1024 characters or less"),
+  requirements: z.string().max(1024, "Requirements must be 1024 characters or less").optional(),
   responsibilities: z.string().optional(),
   benefits: z.string().optional(),
   salary_from: z.number().optional(),
