@@ -19,7 +19,7 @@ import Jobs from "@/pages/Jobs";
 import CreateJob from "@/pages/CreateJob";
 import JobDetails from "@/pages/JobDetails";
 import Applications from "@/pages/Applications";
-import Messages from "@/pages/Messages";
+import Chat from "@/pages/Chat";
 import Notifications from "@/pages/Notifications";
 import UserProfile from "@/pages/UserProfile";
 import Organization from "@/pages/Organization";
@@ -148,10 +148,10 @@ function AppRoutes() {
       />
       
       <Route 
-        path="/messages" 
+        path="/chat" 
         element={
           <ProtectedRoute>
-            <Messages />
+            <Chat />
           </ProtectedRoute>
         } 
       />

@@ -34,7 +34,7 @@ import {
 } from "lucide-react";
 import type { ChatMessage, ChatRoom, MessageAttachment } from "@/types";
 
-export default function Messages() {
+export default function Chat() {
   const { user, selectedOrganization } = useAuth();
   
   // Try to decode user info from token
@@ -305,8 +305,8 @@ export default function Messages() {
     return (
       <div className="flex-1 flex flex-col overflow-hidden">
         <TopBar 
-          title="Messages"
-          description={`Communicate with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
+          title="Chat"
+          description={`Chat with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
           showCreateButton={false}
         />
         <div className="flex-1 flex">
@@ -329,8 +329,8 @@ export default function Messages() {
     return (
       <div className="flex-1 flex flex-col overflow-hidden">
         <TopBar 
-          title="Messages"
-          description={`Communicate with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
+          title="Chat"
+          description={`Chat with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
           showCreateButton={false}
         />
         <div className="flex-1 flex items-center justify-center">
@@ -349,8 +349,8 @@ export default function Messages() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <TopBar 
-        title="Messages"
-        description={`Communicate with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
+        title="Chat"
+        description={`Chat with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
         showCreateButton={false}
       />
       

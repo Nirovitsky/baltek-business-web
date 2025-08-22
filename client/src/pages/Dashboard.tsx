@@ -58,7 +58,7 @@ export default function Dashboard() {
   };
 
   const handleOpenMessages = () => {
-    navigate('/messages');
+    navigate('/chat');
   };
 
   const handleJobClick = (jobId: number) => {
