@@ -100,13 +100,13 @@ export default function Jobs() {
     [];
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
+    <div className="flex-1 flex flex-col h-full overflow-hidden">
       <TopBar 
         title="Job Postings"
         description="Manage your job opportunities"
       />
 
-      <main className="flex-1 overflow-y-auto p-6 bg-muted/30">
+      <main className="flex-1 overflow-y-auto p-6 bg-muted/30 custom-scrollbar">
         {/* Filters */}
         <div className="mb-6 flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
