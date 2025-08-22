@@ -24,7 +24,7 @@ const navigationItems = [
     icon: BarChart3,
   },
   {
-    name: "Job Postings",
+    name: "Jobs",
     href: "/jobs",
     icon: Briefcase,
   },
