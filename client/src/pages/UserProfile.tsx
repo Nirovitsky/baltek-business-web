@@ -24,10 +24,10 @@ interface UserProfile {
   last_name: string;
   email?: string;
   phone?: string;
-  location?: string;
+  location?: string | { id: number; name: string };
   bio?: string;
   experience?: string;
-  skills?: string[];
+  skills?: (string | { id: number; name: string })[];
   created_at: string;
 }
 
@@ -144,7 +144,7 @@ export default function UserProfile() {
                     {user.location && (
                       <div className="flex items-center space-x-1">
                         <MapPin className="w-4 h-4" />
-                        <span>{user.location}</span>
+                        <span>{typeof user.location === 'string' ? user.location : user.location.name}</span>
                       </div>
                     )}
                   </div>
@@ -190,7 +190,7 @@ export default function UserProfile() {
                   <div className="flex flex-wrap gap-2">
                     {user.skills.map((skill, index) => (
                       <Badge key={index} variant="secondary">
-                        {skill}
+                        {typeof skill === 'string' ? skill : skill.name || skill}
                       </Badge>
                     ))}
                   </div>
