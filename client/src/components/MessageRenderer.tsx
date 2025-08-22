@@ -105,9 +105,6 @@ export default function MessageRenderer({ message, currentUser, onRetry }: Messa
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200" />
           </div>
-          {attachment.file_name && (
-            <p className="text-xs text-muted-foreground mt-2 truncate px-1">{attachment.file_name}</p>
-          )}
         </div>
       );
     }
@@ -126,9 +123,6 @@ export default function MessageRenderer({ message, currentUser, onRetry }: Messa
               Your browser does not support the video tag.
             </video>
           </div>
-          {attachment.file_name && (
-            <p className="text-xs text-muted-foreground mt-2 truncate px-1">{attachment.file_name}</p>
-          )}
         </div>
       );
     }
@@ -141,9 +135,6 @@ export default function MessageRenderer({ message, currentUser, onRetry }: Messa
             <source src={attachment.file_url} type={attachment.content_type} />
             Your browser does not support the audio tag.
           </audio>
-          {attachment.file_name && (
-            <p className="text-xs text-gray-500 mt-1 truncate">{attachment.file_name}</p>
-          )}
         </div>
       );
     }
