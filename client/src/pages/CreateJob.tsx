@@ -16,7 +16,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
 import { useReferenceData } from "@/hooks/useReferencedData";
 import { createJobSchema, type CreateJob, type Job, type Category, type Location, type Language, type PaginatedResponse } from "@/types";
-import { useEffect } from "react";
+import { useEffect, useCallback, useState } from "react";
 
 export default function CreateJob() {
   const { toast } = useToast();
@@ -26,6 +26,40 @@ export default function CreateJob() {
   const { id } = useParams<{ id?: string }>();
   
   const isEditing = Boolean(id);
+  const DRAFT_KEY = `job_draft_${isEditing ? id : 'new'}`;
+  const [isDraftSaved, setIsDraftSaved] = useState(false);
+
+  // Function to save draft to localStorage
+  const saveDraft = useCallback((data: any) => {
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+      setIsDraftSaved(true);
+      // Hide the indicator after 2 seconds
+      setTimeout(() => setIsDraftSaved(false), 2000);
+    } catch (error) {
+      console.warn('Failed to save form draft:', error);
+    }
+  }, [DRAFT_KEY]);
+
+  // Function to load draft from localStorage
+  const loadDraft = useCallback(() => {
+    try {
+      const saved = localStorage.getItem(DRAFT_KEY);
+      return saved ? JSON.parse(saved) : null;
+    } catch (error) {
+      console.warn('Failed to load form draft:', error);
+      return null;
+    }
+  }, [DRAFT_KEY]);
+
+  // Function to clear draft
+  const clearDraft = useCallback(() => {
+    try {
+      localStorage.removeItem(DRAFT_KEY);
+    } catch (error) {
+      console.warn('Failed to clear form draft:', error);
+    }
+  }, [DRAFT_KEY]);
 
   // Fetch job data if editing
   const { data: jobData } = useQuery({
@@ -36,9 +70,10 @@ export default function CreateJob() {
 
   const job = jobData;
 
-  const form = useForm<CreateJob>({
-    resolver: zodResolver(createJobSchema),
-    defaultValues: {
+  // Load draft data or use defaults
+  const getDraftOrDefaults = useCallback(() => {
+    const draft = loadDraft();
+    const defaults = {
       title: "",
       description: "",
       requirements: "",
@@ -56,13 +91,36 @@ export default function CreateJob() {
       date_started: Math.floor(Date.now() / 1000),
       date_ended: Math.floor((Date.now() + 30 * 24 * 60 * 60 * 1000) / 1000),
       status: "open",
-    },
+    };
+    
+    return draft ? { ...defaults, ...draft } : defaults;
+  }, [loadDraft, selectedOrganization?.id]);
+
+  const form = useForm<CreateJob>({
+    resolver: zodResolver(createJobSchema),
+    defaultValues: getDraftOrDefaults(),
   });
 
-  // Update form values when job data is loaded
+  // Auto-save form data as user types (debounced)
+  useEffect(() => {
+    const subscription = form.watch((data) => {
+      // Don't save draft if we're editing an existing job (already has data)
+      if (!isEditing) {
+        const timeoutId = setTimeout(() => {
+          saveDraft(data);
+        }, 1000); // Save after 1 second of inactivity
+        
+        return () => clearTimeout(timeoutId);
+      }
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [form, saveDraft, isEditing]);
+
+  // Update form values when job data is loaded (editing mode)
   useEffect(() => {
     if (job) {
-      form.reset({
+      const jobData = {
         title: job.title || "",
         description: job.description || "",
         requirements: job.requirements || "",
@@ -80,9 +138,12 @@ export default function CreateJob() {
         date_started: job.date_started || Math.floor(Date.now() / 1000),
         date_ended: job.date_ended || Math.floor((Date.now() + 30 * 24 * 60 * 60 * 1000) / 1000),
         status: job.status || "open",
-      });
+      };
+      form.reset(jobData);
+      // Clear any draft when editing existing job
+      clearDraft();
     }
-  }, [job, form, selectedOrganization]);
+  }, [job, form, selectedOrganization, clearDraft]);
 
   // Use shared reference data to avoid duplication with other components
   const { categories, locations } = useReferenceData();
@@ -104,6 +165,8 @@ export default function CreateJob() {
       queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
       queryClient.invalidateQueries({ queryKey: ['/jobs/', selectedOrganization?.id] });
       queryClient.refetchQueries({ queryKey: ['/jobs/'] });
+      // Clear draft on successful submission
+      clearDraft();
       toast({
         title: "Success",
         description: "Job posting created successfully",
@@ -146,6 +209,8 @@ export default function CreateJob() {
       queryClient.invalidateQueries({ queryKey: ['/jobs/', selectedOrganization?.id] });
       queryClient.invalidateQueries({ queryKey: ['/jobs/', job!.id] });
       queryClient.refetchQueries({ queryKey: ['/jobs/'] });
+      // Clear draft on successful submission
+      clearDraft();
       toast({
         title: "Success",
         description: "Job posting updated successfully",
@@ -220,11 +285,24 @@ export default function CreateJob() {
                 Back to Jobs
               </Button>
               <div>
-                <h1 className="text-2xl font-semibold">
-                  {isEditing ? 'Edit Job Posting' : 'Create New Job Posting'}
-                </h1>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-2xl font-semibold">
+                    {isEditing ? 'Edit Job Posting' : 'Create New Job Posting'}
+                  </h1>
+                  {isDraftSaved && !isEditing && (
+                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full flex items-center">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
+                      Draft saved
+                    </span>
+                  )}
+                </div>
                 <p className="text-sm text-muted-foreground mt-1">
                   {isEditing ? 'Update your job posting details' : 'Fill in the details to create a new job opportunity'}
+                  {!isEditing && (
+                    <span className="block text-xs text-muted-foreground mt-1">
+                      Your progress is automatically saved as you type
+                    </span>
+                  )}
                 </p>
               </div>
             </div>

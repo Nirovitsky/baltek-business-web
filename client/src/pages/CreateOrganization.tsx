@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -22,16 +22,32 @@ export default function CreateOrganization() {
   
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    official_name: "",
-    display_name: "",
-    about_us: "",
-    website: "",
-    email: "",
-    phone: "",
-    category_id: 0,
-    location_id: 0,
-  });
+  const DRAFT_KEY = 'organization_draft_new';
+  const [isDraftSaved, setIsDraftSaved] = useState(false);
+
+  // Load draft or use defaults
+  const loadDraftOrDefaults = () => {
+    try {
+      const saved = localStorage.getItem(DRAFT_KEY);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (error) {
+      console.warn('Failed to load organization draft:', error);
+    }
+    return {
+      official_name: "",
+      display_name: "",
+      about_us: "",
+      website: "",
+      email: "",
+      phone: "",
+      category_id: 0,
+      location_id: 0,
+    };
+  };
+
+  const [formData, setFormData] = useState(loadDraftOrDefaults);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
 
@@ -67,6 +83,21 @@ export default function CreateOrganization() {
       </div>
     );
   }
+
+  // Auto-save draft
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      try {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(formData));
+        setIsDraftSaved(true);
+        setTimeout(() => setIsDraftSaved(false), 2000);
+      } catch (error) {
+        console.warn('Failed to save organization draft:', error);
+      }
+    }, 1000);
+    
+    return () => clearTimeout(timeoutId);
+  }, [formData]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData(prev => ({
@@ -194,6 +225,12 @@ export default function CreateOrganization() {
         title: "Organization created",
         description: "Your organization has been created successfully",
       });
+      // Clear draft on successful creation
+      try {
+        localStorage.removeItem(DRAFT_KEY);
+      } catch (error) {
+        console.warn('Failed to clear organization draft:', error);
+      }
       navigate('/');
       
     } catch (error: any) {
@@ -500,9 +537,22 @@ export default function CreateOrganization() {
                 Organization
               </span>
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl mx-auto">
-              Set up your company profile and start managing job postings, applications, and candidate communications.
-            </p>
+            <div className="flex justify-center items-center gap-3">
+              <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl mx-auto">
+                Set up your company profile and start managing job postings, applications, and candidate communications.
+              </p>
+              {isDraftSaved && (
+                <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full flex items-center whitespace-nowrap">
+                  <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
+                  Draft saved
+                </span>
+              )}
+            </div>
+            {isDraftSaved && (
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                Your progress is automatically saved as you type
+              </p>
+            )}
           </div>
 
           {/* Step indicator */}
