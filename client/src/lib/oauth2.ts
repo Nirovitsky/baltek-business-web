@@ -195,6 +195,11 @@ export class OAuth2Service {
     localStorage.setItem("refresh_token", tokens.refresh_token);
     localStorage.setItem("token_type", tokens.token_type || "Bearer");
     
+    // Store id_token if provided (useful for logout)
+    if ((tokens as any).id_token) {
+      localStorage.setItem("id_token", (tokens as any).id_token);
+    }
+    
     // Calculate and store expiration time
     if (tokens.expires_in) {
       const expiresAt = Date.now() + (tokens.expires_in * 1000);
@@ -323,11 +328,12 @@ export class OAuth2Service {
    */
   async logout(): Promise<void> {
     const refreshToken = localStorage.getItem("refresh_token");
+    const idToken = localStorage.getItem("id_token"); // If available
     
     try {
       const config = await this.getOIDCConfig();
       
-      // Try to revoke refresh token
+      // Try to revoke refresh token first
       if (refreshToken && config.revocation_endpoint) {
         try {
           await fetch(config.revocation_endpoint, {
@@ -345,14 +351,27 @@ export class OAuth2Service {
         }
       }
 
-      // Clear local storage and redirect
+      // Clear local storage and query cache
       this.clearTokens();
       queryClient.clear();
       
-      // Redirect to logout endpoint for proper cleanup
+      // Initiate RP-initiated logout with proper OAuth2 flow
       if (config.end_session_endpoint) {
-        window.location.href = config.end_session_endpoint;
+        const logoutParams = new URLSearchParams({
+          client_id: OAUTH2_CONFIG.clientId,
+          post_logout_redirect_uri: `${window.location.origin}/login`,
+        });
+
+        // Include id_token_hint if available (recommended for better logout experience)
+        if (idToken) {
+          logoutParams.append('id_token_hint', idToken);
+        }
+
+        const logoutUrl = `${config.end_session_endpoint}?${logoutParams.toString()}`;
+        console.log('Initiating OAuth2 logout:', logoutUrl);
+        window.location.href = logoutUrl;
       } else {
+        // Fallback to local redirect if no logout endpoint
         window.location.href = '/login';
       }
     } catch (error) {
@@ -372,7 +391,9 @@ export class OAuth2Service {
     localStorage.removeItem("refresh_token");
     localStorage.removeItem("token_type");
     localStorage.removeItem("token_expires_at");
+    localStorage.removeItem("id_token");
     localStorage.removeItem("oauth2_state");
+    localStorage.removeItem("oauth2_code_verifier");
   }
 
   /**
