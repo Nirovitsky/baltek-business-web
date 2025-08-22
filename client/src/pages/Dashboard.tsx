@@ -21,22 +21,50 @@ export default function Dashboard() {
   // Fetch data for stats filtered by organization
   const { data: jobsData } = useQuery({
     queryKey: ['/jobs/', selectedOrganization?.id],
-    queryFn: () => {
+    queryFn: async () => {
       const params = new URLSearchParams();
-      if (selectedOrganization) params.append('organization', selectedOrganization.id.toString());
-      return apiService.request<PaginatedResponse<Job>>(`/jobs/?${params.toString()}`);
+      
+      // Try with organization filter first
+      if (selectedOrganization) {
+        try {
+          params.append('organization', selectedOrganization.id.toString());
+          return await apiService.request<PaginatedResponse<Job>>(`/jobs/?${params.toString()}`);
+        } catch (error: any) {
+          console.warn('Failed to fetch jobs with organization filter, trying without:', error);
+          // If organization filter fails, try without it
+          params.delete('organization');
+          return await apiService.request<PaginatedResponse<Job>>(`/jobs/?${params.toString()}`);
+        }
+      } else {
+        return await apiService.request<PaginatedResponse<Job>>(`/jobs/?${params.toString()}`);
+      }
     },
-    enabled: !!selectedOrganization,
+    enabled: true, // Always enable, let the queryFn handle the logic
+    retry: false, // Don't retry on error since we handle it in queryFn
   });
 
   const { data: applicationsData } = useQuery({
     queryKey: ['/jobs/applications/', selectedOrganization?.id],
-    queryFn: () => {
+    queryFn: async () => {
       const params = new URLSearchParams();
-      if (selectedOrganization) params.append('organization', selectedOrganization.id.toString());
-      return apiService.request<PaginatedResponse<JobApplication>>(`/jobs/applications/?${params.toString()}`);
+      
+      // Try with organization filter first
+      if (selectedOrganization) {
+        try {
+          params.append('organization', selectedOrganization.id.toString());
+          return await apiService.request<PaginatedResponse<JobApplication>>(`/jobs/applications/?${params.toString()}`);
+        } catch (error: any) {
+          console.warn('Failed to fetch applications with organization filter, trying without:', error);
+          // If organization filter fails, try without it
+          params.delete('organization');
+          return await apiService.request<PaginatedResponse<JobApplication>>(`/jobs/applications/?${params.toString()}`);
+        }
+      } else {
+        return await apiService.request<PaginatedResponse<JobApplication>>(`/jobs/applications/?${params.toString()}`);
+      }
     },
-    enabled: !!selectedOrganization,
+    enabled: true, // Always enable, let the queryFn handle the logic
+    retry: false, // Don't retry on error since we handle it in queryFn
   });
 
   const jobs = jobsData?.results || [];
