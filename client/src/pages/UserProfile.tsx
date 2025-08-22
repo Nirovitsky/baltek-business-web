@@ -120,10 +120,16 @@ export default function UserProfile() {
   }
 
   return (
-    <div className="h-full overflow-y-auto bg-background">
-      <div className="layout-container-body py-4">
-        {/* Single Column Layout */}
-        <div className="max-w-4xl mx-auto space-y-6">
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <TopBar 
+        title="User Profile" 
+        description={`${user.first_name} ${user.last_name}`}
+      />
+      
+      <main className="flex-1 overflow-y-auto bg-background">
+        <div className="layout-container-body py-4">
+          {/* Single Column Layout */}
+          <div className="max-w-4xl mx-auto space-y-6">
           {/* Personal Information Card */}
           <Card>
             <CardContent className="pt-6">
@@ -438,8 +444,9 @@ export default function UserProfile() {
               </CardContent>
             </Card>
           )}
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
