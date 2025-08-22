@@ -391,7 +391,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
               <FormLabel>Job Description</FormLabel>
               <FormControl>
                 <Textarea 
-                  rows={4}
+                  rows={8}
                   placeholder="Describe the job role and responsibilities..."
                   {...field}
                 />
@@ -409,7 +409,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
               <FormLabel>Requirements (Optional)</FormLabel>
               <FormControl>
                 <Textarea 
-                  rows={4}
+                  rows={8}
                   placeholder="List specific requirements, skills, or qualifications..."
                   {...field}
                 />
