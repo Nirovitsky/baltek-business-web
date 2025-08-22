@@ -30,12 +30,10 @@ export default function TopBar({
         </div>
         <div className="flex items-center space-x-4">
           <ThemeToggle />
-          {showCreateButton && (
-            <Button onClick={handleCreateJob} className="bg-primary hover:bg-primary/90">
-              <Plus className="w-4 h-4 mr-2" />
-              Post New Job
-            </Button>
-          )}
+          <Button onClick={handleCreateJob} className="bg-primary hover:bg-primary/90">
+            <Plus className="w-4 h-4 mr-2" />
+            Post New Job
+          </Button>
         </div>
       </div>
     </header>
