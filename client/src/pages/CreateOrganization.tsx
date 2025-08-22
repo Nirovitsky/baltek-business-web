@@ -166,11 +166,8 @@ export default function CreateOrganization() {
 
       // Upload logo if provided
       if (logoFile) {
-        const logoFormData = new FormData();
-        logoFormData.append('path', logoFile);
-
         try {
-          const uploadResponse = await uploadFile.mutateAsync(logoFormData);
+          const uploadResponse = await uploadFile.mutateAsync(logoFile);
           logoUrl = uploadResponse.url;
         } catch (error) {
           console.error('Logo upload failed:', error);

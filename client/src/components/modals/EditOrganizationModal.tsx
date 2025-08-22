@@ -174,10 +174,7 @@ export default function EditOrganizationModal({
 
     setIsUploading(true);
     try {
-      const formData = new FormData();
-      formData.append('path', logoFile);
-      
-      const uploadResult = await uploadFile.mutateAsync(formData);
+      const uploadResult = await uploadFile.mutateAsync(logoFile);
       
       form.setValue('logo', uploadResult.url);
       setLogoFile(null);
