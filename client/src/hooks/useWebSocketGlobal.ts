@@ -190,14 +190,17 @@ const WebSocketManager = {
   },
 
   sendMessage: (roomId: number, text: string, attachments?: number[]) => {
-    // Apply 1024 character limit
+    // Apply 1024 character limit, but preserve non-empty text for attachment-only messages
     const trimmedText = text?.trim() || '';
     const limitedText = trimmedText.length > 1024 ? trimmedText.substring(0, 1024) : trimmedText;
+    
+    // For attachment-only messages, ensure we have some text content
+    const finalText = limitedText || (attachments && attachments.length > 0 ? ' ' : '');
     
     if (!globalSocket || globalSocket.readyState !== WebSocket.OPEN) {
       // Queue message for later sending
       console.log("WebSocket not connected, queuing message");
-      messageQueue.push({ roomId, content: limitedText, attachments });
+      messageQueue.push({ roomId, content: finalText, attachments });
       return true; // Return true to indicate message was queued
     }
 
@@ -206,7 +209,7 @@ const WebSocketManager = {
         type: "send_message",
         data: {
           room: roomId,
-          text: limitedText,
+          text: finalText,
           ...(attachments && attachments.length > 0 && {
             attachments: attachments,
           }),
@@ -218,8 +221,9 @@ const WebSocketManager = {
       return true;
     } catch (error) {
       console.error("Failed to send message:", error);
+      console.error("WebSocket error:", { room: roomId, text: finalText, attachments });
       // Queue message for retry
-      messageQueue.push({ roomId, content: limitedText, attachments });
+      messageQueue.push({ roomId, content: finalText, attachments });
       return true; // Still return true as message was queued
     }
   },

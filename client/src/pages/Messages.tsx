@@ -180,14 +180,6 @@ export default function Messages() {
       // Prepare message text - if no text but we have attachment, send a space to satisfy backend validation
       const messageText = messageInput.trim() || (uploadedAttachment ? " " : "");
       
-      // Debug attachment-only messages
-      console.log('Sending message:', {
-        originalText: messageInput.trim(),
-        finalMessageText: messageText,
-        hasAttachment: !!uploadedAttachment,
-        attachmentId,
-        selectedConversation
-      });
       
       // Send message via WebSocket with proper handling of attachment-only messages
       const success = sendMessage(
