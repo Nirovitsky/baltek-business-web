@@ -537,22 +537,9 @@ export default function CreateOrganization() {
                 Organization
               </span>
             </h1>
-            <div className="flex justify-center items-center gap-3">
-              <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl mx-auto">
-                Set up your company profile and start managing job postings, applications, and candidate communications.
-              </p>
-              {isDraftSaved && (
-                <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full flex items-center whitespace-nowrap">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
-                  Draft saved
-                </span>
-              )}
-            </div>
-            {isDraftSaved && (
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                Your progress is automatically saved as you type
-              </p>
-            )}
+            <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl mx-auto">
+              Set up your company profile and start managing job postings, applications, and candidate communications.
+            </p>
           </div>
 
           {/* Step indicator */}

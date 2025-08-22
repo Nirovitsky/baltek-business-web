@@ -289,12 +289,6 @@ export default function CreateJob() {
                   <h1 className="text-2xl font-semibold">
                     {isEditing ? 'Edit Job Posting' : 'Create New Job Posting'}
                   </h1>
-                  {isDraftSaved && !isEditing && (
-                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full flex items-center">
-                      <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
-                      Draft saved
-                    </span>
-                  )}
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">
                   {isEditing ? 'Update your job posting details' : 'Fill in the details to create a new job opportunity'}
