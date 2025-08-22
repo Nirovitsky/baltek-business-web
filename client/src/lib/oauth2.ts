@@ -8,7 +8,7 @@ const DISCOVERY_URL = `${OAUTH2_BASE_URL}/.well-known/openid-configuration/`;
 // OAuth2 Configuration for Public Client
 const OAUTH2_CONFIG = {
   clientId: import.meta.env.VITE_OAUTH2_CLIENT_ID, // Required from Replit Secrets
-  redirectUri: `${window.location.origin}/oauth/callback`,
+  redirectUri: `${window.location.origin}/oauth2/callback`,
   scope: import.meta.env.VITE_OAUTH2_SCOPE || "read write",
   responseType: import.meta.env.VITE_OAUTH2_RESPONSE_TYPE || "code",
   // Public client configuration
