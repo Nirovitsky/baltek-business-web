@@ -13,8 +13,8 @@ export function useUserProfile(userId?: string) {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['/users/', userId],
-    queryFn: () => apiService.request<User>(`/users/${userId}/`),
+    queryKey: ['users/', userId],
+    queryFn: () => apiService.request<User>(`users/${userId}/`),
     enabled: !!userId,
   });
 

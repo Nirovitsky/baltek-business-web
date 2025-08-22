@@ -55,7 +55,7 @@ export default function Profile() {
       if (!user?.id) {
         throw new Error('No user ID available');
       }
-      return apiService.request<UserType>(`/users/${user.id}/`);
+      return apiService.request<UserType>(`users/${user.id}/`);
     },
     enabled: !!user?.id,
   });
@@ -82,7 +82,7 @@ export default function Profile() {
 
   const updateMutation = useMutation({
     mutationFn: (data: ProfileUpdate) =>
-      apiService.request<UserType>(`/users/${profile?.id}/`, {
+      apiService.request<UserType>(`users/${profile?.id}/`, {
         method: "PATCH",
         body: JSON.stringify(data),
       }),

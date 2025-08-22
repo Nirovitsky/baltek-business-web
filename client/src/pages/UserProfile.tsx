@@ -39,10 +39,10 @@ export default function UserProfile() {
   console.log('UserProfile component loaded, userId:', userId);
 
   const { data: user, isLoading, error } = useQuery({
-    queryKey: ['/users/', userId],
+    queryKey: ['users/', userId],
     queryFn: () => {
-      console.log('Making API request to /users/' + userId + '/');
-      return apiService.request<UserProfile>(`/users/${userId}/`);
+      console.log('Making API request to users/' + userId + '/');
+      return apiService.request<UserProfile>(`users/${userId}/`);
     },
     enabled: !!userId,
   });
