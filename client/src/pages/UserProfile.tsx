@@ -56,10 +56,6 @@ export default function UserProfile() {
         <main className="flex-1 overflow-y-auto p-6">
           <div className="text-center">
             <p className="text-muted-foreground">User not found</p>
-            <Button onClick={() => navigate('/dashboard')} className="mt-4">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Dashboard
-            </Button>
           </div>
         </main>
       </div>
@@ -97,10 +93,6 @@ export default function UserProfile() {
         <main className="flex-1 overflow-y-auto p-6">
           <div className="text-center">
             <p className="text-red-500">Error loading user profile</p>
-            <Button onClick={() => navigate('/dashboard')} className="mt-4">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Dashboard
-            </Button>
           </div>
         </main>
       </div>
@@ -116,14 +108,6 @@ export default function UserProfile() {
       
       <main className="flex-1 overflow-y-auto p-6">
         <div className="max-w-4xl mx-auto space-y-6">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate('/dashboard')}
-            className="mb-4"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Dashboard
-          </Button>
 
           {/* User Profile Card */}
           <Card>
