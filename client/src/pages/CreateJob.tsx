@@ -20,7 +20,7 @@ import { useEffect, useCallback, useState } from "react";
 
 export default function CreateJob() {
   const { toast } = useToast();
-  const { selectedOrganization } = useAuth();
+  const { selectedOrganization, organizations, refreshOrganizations } = useAuth();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { id } = useParams<{ id?: string }>();
@@ -116,6 +116,17 @@ export default function CreateJob() {
     
     return () => subscription.unsubscribe();
   }, [form, saveDraft, isEditing]);
+
+  // Check if selected organization is valid and refresh if needed
+  useEffect(() => {
+    if (selectedOrganization && organizations.length > 0) {
+      const orgExists = organizations.some(org => org.id === selectedOrganization.id);
+      if (!orgExists) {
+        console.warn(`Selected organization ${selectedOrganization.id} not found in available organizations. Refreshing...`);
+        refreshOrganizations();
+      }
+    }
+  }, [selectedOrganization, organizations, refreshOrganizations]);
 
   // Update form values when job data is loaded (editing mode)
   useEffect(() => {
@@ -228,6 +239,7 @@ export default function CreateJob() {
 
   const onSubmit = (data: CreateJob) => {
     console.log("Selected organization:", selectedOrganization);
+    console.log("Available organizations:", organizations);
     console.log("Form data received:", data);
     
     if (!selectedOrganization?.id) {
@@ -236,6 +248,19 @@ export default function CreateJob() {
         description: "No organization selected. Please select an organization first.",
         variant: "destructive",
       });
+      return;
+    }
+
+    // Validate that the selected organization exists in the current organizations list
+    const orgExists = organizations.some(org => org.id === selectedOrganization.id);
+    if (!orgExists) {
+      toast({
+        title: "Error",
+        description: "Selected organization is no longer available. Please refresh and select a valid organization.",
+        variant: "destructive",
+      });
+      // Refresh organizations to get the latest data
+      refreshOrganizations();
       return;
     }
 
