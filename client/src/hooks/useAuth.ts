@@ -64,7 +64,6 @@ export const useAuth = create<AuthState>((set, get) => ({
 
     try {
       const response = await oauth2Service.request<Organization[]>('/organizations/?owned=true');
-      console.log('Fetched organizations:', response); // Debug log
       
       // Handle direct array response
       const organizations = Array.isArray(response) ? response : [];
@@ -86,14 +85,11 @@ export const useAuth = create<AuthState>((set, get) => ({
         
         localStorage.setItem('selected_organization', JSON.stringify(selectedOrganization));
         
-        console.log('Setting organizations:', organizations, 'Selected:', selectedOrganization); // Debug log
         set({ organizations, selectedOrganization, hasOrganizations: true, organizationsFetched: true });
       } else {
-        console.log('No organizations found for user');
         set({ organizations: [], selectedOrganization: null, hasOrganizations: false, organizationsFetched: true });
       }
     } catch (error) {
-      console.error('Failed to fetch organizations:', error);
       set({ organizations: [], selectedOrganization: null, hasOrganizations: false, organizationsFetched: true });
     }
   },

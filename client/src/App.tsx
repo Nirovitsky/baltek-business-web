@@ -73,12 +73,6 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   // Only redirect to create-organization if organizations have been fetched and user has none
   // This prevents redirecting before we actually know if they have organizations
-  console.log("ProtectedRoute check:", {
-    isAuthenticated,
-    hasOrganizations,
-    organizationsLength: organizations.length,
-    organizationsFetched,
-  });
   if (isAuthenticated && organizationsFetched && !hasOrganizations) {
     return <Navigate to="/create-organization" replace />;
   }

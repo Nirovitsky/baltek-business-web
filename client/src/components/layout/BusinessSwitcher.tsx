@@ -28,10 +28,8 @@ export default function BusinessSwitcher() {
   const MAX_ORGANIZATIONS = 10;
 
   const handleCreateOrganization = () => {
-    console.log('handleCreateOrganization called, organizations.length:', organizations.length, 'MAX_ORGANIZATIONS:', MAX_ORGANIZATIONS);
     
     if (organizations.length >= MAX_ORGANIZATIONS) {
-      console.log('Maximum organizations reached, showing toast');
       toast({
         title: "Maximum organizations reached",
         description: `You can only create up to ${MAX_ORGANIZATIONS} organizations.`,
@@ -41,17 +39,14 @@ export default function BusinessSwitcher() {
       return;
     }
 
-    console.log('Navigating to /create-organization');
     setOpen(false);
     
     // Use setTimeout to ensure the popover closes before navigation
     setTimeout(() => {
-      console.log('Executing navigation to /create-organization');
       navigate('/create-organization');
       // Also try using window.location as backup after a brief delay
       setTimeout(() => {
         if (window.location.pathname !== '/create-organization') {
-          console.log('Wouter navigation failed, using window.location');
           window.location.href = '/create-organization';
         }
       }, 50);

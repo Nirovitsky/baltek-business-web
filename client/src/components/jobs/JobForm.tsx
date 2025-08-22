@@ -130,7 +130,6 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       date_ended: typeof data.date_ended === 'number' ? data.date_ended : Math.floor((Date.now() + 30 * 24 * 60 * 60 * 1000) / 1000),
     };
 
-    console.log('Submitting job data:', formattedData);
     
     if (job) {
       updateMutation.mutate(formattedData);

@@ -53,10 +53,8 @@ export class OAuth2Service {
         throw new Error('Failed to fetch OIDC configuration');
       }
       oidcConfig = await response.json();
-      console.log('OIDC Configuration loaded:', oidcConfig);
       return oidcConfig;
     } catch (error) {
-      console.error('Failed to load OIDC configuration:', error);
       // Fallback to manual endpoints
       oidcConfig = {
         authorization_endpoint: `${OAUTH2_BASE_URL}/authorize/`,
@@ -127,7 +125,6 @@ export class OAuth2Service {
       });
 
       const authUrl = `${config.authorization_endpoint}?${params.toString()}`;
-      console.log('Redirecting to OAuth2 authorization:', authUrl);
       window.location.href = authUrl;
     } catch (error) {
       console.error('Failed to initiate OAuth2 login:', error);
@@ -179,7 +176,6 @@ export class OAuth2Service {
       }
 
       const tokens = await response.json();
-      console.log('Token exchange successful');
       this.storeTokens(tokens);
       return tokens;
     } catch (error) {
@@ -292,7 +288,6 @@ export class OAuth2Service {
       }
 
       const tokens = await response.json();
-      console.log('Token refresh successful');
       this.storeTokens(tokens);
       return tokens;
     } catch (error) {
@@ -368,7 +363,6 @@ export class OAuth2Service {
         }
 
         const logoutUrl = `${config.end_session_endpoint}?${logoutParams.toString()}`;
-        console.log('Initiating OAuth2 logout:', logoutUrl);
         
         // Open logout in a new window/tab to avoid navigation issues
         // Then redirect locally after a short delay

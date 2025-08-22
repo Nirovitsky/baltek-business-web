@@ -199,7 +199,6 @@ export default function Chat() {
         });
       }
     } catch (error) {
-      console.error("Failed to send message:", error);
       toast({
         title: "Failed to send message",
         description: "An error occurred while sending your message",
@@ -212,7 +211,6 @@ export default function Chat() {
 
   // Handle file selection and immediate upload
   const handleFileSelect = async (file: File) => {
-    console.log('File selected:', file.name, 'Size:', file.size, 'Type:', file.type);
     setSelectedFile(file);
     setUploadedAttachment(null);
     
@@ -226,7 +224,6 @@ export default function Chat() {
       });
       
       const result = await upload.promise;
-      console.log('Upload successful:', result);
       
       setUploadedAttachment({
         id: result.id,
@@ -241,7 +238,6 @@ export default function Chat() {
       });
       
     } catch (uploadError) {
-      console.error("File upload failed:", uploadError);
       toast({
         title: "Upload failed",
         description: "Could not upload your file. Please try again.",

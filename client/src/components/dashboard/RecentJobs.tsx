@@ -29,7 +29,6 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
       if (selectedOrganization) params.append('organization', selectedOrganization.id.toString());
       params.append('limit', '3');
       
-      console.log('Fetching recent jobs with params:', params.toString(), 'for organization:', selectedOrganization?.id);
       return apiService.request<PaginatedResponse<Job>>(`/jobs/?${params.toString()}`);
     },
     enabled: !!selectedOrganization,

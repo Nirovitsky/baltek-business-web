@@ -34,7 +34,6 @@ export default function Jobs() {
         params.append('status', statusFilter);
       }
       
-      console.log('Fetching jobs with params:', params.toString(), 'for organization:', selectedOrganization?.id, 'statusFilter:', statusFilter);
       return apiService.request<PaginatedResponse<Job>>(`/jobs/?${params.toString()}`);
     },
     enabled: !!selectedOrganization,

@@ -41,10 +41,6 @@ export class ApiService {
     return oauth2Service.request<T>(endpoint, options, retryWithRefresh);
   }
 
-  // Legacy login method - now redirects to OAuth2
-  async login(credentials: { phone: string; password: string }) {
-    throw new Error("Legacy login is deprecated. Use OAuth2 authentication.");
-  }
 
   // Public method for manual refresh (keep for backward compatibility)
   async refreshToken() {
@@ -81,8 +77,6 @@ export class ApiService {
         requestHeaders.Authorization = `Bearer ${authToken}`;
       }
 
-      console.log('Upload request headers:', requestHeaders);
-      console.log('FormData created with file');
 
       const response = await fetch(url, {
         method: "POST",
@@ -90,11 +84,9 @@ export class ApiService {
         body: formData,
       });
 
-      console.log('Upload response status:', response.status);
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.log('Upload error response:', errorText);
         
         let errorData;
         try {
