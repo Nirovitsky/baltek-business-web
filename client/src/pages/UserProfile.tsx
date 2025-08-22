@@ -12,11 +12,17 @@ import {
   Phone, 
   Calendar, 
   Briefcase,
-  ArrowLeft 
+  ArrowLeft,
+  GraduationCap,
+  FileText,
+  Link,
+  Building2,
+  Download
 } from "lucide-react";
 import { apiService } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
 import TopBar from "@/components/layout/TopBar";
+import type { UserExperience, UserEducation, UserProject, UserResume } from "@/types";
 
 interface UserProfile {
   id: number;
@@ -26,9 +32,20 @@ interface UserProfile {
   phone?: string;
   location?: string | { id: number; name: string };
   bio?: string;
-  experience?: string;
+  avatar?: string;
+  date_joined?: string;
+  is_active?: boolean;
+  profession?: string;
+  // Detailed information
+  experience?: UserExperience[];
+  education?: UserEducation[];
+  projects?: UserProject[];
+  resumes?: UserResume[];
   skills?: (string | { id: number; name: string })[];
-  created_at: string;
+  languages?: (string | { id: number; name: string })[];
+  // Legacy fields for backward compatibility
+  experience_text?: string;
+  created_at?: string;
 }
 
 export default function UserProfile() {
@@ -113,14 +130,25 @@ export default function UserProfile() {
           <Card>
             <CardHeader>
               <div className="flex items-start space-x-4">
-                <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
-                  <User className="text-primary w-10 h-10" />
+                <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center overflow-hidden">
+                  {user.avatar ? (
+                    <img 
+                      src={user.avatar} 
+                      alt={`${user.first_name} ${user.last_name}`}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <User className="text-primary w-12 h-12" />
+                  )}
                 </div>
                 <div className="flex-1">
                   <CardTitle className="text-2xl">
                     {user.first_name} {user.last_name}
                   </CardTitle>
-                  <div className="flex items-center space-x-4 mt-2 text-sm text-muted-foreground">
+                  {user.profession && (
+                    <p className="text-lg text-primary font-medium mt-1">{user.profession}</p>
+                  )}
+                  <div className="flex items-center space-x-4 mt-2 text-sm text-muted-foreground flex-wrap gap-2">
                     {user.email && (
                       <div className="flex items-center space-x-1">
                         <Mail className="w-4 h-4" />
@@ -140,9 +168,16 @@ export default function UserProfile() {
                       </div>
                     )}
                   </div>
-                  <div className="flex items-center space-x-1 mt-2 text-sm text-muted-foreground">
-                    <Calendar className="w-4 h-4" />
-                    <span>Joined {new Date(user.created_at).toLocaleDateString()}</span>
+                  <div className="flex items-center space-x-4 mt-2 text-sm text-muted-foreground">
+                    <div className="flex items-center space-x-1">
+                      <Calendar className="w-4 h-4" />
+                      <span>Joined {new Date(user.date_joined || user.created_at || '').toLocaleDateString()}</span>
+                    </div>
+                    {user.is_active !== undefined && (
+                      <Badge variant={user.is_active ? "default" : "secondary"}>
+                        {user.is_active ? "Active" : "Inactive"}
+                      </Badge>
+                    )}
                   </div>
                 </div>
               </div>
@@ -152,27 +187,128 @@ export default function UserProfile() {
               <CardContent>
                 <Separator className="mb-4" />
                 <h3 className="font-medium text-foreground mb-2">About</h3>
-                <p className="text-muted-foreground">{user.bio}</p>
+                <p className="text-muted-foreground whitespace-pre-wrap">{user.bio}</p>
               </CardContent>
             )}
           </Card>
 
-          {/* Experience and Skills */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {user.experience && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Briefcase className="w-5 h-5" />
-                    <span>Experience</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">{user.experience}</p>
-                </CardContent>
-              </Card>
-            )}
+          {/* Experience Section */}
+          {user.experience && user.experience.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Briefcase className="w-5 h-5" />
+                  <span>Work Experience</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {user.experience.map((exp, index) => (
+                  <div key={exp.id || index} className="border-l-2 border-primary/20 pl-4 pb-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-foreground">{exp.position}</h4>
+                        <p className="text-primary font-medium">{exp.company}</p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {new Date(exp.start_date).toLocaleDateString()} - {
+                            exp.is_current ? 'Present' : 
+                            exp.end_date ? new Date(exp.end_date).toLocaleDateString() : 'Present'
+                          }
+                        </p>
+                        {exp.description && (
+                          <p className="text-sm text-muted-foreground mt-2 whitespace-pre-wrap">{exp.description}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
 
+          {/* Legacy Experience Text */}
+          {user.experience_text && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Briefcase className="w-5 h-5" />
+                  <span>Experience</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground whitespace-pre-wrap">{user.experience_text}</p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Education Section */}
+          {user.education && user.education.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <GraduationCap className="w-5 h-5" />
+                  <span>Education</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {user.education.map((edu, index) => (
+                  <div key={edu.id || index} className="border-l-2 border-primary/20 pl-4 pb-4">
+                    <h4 className="font-semibold text-foreground">{edu.degree}</h4>
+                    <p className="text-primary font-medium">{edu.institution}</p>
+                    {edu.field_of_study && (
+                      <p className="text-sm text-muted-foreground">{edu.field_of_study}</p>
+                    )}
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {new Date(edu.start_date).toLocaleDateString()} - {
+                        edu.is_current ? 'Present' : 
+                        edu.end_date ? new Date(edu.end_date).toLocaleDateString() : 'Present'
+                      }
+                    </p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Projects Section */}
+          {user.projects && user.projects.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Building2 className="w-5 h-5" />
+                  <span>Projects</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {user.projects.map((project, index) => (
+                  <div key={project.id || index} className="border border-border rounded-lg p-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-foreground">{project.title}</h4>
+                        {project.description && (
+                          <p className="text-sm text-muted-foreground mt-1 whitespace-pre-wrap">{project.description}</p>
+                        )}
+                        <p className="text-xs text-muted-foreground mt-2">
+                          {new Date(project.start_date).toLocaleDateString()} - {
+                            project.end_date ? new Date(project.end_date).toLocaleDateString() : 'Ongoing'
+                          }
+                        </p>
+                      </div>
+                      {project.url && (
+                        <Button variant="ghost" size="sm" asChild>
+                          <a href={project.url} target="_blank" rel="noopener noreferrer">
+                            <Link className="w-4 h-4" />
+                          </a>
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Skills and Languages */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {user.skills && user.skills.length > 0 && (
               <Card>
                 <CardHeader>
@@ -189,7 +325,56 @@ export default function UserProfile() {
                 </CardContent>
               </Card>
             )}
+
+            {user.languages && user.languages.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Languages</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {user.languages.map((language, index) => (
+                      <Badge key={index} variant="outline">
+                        {typeof language === 'string' ? language : language.name}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
+
+          {/* Resumes Section */}
+          {user.resumes && user.resumes.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <FileText className="w-5 h-5" />
+                  <span>Resume / CV</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {user.resumes.map((resume, index) => (
+                  <div key={resume.id || index} className="flex items-center justify-between p-3 border border-border rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <FileText className="w-5 h-5 text-muted-foreground" />
+                      <div>
+                        <p className="font-medium text-foreground">{resume.filename}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Uploaded {new Date(resume.uploaded_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                    <Button variant="ghost" size="sm" asChild>
+                      <a href={resume.file_url} target="_blank" rel="noopener noreferrer">
+                        <Download className="w-4 h-4" />
+                      </a>
+                    </Button>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
         </div>
       </main>
     </div>
