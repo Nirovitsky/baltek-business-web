@@ -573,49 +573,58 @@ export default function Messages() {
 
               {/* Message Input */}
               <div className="border-t bg-white dark:bg-background">
-                {selectedFile && (
-                  <div className="p-4 border-b">
-                    <FileUpload
-                      onFileSelect={handleFileSelect}
-                      selectedFile={selectedFile}
-                      onRemoveFile={handleRemoveFile}
-                      disabled={sendingMessage || uploadingFile}
-                    />
-                    {uploadingFile && (
-                      <div className="mt-2">
-                        <div className="flex items-center justify-between text-sm text-muted-foreground mb-1">
-                          <span>Uploading file...</span>
-                          <span>{uploadProgress}%</span>
+                {/* File Attachments Preview */}
+                {(selectedFile || uploadedAttachment) && (
+                  <div className="p-4 border-b bg-muted/10">
+                    <div className="space-y-3">
+                      {uploadingFile && (
+                        <div>
+                          <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
+                            <span className="font-medium">Uploading {selectedFile?.name}...</span>
+                            <span>{uploadProgress}%</span>
+                          </div>
+                          <div className="w-full bg-muted/50 rounded-full h-2">
+                            <div 
+                              className="bg-primary h-2 rounded-full transition-all duration-300" 
+                              style={{ width: `${uploadProgress}%` }}
+                            />
+                          </div>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div 
-                            className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
-                            style={{ width: `${uploadProgress}%` }}
-                          />
+                      )}
+                      
+                      {uploadedAttachment && !uploadingFile && (
+                        <div className="flex items-center p-3 bg-background rounded-lg border shadow-sm">
+                          <div className="flex-shrink-0 mr-3">
+                            <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                              <FileText className="w-5 h-5 text-primary" />
+                            </div>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-foreground truncate">
+                              {uploadedAttachment.name}
+                            </p>
+                            <p className="text-xs text-green-600 dark:text-green-400 flex items-center">
+                              <Check className="w-3 h-3 mr-1" />
+                              Ready to send
+                            </p>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleRemoveFile}
+                            className="ml-2 h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
                         </div>
-                      </div>
-                    )}
-                    {uploadedAttachment && !uploadingFile && (
-                      <div className="mt-2 p-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-                        <div className="flex items-center gap-2 text-sm text-green-700 dark:text-green-300">
-                          <Check className="h-4 w-4" />
-                          <span>File uploaded and ready to send</span>
-                        </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 )}
                 
                 <form onSubmit={handleSendMessage} className="p-4">
-                  <div className="flex items-end gap-2">
-                    <div className="flex-1 relative">
-                      <Input
-                        value={messageInput}
-                        onChange={(e) => setMessageInput(e.target.value)}
-                        placeholder="Type a message..."
-                        disabled={sendingMessage || !connected}
-                      />
-                    </div>
+                  <div className="flex items-end gap-3">
                     <input
                       type="file"
                       ref={fileInputRef}
@@ -628,22 +637,43 @@ export default function Messages() {
                     />
                     <Button
                       type="button"
-                      size="sm"
                       variant="ghost"
+                      size="sm"
                       disabled={sendingMessage || uploadingFile || !connected}
-                      onClick={() => {
-                        fileInputRef.current?.click();
-                      }}
+                      onClick={() => fileInputRef.current?.click()}
+                      className="h-10 w-10 p-0 rounded-lg hover:bg-muted flex-shrink-0"
                       title="Attach file"
                     >
                       <Paperclip className="h-4 w-4" />
                     </Button>
+                    
+                    <div className="flex-1">
+                      <Input
+                        value={messageInput}
+                        onChange={(e) => setMessageInput(e.target.value)}
+                        placeholder="Type a message..."
+                        disabled={sendingMessage || !connected}
+                        className="h-10"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            handleSendMessage(e);
+                          }
+                        }}
+                      />
+                    </div>
+                    
                     <Button
                       type="submit"
                       disabled={(!messageInput.trim() && !uploadedAttachment) || sendingMessage || uploadingFile || !connected}
+                      className="h-10 w-10 p-0 rounded-lg flex-shrink-0"
                       title={!connected ? "Not connected" : uploadingFile ? "Uploading file..." : "Send message"}
                     >
-                      {sendingMessage ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                      {sendingMessage ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Send className="h-4 w-4" />
+                      )}
                     </Button>
                   </div>
                 </form>

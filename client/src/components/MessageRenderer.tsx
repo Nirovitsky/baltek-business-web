@@ -95,15 +95,18 @@ export default function MessageRenderer({ message, currentUser, onRetry }: Messa
     // Handle image attachments
     if (isImage && attachment.file_url) {
       return (
-        <div key={attachment.id} className="max-w-xs">
-          <img
-            src={attachment.file_url}
-            alt={attachment.file_name || 'Image'}
-            className="max-w-full max-h-64 rounded-lg object-cover cursor-pointer border"
-            onClick={() => window.open(attachment.file_url, '_blank')}
-          />
+        <div key={attachment.id} className="max-w-xs group">
+          <div className="relative overflow-hidden rounded-xl border-2 border-border/20 hover:border-primary/30 transition-all duration-200">
+            <img
+              src={attachment.file_url}
+              alt={attachment.file_name || 'Image'}
+              className="max-w-full max-h-64 object-cover cursor-pointer transition-transform duration-200 group-hover:scale-105"
+              onClick={() => window.open(attachment.file_url, '_blank')}
+            />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200" />
+          </div>
           {attachment.file_name && (
-            <p className="text-xs text-gray-500 mt-1 truncate">{attachment.file_name}</p>
+            <p className="text-xs text-muted-foreground mt-2 truncate px-1">{attachment.file_name}</p>
           )}
         </div>
       );
@@ -113,16 +116,18 @@ export default function MessageRenderer({ message, currentUser, onRetry }: Messa
     if (isVideo && attachment.file_url) {
       return (
         <div key={attachment.id} className="max-w-xs">
-          <video
-            controls
-            className="max-w-full max-h-64 rounded-lg border"
-            preload="metadata"
-          >
-            <source src={attachment.file_url} type={attachment.content_type} />
-            Your browser does not support the video tag.
-          </video>
+          <div className="relative overflow-hidden rounded-xl border-2 border-border/20">
+            <video
+              controls
+              className="max-w-full max-h-64 rounded-xl"
+              preload="metadata"
+            >
+              <source src={attachment.file_url} type={attachment.content_type} />
+              Your browser does not support the video tag.
+            </video>
+          </div>
           {attachment.file_name && (
-            <p className="text-xs text-gray-500 mt-1 truncate">{attachment.file_name}</p>
+            <p className="text-xs text-muted-foreground mt-2 truncate px-1">{attachment.file_name}</p>
           )}
         </div>
       );
@@ -147,31 +152,35 @@ export default function MessageRenderer({ message, currentUser, onRetry }: Messa
     return (
       <div
         key={attachment.id}
-        className="flex items-center gap-3 p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 max-w-xs hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+        className="flex items-center gap-3 p-4 border rounded-xl bg-background/50 dark:bg-gray-800/50 max-w-xs hover:shadow-md cursor-pointer transition-all duration-200 hover:scale-105"
         onClick={() => attachment.file_url && window.open(attachment.file_url, '_blank')}
       >
         <div className="flex-shrink-0">
-          {getFileIcon()}
+          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+            {getFileIcon()}
+          </div>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-medium text-sm truncate">
+          <p className="font-semibold text-sm truncate text-foreground">
             {attachment.file_name || attachment.name || 'File'}
           </p>
           <div className="flex items-center gap-2 mt-1">
             {attachment.content_type && (
-              <Badge variant="secondary" className="text-xs px-1 py-0">
+              <Badge variant="secondary" className="text-xs px-2 py-1 rounded-full">
                 {attachment.content_type.split('/')[1]?.toUpperCase() || 'FILE'}
               </Badge>
             )}
             {attachment.size && (
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-muted-foreground font-medium">
                 {formatFileSize(attachment.size)}
               </span>
             )}
           </div>
         </div>
         <div className="flex-shrink-0">
-          <Download className="h-4 w-4 text-gray-400" />
+          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+            <Download className="h-4 w-4 text-primary" />
+          </div>
         </div>
       </div>
     );
