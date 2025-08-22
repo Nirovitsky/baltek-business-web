@@ -62,14 +62,14 @@ export default function Sidebar() {
   const { unreadCount } = useNotifications(false); // Don't fetch notifications in sidebar
 
   return (
-    <div className="w-64 bg-sidebar shadow-lg border-r border-sidebar-border flex flex-col">
+    <div className="w-64 h-full bg-sidebar shadow-lg border-r border-sidebar-border flex flex-col">
       {/* Business Switcher */}
       <div className="p-6 border-b border-sidebar-border">
         <BusinessSwitcher />
       </div>
 
       {/* Navigation Menu */}
-      <nav className="flex-1 px-4 py-6 space-y-2">
+      <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto custom-scrollbar">
         {navigationItems.map((item) => {
           const isActive = location.pathname === item.href || (item.href !== "/" && location.pathname.startsWith(item.href));
           const Icon = item.icon;
