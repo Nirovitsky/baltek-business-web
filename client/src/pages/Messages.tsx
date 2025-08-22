@@ -177,14 +177,10 @@ export default function Messages() {
       // Use the already uploaded attachment if available
       const attachmentId = uploadedAttachment?.id;
       
-      // Prepare message text - if no text but we have attachment, send a space to satisfy backend validation
-      const messageText = messageInput.trim() || (uploadedAttachment ? " " : "");
-      
-      
-      // Send message via WebSocket with proper handling of attachment-only messages
+      // Send message via WebSocket
       const success = sendMessage(
         selectedConversation, 
-        messageText, 
+        messageInput.trim(), 
         attachmentId ? [attachmentId] : undefined
       );
       
