@@ -33,6 +33,16 @@ import type { ChatMessage, ChatRoom, MessageAttachment } from "@/types";
 
 export default function Messages() {
   const { user, selectedOrganization } = useAuth();
+  
+  // Fetch current user profile
+  const { data: currentUser } = useQuery({
+    queryKey: ['/users/me/'],
+    queryFn: () => apiService.request<User>('/users/me/'),
+    enabled: true,
+  });
+  
+  // Use currentUser instead of user for message ownership
+  const activeUser = currentUser || user;
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedConversation, setSelectedConversation] = useState<number | null>(null);
@@ -520,14 +530,16 @@ export default function Messages() {
                       const applicant = selectedConversationData?.content_object?.owner;
                       const messageOwnerId = message.owner?.id || message.owner;
                       
-                      // Debug message ownership
+                      // Debug message ownership and auth state
                       console.log('Message debug:', {
                         messageId: message.id,
                         messageOwnerId: messageOwnerId,
-                        currentUserId: user?.id,
-                        isCurrentUser: messageOwnerId === user?.id,
+                        currentUserId: activeUser?.id,
+                        isCurrentUser: messageOwnerId === activeUser?.id,
                         messageOwnerRaw: message.owner,
-                        text: message.text?.substring(0, 20)
+                        text: message.text?.substring(0, 20),
+                        activeUser: activeUser,
+                        selectedOrg: selectedOrganization?.id
                       });
                       
                       // Convert to ChatMessage format
@@ -559,7 +571,7 @@ export default function Messages() {
                         <MessageRenderer
                           key={`${message.id}-${index}`}
                           message={chatMessage}
-                          currentUser={user}
+                          currentUser={activeUser}
                         />
                       );
                     })}
