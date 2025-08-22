@@ -49,7 +49,7 @@ export function useOrganizations() {
   // Upload file mutation (for logos, etc.)
   const uploadFileMutation = useMutation({
     mutationFn: (formData: FormData) =>
-      apiService.request<{ url: string }>('/upload/', {
+      apiService.request<{ url: string }>('/files/', {
         method: 'POST',
         body: formData,
         headers: {}, // Let browser set Content-Type with boundary
@@ -106,7 +106,7 @@ export function useOrganizationMutations() {
   // Upload file mutation (for logos, etc.)
   const uploadFileMutation = useMutation({
     mutationFn: (formData: FormData) =>
-      apiService.request<{ url: string }>('/upload/', {
+      apiService.request<{ url: string }>('/files/', {
         method: 'POST',
         body: formData,
         headers: {}, // Let browser set Content-Type with boundary
