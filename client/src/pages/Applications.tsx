@@ -229,7 +229,9 @@ export default function Applications() {
                             className="w-10 h-10 flex-shrink-0"
                             onClick={(e) => {
                               e.stopPropagation();
-                              navigate(`/user/${application.owner?.id || ''}`);
+                              if (application.owner?.id) {
+                                navigate(`/user/${application.owner.id}`);
+                              }
                             }}
                           >
                             <AvatarImage 
@@ -246,7 +248,9 @@ export default function Applications() {
                               className="font-medium text-foreground cursor-pointer hover:text-primary transition-colors"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                navigate(`/user/${application.owner?.id || ''}`);
+                                if (application.owner?.id) {
+                                  navigate(`/user/${application.owner.id}`);
+                                }
                               }}
                             >
                               {`${application.owner?.first_name || ''} ${application.owner?.last_name || ''}`}

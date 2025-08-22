@@ -63,8 +63,10 @@ export default function ApplicationDetailsModal({
   };
 
   const handleSendMessage = () => {
-    navigate(`/user/${application.owner?.id}`);
-    onClose();
+    if (application.owner?.id) {
+      navigate(`/user/${application.owner.id}`);
+      onClose();
+    }
   };
 
   return (
@@ -116,7 +118,7 @@ export default function ApplicationDetailsModal({
                   {(detailedApplication?.owner as any)?.profession && (
                     <div className="flex items-center space-x-2">
                       <Briefcase className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm">{(detailedApplication.owner as any).profession}</span>
+                      <span className="text-sm">{(detailedApplication?.owner as any)?.profession}</span>
                     </div>
                   )}
                   <div className="flex items-center space-x-2">
