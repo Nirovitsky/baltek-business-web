@@ -48,15 +48,14 @@ export default function Applications() {
   const navigate = useNavigate();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['/jobs/applications/', selectedOrganization?.id, statusFilter],
+    queryKey: ['/jobs/applications/', statusFilter],
     queryFn: () => {
       const params = new URLSearchParams();
-      if (selectedOrganization) params.append('organization', selectedOrganization.id.toString());
       if (statusFilter !== 'all') params.append('status', statusFilter);
       
       return apiService.request<PaginatedResponse<JobApplication>>(`/jobs/applications/?${params.toString()}`);
     },
-    enabled: !!selectedOrganization,
+    enabled: true,
   });
 
   // Query for detailed application data when viewing details
