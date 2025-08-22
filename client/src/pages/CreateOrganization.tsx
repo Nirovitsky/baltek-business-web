@@ -25,7 +25,6 @@ export default function CreateOrganization() {
   const [formData, setFormData] = useState({
     official_name: "",
     display_name: "",
-    description: "",
     about_us: "",
     website: "",
     email: "",
@@ -183,7 +182,6 @@ export default function CreateOrganization() {
       const organizationData = {
         official_name: formData.official_name,
         display_name: formData.display_name || formData.official_name,
-        description: formData.description,
         about_us: formData.about_us,
         website: formData.website || "",
         email: formData.email || "",
@@ -321,19 +319,6 @@ export default function CreateOrganization() {
       </div>
 
       <div className="space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="description" className="text-sm font-semibold text-gray-700 dark:text-gray-200">
-            Short Description
-          </Label>
-          <Textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            placeholder="Brief description of your organization"
-            className="min-h-[80px] border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary transition-all duration-200"
-          />
-        </div>
 
         <div className="space-y-2">
           <Label htmlFor="about_us" className="text-sm font-semibold text-gray-700 dark:text-gray-200">
