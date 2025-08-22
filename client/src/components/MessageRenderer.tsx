@@ -275,7 +275,7 @@ export default function MessageRenderer({ message, currentUser, onRetry }: Messa
 
         {/* Attachments bubble */}
         <div className={`flex gap-3 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
-          {!isOwn && <div className="w-8" />} {/* Spacer for alignment */}
+          {renderAvatar()}
           <div className={`flex flex-col max-w-[70%] ${isOwn ? 'items-end' : 'items-start'}`}>
             <div className="space-y-2">
               {message.attachments.map(renderAttachment)}
