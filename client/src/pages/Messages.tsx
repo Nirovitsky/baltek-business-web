@@ -516,18 +516,17 @@ export default function Messages() {
                         console.log('Message with attachments:', message.id, message.attachments);
                       }
                       
-                      // Get the sender's user info from selectedConversationData
-                      const messageSender = selectedConversationData?.content_object?.owner;
+                      // Get the sender's user info 
+                      const applicant = selectedConversationData?.content_object?.owner;
+                      const messageOwnerId = message.owner?.id || message.owner;
                       
                       // Convert to ChatMessage format
                       const chatMessage: ChatMessage = {
                         id: message.id,
                         room: message.room,
-                        owner: message.owner?.id || message.owner,
-                        // Pass the full user object for avatar display
-                        senderInfo: messageSender && (message.owner?.id || message.owner) === messageSender.id 
-                          ? messageSender 
-                          : null,
+                        owner: messageOwnerId,
+                        // Pass the correct user info for avatar display
+                        senderInfo: messageOwnerId === applicant?.id ? applicant : null,
                         text: message.text || "",
                         status: "delivered",
                         attachments: message.attachments && message.attachments.length > 0 ? 
