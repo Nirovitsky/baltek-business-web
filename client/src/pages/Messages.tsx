@@ -520,6 +520,16 @@ export default function Messages() {
                       const applicant = selectedConversationData?.content_object?.owner;
                       const messageOwnerId = message.owner?.id || message.owner;
                       
+                      // Debug message ownership
+                      console.log('Message debug:', {
+                        messageId: message.id,
+                        messageOwnerId: messageOwnerId,
+                        currentUserId: user?.id,
+                        isCurrentUser: messageOwnerId === user?.id,
+                        messageOwnerRaw: message.owner,
+                        text: message.text?.substring(0, 20)
+                      });
+                      
                       // Convert to ChatMessage format
                       const chatMessage: ChatMessage = {
                         id: message.id,
