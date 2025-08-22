@@ -28,7 +28,7 @@ import Settings from "@/pages/Settings";
 import NotFound from "@/pages/not-found";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, hasOrganizations, organizations, checkAuth, refreshProfile, organizationsFetched } = useAuth();
+  const { isAuthenticated, hasOrganizations, organizations, checkAuth, organizationsFetched } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   
   // Initialize global WebSocket connection when authenticated
@@ -41,23 +41,18 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (isAuthenticated) {
       setIsLoading(true);
-      // Only fetch user profile, organizations are handled by checkAuth
-      refreshProfile().then(() => {
-        setIsLoading(false);
-      }).catch(error => {
-        console.error('Error fetching user profile:', error);
-        setIsLoading(false);
-      });
+      // Organizations are handled by checkAuth
+      setIsLoading(false);
     } else {
       setIsLoading(false);
     }
-  }, [isAuthenticated]); // Remove refreshProfile dependency
+  }, [isAuthenticated]);
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
-  // Show loading while fetching organizations or user profile
+  // Show loading while fetching organizations
   if (isLoading || !organizationsFetched) {
     return (
       <div className="flex items-center justify-center h-screen">

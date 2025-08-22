@@ -16,7 +16,6 @@ interface AuthState {
   switchOrganization: (organization: Organization) => void;
   fetchOrganizations: (force?: boolean) => Promise<void>;
   refreshOrganizations: () => Promise<void>;
-  refreshProfile: () => Promise<void>;
   updateSelectedOrganization: (updatedOrg: Organization) => void;
   setUser: (user: User | null) => void;
 }
@@ -112,17 +111,6 @@ export const useAuth = create<AuthState>((set, get) => ({
     }
   },
 
-  refreshProfile: async () => {
-    try {
-      // Fetch current user profile without needing user ID
-      const user = await apiService.request<User>(`/users/me/`);
-      set({ user });
-      // Don't return the user to match the Promise<void> return type
-    } catch (error) {
-      console.error('Failed to fetch user profile:', error);
-      throw error;
-    }
-  },
 
   refreshOrganizations: async () => {
     // Force refresh by setting organizationsFetched to false and calling fetch
