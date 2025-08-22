@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { apiService } from '@/lib/api';
-import type { LoginRequest, Organization, User } from '@/types';
+import { oauth2Service } from '@/lib/oauth2';
+import type { Organization, User } from '@/types';
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -10,7 +10,6 @@ interface AuthState {
   user: User | null;
   hasOrganizations: boolean;
   organizationsFetched: boolean;
-  login: (credentials: LoginRequest) => Promise<void>;
   logout: () => void;
   checkAuth: () => void;
   switchOrganization: (organization: Organization) => void;
@@ -18,10 +17,11 @@ interface AuthState {
   refreshOrganizations: () => Promise<void>;
   updateSelectedOrganization: (updatedOrg: Organization) => void;
   setUser: (user: User | null) => void;
+  setAuthenticated: (authenticated: boolean) => void;
 }
 
 export const useAuth = create<AuthState>((set, get) => ({
-  isAuthenticated: apiService.isAuthenticated(),
+  isAuthenticated: oauth2Service.isAuthenticated(),
   isLoading: false,
   selectedOrganization: null,
   organizations: [],
@@ -29,22 +29,9 @@ export const useAuth = create<AuthState>((set, get) => ({
   hasOrganizations: false,
   organizationsFetched: false,
 
-  login: async (credentials: LoginRequest) => {
-    set({ isLoading: true });
-    try {
-      await apiService.login(credentials);
-      set({ isAuthenticated: true });
-      // Fetch organizations after login
-      await get().fetchOrganizations();
-      set({ isLoading: false });
-    } catch (error) {
-      set({ isLoading: false });
-      throw error;
-    }
-  },
 
   logout: () => {
-    apiService.logout();
+    oauth2Service.logout();
     set({ 
       isAuthenticated: false, 
       selectedOrganization: null, 
@@ -56,7 +43,7 @@ export const useAuth = create<AuthState>((set, get) => ({
   },
 
   checkAuth: () => {
-    const isAuthenticated = apiService.isAuthenticated();
+    const isAuthenticated = oauth2Service.isAuthenticated();
     set({ isAuthenticated });
     // Only fetch organizations if authenticated and not already fetched
     if (isAuthenticated && !get().organizationsFetched) {
@@ -76,7 +63,7 @@ export const useAuth = create<AuthState>((set, get) => ({
     }
 
     try {
-      const response = await apiService.request<Organization[]>('/organizations/?owned=true');
+      const response = await oauth2Service.request<Organization[]>('/organizations/?owned=true');
       console.log('Fetched organizations:', response); // Debug log
       
       // Handle direct array response
@@ -129,5 +116,9 @@ export const useAuth = create<AuthState>((set, get) => ({
 
   setUser: (user: User | null) => {
     set({ user });
+  },
+
+  setAuthenticated: (authenticated: boolean) => {
+    set({ isAuthenticated: authenticated });
   },
 }));

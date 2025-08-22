@@ -12,7 +12,8 @@ import { useEffect, useState } from "react";
 import Sidebar from "@/components/layout/Sidebar";
 
 // Pages
-import Login from "@/pages/Login";
+import OAuth2Login from "@/pages/OAuth2Login";
+import OAuth2Callback from "@/pages/OAuth2Callback";
 import CreateOrganization from "@/pages/CreateOrganization";
 import Dashboard from "@/pages/Dashboard";
 import Jobs from "@/pages/Jobs";
@@ -86,7 +87,8 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
+      <Route path="/login" element={<OAuth2Login />} />
+      <Route path="/oauth/callback" element={<OAuth2Callback />} />
       
       <Route 
         path="/create-organization" 

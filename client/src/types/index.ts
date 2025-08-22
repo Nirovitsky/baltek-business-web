@@ -3,13 +3,7 @@
 
 import { z } from "zod";
 
-// Auth schemas
-export const loginSchema = z.object({
-  phone: z.string().min(1, "Phone number is required"),
-  password: z.string().min(1, "Password is required"),
-});
-
-export type LoginRequest = z.infer<typeof loginSchema>;
+// OAuth2 will handle authentication - no local login schemas needed
 
 export interface User {
   id: number;
