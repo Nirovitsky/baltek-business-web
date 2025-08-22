@@ -17,8 +17,12 @@ export default function OAuth2Login() {
     }
   }, [isAuthenticated, hasOrganizations, navigate]);
 
-  const handleLogin = () => {
-    oauth2Service.initiateLogin();
+  const handleLogin = async () => {
+    try {
+      await oauth2Service.initiateLogin();
+    } catch (error) {
+      console.error('Failed to initiate login:', error);
+    }
   };
 
   // Auto-redirect to OAuth2 authorization immediately

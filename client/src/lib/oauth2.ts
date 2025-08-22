@@ -3,14 +3,20 @@ import { queryClient } from "./queryClient";
 // Environment configuration
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://api.baltek.net/api";
 const OAUTH2_BASE_URL = import.meta.env.VITE_OAUTH2_BASE_URL || `${API_BASE_URL}/oauth2`;
+const DISCOVERY_URL = `${OAUTH2_BASE_URL}/.well-known/openid-configuration/`;
 
-// OAuth2 Configuration
+// OAuth2 Configuration for Public Client
 const OAUTH2_CONFIG = {
   clientId: import.meta.env.VITE_OAUTH2_CLIENT_ID || "baltek-business-app",
   redirectUri: `${window.location.origin}/oauth/callback`,
   scope: import.meta.env.VITE_OAUTH2_SCOPE || "read write",
   responseType: import.meta.env.VITE_OAUTH2_RESPONSE_TYPE || "code",
+  // Public client configuration
+  clientType: "public",
 };
+
+// Cache for OpenID configuration
+let oidcConfig: any = null;
 
 export interface TokenResponse {
   access_token: string;
@@ -34,6 +40,36 @@ export class OAuth2Service {
   private refreshPromise: Promise<TokenResponse> | null = null;
 
   /**
+   * Fetch OpenID Connect configuration
+   */
+  private async getOIDCConfig(): Promise<any> {
+    if (oidcConfig) {
+      return oidcConfig;
+    }
+
+    try {
+      const response = await fetch(DISCOVERY_URL);
+      if (!response.ok) {
+        throw new Error('Failed to fetch OIDC configuration');
+      }
+      oidcConfig = await response.json();
+      console.log('OIDC Configuration loaded:', oidcConfig);
+      return oidcConfig;
+    } catch (error) {
+      console.error('Failed to load OIDC configuration:', error);
+      // Fallback to manual endpoints
+      oidcConfig = {
+        authorization_endpoint: `${OAUTH2_BASE_URL}/authorize/`,
+        token_endpoint: `${OAUTH2_BASE_URL}/token/`,
+        userinfo_endpoint: `${OAUTH2_BASE_URL}/userinfo/`,
+        revocation_endpoint: `${OAUTH2_BASE_URL}/revoke_token/`,
+        end_session_endpoint: `${OAUTH2_BASE_URL}/logout/`,
+      };
+      return oidcConfig;
+    }
+  }
+
+  /**
    * Generate a random state parameter for CSRF protection
    */
   private generateState(): string {
@@ -43,20 +79,27 @@ export class OAuth2Service {
   /**
    * Start OAuth2 authorization flow
    */
-  initiateLogin(): void {
-    const state = this.generateState();
-    localStorage.setItem("oauth2_state", state);
+  async initiateLogin(): Promise<void> {
+    try {
+      const config = await this.getOIDCConfig();
+      const state = this.generateState();
+      localStorage.setItem("oauth2_state", state);
 
-    const params = new URLSearchParams({
-      client_id: OAUTH2_CONFIG.clientId,
-      redirect_uri: OAUTH2_CONFIG.redirectUri,
-      response_type: OAUTH2_CONFIG.responseType,
-      scope: OAUTH2_CONFIG.scope,
-      state: state,
-    });
+      const params = new URLSearchParams({
+        client_id: OAUTH2_CONFIG.clientId,
+        redirect_uri: OAUTH2_CONFIG.redirectUri,
+        response_type: OAUTH2_CONFIG.responseType,
+        scope: OAUTH2_CONFIG.scope,
+        state: state,
+      });
 
-    const authUrl = `${OAUTH2_BASE_URL}/authorize/?${params.toString()}`;
-    window.location.href = authUrl;
+      const authUrl = `${config.authorization_endpoint}?${params.toString()}`;
+      console.log('Redirecting to OAuth2 authorization:', authUrl);
+      window.location.href = authUrl;
+    } catch (error) {
+      console.error('Failed to initiate OAuth2 login:', error);
+      throw error;
+    }
   }
 
   /**
@@ -73,7 +116,8 @@ export class OAuth2Service {
     localStorage.removeItem("oauth2_state");
 
     try {
-      const response = await fetch(`${OAUTH2_BASE_URL}/token/`, {
+      const config = await this.getOIDCConfig();
+      const response = await fetch(config.token_endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -83,15 +127,18 @@ export class OAuth2Service {
           client_id: OAUTH2_CONFIG.clientId,
           code: code,
           redirect_uri: OAUTH2_CONFIG.redirectUri,
+          // No client_secret needed for public clients
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+        console.error('Token exchange error:', errorData);
         throw new Error(errorData.error_description || errorData.error || "Token exchange failed");
       }
 
       const tokens = await response.json();
+      console.log('Token exchange successful');
       this.storeTokens(tokens);
       return tokens;
     } catch (error) {
@@ -178,7 +225,8 @@ export class OAuth2Service {
    */
   private async performTokenRefresh(refreshToken: string): Promise<TokenResponse> {
     try {
-      const response = await fetch(`${OAUTH2_BASE_URL}/token/`, {
+      const config = await this.getOIDCConfig();
+      const response = await fetch(config.token_endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -187,15 +235,18 @@ export class OAuth2Service {
           grant_type: "refresh_token",
           client_id: OAUTH2_CONFIG.clientId,
           refresh_token: refreshToken,
+          // No client_secret needed for public clients
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+        console.error('Token refresh error:', errorData);
         throw new Error(errorData.error_description || errorData.error || "Token refresh failed");
       }
 
       const tokens = await response.json();
+      console.log('Token refresh successful');
       this.storeTokens(tokens);
       return tokens;
     } catch (error) {
@@ -210,15 +261,21 @@ export class OAuth2Service {
    * Get user information
    */
   async getUserInfo(): Promise<UserInfo> {
-    const response = await fetch(`${OAUTH2_BASE_URL}/userinfo/`, {
-      headers: this.getAuthHeaders(),
-    });
+    try {
+      const config = await this.getOIDCConfig();
+      const response = await fetch(config.userinfo_endpoint, {
+        headers: this.getAuthHeaders(),
+      });
 
-    if (!response.ok) {
-      throw new Error("Failed to get user info");
+      if (!response.ok) {
+        throw new Error("Failed to get user info");
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error('Failed to get user info:', error);
+      throw error;
     }
-
-    return response.json();
   }
 
   /**
@@ -227,31 +284,44 @@ export class OAuth2Service {
   async logout(): Promise<void> {
     const refreshToken = localStorage.getItem("refresh_token");
     
-    // Try to revoke refresh token
-    if (refreshToken) {
-      try {
-        await fetch(`${OAUTH2_BASE_URL}/revoke_token/`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: new URLSearchParams({
-            token: refreshToken,
-            client_id: OAUTH2_CONFIG.clientId,
-          }),
-        });
-      } catch (error) {
-        console.error("Token revocation failed:", error);
+    try {
+      const config = await this.getOIDCConfig();
+      
+      // Try to revoke refresh token
+      if (refreshToken && config.revocation_endpoint) {
+        try {
+          await fetch(config.revocation_endpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({
+              token: refreshToken,
+              client_id: OAUTH2_CONFIG.clientId,
+            }),
+          });
+        } catch (error) {
+          console.error("Token revocation failed:", error);
+        }
       }
-    }
 
-    // Clear local storage and redirect
-    this.clearTokens();
-    queryClient.clear();
-    
-    // Redirect to logout endpoint for proper cleanup
-    const logoutUrl = `${OAUTH2_BASE_URL}/logout/`;
-    window.location.href = logoutUrl;
+      // Clear local storage and redirect
+      this.clearTokens();
+      queryClient.clear();
+      
+      // Redirect to logout endpoint for proper cleanup
+      if (config.end_session_endpoint) {
+        window.location.href = config.end_session_endpoint;
+      } else {
+        window.location.href = '/login';
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Fallback: just clear tokens and redirect
+      this.clearTokens();
+      queryClient.clear();
+      window.location.href = '/login';
+    }
   }
 
   /**
