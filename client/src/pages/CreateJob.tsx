@@ -116,19 +116,20 @@ export default function CreateJob() {
       
       if (error.message) {
         errorMessage = error.message;
-      } else if (typeof error === 'object' && error !== null) {
-        // Handle validation errors from the API
+      } else if (typeof error === 'object' && error !== null && !error.status) {
+        // Handle validation errors from the API (field-specific errors)
         const errors = Object.entries(error).map(([field, messages]) => {
+          const fieldName = field.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
           if (Array.isArray(messages)) {
-            return `${field}: ${messages.join(', ')}`;
+            return `${fieldName}: ${messages.join(', ')}`;
           }
-          return `${field}: ${messages}`;
-        }).join('; ');
+          return `${fieldName}: ${messages}`;
+        }).join('\n');
         errorMessage = errors || errorMessage;
       }
       
       toast({
-        title: "Error",
+        title: "Validation Error",
         description: errorMessage,
         variant: "destructive",
       });
@@ -161,6 +162,9 @@ export default function CreateJob() {
   });
 
   const onSubmit = (data: CreateJob) => {
+    console.log("Selected organization:", selectedOrganization);
+    console.log("Form data received:", data);
+    
     if (!selectedOrganization?.id) {
       toast({
         title: "Error",
@@ -187,7 +191,8 @@ export default function CreateJob() {
       }
     });
 
-    console.log("Submitting job data:", submitData);
+    console.log("Final submit data:", submitData);
+    console.log("Organization ID being sent:", submitData.organization);
 
     if (isEditing) {
       updateMutation.mutate(submitData);
@@ -440,8 +445,9 @@ export default function CreateJob() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="secondary">Secondary Education</SelectItem>
-                              <SelectItem value="undergraduate">Undergraduate</SelectItem>
+                              <SelectItem value="high_school">High School</SelectItem>
+                              <SelectItem value="some_college">Some College</SelectItem>
+                              <SelectItem value="associate">Associate Degree</SelectItem>
                               <SelectItem value="bachelor">Bachelor's Degree</SelectItem>
                               <SelectItem value="master">Master's Degree</SelectItem>
                               <SelectItem value="doctorate">Doctorate/PhD</SelectItem>

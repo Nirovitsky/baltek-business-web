@@ -22,6 +22,11 @@ export class ApiService {
       const errorData = await response.json().catch(() => ({}));
       console.error('API Error:', { status: response.status, data: errorData });
       
+      // If it's a validation error with field-specific errors, throw the whole error object
+      if (response.status === 400 && typeof errorData === 'object' && !errorData.message && !errorData.detail) {
+        throw errorData; // This will be the field validation errors
+      }
+      
       const error: ApiError = {
         message: errorData.message || errorData.detail || response.statusText,
         status: response.status,
