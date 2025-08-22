@@ -77,13 +77,43 @@ export class OAuth2Service {
   }
 
   /**
+   * Generate PKCE code verifier
+   */
+  private generateCodeVerifier(): string {
+    const array = new Uint8Array(32);
+    crypto.getRandomValues(array);
+    return btoa(String.fromCharCode.apply(null, Array.from(array)))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '');
+  }
+
+  /**
+   * Generate PKCE code challenge from verifier
+   */
+  private async generateCodeChallenge(verifier: string): Promise<string> {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(verifier);
+    const digest = await crypto.subtle.digest('SHA-256', data);
+    return btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(digest))))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '');
+  }
+
+  /**
    * Start OAuth2 authorization flow
    */
   async initiateLogin(): Promise<void> {
     try {
       const config = await this.getOIDCConfig();
       const state = this.generateState();
+      const codeVerifier = this.generateCodeVerifier();
+      const codeChallenge = await this.generateCodeChallenge(codeVerifier);
+      
+      // Store state and code verifier for later use
       localStorage.setItem("oauth2_state", state);
+      localStorage.setItem("oauth2_code_verifier", codeVerifier);
 
       const params = new URLSearchParams({
         client_id: OAUTH2_CONFIG.clientId,
@@ -91,6 +121,8 @@ export class OAuth2Service {
         response_type: OAUTH2_CONFIG.responseType,
         scope: OAUTH2_CONFIG.scope,
         state: state,
+        code_challenge: codeChallenge,
+        code_challenge_method: "S256",
       });
 
       const authUrl = `${config.authorization_endpoint}?${params.toString()}`;
@@ -112,8 +144,15 @@ export class OAuth2Service {
       throw new Error("Invalid state parameter. Possible CSRF attack.");
     }
 
-    // Clean up stored state
+    // Get code verifier for PKCE
+    const codeVerifier = localStorage.getItem("oauth2_code_verifier");
+    if (!codeVerifier) {
+      throw new Error("Missing code verifier. PKCE flow incomplete.");
+    }
+
+    // Clean up stored state and code verifier
     localStorage.removeItem("oauth2_state");
+    localStorage.removeItem("oauth2_code_verifier");
 
     try {
       const config = await this.getOIDCConfig();
@@ -127,7 +166,8 @@ export class OAuth2Service {
           client_id: OAUTH2_CONFIG.clientId,
           code: code,
           redirect_uri: OAUTH2_CONFIG.redirectUri,
-          // No client_secret needed for public clients
+          code_verifier: codeVerifier,
+          // No client_secret needed for public clients with PKCE
         }),
       });
 
