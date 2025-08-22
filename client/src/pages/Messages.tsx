@@ -27,7 +27,9 @@ import {
   User, 
   Loader2,
   Paperclip,
-  Check
+  Check,
+  FileText,
+  X
 } from "lucide-react";
 import type { ChatMessage, ChatRoom, MessageAttachment } from "@/types";
 
