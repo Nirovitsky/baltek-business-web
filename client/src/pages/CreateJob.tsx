@@ -650,10 +650,14 @@ export default function CreateJob() {
                           <FormControl>
                             <Input
                               type="number"
-                              {...field}
+                              value={field.value ? field.value.toString() : ''}
                               onChange={(e) => {
                                 const value = e.target.value;
-                                field.onChange(value === '' ? undefined : Number(value));
+                                if (value === '' || value === '0') {
+                                  field.onChange(undefined);
+                                } else {
+                                  field.onChange(Number(value));
+                                }
                               }}
                               placeholder="Enter minimum salary"
                               className="mt-1"
@@ -675,10 +679,14 @@ export default function CreateJob() {
                           <FormControl>
                             <Input
                               type="number"
-                              {...field}
+                              value={field.value ? field.value.toString() : ''}
                               onChange={(e) => {
                                 const value = e.target.value;
-                                field.onChange(value === '' ? undefined : Number(value));
+                                if (value === '' || value === '0') {
+                                  field.onChange(undefined);
+                                } else {
+                                  field.onChange(Number(value));
+                                }
                               }}
                               placeholder="Enter maximum salary (optional)"
                               className="mt-1"

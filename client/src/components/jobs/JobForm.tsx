@@ -288,10 +288,14 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
                   <Input 
                     type="number" 
                     placeholder="e.g. 1000"
-                    value={field.value ?? ''}
+                    value={field.value ? field.value.toString() : ''}
                     onChange={(e) => {
                       const value = e.target.value;
-                      field.onChange(value === '' ? undefined : Number(value));
+                      if (value === '' || value === '0') {
+                        field.onChange(undefined);
+                      } else {
+                        field.onChange(Number(value));
+                      }
                     }}
                   />
                 </FormControl>
@@ -310,10 +314,14 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
                   <Input 
                     type="number" 
                     placeholder="e.g. 2000"
-                    value={field.value ?? ''}
+                    value={field.value ? field.value.toString() : ''}
                     onChange={(e) => {
                       const value = e.target.value;
-                      field.onChange(value === '' ? undefined : Number(value));
+                      if (value === '' || value === '0') {
+                        field.onChange(undefined);
+                      } else {
+                        field.onChange(Number(value));
+                      }
                     }}
                   />
                 </FormControl>
