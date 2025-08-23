@@ -7,9 +7,10 @@ import RecentJobs from "@/components/dashboard/RecentJobs";
 import RecentApplications from "@/components/dashboard/RecentApplications";
 import QuickActions from "@/components/dashboard/QuickActions";
 import JobDetailDialog from "@/components/jobs/JobDetailDialog";
-import { Briefcase, Users, Clock, UserCheck } from "lucide-react";
+import { Briefcase, Users, Clock, UserCheck, AlertCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Job, JobApplication, PaginatedResponse } from "@/types";
 
 export default function Dashboard() {
@@ -80,6 +81,16 @@ export default function Dashboard() {
       />
 
       <main className="flex-1 overflow-y-auto p-6 space-y-8 bg-muted/30">
+        {/* Organization Approval Notice */}
+        {selectedOrganization && selectedOrganization.is_public === false && (
+          <Alert className="border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950">
+            <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+            <AlertDescription className="text-yellow-800 dark:text-yellow-200">
+              <strong>Organization Under Review:</strong> Your organization "{selectedOrganization.official_name}" is currently being reviewed by our moderators. Once approved, you'll be able to post job openings and access all features.
+            </AlertDescription>
+          </Alert>
+        )}
+        
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatsCard

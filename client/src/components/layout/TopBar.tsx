@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 interface TopBarProps {
   title: string;
@@ -15,8 +17,18 @@ export default function TopBar({
   showCreateButton = true 
 }: TopBarProps) {
   const navigate = useNavigate();
+  const { selectedOrganization } = useAuth();
+  const { toast } = useToast();
 
   const handleCreateJob = () => {
+    if (selectedOrganization?.is_public === false) {
+      toast({
+        title: "Organization Not Approved",
+        description: "Your organization is currently under review. You cannot create job postings until it's approved by our moderators.",
+        variant: "destructive",
+      });
+      return;
+    }
     navigate('/jobs/create');
   };
   return (
@@ -30,7 +42,15 @@ export default function TopBar({
         </div>
         <div className="flex items-center space-x-4">
           <ThemeToggle />
-          <Button onClick={handleCreateJob} className="bg-primary hover:bg-primary/90">
+          <Button 
+            onClick={handleCreateJob} 
+            disabled={selectedOrganization?.is_public === false}
+            className={`${
+              selectedOrganization?.is_public === false 
+                ? 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed opacity-60' 
+                : 'bg-primary hover:bg-primary/90'
+            }`}
+          >
             <Plus className="w-4 h-4 mr-2" />
             Post New Job
           </Button>

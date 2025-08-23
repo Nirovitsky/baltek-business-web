@@ -2,8 +2,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Briefcase, MapPin, Users, Calendar, DollarSign, GraduationCap, Building } from "lucide-react";
+import { ArrowLeft, Briefcase, MapPin, Users, Calendar, DollarSign, GraduationCap, Building, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -251,6 +252,16 @@ export default function CreateJob() {
       return;
     }
 
+    // Check if organization is public
+    if (selectedOrganization.is_public === false) {
+      toast({
+        title: "Organization Not Approved",
+        description: "Your organization is currently under review. You cannot create job postings until it's approved by our moderators.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Validate that the selected organization exists in the current organizations list
     const orgExists = organizations.some(org => org.id === selectedOrganization.id);
     if (!orgExists) {
@@ -332,6 +343,16 @@ export default function CreateJob() {
       {/* Content */}
       <div className="flex-1 overflow-y-auto scrollbar-hide">
         <div className="max-w-4xl mx-auto px-6 py-8">
+          {/* Organization Approval Notice */}
+          {selectedOrganization && selectedOrganization.is_public === false && (
+            <Alert className="mb-6 border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950">
+              <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+              <AlertDescription className="text-yellow-800 dark:text-yellow-200">
+                <strong>Organization Under Review:</strong> Your organization "{selectedOrganization.official_name}" is currently being reviewed by our moderators. You won't be able to create job postings until the review is complete and your organization is approved.
+              </AlertDescription>
+            </Alert>
+          )}
+          
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {/* Basic Information */}
