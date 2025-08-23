@@ -305,7 +305,7 @@ export default function CreateJob() {
   const isLoading = createMutation.isPending || updateMutation.isPending;
 
   return (
-    <div className="h-full flex flex-col bg-background">
+    <div className="flex-1 flex flex-col bg-background overflow-hidden">
       {/* Header */}
       <div className="bg-card border-b flex-shrink-0">
         <div className="max-w-4xl mx-auto px-6 py-6">
@@ -341,7 +341,7 @@ export default function CreateJob() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto min-h-0">
+      <div className="flex-1 overflow-y-auto scrollbar-hide">
         <div className="max-w-4xl mx-auto px-6 py-8">
           {/* Organization Approval Notice */}
           {selectedOrganization && selectedOrganization.is_public === false && (
