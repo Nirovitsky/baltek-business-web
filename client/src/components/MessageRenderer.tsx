@@ -52,19 +52,39 @@ export default function MessageRenderer({ message, currentUser, onRetry, onImage
     return name.charAt(0).toUpperCase();
   };
 
-  // Render message status icon
+  // Render message status with icon and text
   const renderStatusIcon = () => {
     if (!isOwn) return null;
     
     switch (message.status) {
       case 'sending':
-        return <Clock className="h-3 w-3 text-gray-400" />;
+        return (
+          <div className="flex items-center gap-1 text-gray-400">
+            <Clock className="h-3 w-3" />
+            <span className="text-xs">Sending</span>
+          </div>
+        );
       case 'delivered':
-        return <Check className="h-3 w-3 text-gray-400" />;
+        return (
+          <div className="flex items-center gap-1 text-gray-400">
+            <Check className="h-3 w-3" />
+            <span className="text-xs">Delivered</span>
+          </div>
+        );
       case 'read':
-        return <CheckCheck className="h-3 w-3 text-blue-500" />;
+        return (
+          <div className="flex items-center gap-1 text-blue-500">
+            <CheckCheck className="h-3 w-3" />
+            <span className="text-xs">Read</span>
+          </div>
+        );
       case 'failed':
-        return <AlertTriangle className="h-3 w-3 text-red-500" />;
+        return (
+          <div className="flex items-center gap-1 text-red-500">
+            <AlertTriangle className="h-3 w-3" />
+            <span className="text-xs">Failed</span>
+          </div>
+        );
       default:
         return null;
     }
