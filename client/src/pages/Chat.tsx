@@ -306,11 +306,28 @@ export default function Chat() {
     });
     
     if (wsMessages.length > 0 && selectedConversation && selectedConversation === currentRoom) {
-      // Message is for current room - only update current room messages, no rooms fetch
-      console.log('🔄 [Chat] Invalidating current room messages only (no rooms fetch)');
-      queryClient.invalidateQueries({ 
-        queryKey: ['/api/chat/messages/', selectedConversation]
-      });
+      // Message is for current room - update cache directly instead of invalidating
+      console.log('🔄 [Chat] Updating current room messages cache directly (no refetch)');
+      
+      // Get current cache data
+      const currentData = queryClient.getQueryData(['/api/chat/messages/', selectedConversation]) as any;
+      
+      if (currentData?.results) {
+        // Add new WebSocket messages to existing cache without refetching
+        const existingIds = new Set(currentData.results.map((m: any) => m.id));
+        const newMessages = wsMessages.filter(msg => !existingIds.has(msg.id));
+        
+        if (newMessages.length > 0) {
+          const updatedData = {
+            ...currentData,
+            results: [...currentData.results, ...newMessages].sort((a, b) => a.date_created - b.date_created),
+            count: currentData.count + newMessages.length
+          };
+          
+          console.log('📋 [Chat] Adding', newMessages.length, 'new messages to cache');
+          queryClient.setQueryData(['/api/chat/messages/', selectedConversation], updatedData);
+        }
+      }
     } else if (wsMessages.length > 0) {
       // Message is for different room or no room selected - update rooms list with debouncing
       console.log('🔄 [Chat] Message for different room - scheduling room list update');
