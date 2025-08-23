@@ -33,50 +33,20 @@ import {
   X
 } from "lucide-react";
 import type { ChatMessage, ChatRoom, MessageAttachment, User } from "@/types";
-import { oauth2Service } from "@/lib/oauth2";
 
 export default function Chat() {
   const { user, selectedOrganization } = useAuth();
   
-  // Get user info from OAuth2 service or use hardcoded approach as fallback
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        // Try to get user info from OAuth2 service
-        const userInfo = await oauth2Service.getUserInfo();
-        console.log('OAuth2 user info:', userInfo);
-        setCurrentUser(userInfo);
-      } catch (error) {
-        console.error('Failed to get user info from OAuth2:', error);
-        
-        // Fallback: Based on the debug output, the organization user ID is 8
-        // Since we know the organization is sending messages with owner ID 8,
-        // we can use this as the current user for message ownership detection
-        const fallbackUser: User = {
-          id: 8, // Organization user ID from debug output
-          first_name: 'Organization',
-          last_name: 'User',
-          phone: '',
-        };
-        setCurrentUser(fallbackUser);
-        console.log('Using fallback user with ID 8 for organization messages');
-      }
-    };
-    
-    fetchCurrentUser();
-  }, []);
+  // Use organization user ID directly since we know it's 8 from the debug output
+  const currentUser: User = {
+    id: 8, // Organization user ID from debug output
+    first_name: 'Organization',
+    last_name: 'User',
+    phone: '',
+  };
   
   const activeUser = user || currentUser;
   
-  // Debug user authentication
-  console.log('User authentication debug:', {
-    user: user,
-    currentUser: currentUser,
-    activeUser: activeUser,
-    activeUserId: activeUser?.id
-  });
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedConversation, setSelectedConversation] = useState<number | null>(null);
