@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import TopBar from "@/components/layout/TopBar";
@@ -355,12 +355,19 @@ export default function Chat() {
     };
   }, [wsMessages, selectedConversation, currentRoom, queryClient]);
 
-  // Combine API messages with WebSocket messages and sort by date
-  const allMessages = selectedConversation === currentRoom 
-    ? [...(messages?.results || []), ...wsMessages].sort((a, b) => a.date_created - b.date_created)
-    : (messages?.results || []).sort((a, b) => a.date_created - b.date_created);
+  // Memoize allMessages to prevent unnecessary re-renders
+  const allMessages = useMemo(() => {
+    console.log('🔄 [Chat] Recalculating allMessages - this should only happen when message data actually changes');
+    
+    if (selectedConversation === currentRoom) {
+      const combined = [...(messages?.results || []), ...wsMessages];
+      return combined.sort((a, b) => a.date_created - b.date_created);
+    } else {
+      return (messages?.results || []).sort((a, b) => a.date_created - b.date_created);
+    }
+  }, [messages?.results, wsMessages, selectedConversation, currentRoom]);
   
-  console.log('📋 [Chat] Messages combined:', {
+  console.log('📋 [Chat] Using memoized messages:', {
     selectedConversation,
     currentRoom,
     apiMessagesCount: messages?.results?.length || 0,
