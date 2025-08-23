@@ -28,7 +28,7 @@ export function useUserProfile(userId?: string) {
   // Create chat room mutation
   const createChatMutation = useMutation({
     mutationFn: (targetUserId: number) =>
-      apiService.request('/chat/rooms/', {
+      apiService.request<Room>('/chat/rooms/', {
         method: 'POST',
         body: JSON.stringify({
           name: `Chat with User ${targetUserId}`,
