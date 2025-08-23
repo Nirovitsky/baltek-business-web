@@ -25,34 +25,29 @@ export function useUserProfile(userId?: string) {
     staleTime: 2 * 60 * 1000, // Keep data fresh for 2 minutes
   });
 
-  // Create chat room mutation - using message creation to auto-create rooms
+  // Create chat room mutation using the correct application-specific endpoint
   const createChatMutation = useMutation({
-    mutationFn: async (targetUserId: number) => {
-      // Send an initial message which will auto-create the room
-      const initialMessage = await apiService.request<any>('/chat/messages/', {
+    mutationFn: async (applicationId: number) => {
+      // Use the application-specific create room endpoint
+      const roomData = await apiService.request<Room>(`/jobs/applications/${applicationId}/create_room/`, {
         method: 'POST',
-        body: JSON.stringify({
-          content: 'Chat started',
-          recipient: targetUserId,
-        }),
       });
       
-      // Return the room data from the message response
-      return initialMessage.room || { id: initialMessage.room_id };
+      return roomData;
     },
     onSuccess: (roomData: any) => {
       // Invalidate rooms query to refresh data
       queryClient.invalidateQueries({ queryKey: ['/chat/rooms/'] });
       toast({
         title: 'Success',
-        description: 'Chat started successfully',
+        description: 'Chat room created successfully',
       });
       return roomData;
     },
     onError: (error: any) => {
       toast({
         title: 'Error',
-        description: error.message || 'Failed to start chat',
+        description: error.message || 'Failed to create chat room',
         variant: 'destructive',
       });
     },

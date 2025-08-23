@@ -115,25 +115,25 @@ export default function Applications() {
 
   // Handle chat creation
   const handleStartChat = async (application: JobApplication) => {
-    if (!application.owner?.id) {
+    if (!application.id || !application.owner?.id) {
       toast({
         title: "Error",
-        description: "Cannot start chat: User information not available",
+        description: "Cannot start chat: Application information not available",
         variant: "destructive",
       });
       return;
     }
 
     try {
-      // Check if chat room already exists
+      // Check if chat room already exists for this application
       const existingRoom = findExistingRoom(application.owner.id);
       
       if (existingRoom) {
         // Navigate to existing chat room
         navigate(`/chat?room=${existingRoom.id}`);
       } else {
-        // Create new chat room
-        const roomData = await createChatMutation.mutateAsync(application.owner.id);
+        // Create new chat room using application ID
+        const roomData = await createChatMutation.mutateAsync(application.id);
         if (roomData?.id) {
           navigate(`/chat?room=${roomData.id}`);
         }
