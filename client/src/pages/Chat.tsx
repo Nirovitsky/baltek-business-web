@@ -37,21 +37,50 @@ import type { ChatMessage, ChatRoom, MessageAttachment } from "@/types";
 export default function Chat() {
   const { user, selectedOrganization } = useAuth();
   
-  // Try to decode user info from token
+  // Try to decode user info from token with multiple possible ID fields
   const getUserFromToken = () => {
     const token = localStorage.getItem('access_token');
-    if (!token) return null;
+    if (!token) {
+      console.log('No access token found');
+      return null;
+    }
     
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
-      return { id: payload.user_id, ...payload };
+      console.log('Token payload:', payload);
+      
+      // Try different possible user ID fields from JWT token
+      const userId = payload.user_id || payload.sub || payload.id || payload.user?.id;
+      
+      if (!userId) {
+        console.error('No user ID found in token payload');
+        return null;
+      }
+      
+      return { 
+        id: parseInt(userId), 
+        first_name: payload.first_name || payload.given_name || 'User',
+        last_name: payload.last_name || payload.family_name || '',
+        email: payload.email,
+        phone: payload.phone,
+        ...payload 
+      };
     } catch (error) {
+      console.error('Token decode error:', error);
       return null;
     }
   };
   
   const tokenUser = getUserFromToken();
   const activeUser = user || tokenUser;
+  
+  // Debug user authentication
+  console.log('User authentication debug:', {
+    user: user,
+    tokenUser: tokenUser,
+    activeUser: activeUser,
+    activeUserId: activeUser?.id
+  });
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedConversation, setSelectedConversation] = useState<number | null>(null);
