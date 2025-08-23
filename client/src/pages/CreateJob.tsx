@@ -392,7 +392,7 @@ export default function CreateJob() {
                           <Textarea
                             {...field}
                             placeholder="Describe the role, responsibilities, and what makes this position exciting..."
-                            className="min-h-[120px] mt-1"
+                            className="h-[600px] mt-1"
                             maxLength={1024}
                           />
                         </FormControl>
@@ -469,7 +469,7 @@ export default function CreateJob() {
                           <Textarea
                             {...field}
                             placeholder="List the required skills, experience, and qualifications..."
-                            className="min-h-[100px] mt-1"
+                            className="h-[600px] mt-1"
                             maxLength={1024}
                           />
                         </FormControl>
