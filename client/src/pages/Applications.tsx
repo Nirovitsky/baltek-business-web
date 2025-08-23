@@ -9,12 +9,14 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserProfile } from "@/hooks/useUserProfile";
 import { apiService } from "@/lib/api";
-import { User, Search, MessageCircle, FileText, Download, MapPin, Calendar, Briefcase, X, Eye } from "lucide-react";
+import { User, Search, MessageCircle, FileText, Download, MapPin, Calendar, Briefcase, X, Eye, UserX, UserCheck, AlertTriangle } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { JobApplication, PaginatedResponse } from "@/types";
 
@@ -41,6 +43,9 @@ export default function Applications() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedApplication, setSelectedApplication] = useState<JobApplication | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [pendingAction, setPendingAction] = useState<{ applicationId: number; action: string; applicantName: string } | null>(null);
+  
+  const { createChatMutation, findExistingRoom } = useUserProfile();
   
   const { toast } = useToast();
   const { selectedOrganization } = useAuth();
@@ -95,6 +100,51 @@ export default function Applications() {
 
   const handleStatusChange = (applicationId: number, newStatus: string) => {
     updateApplicationMutation.mutate({ id: applicationId, status: newStatus });
+  };
+
+  // Handle action confirmations
+  const handleConfirmAction = () => {
+    if (!pendingAction) return;
+    
+    updateApplicationMutation.mutate({ 
+      id: pendingAction.applicationId, 
+      status: pendingAction.action 
+    });
+    setPendingAction(null);
+  };
+
+  // Handle chat creation
+  const handleStartChat = async (application: JobApplication) => {
+    if (!application.owner?.id) {
+      toast({
+        title: "Error",
+        description: "Cannot start chat: User information not available",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Check if chat room already exists
+      const existingRoom = findExistingRoom(application.owner.id);
+      
+      if (existingRoom) {
+        // Navigate to existing chat room
+        navigate(`/chat?room=${existingRoom.id}`);
+      } else {
+        // Create new chat room
+        const roomData = await createChatMutation.mutateAsync(application.owner.id);
+        if (roomData?.id) {
+          navigate(`/chat?room=${roomData.id}`);
+        }
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to start chat",
+        variant: "destructive",
+      });
+    }
   };
 
   // Sort applications by ID in descending order (newest first, since higher ID = more recent)
@@ -278,9 +328,19 @@ export default function Applications() {
                       </TableCell>
                       
                       <TableCell>
-                        <Badge variant="secondary" className={getStatusColor(application.status)}>
-                          {application.status ? application.status.charAt(0).toUpperCase() + application.status.slice(1) : 'Unknown'}
-                        </Badge>
+                        {application.status === 'rejected' ? (
+                          <Badge variant="secondary" className="bg-red-500/10 text-red-700 dark:text-red-300">
+                            Rejected
+                          </Badge>
+                        ) : application.status === 'hired' ? (
+                          <Badge variant="secondary" className="bg-green-500/10 text-green-700 dark:text-green-300">
+                            Hired
+                          </Badge>
+                        ) : (
+                          <Badge variant="secondary" className={getStatusColor(application.status)}>
+                            {application.status ? application.status.charAt(0).toUpperCase() + application.status.slice(1) : 'Unknown'}
+                          </Badge>
+                        )}
                       </TableCell>
                       
                       <TableCell>
@@ -291,24 +351,91 @@ export default function Applications() {
                       </TableCell>
                       
                       <TableCell className="text-right">
-                        <div className="flex items-center justify-end space-x-2">
-                          <Select
-                            value={application.status}
-                            onValueChange={(value) => handleStatusChange(application.id, value)}
-                            disabled={updateApplicationMutation.isPending}
-                          >
-                            <SelectTrigger className="w-28 h-8 text-xs" onClick={(e) => e.stopPropagation()}>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="pending">Pending</SelectItem>
-                              <SelectItem value="invited">Invited</SelectItem>
-                              <SelectItem value="rejected">Rejected</SelectItem>
-                              <SelectItem value="hired">Hired</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          
+                        <div className="flex items-center justify-end space-x-1">
+                          {application.status !== 'rejected' && application.status !== 'hired' ? (
+                            <>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 w-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
+                                    onClick={(e) => e.stopPropagation()}
+                                    disabled={updateApplicationMutation.isPending}
+                                  >
+                                    <UserX className="h-4 w-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle className="flex items-center gap-2">
+                                      <AlertTriangle className="h-5 w-5 text-red-500" />
+                                      Reject Application
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Are you sure you want to reject the application from {`${application.owner?.first_name || ''} ${application.owner?.last_name || ''}`}? This action cannot be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => handleStatusChange(application.id, 'rejected')}
+                                      className="bg-red-500 hover:bg-red-600"
+                                    >
+                                      Reject
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
 
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 w-8 p-0 text-green-500 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-950"
+                                    onClick={(e) => e.stopPropagation()}
+                                    disabled={updateApplicationMutation.isPending}
+                                  >
+                                    <UserCheck className="h-4 w-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle className="flex items-center gap-2">
+                                      <UserCheck className="h-5 w-5 text-green-500" />
+                                      Hire Candidate
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Are you sure you want to hire {`${application.owner?.first_name || ''} ${application.owner?.last_name || ''}`}? This will mark their application as hired.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => handleStatusChange(application.id, 'hired')}
+                                      className="bg-green-500 hover:bg-green-600"
+                                    >
+                                      Hire
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </>
+                          ) : null}
+
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleStartChat(application);
+                            }}
+                            disabled={createChatMutation.isPending}
+                          >
+                            <MessageCircle className="h-4 w-4" />
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>
