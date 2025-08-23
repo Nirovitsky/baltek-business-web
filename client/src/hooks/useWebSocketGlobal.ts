@@ -96,7 +96,7 @@ const WebSocketManager = {
             } else {
               console.log('⚠️ [WebSocket] Message delivered for different room:', message.message.room, 'current:', globalCurrentRoom);
             }
-          } else if (message.type === "receive_message") {
+          } else if (message.type === "message_received") {
             console.log('📨 [WebSocket] Message received from another user:', message.message);
             console.log('🔍 [WebSocket] Room check - Message room:', message.message.room, 'Current room:', globalCurrentRoom, 'Match:', message.message.room === globalCurrentRoom);
             // Message received from another user - add to current room
