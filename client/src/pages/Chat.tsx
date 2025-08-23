@@ -294,7 +294,7 @@ export default function Chat() {
     return () => clearTimeout(timer);
   }, [messages, wsMessages, selectedConversation]);
 
-  // Debounced room list update - only fetch once even if multiple messages arrive
+  // Debounced room list update - only fetch when message is for different room
   const roomsUpdateTimeoutRef = useRef<NodeJS.Timeout>();
   
   useEffect(() => {
@@ -305,7 +305,16 @@ export default function Chat() {
       roomMatch: selectedConversation === currentRoom
     });
     
-    if (wsMessages.length > 0) {
+    if (wsMessages.length > 0 && selectedConversation && selectedConversation === currentRoom) {
+      // Message is for current room - only update current room messages, no rooms fetch
+      console.log('🔄 [Chat] Invalidating current room messages only (no rooms fetch)');
+      queryClient.invalidateQueries({ 
+        queryKey: ['/api/chat/messages/', selectedConversation]
+      });
+    } else if (wsMessages.length > 0) {
+      // Message is for different room or no room selected - update rooms list with debouncing
+      console.log('🔄 [Chat] Message for different room - scheduling room list update');
+      
       // Clear existing timeout to debounce the rooms fetch
       if (roomsUpdateTimeoutRef.current) {
         clearTimeout(roomsUpdateTimeoutRef.current);
@@ -319,14 +328,6 @@ export default function Chat() {
         });
         console.log('✅ [Chat] Room list invalidated successfully');
       }, 500);
-      
-      // Only invalidate current room's messages if this is the active room (immediate)
-      if (selectedConversation && selectedConversation === currentRoom) {
-        console.log('🔄 [Chat] Invalidating current room messages (immediate)');
-        queryClient.invalidateQueries({ 
-          queryKey: ['/api/chat/messages/', selectedConversation]
-        });
-      }
     }
     
     // Cleanup timeout on unmount
