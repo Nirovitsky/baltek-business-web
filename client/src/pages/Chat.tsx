@@ -292,7 +292,7 @@ export default function Chat() {
       scrollToBottom();
     }, 100);
     return () => clearTimeout(timer);
-  }, [displayMessages, selectedConversation]);
+  }, [apiMessages, wsMessages, selectedConversation]);
 
   // Debounced room list update - only fetch when message is for different room
   const roomsUpdateTimeoutRef = useRef<NodeJS.Timeout>();
@@ -341,24 +341,11 @@ export default function Chat() {
     return (messages?.results || []).sort((a, b) => a.date_created - b.date_created);
   }, [messages?.results]);
 
-  // Create display messages WITHOUT useMemo to avoid triggering re-renders
-  const displayMessages = selectedConversation === currentRoom 
-    ? [...apiMessages, ...wsMessages].sort((a, b) => a.date_created - b.date_created)
-    : apiMessages;
-  
-  console.log('🚨 [DEBUG] Display messages created directly (no memoization):', {
-    api: apiMessages.length,
-    ws: wsMessages.length,
-    total: displayMessages.length,
-    isCurrentRoom: selectedConversation === currentRoom
-  });
-  
-  console.log('📋 [Chat] Using display messages:', {
+  console.log('📋 [Chat] Using separate message lists:', {
     selectedConversation,
     currentRoom,
-    apiMessagesCount: messages?.results?.length || 0,
+    apiMessagesCount: apiMessages.length,
     wsMessagesCount: wsMessages.length,
-    totalMessages: displayMessages.length,
     roomsMatch: selectedConversation === currentRoom
   });
 
@@ -589,7 +576,7 @@ export default function Chat() {
                   <div className="flex justify-center py-8">
                     <Loader2 className="h-6 w-6 animate-spin" />
                   </div>
-                ) : displayMessages.length === 0 ? (
+                ) : (apiMessages.length === 0 && (selectedConversation !== currentRoom || wsMessages.length === 0)) ? (
                   <div className="text-center py-8">
                     <MessageCircle className="h-12 w-12 mx-auto text-gray-400 mb-4" />
                     <p className="text-gray-500 dark:text-gray-400">No messages yet</p>
