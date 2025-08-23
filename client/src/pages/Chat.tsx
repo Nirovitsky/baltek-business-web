@@ -332,16 +332,26 @@ export default function Chat() {
   const transformedApiMessages = useMemo(() => {
     console.log('🚨 [DEBUG] Transforming API messages to ChatMessage format');
     return (messages?.results || []).map((message: any) => {
-      // Get the sender's user info 
+      // Get the sender's user info from rooms data (includes avatar)
       const applicant = selectedConversationData?.content_object?.owner;
       const messageOwnerId = message.owner?.id || message.owner;
       
-      // Determine sender info
+      // Determine sender info - always use avatar from rooms endpoint
       let senderInfo = null;
       if (messageOwnerId === applicant?.id) {
-        senderInfo = applicant;
+        // Use applicant info with avatar from rooms endpoint
+        senderInfo = {
+          ...applicant,
+          // Ensure avatar is available from rooms data
+          avatar: applicant?.avatar
+        };
       } else if (messageOwnerId === activeUser?.id) {
-        senderInfo = activeUser;
+        // Use organization user info
+        senderInfo = {
+          ...activeUser,
+          // Organization users might not have avatars, that's OK
+          avatar: activeUser?.avatar
+        };
       }
       
       // Convert to ChatMessage format
@@ -369,16 +379,26 @@ export default function Chat() {
   const transformedWsMessages = useMemo(() => {
     console.log('🚨 [DEBUG] Transforming WebSocket messages to ChatMessage format');
     return wsMessages.map((message: any) => {
-      // Get the sender's user info 
+      // Get the sender's user info from rooms data (includes avatar)
       const applicant = selectedConversationData?.content_object?.owner;
       const messageOwnerId = message.owner?.id || message.owner;
       
-      // Determine sender info
+      // Determine sender info - always use avatar from rooms endpoint
       let senderInfo = null;
       if (messageOwnerId === applicant?.id) {
-        senderInfo = applicant;
+        // Use applicant info with avatar from rooms endpoint
+        senderInfo = {
+          ...applicant,
+          // Ensure avatar is available from rooms data
+          avatar: applicant?.avatar
+        };
       } else if (messageOwnerId === activeUser?.id) {
-        senderInfo = activeUser;
+        // Use organization user info
+        senderInfo = {
+          ...activeUser,
+          // Organization users might not have avatars, that's OK
+          avatar: activeUser?.avatar
+        };
       }
       
       // Convert to ChatMessage format
