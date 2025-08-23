@@ -53,7 +53,7 @@ export function useGlobalMessageNotifications(): GlobalMessageNotifications {
     const handleNewMessage = (event: CustomEvent) => {
       const { message, roomId } = event.detail;
       
-      // Only show notification if user is not currently on chat page with that room
+      // Check if user is currently on chat page
       const isOnChatPage = location.pathname === '/chat';
       const urlParams = new URLSearchParams(location.search);
       const currentRoom = urlParams.get('room');
@@ -67,9 +67,9 @@ export function useGlobalMessageNotifications(): GlobalMessageNotifications {
       // Add room to unread set
       globalUnreadRooms.add(roomId);
       
-      // Play notification sound (with throttling to avoid spam)
+      // Play notification sound only if user is NOT on chat page (with throttling to avoid spam)
       const now = Date.now();
-      if (playSound && now - lastPlayedRef.current > 1000) { // Throttle to once per second
+      if (playSound && !isOnChatPage && now - lastPlayedRef.current > 1000) { // Throttle to once per second
         try {
           playSound();
           lastPlayedRef.current = now;

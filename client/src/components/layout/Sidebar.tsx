@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import BusinessSwitcher from "./BusinessSwitcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useNotifications } from "@/hooks/useNotifications";
+import { useGlobalMessageNotifications } from "@/hooks/useGlobalMessageNotifications";
 
 const navigationItems = [
   {
@@ -37,6 +38,7 @@ const navigationItems = [
     name: "Chat",
     href: "/chat",
     icon: MessageCircle,
+    showChatBadge: true,
   },
   {
     name: "Notifications",
@@ -60,6 +62,7 @@ export default function Sidebar() {
   const location = useLocation();
   const { logout, selectedOrganization, user } = useAuth();
   const { unreadCount } = useNotifications(false); // Don't fetch notifications in sidebar
+  const { unreadCount: messageUnreadCount } = useGlobalMessageNotifications();
 
   return (
     <div className="w-64 h-full bg-sidebar shadow-lg border-r border-sidebar-border flex flex-col">
@@ -91,6 +94,11 @@ export default function Sidebar() {
                 {item.showBadge && unreadCount > 0 && (
                   <Badge variant="destructive" className="ml-auto bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full">
                     {unreadCount > 99 ? "99+" : unreadCount}
+                  </Badge>
+                )}
+                {item.showChatBadge && messageUnreadCount > 0 && (
+                  <Badge variant="destructive" className="ml-auto bg-blue-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full animate-pulse">
+                    {messageUnreadCount > 99 ? "99+" : messageUnreadCount}
                   </Badge>
                 )}
               </div>
