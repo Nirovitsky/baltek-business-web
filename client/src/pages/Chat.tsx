@@ -536,6 +536,15 @@ export default function Chat() {
                       const applicant = selectedConversationData?.content_object?.owner;
                       const messageOwnerId = message.owner?.id || message.owner;
                       
+                      // Determine sender info: if message is from applicant, use applicant info
+                      // If message is from organization (activeUser), use organization user info
+                      let senderInfo = null;
+                      if (messageOwnerId === applicant?.id) {
+                        senderInfo = applicant;
+                      } else if (messageOwnerId === activeUser?.id) {
+                        // This is an organization message, use the active user (organization) info
+                        senderInfo = activeUser;
+                      }
                       
                       // Convert to ChatMessage format
                       const chatMessage: ChatMessage = {
@@ -543,7 +552,7 @@ export default function Chat() {
                         room: message.room,
                         owner: messageOwnerId,
                         // Pass the correct user info for avatar display
-                        senderInfo: messageOwnerId === applicant?.id ? applicant : null,
+                        senderInfo: senderInfo,
                         text: message.text || "",
                         status: "delivered",
                         attachments: message.attachments && message.attachments.length > 0 ? 
