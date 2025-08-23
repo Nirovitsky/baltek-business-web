@@ -292,7 +292,7 @@ export default function Chat() {
       scrollToBottom();
     }, 100);
     return () => clearTimeout(timer);
-  }, [messages, wsMessages, selectedConversation]);
+  }, [displayMessages, selectedConversation]);
 
   // Debounced room list update - only fetch when message is for different room
   const roomsUpdateTimeoutRef = useRef<NodeJS.Timeout>();
@@ -335,30 +335,30 @@ export default function Chat() {
     };
   }, [wsMessages, selectedConversation, currentRoom, queryClient]);
 
-  // Memoize allMessages to prevent unnecessary re-renders
-  const allMessages = useMemo(() => {
-    console.log('🚨 [DEBUG] Recalculating allMessages - checking dependencies');
-    
-    if (selectedConversation === currentRoom && wsMessages.length > 0) {
-      // For current room with WebSocket messages, combine without re-sorting API data
-      const apiMessages = messages?.results || [];
-      const combined = [...apiMessages, ...wsMessages];
-      console.log('🚨 [DEBUG] Current room - combined', apiMessages.length, 'API +', wsMessages.length, 'WS =', combined.length);
-      return combined.sort((a, b) => a.date_created - b.date_created);
-    } else {
-      // For other rooms or no WebSocket messages, just use API data
-      const apiOnly = (messages?.results || []).sort((a, b) => a.date_created - b.date_created);
-      console.log('🚨 [DEBUG] Other room or no WS - using', apiOnly.length, 'API messages only');
-      return apiOnly;
-    }
-  }, [messages?.results, wsMessages, selectedConversation, currentRoom]);
+  // Memoize ONLY API messages - never include WebSocket messages in useMemo
+  const apiMessages = useMemo(() => {
+    console.log('🚨 [DEBUG] Recalculating API messages only (stable, no WS dependency)');
+    return (messages?.results || []).sort((a, b) => a.date_created - b.date_created);
+  }, [messages?.results]);
+
+  // Create display messages WITHOUT useMemo to avoid triggering re-renders
+  const displayMessages = selectedConversation === currentRoom 
+    ? [...apiMessages, ...wsMessages].sort((a, b) => a.date_created - b.date_created)
+    : apiMessages;
   
-  console.log('📋 [Chat] Using memoized messages:', {
+  console.log('🚨 [DEBUG] Display messages created directly (no memoization):', {
+    api: apiMessages.length,
+    ws: wsMessages.length,
+    total: displayMessages.length,
+    isCurrentRoom: selectedConversation === currentRoom
+  });
+  
+  console.log('📋 [Chat] Using display messages:', {
     selectedConversation,
     currentRoom,
     apiMessagesCount: messages?.results?.length || 0,
     wsMessagesCount: wsMessages.length,
-    totalMessages: allMessages.length,
+    totalMessages: displayMessages.length,
     roomsMatch: selectedConversation === currentRoom
   });
 
@@ -589,7 +589,7 @@ export default function Chat() {
                   <div className="flex justify-center py-8">
                     <Loader2 className="h-6 w-6 animate-spin" />
                   </div>
-                ) : allMessages.length === 0 ? (
+                ) : displayMessages.length === 0 ? (
                   <div className="text-center py-8">
                     <MessageCircle className="h-12 w-12 mx-auto text-gray-400 mb-4" />
                     <p className="text-gray-500 dark:text-gray-400">No messages yet</p>
@@ -599,7 +599,8 @@ export default function Chat() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {allMessages.map((message: any, index: number) => {
+                    {/* Render API messages first (stable, won't re-render) */}
+                    {apiMessages.map((message: any, index: number) => {
                       // Debug log for messages with attachments
                       if (message.attachments && message.attachments.length > 0) {
                         console.log('Message with attachments:', message.id, message.attachments);
@@ -643,13 +644,59 @@ export default function Chat() {
                       
                       return (
                         <MessageRenderer
-                          key={`${selectedConversation}-${message.id}-${index}`}
+                          key={`api-${selectedConversation}-${message.id}-${index}`}
                           message={chatMessage}
                           currentUser={activeUser}
                           onImageClick={(src, alt) => setImageModal({ src, alt })}
                         />
                       );
                     })}
+                    
+                    {/* Render WebSocket messages separately (only for current room) */}
+                    {selectedConversation === currentRoom && wsMessages.map((message: any, index: number) => {
+                      console.log('🚨 [DEBUG] Rendering WebSocket message (separate from API)');
+                      
+                      // Get the sender's user info 
+                      const applicant = selectedConversationData?.content_object?.owner;
+                      const messageOwnerId = message.owner?.id || message.owner;
+                      
+                      // Determine sender info
+                      let senderInfo = null;
+                      if (messageOwnerId === applicant?.id) {
+                        senderInfo = applicant;
+                      } else if (messageOwnerId === activeUser?.id) {
+                        senderInfo = activeUser;
+                      }
+                      
+                      // Convert to ChatMessage format
+                      const chatMessage: ChatMessage = {
+                        id: message.id,
+                        room: message.room,
+                        owner: messageOwnerId,
+                        senderInfo: senderInfo,
+                        text: message.text || "",
+                        status: "delivered",
+                        attachments: message.attachments && message.attachments.length > 0 ? 
+                          message.attachments.map((att: any) => ({
+                            id: att.id,
+                            file_name: att.name,
+                            file_url: att.path,
+                            content_type: inferContentType(att.name, att.path),
+                            size: att.size || null,
+                          })) : [],
+                        date_created: message.date_created,
+                      };
+                      
+                      return (
+                        <MessageRenderer
+                          key={`ws-${selectedConversation}-${message.id}-${index}`}
+                          message={chatMessage}
+                          currentUser={activeUser}
+                          onImageClick={(src, alt) => setImageModal({ src, alt })}
+                        />
+                      );
+                    })}
+                    
                     <div ref={messagesEndRef} />
                   </div>
                 )}
