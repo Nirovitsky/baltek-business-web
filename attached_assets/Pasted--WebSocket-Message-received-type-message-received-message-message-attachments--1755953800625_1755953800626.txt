@@ -1,0 +1,209 @@
+[WebSocket] Message received: 
+{type: 'message_received', message: {…}}
+message
+: 
+attachments
+: 
+[]
+date_created
+: 
+1755953770
+id
+: 
+426
+owner
+: 
+2
+room
+: 
+9
+status
+: 
+"delivered"
+text
+: 
+"websocket console test"
+[[Prototype]]
+: 
+Object
+type
+: 
+"message_received"
+[[Prototype]]
+: 
+Object
+constructor
+: 
+ƒ Object()
+hasOwnProperty
+: 
+ƒ hasOwnProperty()
+isPrototypeOf
+: 
+ƒ isPrototypeOf()
+propertyIsEnumerable
+: 
+ƒ propertyIsEnumerable()
+toLocaleString
+: 
+ƒ toLocaleString()
+toString
+: 
+ƒ toString()
+valueOf
+: 
+ƒ valueOf()
+__defineGetter__
+: 
+ƒ __defineGetter__()
+__defineSetter__
+: 
+ƒ __defineSetter__()
+__lookupGetter__
+: 
+ƒ __lookupGetter__()
+__lookupSetter__
+: 
+ƒ __lookupSetter__()
+__proto__
+: 
+(...)
+get __proto__
+: 
+ƒ __proto__()
+set __proto__
+: 
+ƒ __proto__()
+Chat.tsx:326 📋 [Chat] Messages combined: 
+{selectedConversation: 9, currentRoom: null, apiMessagesCount: 11, wsMessagesCount: 0, totalMessages: 11, …}
+apiMessagesCount
+: 
+11
+currentRoom
+: 
+null
+roomsMatch
+: 
+false
+selectedConversation
+: 
+9
+totalMessages
+: 
+11
+wsMessagesCount
+: 
+0
+[[Prototype]]
+: 
+Object
+constructor
+: 
+ƒ Object()
+hasOwnProperty
+: 
+ƒ hasOwnProperty()
+isPrototypeOf
+: 
+ƒ isPrototypeOf()
+propertyIsEnumerable
+: 
+ƒ propertyIsEnumerable()
+toLocaleString
+: 
+ƒ toLocaleString()
+toString
+: 
+ƒ toString()
+valueOf
+: 
+ƒ valueOf()
+__defineGetter__
+: 
+ƒ __defineGetter__()
+__defineSetter__
+: 
+ƒ __defineSetter__()
+__lookupGetter__
+: 
+ƒ __lookupGetter__()
+__lookupSetter__
+: 
+ƒ __lookupSetter__()
+__proto__
+: 
+(...)
+get __proto__
+: 
+ƒ __proto__()
+set __proto__
+: 
+ƒ __proto__()
+Chat.tsx:575 Message with attachments: 414 
+[{…}]
+0
+: 
+{id: 89, path: 'https://api.baltek.net/media/file/c1742f94-87c1-4c71-a1c4-8f519a48bc91.png', name: '3.png'}
+length
+: 
+1
+[[Prototype]]
+: 
+Array(0)
+useWebSocketGlobal.ts:79 📨 [WebSocket] Message received: 
+{type: 'message_received', message: {…}}
+message
+: 
+attachments
+: 
+[]
+date_created
+: 
+1755953770
+id
+: 
+426
+owner
+: 
+2
+room
+: 
+9
+status
+: 
+"delivered"
+text
+: 
+"websocket console test"
+[[Prototype]]
+: 
+Object
+type
+: 
+"message_received"
+[[Prototype]]
+: 
+Object
+Chat.tsx:326 📋 [Chat] Messages combined: 
+{selectedConversation: 9, currentRoom: null, apiMessagesCount: 11, wsMessagesCount: 0, totalMessages: 11, …}
+apiMessagesCount
+: 
+11
+currentRoom
+: 
+null
+roomsMatch
+: 
+false
+selectedConversation
+: 
+9
+totalMessages
+: 
+11
+wsMessagesCount
+: 
+0
+[[Prototype]]
+: 
+Object

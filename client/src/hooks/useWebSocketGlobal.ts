@@ -98,6 +98,7 @@ const WebSocketManager = {
             }
           } else if (message.type === "receive_message") {
             console.log('📨 [WebSocket] Message received from another user:', message.message);
+            console.log('🔍 [WebSocket] Room check - Message room:', message.message.room, 'Current room:', globalCurrentRoom, 'Match:', message.message.room === globalCurrentRoom);
             // Message received from another user - add to current room
             if (message.message.room === globalCurrentRoom) {
               console.log('✅ [WebSocket] Adding received message to current room:', globalCurrentRoom);
@@ -242,34 +243,31 @@ const WebSocketManager = {
 
   joinRoom: (roomId: number) => {
     console.log('🏠 [WebSocket] Join room request:', roomId, 'current:', globalCurrentRoom);
-    // Prevent joining the same room multiple times
-    if (globalCurrentRoom === roomId) {
-      console.log('⚠️ [WebSocket] Already in room, skipping');
-      return;
-    }
+    // Always update the current room, even if it's the same
     
     globalCurrentRoom = roomId;
     globalMessages = []; // Clear messages when switching rooms
     lastSeenMessageId = null; // Reset last seen message
-    console.log('🧹 [WebSocket] Cleared messages for room switch');
+    console.log('🧹 [WebSocket] Room set to:', roomId, 'messages cleared');
     
     // Send room join message to server if connected
     if (globalSocket && globalSocket.readyState === WebSocket.OPEN) {
       const token = localStorage.getItem('access_token');
-      console.log('📤 [WebSocket] Sending join_room message');
+      console.log('📤 [WebSocket] Sending join_room message for room:', roomId);
       globalSocket.send(JSON.stringify({
         type: 'join_room',
         room: roomId,
         token: token
       }));
     } else {
-      console.log('⚠️ [WebSocket] Cannot join room - not connected');
+      console.log('⚠️ [WebSocket] Cannot join room - not connected. State:', globalSocket?.readyState);
     }
     
     // Trigger resync for room change
     resyncCallbacks.forEach(callback => callback());
     
-    // Notify all listeners
+    // Notify all listeners to trigger re-render
+    console.log('🔄 [WebSocket] Notifying', globalListeners.size, 'listeners');
     globalListeners.forEach(listener => listener());
   },
 
