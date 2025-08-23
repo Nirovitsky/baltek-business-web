@@ -546,6 +546,16 @@ export default function Chat() {
                         senderInfo = activeUser;
                       }
                       
+                      // Debug logging
+                      console.log('Message debug:', {
+                        messageId: message.id,
+                        messageOwnerId: messageOwnerId,
+                        activeUserId: activeUser?.id,
+                        applicantId: applicant?.id,
+                        isOwnMessage: messageOwnerId === activeUser?.id,
+                        senderInfo: senderInfo?.first_name || 'No sender info'
+                      });
+                      
                       // Convert to ChatMessage format
                       const chatMessage: ChatMessage = {
                         id: message.id,
