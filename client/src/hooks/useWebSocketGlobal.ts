@@ -99,7 +99,11 @@ const WebSocketManager = {
           } else if (message.type === "message_received") {
             console.log('📨 [WebSocket] Message received from another user:', message.message);
             console.log('🔍 [WebSocket] Room check - Message room:', message.message.room, 'Current room:', globalCurrentRoom, 'Match:', message.message.room === globalCurrentRoom);
-            // Message received from another user - add to current room
+            
+            // Always trigger room list updates for any message received
+            console.log('🔄 [WebSocket] Triggering room list update for message in room:', message.message.room);
+            
+            // Only add to current room's message list if it matches
             if (message.message.room === globalCurrentRoom) {
               console.log('✅ [WebSocket] Adding received message to current room:', globalCurrentRoom);
               // Avoid duplicates by checking message ID
@@ -111,7 +115,7 @@ const WebSocketManager = {
                 console.log('⚠️ [WebSocket] Duplicate message received, skipping');
               }
             } else {
-              console.log('⚠️ [WebSocket] Message received for different room:', message.message.room, 'current:', globalCurrentRoom);
+              console.log('📝 [WebSocket] Message received for different room:', message.message.room, 'current:', globalCurrentRoom, '- will update room list only');
             }
           } else if (message.type === "error") {
             console.error("WebSocket error:", message.message || message.data);

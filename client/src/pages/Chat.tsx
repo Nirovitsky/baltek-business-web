@@ -294,7 +294,7 @@ export default function Chat() {
     return () => clearTimeout(timer);
   }, [messages, wsMessages, selectedConversation]);
 
-  // Invalidate messages query when new WebSocket messages arrive for current room
+  // Invalidate queries when new WebSocket messages arrive
   useEffect(() => {
     console.log('📨 [Chat] WebSocket messages effect triggered:', {
       wsMessagesCount: wsMessages.length,
@@ -303,17 +303,22 @@ export default function Chat() {
       roomMatch: selectedConversation === currentRoom
     });
     
-    if (wsMessages.length > 0 && selectedConversation && selectedConversation === currentRoom) {
-      console.log('🔄 [Chat] Invalidating queries due to new WebSocket messages');
-      // Invalidate the messages query to refresh from API
-      queryClient.invalidateQueries({ 
-        queryKey: ['/api/chat/messages/', selectedConversation]
-      });
+    if (wsMessages.length > 0) {
+      console.log('🔄 [Chat] Invalidating room list due to new WebSocket messages');
       
-      // Also invalidate chat rooms to update last message
+      // Always invalidate chat rooms to update last message and unread counts for all rooms
       queryClient.invalidateQueries({ 
         queryKey: ['/chat/rooms/']
       });
+      
+      // Only invalidate current room's messages if this is the active room
+      if (selectedConversation && selectedConversation === currentRoom) {
+        console.log('🔄 [Chat] Also invalidating current room messages');
+        queryClient.invalidateQueries({ 
+          queryKey: ['/api/chat/messages/', selectedConversation]
+        });
+      }
+      
       console.log('✅ [Chat] Queries invalidated successfully');
     }
   }, [wsMessages, selectedConversation, currentRoom, queryClient]);
