@@ -294,7 +294,9 @@ export default function Chat() {
     return () => clearTimeout(timer);
   }, [messages, wsMessages, selectedConversation]);
 
-  // Invalidate queries when new WebSocket messages arrive
+  // Debounced room list update - only fetch once even if multiple messages arrive
+  const roomsUpdateTimeoutRef = useRef<NodeJS.Timeout>();
+  
   useEffect(() => {
     console.log('📨 [Chat] WebSocket messages effect triggered:', {
       wsMessagesCount: wsMessages.length,
@@ -304,23 +306,35 @@ export default function Chat() {
     });
     
     if (wsMessages.length > 0) {
-      console.log('🔄 [Chat] Invalidating room list due to new WebSocket messages');
+      // Clear existing timeout to debounce the rooms fetch
+      if (roomsUpdateTimeoutRef.current) {
+        clearTimeout(roomsUpdateTimeoutRef.current);
+      }
       
-      // Always invalidate chat rooms to update last message and unread counts for all rooms
-      queryClient.invalidateQueries({ 
-        queryKey: ['/chat/rooms/']
-      });
+      // Debounce room list updates - wait 500ms after last message before fetching
+      roomsUpdateTimeoutRef.current = setTimeout(() => {
+        console.log('🔄 [Chat] Invalidating room list due to new WebSocket messages (debounced)');
+        queryClient.invalidateQueries({ 
+          queryKey: ['/chat/rooms/']
+        });
+        console.log('✅ [Chat] Room list invalidated successfully');
+      }, 500);
       
-      // Only invalidate current room's messages if this is the active room
+      // Only invalidate current room's messages if this is the active room (immediate)
       if (selectedConversation && selectedConversation === currentRoom) {
-        console.log('🔄 [Chat] Also invalidating current room messages');
+        console.log('🔄 [Chat] Invalidating current room messages (immediate)');
         queryClient.invalidateQueries({ 
           queryKey: ['/api/chat/messages/', selectedConversation]
         });
       }
-      
-      console.log('✅ [Chat] Queries invalidated successfully');
     }
+    
+    // Cleanup timeout on unmount
+    return () => {
+      if (roomsUpdateTimeoutRef.current) {
+        clearTimeout(roomsUpdateTimeoutRef.current);
+      }
+    };
   }, [wsMessages, selectedConversation, currentRoom, queryClient]);
 
   // Combine API messages with WebSocket messages and sort by date
