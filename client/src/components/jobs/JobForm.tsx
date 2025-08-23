@@ -267,10 +267,9 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="secondary">Secondary Education</SelectItem>
+                    <SelectItem value="secondary">Secondary</SelectItem>
                     <SelectItem value="undergraduate">Undergraduate</SelectItem>
-                    <SelectItem value="bachelor">Bachelor's Degree</SelectItem>
-                    <SelectItem value="master">Master's Degree</SelectItem>
+                    <SelectItem value="master">Master</SelectItem>
                     <SelectItem value="doctorate">Doctorate</SelectItem>
                   </SelectContent>
                 </Select>

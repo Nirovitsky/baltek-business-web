@@ -83,7 +83,7 @@ export default function CreateJob() {
       location: 1,
       job_type: "full_time",
       workplace_type: "on_site",
-      min_education_level: "",
+      min_education_level: "secondary",
       salary_from: 0,
       salary_to: 0,
       salary_payment_type: "monthly",
@@ -563,12 +563,10 @@ export default function CreateJob() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="high_school">High School</SelectItem>
-                              <SelectItem value="some_college">Some College</SelectItem>
-                              <SelectItem value="associate">Associate Degree</SelectItem>
-                              <SelectItem value="bachelor">Bachelor's Degree</SelectItem>
-                              <SelectItem value="master">Master's Degree</SelectItem>
-                              <SelectItem value="doctorate">Doctorate/PhD</SelectItem>
+                              <SelectItem value="secondary">Secondary</SelectItem>
+                              <SelectItem value="undergraduate">Undergraduate</SelectItem>
+                              <SelectItem value="master">Master</SelectItem>
+                              <SelectItem value="doctorate">Doctorate</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
