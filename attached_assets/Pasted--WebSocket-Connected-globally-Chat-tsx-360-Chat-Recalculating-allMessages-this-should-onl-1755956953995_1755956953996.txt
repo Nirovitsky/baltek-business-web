@@ -1,0 +1,32 @@
+🔌 [WebSocket] Connected globally
+Chat.tsx:360 🔄 [Chat] Recalculating allMessages - this should only happen when message data actually changes
+Chat.tsx:370 📋 [Chat] Using memoized messages: {selectedConversation: null, currentRoom: null, apiMessagesCount: 0, wsMessagesCount: 0, totalMessages: 0, …}apiMessagesCount: 0currentRoom: nullroomsMatch: trueselectedConversation: nulltotalMessages: 0wsMessagesCount: 0[[Prototype]]: Objectconstructor: ƒ Object()hasOwnProperty: ƒ hasOwnProperty()isPrototypeOf: ƒ isPrototypeOf()propertyIsEnumerable: ƒ propertyIsEnumerable()toLocaleString: ƒ toLocaleString()toString: ƒ toString()valueOf: ƒ valueOf()__defineGetter__: ƒ __defineGetter__()__defineSetter__: ƒ __defineSetter__()__lookupGetter__: ƒ __lookupGetter__()__lookupSetter__: ƒ __lookupSetter__()__proto__: (...)get __proto__: ƒ __proto__()set __proto__: ƒ __proto__()
+Chat.tsx:301 📨 [Chat] WebSocket messages effect triggered: {wsMessagesCount: 0, selectedConversation: null, currentRoom: null, roomMatch: true}
+Chat.tsx:370 📋 [Chat] Using memoized messages: {selectedConversation: null, currentRoom: null, apiMessagesCount: 0, wsMessagesCount: 0, totalMessages: 0, …}
+Chat.tsx:269 🏠 [Chat] Room selection started: 9
+Chat.tsx:276 Selected room organization: Apple
+Chat.tsx:277 Current selected organization: Apple
+Chat.tsx:280 🔌 [Chat] Joining WebSocket room: 9
+useWebSocketGlobal.ts:249 🏠 [WebSocket] Join room request: 9 current: null
+useWebSocketGlobal.ts:255 🧹 [WebSocket] Room set to: 9 messages cleared
+useWebSocketGlobal.ts:260 📤 [WebSocket] Sending join_room message for room: 9
+useWebSocketGlobal.ts:274 🔄 [WebSocket] Notifying 2 listeners
+Chat.tsx:284 🔄 [Chat] Invalidating messages query for room: 9
+Chat.tsx:286 ✅ [Chat] Room selection completed
+Chat.tsx:360 🔄 [Chat] Recalculating allMessages - this should only happen when message data actually changes
+Chat.tsx:370 📋 [Chat] Using memoized messages: {selectedConversation: 9, currentRoom: 9, apiMessagesCount: 0, wsMessagesCount: 0, totalMessages: 0, …}
+Chat.tsx:301 📨 [Chat] WebSocket messages effect triggered: {wsMessagesCount: 0, selectedConversation: 9, currentRoom: 9, roomMatch: true}
+Chat.tsx:360 🔄 [Chat] Recalculating allMessages - this should only happen when message data actually changes
+Chat.tsx:370 📋 [Chat] Using memoized messages: {selectedConversation: 9, currentRoom: 9, apiMessagesCount: 20, wsMessagesCount: 0, totalMessages: 20, …}
+Chat.tsx:619 Message with attachments: 430 [{…}]
+useWebSocketGlobal.ts:79 📨 [WebSocket] Message received: {type: 'message_received', message: {…}}
+useWebSocketGlobal.ts:100 📨 [WebSocket] Message received from another user: {id: 444, room: 9, owner: 2, text: 'debug messages', status: 'delivered', …}
+useWebSocketGlobal.ts:101 🔍 [WebSocket] Room check - Message room: 9 Current room: 9 Match: true
+useWebSocketGlobal.ts:104 🔄 [WebSocket] Triggering room list update for message in room: 9
+useWebSocketGlobal.ts:108 ✅ [WebSocket] Adding received message to current room: 9
+useWebSocketGlobal.ts:113 📋 [WebSocket] Global messages updated, count: 1
+Chat.tsx:360 🔄 [Chat] Recalculating allMessages - this should only happen when message data actually changes
+Chat.tsx:370 📋 [Chat] Using memoized messages: {selectedConversation: 9, currentRoom: 9, apiMessagesCount: 20, wsMessagesCount: 1, totalMessages: 21, …}
+Chat.tsx:619 Message with attachments: 430 [{…}]
+Chat.tsx:301 📨 [Chat] WebSocket messages effect triggered: {wsMessagesCount: 1, selectedConversation: 9, currentRoom: 9, roomMatch: true}
+Chat.tsx:310 🔄 [Chat] Updating current room messages cache directly (no refetch)

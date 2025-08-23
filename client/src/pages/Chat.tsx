@@ -306,28 +306,8 @@ export default function Chat() {
     });
     
     if (wsMessages.length > 0 && selectedConversation && selectedConversation === currentRoom) {
-      // Message is for current room - update cache directly instead of invalidating
-      console.log('🔄 [Chat] Updating current room messages cache directly (no refetch)');
-      
-      // Get current cache data
-      const currentData = queryClient.getQueryData(['/api/chat/messages/', selectedConversation]) as any;
-      
-      if (currentData?.results) {
-        // Add new WebSocket messages to existing cache without refetching
-        const existingIds = new Set(currentData.results.map((m: any) => m.id));
-        const newMessages = wsMessages.filter(msg => !existingIds.has(msg.id));
-        
-        if (newMessages.length > 0) {
-          const updatedData = {
-            ...currentData,
-            results: [...currentData.results, ...newMessages].sort((a, b) => a.date_created - b.date_created),
-            count: currentData.count + newMessages.length
-          };
-          
-          console.log('📋 [Chat] Adding', newMessages.length, 'new messages to cache');
-          queryClient.setQueryData(['/api/chat/messages/', selectedConversation], updatedData);
-        }
-      }
+      // Message is for current room - DO NOT update cache, let useMemo handle it
+      console.log('🚨 [DEBUG] Current room message - using WebSocket only (no cache update)');
     } else if (wsMessages.length > 0) {
       // Message is for different room or no room selected - update rooms list with debouncing
       console.log('🔄 [Chat] Message for different room - scheduling room list update');
@@ -357,13 +337,19 @@ export default function Chat() {
 
   // Memoize allMessages to prevent unnecessary re-renders
   const allMessages = useMemo(() => {
-    console.log('🔄 [Chat] Recalculating allMessages - this should only happen when message data actually changes');
+    console.log('🚨 [DEBUG] Recalculating allMessages - checking dependencies');
     
-    if (selectedConversation === currentRoom) {
-      const combined = [...(messages?.results || []), ...wsMessages];
+    if (selectedConversation === currentRoom && wsMessages.length > 0) {
+      // For current room with WebSocket messages, combine without re-sorting API data
+      const apiMessages = messages?.results || [];
+      const combined = [...apiMessages, ...wsMessages];
+      console.log('🚨 [DEBUG] Current room - combined', apiMessages.length, 'API +', wsMessages.length, 'WS =', combined.length);
       return combined.sort((a, b) => a.date_created - b.date_created);
     } else {
-      return (messages?.results || []).sort((a, b) => a.date_created - b.date_created);
+      // For other rooms or no WebSocket messages, just use API data
+      const apiOnly = (messages?.results || []).sort((a, b) => a.date_created - b.date_created);
+      console.log('🚨 [DEBUG] Other room or no WS - using', apiOnly.length, 'API messages only');
+      return apiOnly;
     }
   }, [messages?.results, wsMessages, selectedConversation, currentRoom]);
   
