@@ -35,8 +35,8 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       job_type: job?.job_type || "full_time",
       workplace_type: job?.workplace_type || "remote",
       min_education_level: job?.min_education_level || "secondary",
-      salary_from: job?.salary_from || undefined,
-      salary_to: job?.salary_to || undefined,
+      salary_from: job?.salary_from ?? undefined,
+      salary_to: job?.salary_to ?? undefined,
       salary_payment_type: job?.salary_payment_type || "monthly",
       required_languages: job?.required_languages || [],
       date_started: job?.date_started || Math.floor(Date.now() / 1000),
@@ -288,7 +288,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
                   <Input 
                     type="number" 
                     placeholder="e.g. 1000"
-                    value={field.value || ''}
+                    value={field.value ?? ''}
                     onChange={(e) => {
                       const value = e.target.value;
                       field.onChange(value === '' ? undefined : Number(value));
@@ -310,7 +310,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
                   <Input 
                     type="number" 
                     placeholder="e.g. 2000"
-                    value={field.value || ''}
+                    value={field.value ?? ''}
                     onChange={(e) => {
                       const value = e.target.value;
                       field.onChange(value === '' ? undefined : Number(value));
