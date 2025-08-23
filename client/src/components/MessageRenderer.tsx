@@ -13,7 +13,7 @@ interface MessageRendererProps {
   onImageClick?: (src: string, alt: string) => void;
 }
 
-export default function MessageRenderer({ message, currentUser, onRetry, onImageClick }: MessageRendererProps) {
+function MessageRenderer({ message, currentUser, onRetry, onImageClick }: MessageRendererProps) {
   const isOwn = message.owner === currentUser?.id;
   
   
@@ -348,3 +348,16 @@ export default function MessageRenderer({ message, currentUser, onRetry, onImage
     </div>
   );
 }
+
+// Memoize the component to prevent unnecessary re-renders when message content hasn't changed
+export default React.memo(MessageRenderer, (prevProps, nextProps) => {
+  // Only re-render if essential message properties have changed
+  return (
+    prevProps.message.id === nextProps.message.id &&
+    prevProps.message.text === nextProps.message.text &&
+    prevProps.message.status === nextProps.message.status &&
+    prevProps.message.date_created === nextProps.message.date_created &&
+    prevProps.message.attachments?.length === nextProps.message.attachments?.length &&
+    prevProps.currentUser?.id === nextProps.currentUser?.id
+  );
+});

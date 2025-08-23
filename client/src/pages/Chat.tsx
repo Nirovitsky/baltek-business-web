@@ -633,7 +633,7 @@ export default function Chat() {
                       
                       return (
                         <MessageRenderer
-                          key={`${message.id}-${index}`}
+                          key={`${selectedConversation}-${message.id}-${index}`}
                           message={chatMessage}
                           currentUser={activeUser}
                           onImageClick={(src, alt) => setImageModal({ src, alt })}
