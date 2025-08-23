@@ -3,9 +3,10 @@ import { apiService } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import type { User, Room, PaginatedResponse } from '@/types';
 
-export function useUserProfile(userId?: string) {
+export function useUserProfile(userId?: string, options?: { fetchRooms?: boolean }) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { fetchRooms = true } = options || {};
 
   // Fetch user profile data
   const {
@@ -19,10 +20,12 @@ export function useUserProfile(userId?: string) {
   });
 
   // Use shared rooms query with same key as other components to avoid duplication
+  // Only fetch rooms when explicitly needed
   const { data: roomsData } = useQuery({
     queryKey: ["/chat/rooms/"],
     queryFn: () => apiService.request<PaginatedResponse<Room>>('/chat/rooms/'),
     staleTime: 2 * 60 * 1000, // Keep data fresh for 2 minutes
+    enabled: fetchRooms,
   });
 
   // Create chat room mutation using the correct application-specific endpoint

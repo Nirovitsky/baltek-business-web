@@ -28,6 +28,10 @@ The Baltek Business Dashboard is a React and Express-based application for HR ma
   - **Reference Data**: Created `useReferenceData` hook for categories and locations with 15-minute cache duration
   - **Shared Mutations**: All organization operations (create, update, upload) now use centralized mutations with proper invalidation
   - **Cache Optimization**: Long stale times for reference data (categories, locations, languages) that rarely change
+- **Migration & Optimization (January 23, 2025)**: Successfully migrated from Replit Agent to Replit environment
+  - **Environment Setup**: Configured secure OAuth2 client ID through Replit Secrets
+  - **Performance Enhancement**: Optimized `useUserProfile` hook with conditional room fetching to eliminate unnecessary API calls
+  - **Applications Page Optimization**: Removed redundant `/chat/rooms/` endpoint fetch, improving page load performance
 
 ## System Architecture
 

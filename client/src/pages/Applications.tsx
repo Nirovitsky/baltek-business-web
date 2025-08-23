@@ -45,7 +45,7 @@ export default function Applications() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [pendingAction, setPendingAction] = useState<{ applicationId: number; action: string; applicantName: string } | null>(null);
   
-  const { createChatMutation, findExistingRoom } = useUserProfile();
+  const { createChatMutation, findExistingRoom } = useUserProfile(undefined, { fetchRooms: false });
   
   const { toast } = useToast();
   const { selectedOrganization } = useAuth();
