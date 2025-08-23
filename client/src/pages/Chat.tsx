@@ -286,13 +286,6 @@ export default function Chat() {
     console.log('✅ [Chat] Room selection completed');
   };
 
-  // Auto scroll when messages change (with slight delay to ensure DOM updates)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      scrollToBottom();
-    }, 100);
-    return () => clearTimeout(timer);
-  }, [apiMessages, wsMessages, selectedConversation]);
 
   // Debounced room list update - only fetch when message is for different room
   const roomsUpdateTimeoutRef = useRef<NodeJS.Timeout>();
@@ -340,6 +333,14 @@ export default function Chat() {
     console.log('🚨 [DEBUG] Recalculating API messages only (stable, no WS dependency)');
     return (messages?.results || []).sort((a, b) => a.date_created - b.date_created);
   }, [messages?.results]);
+
+  // Auto scroll when messages change (with slight delay to ensure DOM updates)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [apiMessages, wsMessages, selectedConversation]);
 
   console.log('📋 [Chat] Using separate message lists:', {
     selectedConversation,
