@@ -16,14 +16,6 @@ interface MessageRendererProps {
 export default function MessageRenderer({ message, currentUser, onRetry, onImageClick }: MessageRendererProps) {
   const isOwn = message.owner === currentUser?.id;
   
-  // Debug logging for message ownership
-  console.log('MessageRenderer debug:', {
-    messageId: message.id,
-    messageOwner: message.owner,
-    currentUserId: currentUser?.id,
-    isOwn: isOwn,
-    messageText: message.text?.substring(0, 50) + '...'
-  });
   
   // Format timestamp
   const formatTime = (timestamp: number) => {

@@ -1,0 +1,53 @@
+Chat.tsx:69 Token decode error: InvalidCharacterError: Failed to execute 'atob' on 'Window': The string to be decoded is not correctly encoded.
+    at getUserFromToken (Chat.tsx:49:34)
+    at Chat (Chat.tsx:74:21)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=ccc13500:11548:26)
+    at updateFunctionComponent (chunk-RPCDYKBN.js?v=ccc13500:14582:28)
+    at beginWork (chunk-RPCDYKBN.js?v=ccc13500:15924:22)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=ccc13500:19753:22)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=ccc13500:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js?v=ccc13500:19137:13)
+    at renderRootSync (chunk-RPCDYKBN.js?v=ccc13500:19116:15)
+    at performSyncWorkOnRoot (chunk-RPCDYKBN.js?v=ccc13500:18874:28)
+getUserFromToken @ Chat.tsx:69
+Chat @ Chat.tsx:74
+renderWithHooks @ chunk-RPCDYKBN.js?v=ccc13500:11548
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=ccc13500:14582
+beginWork @ chunk-RPCDYKBN.js?v=ccc13500:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=ccc13500:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=ccc13500:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=ccc13500:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=ccc13500:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=ccc13500:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=ccc13500:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=ccc13500:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=3af2e344:555
+flush @ @tanstack_react-query.js?v=3af2e344:569
+batch @ @tanstack_react-query.js?v=3af2e344:587
+dispatch_fn @ @tanstack_react-query.js?v=3af2e344:996
+setData @ @tanstack_react-query.js?v=3af2e344:696
+onSuccess @ @tanstack_react-query.js?v=3af2e344:897
+resolve @ @tanstack_react-query.js?v=3af2e344:456
+Promise.then
+run @ @tanstack_react-query.js?v=3af2e344:498
+start @ @tanstack_react-query.js?v=3af2e344:536
+fetch @ @tanstack_react-query.js?v=3af2e344:926
+executeFetch_fn @ @tanstack_react-query.js?v=3af2e344:2211
+setOptions @ @tanstack_react-query.js?v=3af2e344:1955
+(anonymous) @ @tanstack_react-query.js?v=3af2e344:3032
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=ccc13500:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=ccc13500:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=ccc13500:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=ccc13500:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=ccc13500:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=ccc13500:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=ccc13500:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=ccc13500:19416
+commitRoot @ chunk-RPCDYKBN.js?v=ccc13500:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=ccc13500:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=ccc13500:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=ccc13500:18627Understand this error
+Chat.tsx:78 User authentication debug: {user: null, tokenUser: null, activeUser: null, activeUserId: undefined}activeUser: nullactiveUserId: undefinedtokenUser: nulluser: null[[Prototype]]: Objectconstructor: ƒ Object()hasOwnProperty: ƒ hasOwnProperty()isPrototypeOf: ƒ isPrototypeOf()propertyIsEnumerable: ƒ propertyIsEnumerable()toLocaleString: ƒ toLocaleString()toString: ƒ toString()valueOf: ƒ valueOf()__defineGetter__: ƒ __defineGetter__()__defineSetter__: ƒ __defineSetter__()__lookupGetter__: ƒ __lookupGetter__()__lookupSetter__: ƒ __lookupSetter__()__proto__: (...)get __proto__: ƒ __proto__()set __proto__: ƒ __proto__()
+Chat.tsx:579 Message debug: {messageId: 412, messageOwnerId: 8, activeUserId: undefined, applicantId: 2, isOwnMessage: false, …}activeUserId: undefinedapplicantId: 2isOwnMessage: falsemessageId: 412messageOwnerId: 8senderInfo: "No sender info"[[Prototype]]: Objectconstructor: ƒ Object()hasOwnProperty: ƒ hasOwnProperty()isPrototypeOf: ƒ isPrototypeOf()propertyIsEnumerable: ƒ propertyIsEnumerable()toLocaleString: ƒ toLocaleString()toString: ƒ toString()valueOf: ƒ valueOf()__defineGetter__: ƒ __defineGetter__()__defineSetter__: ƒ __defineSetter__()__lookupGetter__: ƒ __lookupGetter__()__lookupSetter__: ƒ __lookupSetter__()__proto__: (...)get __proto__: ƒ __proto__()set __proto__: ƒ __proto__()
+Chat.tsx:579 
