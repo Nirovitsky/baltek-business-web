@@ -359,14 +359,6 @@ export default function Chat() {
               />
             </div>
             
-            {/* WebSocket connection status */}
-            <div className={`flex items-center justify-between mt-2 text-xs`}>
-              <div className={`flex items-center gap-2 ${connected ? 'text-green-600' : 'text-red-600'}`}>
-                <div className={`w-2 h-2 rounded-full ${connected ? 'bg-green-500' : 'bg-red-500'}`} />
-                Status: {connected ? 'Connected' : 'Disconnected'}
-              </div>
-              {!connected && <Loader2 className="h-3 w-3 animate-spin" />}
-            </div>
           </div>
           
           <ScrollArea className="flex-1">
@@ -429,12 +421,6 @@ export default function Chat() {
                                 : room.content_object?.job?.title || 'Job Application'
                               }
                             </p>
-                            {/* Application status in conversation list */}
-                            {room.content_object?.status && (
-                              <p className="text-xs text-gray-500 mt-1">
-                                Status: {room.content_object.status}
-                              </p>
-                            )}
                           </div>
                           {room.unread_message_count > 0 && (
                             <Badge className="ml-2 px-1.5 py-0.5 text-xs">
@@ -509,18 +495,6 @@ export default function Chat() {
                           {selectedConversationData.content_object?.owner?.first_name}{' '}
                           {selectedConversationData.content_object?.owner?.last_name}
                         </p>
-                        {/* Application status badge */}
-                        {selectedConversationData.content_object?.status && (
-                          <span className={`px-2 py-1 text-xs rounded-full ${
-                            selectedConversationData.content_object.status === 'pending' ? 'bg-primary/10 text-primary' :
-                            selectedConversationData.content_object.status === 'invited' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                            selectedConversationData.content_object.status === 'hired' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                            selectedConversationData.content_object.status === 'rejected' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
-                            'bg-muted text-muted-foreground'
-                          }`}>
-                            Status: {selectedConversationData.content_object.status}
-                          </span>
-                        )}
                       </div>
                       <p className="text-sm text-gray-500">
                         Applied for {selectedConversationData.content_object?.job?.title}
