@@ -278,6 +278,21 @@ export default function Chat() {
     return () => clearTimeout(timer);
   }, [messages, wsMessages, selectedConversation]);
 
+  // Invalidate messages query when new WebSocket messages arrive for current room
+  useEffect(() => {
+    if (wsMessages.length > 0 && selectedConversation && selectedConversation === currentRoom) {
+      // Invalidate the messages query to refresh from API
+      queryClient.invalidateQueries({ 
+        queryKey: ['/api/chat/messages/', selectedConversation]
+      });
+      
+      // Also invalidate chat rooms to update last message
+      queryClient.invalidateQueries({ 
+        queryKey: ['/chat/rooms/']
+      });
+    }
+  }, [wsMessages, selectedConversation, currentRoom, queryClient]);
+
   // Combine API messages with WebSocket messages and sort by date
   const allMessages = selectedConversation === currentRoom 
     ? [...(messages?.results || []), ...wsMessages].sort((a, b) => a.date_created - b.date_created)

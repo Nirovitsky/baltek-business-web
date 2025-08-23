@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import type { Message } from "@/types";
+import type { ChatMessage } from "@/types";
 
 interface WebSocketMessage {
   type: string;
@@ -12,7 +12,7 @@ interface WebSocketMessage {
 
 let globalSocket: WebSocket | null = null;
 let globalConnected = false;
-let globalMessages: Message[] = [];
+let globalMessages: ChatMessage[] = [];
 let globalCurrentRoom: number | null = null;
 let globalListeners: Set<() => void> = new Set();
 let messageQueue: Array<{ roomId: number; content: string; attachments?: number[] }> = [];
