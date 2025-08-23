@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "./useAuth";
-import type { ChatMessage } from "@/types";
+import type { Message } from "@/types";
 
 interface WebSocketMessage {
   type: "send_message" | "message_received" | "room_joined" | "error";
@@ -12,7 +12,7 @@ interface WebSocketMessage {
 export function useWebSocketChat() {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [connected, setConnected] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [currentRoom, setCurrentRoom] = useState<number | null>(null);
   const { isAuthenticated } = useAuth();
   

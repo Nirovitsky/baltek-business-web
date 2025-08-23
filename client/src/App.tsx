@@ -6,7 +6,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
 import { useAuth } from "@/hooks/useAuth";
 import { useWebSocketGlobal } from "@/hooks/useWebSocketGlobal";
-import { useGlobalMessageNotifications } from "@/hooks/useGlobalMessageNotifications";
 import { useEffect, useState } from "react";
 
 // Layout Components
@@ -41,9 +40,6 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   // Initialize global WebSocket connection when authenticated
   const { connected } = useWebSocketGlobal();
-  
-  // Initialize global message notifications
-  useGlobalMessageNotifications();
 
   useEffect(() => {
     checkAuth();
