@@ -20,21 +20,27 @@ export default function Dashboard() {
 
   // Fetch data for stats filtered by organization
   const { data: jobsData } = useQuery({
-    queryKey: ['/jobs/'],
+    queryKey: ['/jobs/', selectedOrganization?.id],
     queryFn: () => {
       const params = new URLSearchParams();
+      if (selectedOrganization) {
+        params.append('organization', selectedOrganization.id.toString());
+      }
       return apiService.request<PaginatedResponse<Job>>(`/jobs/?${params.toString()}`);
     },
-    enabled: true,
+    enabled: !!selectedOrganization,
   });
 
   const { data: applicationsData } = useQuery({
-    queryKey: ['/jobs/applications/'],
+    queryKey: ['/jobs/applications/', selectedOrganization?.id],
     queryFn: () => {
       const params = new URLSearchParams();
+      if (selectedOrganization) {
+        params.append('organization', selectedOrganization.id.toString());
+      }
       return apiService.request<PaginatedResponse<JobApplication>>(`/jobs/applications/?${params.toString()}`);
     },
-    enabled: true,
+    enabled: !!selectedOrganization,
   });
 
   const jobs = jobsData?.results || [];
