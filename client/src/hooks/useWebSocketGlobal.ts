@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import type { Message } from "@/types";
+import type { ChatMessage } from "@/types";
 
 interface WebSocketMessage {
   type: string;
@@ -12,7 +12,7 @@ interface WebSocketMessage {
 
 let globalSocket: WebSocket | null = null;
 let globalConnected = false;
-let globalMessages: Message[] = [];
+let globalMessages: ChatMessage[] = [];
 let globalCurrentRoom: number | null = null;
 let globalListeners: Set<() => void> = new Set();
 let messageQueue: Array<{ roomId: number; content: string; attachments?: number[] }> = [];
@@ -97,6 +97,14 @@ const WebSocketManager = {
                 lastSeenMessageId = Math.max(lastSeenMessageId || 0, message.message.id);
               }
             }
+            
+            // Dispatch custom event for global message notifications
+            window.dispatchEvent(new CustomEvent('newChatMessage', {
+              detail: {
+                message: message.message,
+                roomId: message.message.room
+              }
+            }));
           } else if (message.type === "error") {
             console.error("WebSocket error:", message.message || message.data);
           } else if (message.type === "auth_error") {
