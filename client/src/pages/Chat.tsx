@@ -168,6 +168,13 @@ export default function Chat() {
     e.preventDefault();
     if ((!messageInput.trim() && !uploadedAttachment) || !selectedConversation) return;
 
+    console.log('📤 [Chat] Sending message started:', {
+      text: messageInput.trim(),
+      room: selectedConversation,
+      hasAttachment: !!uploadedAttachment,
+      connected
+    });
+    
     setSendingMessage(true);
     
     try {
@@ -181,12 +188,16 @@ export default function Chat() {
         attachmentId ? [attachmentId] : undefined
       );
       
+      console.log('📤 [Chat] Message send result:', success);
+      
       if (success) {
         setMessageInput("");
         setSelectedFile(null);
         setUploadedAttachment(null);
         setTimeout(scrollToBottom, 100);
+        console.log('✅ [Chat] Message sent successfully');
       } else {
+        console.error('❌ [Chat] Message send failed');
         toast({
           title: "Failed to send message",
           description: "Please check your connection and try again",
@@ -194,6 +205,7 @@ export default function Chat() {
         });
       }
     } catch (error) {
+      console.error('❌ [Chat] Message send error:', error);
       toast({
         title: "Failed to send message",
         description: "An error occurred while sending your message",
@@ -254,6 +266,7 @@ export default function Chat() {
 
   // Handle room selection
   const handleRoomSelect = (room: ChatRoom) => {
+    console.log('🏠 [Chat] Room selection started:', room.id);
     setSelectedConversation(room.id);
     setMessageInput("");
     setSelectedFile(null);
@@ -264,10 +277,13 @@ export default function Chat() {
     console.log('Current selected organization:', selectedOrganization?.display_name);
     
     // Join room via WebSocket
+    console.log('🔌 [Chat] Joining WebSocket room:', room.id);
     joinRoom(room.id);
     
     // Refresh messages for this room
+    console.log('🔄 [Chat] Invalidating messages query for room:', room.id);
     queryClient.invalidateQueries({ queryKey: ['/api/chat/messages/', room.id] });
+    console.log('✅ [Chat] Room selection completed');
   };
 
   // Auto scroll when messages change (with slight delay to ensure DOM updates)
@@ -280,7 +296,15 @@ export default function Chat() {
 
   // Invalidate messages query when new WebSocket messages arrive for current room
   useEffect(() => {
+    console.log('📨 [Chat] WebSocket messages effect triggered:', {
+      wsMessagesCount: wsMessages.length,
+      selectedConversation,
+      currentRoom,
+      roomMatch: selectedConversation === currentRoom
+    });
+    
     if (wsMessages.length > 0 && selectedConversation && selectedConversation === currentRoom) {
+      console.log('🔄 [Chat] Invalidating queries due to new WebSocket messages');
       // Invalidate the messages query to refresh from API
       queryClient.invalidateQueries({ 
         queryKey: ['/api/chat/messages/', selectedConversation]
@@ -290,6 +314,7 @@ export default function Chat() {
       queryClient.invalidateQueries({ 
         queryKey: ['/chat/rooms/']
       });
+      console.log('✅ [Chat] Queries invalidated successfully');
     }
   }, [wsMessages, selectedConversation, currentRoom, queryClient]);
 
@@ -297,6 +322,15 @@ export default function Chat() {
   const allMessages = selectedConversation === currentRoom 
     ? [...(messages?.results || []), ...wsMessages].sort((a, b) => a.date_created - b.date_created)
     : (messages?.results || []).sort((a, b) => a.date_created - b.date_created);
+  
+  console.log('📋 [Chat] Messages combined:', {
+    selectedConversation,
+    currentRoom,
+    apiMessagesCount: messages?.results?.length || 0,
+    wsMessagesCount: wsMessages.length,
+    totalMessages: allMessages.length,
+    roomsMatch: selectedConversation === currentRoom
+  });
 
   const filteredRooms = chatRooms?.results?.filter((room: ChatRoom) => {
     if (!searchQuery) return true;

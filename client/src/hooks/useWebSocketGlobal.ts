@@ -40,7 +40,7 @@ const WebSocketManager = {
       const ws = new WebSocket(wsUrl);
 
       ws.onopen = () => {
-        console.log("WebSocket connected globally");
+        console.log('🔌 [WebSocket] Connected globally');
         globalConnected = true;
         globalSocket = ws;
         
@@ -76,26 +76,41 @@ const WebSocketManager = {
       ws.onmessage = (event) => {
         try {
           const message = JSON.parse(event.data);
+          console.log('📨 [WebSocket] Message received:', message);
 
           if (message.type === "authenticated") {
-            console.log("WebSocket authenticated globally:", message.user?.first_name);
+            console.log('🔐 [WebSocket] Authenticated globally:', message.user?.first_name);
           } else if (message.type === "message_delivered") {
+            console.log('📤 [WebSocket] Message delivered:', message.message);
             // Message sent by this user was delivered - add to current room
             if (message.message.room === globalCurrentRoom) {
+              console.log('✅ [WebSocket] Adding delivered message to current room:', globalCurrentRoom);
               // Avoid duplicates by checking message ID
               if (!globalMessages.some(m => m.id === message.message.id)) {
                 globalMessages = [...globalMessages, message.message];
                 lastSeenMessageId = Math.max(lastSeenMessageId || 0, message.message.id);
+                console.log('📋 [WebSocket] Global messages updated, count:', globalMessages.length);
+              } else {
+                console.log('⚠️ [WebSocket] Duplicate message delivered, skipping');
               }
+            } else {
+              console.log('⚠️ [WebSocket] Message delivered for different room:', message.message.room, 'current:', globalCurrentRoom);
             }
           } else if (message.type === "receive_message") {
+            console.log('📨 [WebSocket] Message received from another user:', message.message);
             // Message received from another user - add to current room
             if (message.message.room === globalCurrentRoom) {
+              console.log('✅ [WebSocket] Adding received message to current room:', globalCurrentRoom);
               // Avoid duplicates by checking message ID
               if (!globalMessages.some(m => m.id === message.message.id)) {
                 globalMessages = [...globalMessages, message.message];
                 lastSeenMessageId = Math.max(lastSeenMessageId || 0, message.message.id);
+                console.log('📋 [WebSocket] Global messages updated, count:', globalMessages.length);
+              } else {
+                console.log('⚠️ [WebSocket] Duplicate message received, skipping');
               }
+            } else {
+              console.log('⚠️ [WebSocket] Message received for different room:', message.message.room, 'current:', globalCurrentRoom);
             }
           } else if (message.type === "error") {
             console.error("WebSocket error:", message.message || message.data);
@@ -112,7 +127,7 @@ const WebSocketManager = {
       };
 
       ws.onclose = () => {
-        console.log("WebSocket disconnected globally");
+        console.log('🔌 [WebSocket] Disconnected globally');
         globalConnected = false;
         globalSocket = null;
         wasDisconnected = true; // Mark that we were disconnected
@@ -190,13 +205,14 @@ const WebSocketManager = {
   },
 
   sendMessage: (roomId: number, text: string, attachments?: number[]) => {
+    console.log('📤 [WebSocket] Send message request:', { roomId, text, attachments });
     // Apply 1024 character limit
     const trimmedText = text?.trim() || '';
     const limitedText = trimmedText.length > 1024 ? trimmedText.substring(0, 1024) : trimmedText;
     
     if (!globalSocket || globalSocket.readyState !== WebSocket.OPEN) {
       // Queue message for later sending
-      console.log("WebSocket not connected, queuing message");
+      console.log('⚠️ [WebSocket] Not connected, queuing message. State:', globalSocket?.readyState);
       messageQueue.push({ roomId, content: limitedText, attachments });
       return true; // Return true to indicate message was queued
     }
@@ -214,10 +230,10 @@ const WebSocketManager = {
       };
 
       globalSocket.send(JSON.stringify(message));
-      console.log("Sent message:", message);
+      console.log('✅ [WebSocket] Message sent successfully:', message);
       return true;
     } catch (error) {
-      console.error("Failed to send message:", error);
+      console.error('❌ [WebSocket] Failed to send message:', error);
       // Queue message for retry
       messageQueue.push({ roomId, content: limitedText, attachments });
       return true; // Still return true as message was queued
@@ -225,23 +241,29 @@ const WebSocketManager = {
   },
 
   joinRoom: (roomId: number) => {
+    console.log('🏠 [WebSocket] Join room request:', roomId, 'current:', globalCurrentRoom);
     // Prevent joining the same room multiple times
     if (globalCurrentRoom === roomId) {
+      console.log('⚠️ [WebSocket] Already in room, skipping');
       return;
     }
     
     globalCurrentRoom = roomId;
     globalMessages = []; // Clear messages when switching rooms
     lastSeenMessageId = null; // Reset last seen message
+    console.log('🧹 [WebSocket] Cleared messages for room switch');
     
     // Send room join message to server if connected
     if (globalSocket && globalSocket.readyState === WebSocket.OPEN) {
       const token = localStorage.getItem('access_token');
+      console.log('📤 [WebSocket] Sending join_room message');
       globalSocket.send(JSON.stringify({
         type: 'join_room',
         room: roomId,
         token: token
       }));
+    } else {
+      console.log('⚠️ [WebSocket] Cannot join room - not connected');
     }
     
     // Trigger resync for room change
