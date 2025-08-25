@@ -352,7 +352,7 @@ export default function Applications() {
                       
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end space-x-1">
-                          {application.status !== 'rejected' && application.status !== 'hired' ? (
+                          {application.status !== 'rejected' && application.status !== 'hired' && application.status !== 'expired' ? (
                             <>
                               <div onClick={(e) => e.stopPropagation()}>
                                 <AlertDialog>
@@ -423,21 +423,25 @@ export default function Applications() {
                                   </AlertDialogContent>
                                 </AlertDialog>
                               </div>
-                            </>
-                          ) : null}
 
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleStartChat(application);
-                            }}
-                            disabled={createChatMutation.isPending}
-                          >
-                            <MessageCircle className="h-4 w-4" />
-                          </Button>
+                              {(application.status === 'pending' || application.status === 'ongoing') && (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 w-8 p-0 text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleStartChat(application);
+                                  }}
+                                  disabled={createChatMutation.isPending}
+                                >
+                                  <MessageCircle className="h-4 w-4" />
+                                </Button>
+                              )}
+                            </>
+                          ) : (
+                            <span className="text-sm text-muted-foreground">-</span>
+                          )}
                         </div>
                       </TableCell>
                     </TableRow>
