@@ -20,6 +20,29 @@ import { User, Search, MessageCircle, FileText, Download, MapPin, Calendar, Brie
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { JobApplication, PaginatedResponse } from "@/types";
 
+// Helper function to format dates properly
+const formatDate = (timestamp?: number | string) => {
+  if (!timestamp) return 'Not specified';
+  try {
+    let date: Date;
+    
+    // Handle timestamp (number or string)
+    if (typeof timestamp === 'number') {
+      date = new Date(timestamp * 1000); // Convert from seconds to milliseconds
+    } else if (typeof timestamp === 'string' && /^\d+$/.test(timestamp)) {
+      date = new Date(parseInt(timestamp) * 1000);
+    } else {
+      // Fallback: try parsing as other date format
+      date = new Date(timestamp as string);
+    }
+    
+    if (isNaN(date.getTime())) return 'Not specified';
+    return date.toLocaleDateString();
+  } catch {
+    return 'Not specified';
+  }
+};
+
 // Helper function to get status colors for applications (plain text, no borders)
 const getStatusTextColor = (status: string) => {
   switch (status) {
@@ -375,7 +398,7 @@ export default function Applications() {
                       <TableCell>
                         <div className="flex items-center space-x-1 text-sm text-muted-foreground">
                           <Calendar className="w-3 h-3 flex-shrink-0" />
-                          <span>Recently</span>
+                          <span>{formatDate(application.date_started)}</span>
                         </div>
                       </TableCell>
                       
