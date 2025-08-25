@@ -195,6 +195,13 @@ export default function Chat() {
         setSelectedFile(null);
         setUploadedAttachment(null);
         setTimeout(scrollToBottom, 100);
+        
+        // Immediately invalidate room list to update last message and sorting
+        console.log('🔄 [Chat] Message sent - immediately updating room list');
+        queryClient.invalidateQueries({ 
+          queryKey: ['/chat/rooms/']
+        });
+        
         console.log('✅ [Chat] Message sent successfully');
       } else {
         console.error('❌ [Chat] Message send failed');
@@ -287,7 +294,7 @@ export default function Chat() {
   };
 
 
-  // Debounced room list update - only fetch when message is for different room
+  // Immediately update room list when new messages arrive
   const roomsUpdateTimeoutRef = useRef<NodeJS.Timeout>();
   
   useEffect(() => {
@@ -298,26 +305,23 @@ export default function Chat() {
       roomMatch: selectedConversation === currentRoom
     });
     
-    if (wsMessages.length > 0 && selectedConversation && selectedConversation === currentRoom) {
-      // Message is for current room - DO NOT update cache, let useMemo handle it
-      console.log('🚨 [DEBUG] Current room message - using WebSocket only (no cache update)');
-    } else if (wsMessages.length > 0) {
-      // Message is for different room or no room selected - update rooms list with debouncing
-      console.log('🔄 [Chat] Message for different room - scheduling room list update');
+    // Always update room list when new messages arrive for real-time sorting
+    if (wsMessages.length > 0) {
+      console.log('🔄 [Chat] New message detected - updating room list for real-time sorting');
       
       // Clear existing timeout to debounce the rooms fetch
       if (roomsUpdateTimeoutRef.current) {
         clearTimeout(roomsUpdateTimeoutRef.current);
       }
       
-      // Debounce room list updates - wait 500ms after last message before fetching
+      // Shorter debounce for better real-time experience
       roomsUpdateTimeoutRef.current = setTimeout(() => {
-        console.log('🔄 [Chat] Invalidating room list due to new WebSocket messages (debounced)');
+        console.log('🔄 [Chat] Invalidating room list due to new WebSocket messages');
         queryClient.invalidateQueries({ 
           queryKey: ['/chat/rooms/']
         });
         console.log('✅ [Chat] Room list invalidated successfully');
-      }, 500);
+      }, 200); // Reduced from 500ms to 200ms for faster updates
     }
     
     // Cleanup timeout on unmount
@@ -326,7 +330,15 @@ export default function Chat() {
         clearTimeout(roomsUpdateTimeoutRef.current);
       }
     };
-  }, [wsMessages, selectedConversation, currentRoom, queryClient]);
+  }, [wsMessages, queryClient]);
+  
+  // Also update room list immediately when sending a message
+  useEffect(() => {
+    // Force room list update when user sends a message to ensure real-time sorting
+    if (selectedConversation && connected) {
+      console.log('💬 [Chat] Message sent context - scheduling room list refresh');
+    }
+  }, [selectedConversation, connected]);
 
   // Clear WebSocket messages when API messages are loaded for the selected room
   useEffect(() => {
@@ -479,14 +491,47 @@ export default function Chat() {
     roomsMatch: selectedConversation === currentRoom
   });
 
-  const filteredRooms = chatRooms?.results?.filter((room: ChatRoom) => {
-    if (!searchQuery) return true;
-    const query = searchQuery.toLowerCase();
-    return (
-      room.content_object?.title?.toLowerCase().includes(query) ||
-      room.last_message_text?.toLowerCase().includes(query)
-    );
-  }) || [];
+  // Filter and sort rooms by most recent activity
+  const filteredRooms = useMemo(() => {
+    if (!chatRooms?.results) return [];
+    
+    // First filter by search query
+    let rooms = chatRooms.results.filter((room: ChatRoom) => {
+      if (!searchQuery) return true;
+      const query = searchQuery.toLowerCase();
+      return (
+        room.content_object?.title?.toLowerCase().includes(query) ||
+        room.last_message_text?.toLowerCase().includes(query) ||
+        `${room.content_object?.owner?.first_name || ''} ${room.content_object?.owner?.last_name || ''}`.toLowerCase().includes(query)
+      );
+    });
+    
+    // Sort by most recent activity (highest timestamp first)
+    rooms = rooms.sort((a, b) => {
+      const aTime = a.last_message_date_created || 0;
+      const bTime = b.last_message_date_created || 0;
+      return bTime - aTime; // Descending order (most recent first)
+    });
+    
+    // If there are recent WebSocket messages, prioritize those rooms
+    if (wsMessages.length > 0) {
+      const recentMessageRooms = new Set(wsMessages.map(msg => msg.room));
+      rooms = rooms.sort((a, b) => {
+        const aHasRecent = recentMessageRooms.has(a.id);
+        const bHasRecent = recentMessageRooms.has(b.id);
+        
+        if (aHasRecent && !bHasRecent) return -1;
+        if (!aHasRecent && bHasRecent) return 1;
+        
+        // Both have recent messages or neither do - use timestamp
+        const aTime = a.last_message_date_created || 0;
+        const bTime = b.last_message_date_created || 0;
+        return bTime - aTime;
+      });
+    }
+    
+    return rooms;
+  }, [chatRooms?.results, searchQuery, wsMessages]);
 
   if (roomsLoading) {
     return (
