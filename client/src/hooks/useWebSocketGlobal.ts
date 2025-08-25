@@ -250,9 +250,11 @@ const WebSocketManager = {
     // Always update the current room, even if it's the same
     
     globalCurrentRoom = roomId;
-    globalMessages = []; // Clear messages when switching rooms
+    // DON'T clear messages immediately - let them persist until new room loads
+    // This prevents messages from disappearing when switching rooms quickly
+    // globalMessages = []; // Clear messages when switching rooms
     lastSeenMessageId = null; // Reset last seen message
-    console.log('🧹 [WebSocket] Room set to:', roomId, 'messages cleared');
+    console.log('🧹 [WebSocket] Room set to:', roomId, 'keeping messages temporarily');
     
     // Send room join message to server if connected
     if (globalSocket && globalSocket.readyState === WebSocket.OPEN) {

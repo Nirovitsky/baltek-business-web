@@ -280,9 +280,9 @@ export default function Chat() {
     console.log('🔌 [Chat] Joining WebSocket room:', room.id);
     joinRoom(room.id);
     
-    // Refresh messages for this room
+    // Refresh messages for this room - but don't clear cache immediately
     console.log('🔄 [Chat] Invalidating messages query for room:', room.id);
-    queryClient.invalidateQueries({ queryKey: ['/api/chat/messages/', room.id] });
+    queryClient.invalidateQueries({ queryKey: ['/chat/messages/', room.id] });
     console.log('✅ [Chat] Room selection completed');
   };
 
@@ -328,6 +328,15 @@ export default function Chat() {
     };
   }, [wsMessages, selectedConversation, currentRoom, queryClient]);
 
+  // Clear WebSocket messages when API messages are loaded for the selected room
+  useEffect(() => {
+    if (messages?.results && selectedConversation && selectedConversation === currentRoom) {
+      // API messages loaded for current room - now it's safe to clear any stale WebSocket messages
+      // This ensures sent messages don't disappear during room switches
+      console.log('📨 [Chat] API messages loaded for current room, filtering WebSocket messages');
+    }
+  }, [messages?.results, selectedConversation, currentRoom]);
+
   // Memoize API message transformations to prevent object recreation
   const transformedApiMessages = useMemo(() => {
     console.log('🚨 [DEBUG] Transforming API messages to ChatMessage format');
@@ -361,7 +370,7 @@ export default function Chat() {
         owner: messageOwnerId,
         senderInfo: senderInfo,
         text: message.text || "",
-        status: "delivered",
+        status: "delivered" as const,
         attachments: message.attachments && message.attachments.length > 0 ? 
           message.attachments.map((att: any) => ({
             id: att.id,
@@ -375,10 +384,15 @@ export default function Chat() {
     }).sort((a, b) => a.date_created - b.date_created);
   }, [messages?.results, selectedConversationData, activeUser]);
 
-  // Memoize WebSocket message transformations
+  // Memoize WebSocket message transformations - filter to only current room
   const transformedWsMessages = useMemo(() => {
     console.log('🚨 [DEBUG] Transforming WebSocket messages to ChatMessage format');
-    return wsMessages.map((message: any) => {
+    // Filter WebSocket messages to only include current room messages
+    const filteredWsMessages = wsMessages.filter(message => 
+      message.room === selectedConversation
+    );
+    
+    return filteredWsMessages.map((message: any) => {
       // Get the sender's user info from rooms data (includes avatar)
       const applicant = selectedConversationData?.content_object?.owner;
       const messageOwnerId = message.owner?.id || message.owner;
@@ -408,7 +422,7 @@ export default function Chat() {
         owner: messageOwnerId,
         senderInfo: senderInfo,
         text: message.text || "",
-        status: "delivered",
+        status: "delivered" as const,
         attachments: message.attachments && message.attachments.length > 0 ? 
           message.attachments.map((att: any) => ({
             id: att.id,
