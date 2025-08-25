@@ -655,7 +655,7 @@ export default function Chat() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
-                          <div className="flex-1 min-w-0">
+                          <div className="flex-1 min-w-0 pr-2">
                             <p className="font-medium text-sm truncate">
                               {room.content_object?.owner?.first_name && room.content_object?.owner?.last_name 
                                 ? `${room.content_object.owner.first_name} ${room.content_object.owner.last_name} - ${room.content_object?.job?.title || 'Job Application'}`
@@ -664,13 +664,13 @@ export default function Chat() {
                             </p>
                           </div>
                           {room.unread_message_count > 0 && (
-                            <Badge className="ml-2 px-1.5 py-0.5 text-xs">
+                            <Badge className="ml-2 px-1.5 py-0.5 text-xs flex-shrink-0">
                               {room.unread_message_count}
                             </Badge>
                           )}
                         </div>
                         {room.last_message_text && (
-                          <p className="text-xs text-gray-400 truncate">
+                          <p className="text-xs text-gray-400 truncate max-w-full">
                             {room.last_message_text}
                           </p>
                         )}
