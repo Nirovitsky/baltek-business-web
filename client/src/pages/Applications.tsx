@@ -75,11 +75,16 @@ export default function Applications() {
   });
 
   const updateApplicationMutation = useMutation({
-    mutationFn: ({ id, status }: { id: number; status: string }) => 
-      apiService.request(`/jobs/applications/${id}/`, {
+    mutationFn: ({ id, status }: { id: number; status: string }) => {
+      console.log(`Attempting to update application ${id} to status: ${status}`);
+      return apiService.request(`/jobs/applications/${id}/`, {
         method: 'PATCH',
         body: JSON.stringify({ status }),
-      }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/jobs/applications/'] });
       toast({
@@ -88,9 +93,10 @@ export default function Applications() {
       });
     },
     onError: (error: any) => {
+      console.error('Application status update error:', error);
       toast({
         title: "Error",
-        description: error.message || "Failed to update application status",
+        description: `Failed to update status: ${error.message || 'Unknown error'}. The backend may still have references to old status values.`,
         variant: "destructive",
       });
     },
