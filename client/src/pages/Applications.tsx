@@ -398,7 +398,7 @@ export default function Applications() {
                       <TableCell>
                         <div className="flex items-center space-x-1 text-sm text-muted-foreground">
                           <Calendar className="w-3 h-3 flex-shrink-0" />
-                          <span>{formatDate(application.date_started)}</span>
+                          <span>{formatDate(application.applied_at)}</span>
                         </div>
                       </TableCell>
                       
