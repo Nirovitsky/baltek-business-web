@@ -461,7 +461,15 @@ export default function Applications() {
             <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto custom-scrollbar">
               <DialogHeader>
                 <DialogTitle className="flex items-center space-x-3">
-                  <Avatar className="w-12 h-12">
+                  <Avatar 
+                    className="w-12 h-12 cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all duration-200"
+                    onClick={() => {
+                      if (selectedApplication.owner?.id) {
+                        navigate(`/user/${selectedApplication.owner.id}`);
+                        setSelectedApplication(null);
+                      }
+                    }}
+                  >
                     <AvatarImage 
                       src={selectedApplication.owner?.avatar} 
                       alt={`${selectedApplication.owner?.first_name || ''} ${selectedApplication.owner?.last_name || ''}`}
@@ -470,7 +478,15 @@ export default function Applications() {
                       {selectedApplication.owner?.first_name?.[0]}{selectedApplication.owner?.last_name?.[0]}
                     </AvatarFallback>
                   </Avatar>
-                  <div>
+                  <div 
+                    className="cursor-pointer hover:text-primary transition-colors duration-200"
+                    onClick={() => {
+                      if (selectedApplication.owner?.id) {
+                        navigate(`/user/${selectedApplication.owner.id}`);
+                        setSelectedApplication(null);
+                      }
+                    }}
+                  >
                     <h2 className="text-xl font-bold text-foreground">
                       {`${selectedApplication.owner?.first_name || ''} ${selectedApplication.owner?.last_name || ''}`}
                     </h2>
@@ -652,45 +668,6 @@ export default function Applications() {
 
 
 
-                {/* Actions */}
-                <div className="flex items-center justify-between pt-4 border-t border">
-                  <div className="flex items-center space-x-3">
-                    <Select
-                      value={selectedApplication.status}
-                      onValueChange={(value) => handleStatusChange(selectedApplication.id, value)}
-                      disabled={updateApplicationMutation.isPending}
-                    >
-                      <SelectTrigger className="w-40">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="ongoing">Ongoing</SelectItem>
-                        <SelectItem value="rejected">Rejected</SelectItem>
-                        <SelectItem value="hired">Hired</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    
-
-                  </div>
-                  
-                  <div className="flex items-center space-x-3">
-                    <Button
-                      variant="ghost"
-                      onClick={() => navigate(`/profile/${selectedApplication.owner?.id || ''}`)}
-                      className="text-muted-foreground hover:text-foreground"
-                    >
-                      View Full Profile
-                    </Button>
-                    
-                    <Button
-                      variant="outline"
-                      onClick={() => setSelectedApplication(null)}
-                    >
-                      Close
-                    </Button>
-                  </div>
-                </div>
               </div>
               )}
             </DialogContent>
