@@ -590,16 +590,19 @@ export default function Chat() {
         {/* Conversations List */}
         <div className="w-80 border-r bg-white dark:bg-background flex flex-col">
           <div className="p-4 border-b">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                placeholder="Search conversations..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            
+            {roomsLoading ? (
+              <Skeleton className="h-10 w-full rounded-md" />
+            ) : (
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Input
+                  placeholder="Search conversations..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            )}
           </div>
           
           <ScrollArea className="flex-1">
