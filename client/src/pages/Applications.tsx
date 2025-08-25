@@ -20,22 +20,31 @@ import { User, Search, MessageCircle, FileText, Download, MapPin, Calendar, Brie
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { JobApplication, PaginatedResponse } from "@/types";
 
-// Helper function to get status colors for applications
-const getStatusColor = (status: string) => {
+// Helper function to get status colors for applications (plain text, no borders)
+const getStatusTextColor = (status: string) => {
   switch (status) {
     case 'pending':
-      return 'bg-primary/10 text-primary';
+      return 'text-primary';
     case 'ongoing':
-      return 'bg-green-500/10 text-green-700 dark:text-green-300';
+      return 'text-green-700 dark:text-green-300';
     case 'rejected':
-      return 'bg-red-500/10 text-red-700 dark:text-red-300';
+      return 'text-red-700 dark:text-red-300';
     case 'hired':
-      return 'bg-green-500/10 text-green-700 dark:text-green-300';
+      return 'text-green-700 dark:text-green-300';
     case 'expired':
-      return 'bg-muted text-muted-foreground';
+      return 'text-muted-foreground';
     default:
-      return 'bg-muted text-muted-foreground';  
+      return 'text-muted-foreground';  
   }
+};
+
+// Helper function to determine actual status (check for active chats)
+const getActualStatus = (application: JobApplication, findExistingRoom: any) => {
+  // If there's an existing chat room with this user, status should be ongoing
+  if (application.owner?.id && findExistingRoom(application.owner.id)) {
+    return 'ongoing';
+  }
+  return application.status;
 };
 
 export default function Applications() {
@@ -45,7 +54,7 @@ export default function Applications() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [pendingAction, setPendingAction] = useState<{ applicationId: number; action: string; applicantName: string } | null>(null);
   
-  const { createChatMutation, findExistingRoom } = useUserProfile(undefined, { fetchRooms: false });
+  const { createChatMutation, findExistingRoom } = useUserProfile(undefined, { fetchRooms: true });
   
   const { toast } = useToast();
   const { selectedOrganization } = useAuth();
@@ -334,19 +343,14 @@ export default function Applications() {
                       </TableCell>
                       
                       <TableCell>
-                        {application.status === 'rejected' ? (
-                          <Badge variant="secondary" className="bg-red-500/10 text-red-700 dark:text-red-300">
-                            Rejected
-                          </Badge>
-                        ) : application.status === 'hired' ? (
-                          <Badge variant="secondary" className="bg-green-500/10 text-green-700 dark:text-green-300">
-                            Hired
-                          </Badge>
-                        ) : (
-                          <Badge variant="secondary" className={getStatusColor(application.status)}>
-                            {application.status ? application.status.charAt(0).toUpperCase() + application.status.slice(1) : 'Unknown'}
-                          </Badge>
-                        )}
+                        {(() => {
+                          const actualStatus = getActualStatus(application, findExistingRoom);
+                          return (
+                            <span className={`text-sm font-medium ${getStatusTextColor(actualStatus)}`}>
+                              {actualStatus ? actualStatus.charAt(0).toUpperCase() + actualStatus.slice(1) : 'Unknown'}
+                            </span>
+                          );
+                        })()}
                       </TableCell>
                       
                       <TableCell>
@@ -533,9 +537,12 @@ export default function Applications() {
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-foreground">Application Status</h3>
                     <div className="space-y-2">
-                      <Badge variant="secondary" className={`${getStatusColor(selectedApplication.status)} text-sm`}>
-                        {selectedApplication.status ? selectedApplication.status.charAt(0).toUpperCase() + selectedApplication.status.slice(1) : 'Unknown'}
-                      </Badge>
+                      <span className={`text-sm font-medium ${getStatusTextColor(getActualStatus(selectedApplication, findExistingRoom))}`}>
+                        {(() => {
+                          const actualStatus = getActualStatus(selectedApplication, findExistingRoom);
+                          return actualStatus ? actualStatus.charAt(0).toUpperCase() + actualStatus.slice(1) : 'Unknown';
+                        })()}
+                      </span>
                       <div className="flex items-center space-x-2">
                         <Calendar className="w-4 h-4 text-muted-foreground" />
                         <span className="text-sm">Applied recently</span>
