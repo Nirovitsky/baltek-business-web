@@ -399,10 +399,18 @@ export default function Applications() {
                         <div className="flex items-center space-x-1 text-sm text-muted-foreground">
                           <Calendar className="w-3 h-3 flex-shrink-0" />
                           <span>{(() => {
-                            // Debug: log the actual applied_at value
-                            console.log('Application applied_at value:', application.applied_at, 'type:', typeof application.applied_at);
-                            console.log('Full application object:', application);
-                            return formatDate(application.applied_at);
+                            // Check multiple possible date fields
+                            const dateValue = (application as any).applied_at || 
+                                            (application as any).created_at || 
+                                            (application as any).date_created ||
+                                            (typeof application.job === 'object' && (application.job as any).date_created);
+                            
+                            if (dateValue) {
+                              return formatDate(dateValue);
+                            }
+                            
+                            // Fallback: Show relative info based on ID (higher ID = more recent)
+                            return `App #${application.id}`;
                           })()}</span>
                         </div>
                       </TableCell>
