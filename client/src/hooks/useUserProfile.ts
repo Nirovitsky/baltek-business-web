@@ -74,6 +74,7 @@ export function useUserProfile(userId?: string, options?: { fetchRooms?: boolean
     isLoading,
     error,
     rooms: roomsData?.results || [],
+    roomsData,
     createChatMutation,
     findExistingRoom,
   };

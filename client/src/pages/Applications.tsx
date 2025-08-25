@@ -39,11 +39,29 @@ const getStatusTextColor = (status: string) => {
 };
 
 // Helper function to determine actual status (check for active chats)
-const getActualStatus = (application: JobApplication, findExistingRoom: any) => {
+const getActualStatus = (application: JobApplication, findExistingRoom: any, roomsData: any) => {
   // If there's an existing chat room with this user, status should be ongoing
-  if (application.owner?.id && findExistingRoom(application.owner.id)) {
-    return 'ongoing';
+  console.log('Rooms data available:', roomsData?.results?.length || 0, 'rooms');
+  if (application.owner?.id) {
+    console.log(`Checking chat for user ${application.owner.id}, name: ${application.owner.first_name} ${application.owner.last_name}`);
+    
+    if (roomsData?.results) {
+      console.log('Available rooms:', roomsData.results.map((room: any) => ({
+        id: room.id,
+        members: room.members,
+        memberIds: room.members?.map((m: any) => typeof m === 'object' ? m.id : m)
+      })));
+    }
+    
+    const existingRoom = findExistingRoom(application.owner.id);
+    console.log(`Found existing room for user ${application.owner.id}:`, existingRoom);
+    
+    if (existingRoom) {
+      console.log(`Setting status to ongoing for user ${application.owner.id}`);
+      return 'ongoing';
+    }
   }
+  console.log(`No chat found, keeping status: ${application.status}`);
   return application.status;
 };
 
@@ -54,7 +72,7 @@ export default function Applications() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [pendingAction, setPendingAction] = useState<{ applicationId: number; action: string; applicantName: string } | null>(null);
   
-  const { createChatMutation, findExistingRoom } = useUserProfile(undefined, { fetchRooms: true });
+  const { createChatMutation, findExistingRoom, roomsData } = useUserProfile(undefined, { fetchRooms: true });
   
   const { toast } = useToast();
   const { selectedOrganization } = useAuth();
@@ -344,7 +362,7 @@ export default function Applications() {
                       
                       <TableCell>
                         {(() => {
-                          const actualStatus = getActualStatus(application, findExistingRoom);
+                          const actualStatus = getActualStatus(application, findExistingRoom, roomsData);
                           return (
                             <span className={`text-sm font-medium ${getStatusTextColor(actualStatus)}`}>
                               {actualStatus ? actualStatus.charAt(0).toUpperCase() + actualStatus.slice(1) : 'Unknown'}
@@ -537,9 +555,9 @@ export default function Applications() {
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-foreground">Application Status</h3>
                     <div className="space-y-2">
-                      <span className={`text-sm font-medium ${getStatusTextColor(getActualStatus(selectedApplication, findExistingRoom))}`}>
+                      <span className={`text-sm font-medium ${getStatusTextColor(getActualStatus(selectedApplication, findExistingRoom, roomsData))}`}>
                         {(() => {
-                          const actualStatus = getActualStatus(selectedApplication, findExistingRoom);
+                          const actualStatus = getActualStatus(selectedApplication, findExistingRoom, roomsData);
                           return actualStatus ? actualStatus.charAt(0).toUpperCase() + actualStatus.slice(1) : 'Unknown';
                         })()}
                       </span>
