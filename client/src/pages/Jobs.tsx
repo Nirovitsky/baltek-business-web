@@ -77,6 +77,28 @@ export default function Jobs() {
     }
   };
 
+  const formatDate = (timestamp?: number | string) => {
+    if (!timestamp) return 'Not specified';
+    try {
+      let date: Date;
+      
+      // Handle timestamp (number or string)
+      if (typeof timestamp === 'number') {
+        date = new Date(timestamp * 1000); // Convert from seconds to milliseconds
+      } else if (typeof timestamp === 'string' && /^\d+$/.test(timestamp)) {
+        date = new Date(parseInt(timestamp) * 1000);
+      } else {
+        // Fallback: try parsing as other date format
+        date = new Date(timestamp as string);
+      }
+      
+      if (isNaN(date.getTime())) return 'Not specified';
+      return date.toLocaleDateString();
+    } catch {
+      return 'Not specified';
+    }
+  };
+
   const getStatusColor = (status: string) => {
     const statusLower = status?.toLowerCase();
     switch (statusLower) {
@@ -311,7 +333,7 @@ export default function Jobs() {
                           <div className="flex items-center">
                             <Calendar className="w-3 h-3 mr-1" />
                             <span>
-                              Published: {job.date_started || 'No date'}
+                              Published: {formatDate(job.date_started)}
                             </span>
                           </div>
                         )}
@@ -319,7 +341,7 @@ export default function Jobs() {
                           <div className="flex items-center">
                             <Calendar className="w-3 h-3 mr-1" />
                             <span>
-                              Expires: {job.date_ended || 'No date'}
+                              Expires: {formatDate(job.date_ended)}
                             </span>
                           </div>
                         )}
