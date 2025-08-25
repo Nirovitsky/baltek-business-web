@@ -49,7 +49,8 @@ const getActualStatus = (application: JobApplication, findExistingRoom: any, roo
       console.log('Available rooms:', roomsData.results.map((room: any) => ({
         id: room.id,
         members: room.members,
-        memberIds: room.members?.map((m: any) => typeof m === 'object' ? m.id : m)
+        participants: room.participants,
+        memberIds: (room.participants || room.members || []).map((m: any) => typeof m === 'object' ? m.id : m)
       })));
     }
     

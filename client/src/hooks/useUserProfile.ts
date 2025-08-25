@@ -61,8 +61,11 @@ export function useUserProfile(userId?: string, options?: { fetchRooms?: boolean
     if (!roomsData?.results) return null;
     
     return roomsData.results.find((room: Room) => {
-      if (!room.members) return false;
-      return room.members.some((member: any) => {
+      // Check both participants and members fields
+      const roomMembers = room.participants || room.members || [];
+      if (roomMembers.length === 0) return false;
+      
+      return roomMembers.some((member: any) => {
         const memberId = typeof member === 'object' ? member.id : member;
         return memberId === targetUserId;
       });

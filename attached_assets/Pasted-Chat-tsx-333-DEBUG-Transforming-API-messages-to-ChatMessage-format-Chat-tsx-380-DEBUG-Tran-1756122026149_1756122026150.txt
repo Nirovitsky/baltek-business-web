@@ -1,0 +1,22 @@
+Chat.tsx:333 🚨 [DEBUG] Transforming API messages to ChatMessage format
+Chat.tsx:380 🚨 [DEBUG] Transforming WebSocket messages to ChatMessage format
+Chat.tsx:433 📋 [Chat] Using separate message lists: {selectedConversation: null, currentRoom: null, apiMessagesCount: 0, wsMessagesCount: 0, roomsMatch: true}apiMessagesCount: 0currentRoom: nullroomsMatch: trueselectedConversation: nullwsMessagesCount: 0[[Prototype]]: Object
+Chat.tsx:294 📨 [Chat] WebSocket messages effect triggered: {wsMessagesCount: 0, selectedConversation: null, currentRoom: null, roomMatch: true}currentRoom: nullroomMatch: trueselectedConversation: nullwsMessagesCount: 0[[Prototype]]: Object
+Chat.tsx:333 🚨 [DEBUG] Transforming API messages to ChatMessage format
+Chat.tsx:380 🚨 [DEBUG] Transforming WebSocket messages to ChatMessage format
+Chat.tsx:433 📋 [Chat] Using separate message lists: {selectedConversation: null, currentRoom: null, apiMessagesCount: 0, wsMessagesCount: 0, roomsMatch: true}apiMessagesCount: 0currentRoom: nullroomsMatch: trueselectedConversation: nullwsMessagesCount: 0[[Prototype]]: Object
+Applications.tsx:44 Rooms data available: 2 rooms
+Applications.tsx:46 Checking chat for user 6, name: Rovshen Tagangylyjov
+Applications.tsx:49 Available rooms: (2) [{…}, {…}]
+Applications.tsx:57 Found existing room for user 6: undefined
+Applications.tsx:64 No chat found, keeping status: pending
+Applications.tsx:44 Rooms data available: 2 rooms
+Applications.tsx:46 Checking chat for user 1, name: Ata Saparov
+Applications.tsx:49 Available rooms: (2) [{…}, {…}]
+Applications.tsx:57 Found existing room for user 1: undefined
+Applications.tsx:64 No chat found, keeping status: hired
+Applications.tsx:44 Rooms data available: 2 rooms
+Applications.tsx:46 Checking chat for user 2, name: Emir Nazarov
+Applications.tsx:49 Available rooms: (2) [{…}, {…}]0: id: 9memberIds: undefinedmembers: undefined[[Prototype]]: Object1: id: 12memberIds: undefinedmembers: undefined[[Prototype]]: Objectlength: 2[[Prototype]]: Array(0)at: ƒ at()concat: ƒ concat()constructor: ƒ Array()copyWithin: ƒ copyWithin()entries: ƒ entries()every: ƒ every()fill: ƒ fill()filter: ƒ filter()find: ƒ find()findIndex: ƒ findIndex()findLast: ƒ findLast()findLastIndex: ƒ findLastIndex()flat: ƒ flat()flatMap: ƒ flatMap()forEach: ƒ forEach()includes: ƒ includes()indexOf: ƒ indexOf()join: ƒ join()keys: ƒ keys()lastIndexOf: ƒ lastIndexOf()length: 0map: ƒ map()pop: ƒ pop()push: ƒ push()reduce: ƒ reduce()reduceRight: ƒ reduceRight()reverse: ƒ reverse()shift: ƒ shift()slice: ƒ slice()some: ƒ some()sort: ƒ sort()splice: ƒ splice()toLocaleString: ƒ toLocaleString()toReversed: ƒ toReversed()toSorted: ƒ toSorted()toSpliced: ƒ toSpliced()toString: ƒ toString()unshift: ƒ unshift()values: ƒ values()with: ƒ with()Symbol(Symbol.iterator): ƒ values()Symbol(Symbol.unscopables): {at: true, copyWithin: true, entries: true, fill: true, find: true, …}[[Prototype]]: Object
+Applications.tsx:57 Found existing room for user 2: undefined
+Applications.tsx:64 No chat found, keeping status: rejected
