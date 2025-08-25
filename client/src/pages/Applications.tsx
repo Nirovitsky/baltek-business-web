@@ -398,7 +398,12 @@ export default function Applications() {
                       <TableCell>
                         <div className="flex items-center space-x-1 text-sm text-muted-foreground">
                           <Calendar className="w-3 h-3 flex-shrink-0" />
-                          <span>{formatDate(application.applied_at)}</span>
+                          <span>{(() => {
+                            // Debug: log the actual applied_at value
+                            console.log('Application applied_at value:', application.applied_at, 'type:', typeof application.applied_at);
+                            console.log('Full application object:', application);
+                            return formatDate(application.applied_at);
+                          })()}</span>
                         </div>
                       </TableCell>
                       
