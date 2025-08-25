@@ -542,11 +542,16 @@ export default function Chat() {
           showCreateButton={false}
         />
         <div className="flex-1 flex">
-          <div className="w-80 border-r bg-white dark:bg-background p-4">
-            <div className="space-y-4">
-              {[...Array(5)].map((_, i) => (
-                <Skeleton key={i} className="h-16 w-full" />
-              ))}
+          <div className="w-80 border-r bg-white dark:bg-background flex flex-col">
+            <div className="p-4 border-b">
+              <Skeleton className="h-10 w-full rounded-md" />
+            </div>
+            <div className="p-4">
+              <div className="space-y-4">
+                {[...Array(5)].map((_, i) => (
+                  <Skeleton key={i} className="h-16 w-full" />
+                ))}
+              </div>
             </div>
           </div>
           <div className="flex-1 flex items-center justify-center">
