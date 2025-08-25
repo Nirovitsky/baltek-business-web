@@ -25,7 +25,7 @@ const getStatusColor = (status: string) => {
   switch (status) {
     case 'pending':
       return 'bg-primary/10 text-primary';
-    case 'invited':
+    case 'accepted':
       return 'bg-green-500/10 text-green-700 dark:text-green-300';
     case 'rejected':
       return 'bg-red-500/10 text-red-700 dark:text-red-300';
@@ -186,7 +186,7 @@ export default function Applications() {
             <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="invited">Invited</SelectItem>
+              <SelectItem value="accepted">Accepted</SelectItem>
               <SelectItem value="rejected">Rejected</SelectItem>
               <SelectItem value="hired">Hired</SelectItem>
               <SelectItem value="expired">Expired</SelectItem>
@@ -661,7 +661,7 @@ export default function Applications() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="invited">Invited</SelectItem>
+                        <SelectItem value="accepted">Accepted</SelectItem>
                         <SelectItem value="rejected">Rejected</SelectItem>
                         <SelectItem value="hired">Hired</SelectItem>
                       </SelectContent>

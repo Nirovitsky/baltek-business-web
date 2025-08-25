@@ -56,7 +56,7 @@ export default function Dashboard() {
   // Calculate changes (simplified calculation based on available data)
   const totalJobs = jobsData?.count || 0;
   const archivedJobs = jobs.filter(job => job.status === 'archived').length;
-  const invitedApplications = applications.filter(app => app.status === 'invited').length;
+  const acceptedApplications = applications.filter(app => app.status === 'accepted').length;
 
 
 
@@ -111,7 +111,7 @@ export default function Dashboard() {
             iconColor="text-primary"
             change={{
               value: `${pendingApplications} pending`,
-              label: `${invitedApplications} invited`,
+              label: `${acceptedApplications} accepted`,
               type: "positive"
             }}
           />
