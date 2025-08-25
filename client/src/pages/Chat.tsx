@@ -384,15 +384,17 @@ export default function Chat() {
     }).sort((a, b) => a.date_created - b.date_created);
   }, [messages?.results, selectedConversationData, activeUser]);
 
-  // Memoize WebSocket message transformations - filter to only current room
-  const transformedWsMessages = useMemo(() => {
-    console.log('🚨 [DEBUG] Transforming WebSocket messages to ChatMessage format');
+  // Create unified message list by merging API and WebSocket messages with deduplication
+  const unifiedMessages = useMemo(() => {
+    console.log('🚨 [DEBUG] Creating unified message list');
+    
     // Filter WebSocket messages to only include current room messages
     const filteredWsMessages = wsMessages.filter(message => 
       message.room === selectedConversation
     );
     
-    return filteredWsMessages.map((message: any) => {
+    // Transform WebSocket messages
+    const transformedWsMessages = filteredWsMessages.map((message: any) => {
       // Get the sender's user info from rooms data (includes avatar)
       const applicant = selectedConversationData?.content_object?.owner;
       const messageOwnerId = message.owner?.id || message.owner;
@@ -432,9 +434,35 @@ export default function Chat() {
             size: att.size || null,
           })) : [],
         date_created: message.date_created,
+        isFromWebSocket: true, // Mark WebSocket messages
       };
     });
-  }, [wsMessages, selectedConversationData, activeUser]);
+    
+    // Combine API and WebSocket messages
+    const allMessages = [...transformedApiMessages, ...transformedWsMessages];
+    
+    // Deduplicate by message ID (prefer WebSocket messages for real-time updates)
+    const messageMap = new Map();
+    allMessages.forEach(message => {
+      const existingMessage = messageMap.get(message.id);
+      // Prefer WebSocket messages over API messages for real-time updates
+      if (!existingMessage || (message as any).isFromWebSocket) {
+        messageMap.set(message.id, message);
+      }
+    });
+    
+    // Convert back to array and sort by timestamp (oldest to newest)
+    const deduplicatedMessages = Array.from(messageMap.values())
+      .sort((a, b) => a.date_created - b.date_created);
+    
+    console.log('📋 [DEBUG] Unified messages created:', {
+      apiCount: transformedApiMessages.length,
+      wsCount: transformedWsMessages.length,
+      totalAfterDedup: deduplicatedMessages.length
+    });
+    
+    return deduplicatedMessages;
+  }, [transformedApiMessages, wsMessages, selectedConversation, selectedConversationData, activeUser]);
 
   // Auto scroll when messages change (with slight delay to ensure DOM updates)
   useEffect(() => {
@@ -442,13 +470,12 @@ export default function Chat() {
       scrollToBottom();
     }, 100);
     return () => clearTimeout(timer);
-  }, [transformedApiMessages, transformedWsMessages, selectedConversation]);
+  }, [unifiedMessages, selectedConversation]);
 
-  console.log('📋 [Chat] Using separate message lists:', {
+  console.log('📋 [Chat] Using unified message list:', {
     selectedConversation,
     currentRoom,
-    apiMessagesCount: transformedApiMessages.length,
-    wsMessagesCount: transformedWsMessages.length,
+    unifiedMessagesCount: unifiedMessages.length,
     roomsMatch: selectedConversation === currentRoom
   });
 
@@ -679,7 +706,7 @@ export default function Chat() {
                   <div className="flex justify-center py-8">
                     <Loader2 className="h-6 w-6 animate-spin" />
                   </div>
-                ) : (transformedApiMessages.length === 0 && (selectedConversation !== currentRoom || transformedWsMessages.length === 0)) ? (
+                ) : unifiedMessages.length === 0 ? (
                   <div className="text-center py-8">
                     <MessageCircle className="h-12 w-12 mx-auto text-gray-400 mb-4" />
                     <p className="text-gray-500 dark:text-gray-400">No messages yet</p>
@@ -689,8 +716,8 @@ export default function Chat() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {/* Render API messages first (stable, won't re-render) */}
-                    {transformedApiMessages.map((chatMessage: ChatMessage, index: number) => {
+                    {/* Render unified messages (API + WebSocket, deduplicated and sorted) */}
+                    {unifiedMessages.map((chatMessage: ChatMessage, index: number) => {
                       // Debug log for messages with attachments
                       if (chatMessage.attachments && chatMessage.attachments.length > 0) {
                         console.log('Message with attachments:', chatMessage.id, chatMessage.attachments);
@@ -698,21 +725,7 @@ export default function Chat() {
                       
                       return (
                         <MessageRenderer
-                          key={`api-${chatMessage.id}`}
-                          message={chatMessage}
-                          currentUser={activeUser}
-                          onImageClick={(src, alt) => setImageModal({ src, alt })}
-                        />
-                      );
-                    })}
-                    
-                    {/* Render WebSocket messages separately (only for current room) */}
-                    {selectedConversation === currentRoom && transformedWsMessages.map((chatMessage: ChatMessage, index: number) => {
-                      console.log('🚨 [DEBUG] Rendering WebSocket message (separate from API)');
-                      
-                      return (
-                        <MessageRenderer
-                          key={`ws-${chatMessage.id}`}
+                          key={`unified-${chatMessage.id}`}
                           message={chatMessage}
                           currentUser={activeUser}
                           onImageClick={(src, alt) => setImageModal({ src, alt })}
