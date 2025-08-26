@@ -103,13 +103,38 @@ const WebSocketManager = {
             // Message sent by this user was delivered - add to current room
             if (message.message.room === globalCurrentRoom) {
               console.log('✅ [WebSocket] Adding delivered message to current room:', globalCurrentRoom);
-              // Avoid duplicates by checking message ID
-              if (!globalMessages.some(m => m.id === message.message.id)) {
-                globalMessages = [...globalMessages, message.message];
-                lastSeenMessageId = Math.max(lastSeenMessageId || 0, message.message.id);
-                console.log('📋 [WebSocket] Global messages updated, count:', globalMessages.length);
+              
+              // First, check if this message replaces an optimistic message
+              const deliveredMessage = message.message;
+              const optimisticIndex = globalMessages.findIndex(m => 
+                m.isOptimistic && 
+                m.room === deliveredMessage.room && 
+                m.text === deliveredMessage.text &&
+                m.owner === deliveredMessage.owner &&
+                (m.status === 'sending' || m.status === 'failed')
+              );
+
+              if (optimisticIndex !== -1) {
+                // Replace optimistic message with delivered message
+                console.log('🔄 [WebSocket] Replacing optimistic message with delivered message');
+                globalMessages[optimisticIndex] = {
+                  ...deliveredMessage,
+                  status: 'delivered',
+                  isOptimistic: false
+                };
+                lastSeenMessageId = Math.max(lastSeenMessageId || 0, deliveredMessage.id);
               } else {
-                console.log('⚠️ [WebSocket] Duplicate message delivered, skipping');
+                // Avoid duplicates by checking message ID
+                if (!globalMessages.some(m => m.id === message.message.id)) {
+                  globalMessages = [...globalMessages, { 
+                    ...message.message, 
+                    status: 'delivered' 
+                  }];
+                  lastSeenMessageId = Math.max(lastSeenMessageId || 0, message.message.id);
+                  console.log('📋 [WebSocket] Global messages updated, count:', globalMessages.length);
+                } else {
+                  console.log('⚠️ [WebSocket] Duplicate message delivered, skipping');
+                }
               }
             } else {
               console.log('⚠️ [WebSocket] Message delivered for different room:', message.message.room, 'current:', globalCurrentRoom);
