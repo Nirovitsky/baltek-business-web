@@ -21,6 +21,28 @@ interface RecentJobsProps {
 export default function RecentJobs({ onJobClick }: RecentJobsProps) {
   const { selectedOrganization } = useAuth();
   const navigate = useNavigate();
+
+  const formatDate = (timestamp?: number | string) => {
+    if (!timestamp) return 'No date';
+    try {
+      let date: Date;
+      
+      // Handle timestamp (number or string)
+      if (typeof timestamp === 'number') {
+        date = new Date(timestamp * 1000); // Convert from seconds to milliseconds
+      } else if (typeof timestamp === 'string' && /^\d+$/.test(timestamp)) {
+        date = new Date(parseInt(timestamp) * 1000);
+      } else {
+        // Fallback: try parsing as other date format
+        date = new Date(timestamp as string);
+      }
+      
+      if (isNaN(date.getTime())) return 'No date';
+      return date.toLocaleDateString();
+    } catch {
+      return 'No date';
+    }
+  };
   
   const { data, isLoading, error } = useQuery({
     queryKey: ['/jobs/', selectedOrganization?.id],
@@ -145,7 +167,7 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
                       </p>
                     )}
                     <p className="text-xs text-muted-foreground">
-                      {job.date_started || 'No date'}
+                      {formatDate(job.date_started)}
                     </p>
                   </div>
                 </div>

@@ -37,6 +37,7 @@ The Baltek Business Dashboard is a React and Express-based application for HR ma
     - Workflow setup for continuous development server
     - Environment variables configured through Replit Secrets
     - Application verified working with external API connections
+    - Date formatting fixed in RecentJobs dashboard component
     - Ready for deployment to production environment
 
 ## System Architecture
