@@ -2,6 +2,10 @@
 // All API requests go directly to the external API at https://api.baltek.net/api/
 
 import { createServer } from "vite";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function startServer() {
   try {
@@ -13,8 +17,8 @@ async function startServer() {
     
     // Create Vite server directly (not in middleware mode)
     const server = await createServer({
-      configFile: "./vite.config.ts",
-      root: "./client",
+      configFile: path.resolve(__dirname, "..", "vite.config.ts"),
+      root: path.resolve(__dirname, "..", "client"),
       server: {
         port,
         host,
