@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { 
@@ -30,7 +31,8 @@ import {
   Paperclip,
   Check,
   FileText,
-  X
+  X,
+  AlertTriangle
 } from "lucide-react";
 import type { ChatMessage, ChatRoom, MessageAttachment, User } from "@/types";
 
@@ -91,6 +93,10 @@ export default function Chat() {
   const selectedConversationData = chatRooms?.results?.find(
     (room: ChatRoom) => room.id === selectedConversation
   );
+
+  // Check if current applicant's status allows chat
+  const applicantStatus = selectedConversationData?.content_object?.status;
+  const isChatDisabled = applicantStatus && applicantStatus !== 'ongoing';
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -166,7 +172,7 @@ export default function Chat() {
   // Handle sending messages
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if ((!messageInput.trim() && !uploadedAttachment) || !selectedConversation) return;
+    if ((!messageInput.trim() && !uploadedAttachment) || !selectedConversation || isChatDisabled) return;
 
     console.log('📤 [Chat] Sending message started:', {
       text: messageInput.trim(),
@@ -791,6 +797,21 @@ export default function Chat() {
                 )}
               </ScrollArea>
 
+              {/* Status Notification */}
+              {isChatDisabled && selectedConversationData && (
+                <div className="border-t bg-white dark:bg-background">
+                  <div className="p-4">
+                    <Alert className="border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950">
+                      <AlertTriangle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+                      <AlertDescription className="text-yellow-800 dark:text-yellow-200">
+                        Chat is disabled because the applicant's status is "{applicantStatus}". 
+                        Chat is only available for ongoing applications.
+                      </AlertDescription>
+                    </Alert>
+                  </div>
+                </div>
+              )}
+
               {/* Message Input */}
               <div className="border-t bg-white dark:bg-background">
                 {/* File Attachments Preview */}
@@ -850,8 +871,9 @@ export default function Chat() {
                       ref={fileInputRef}
                       onChange={(e) => {
                         const file = e.target.files?.[0];
-                        if (file) handleFileSelect(file);
+                        if (file && !isChatDisabled) handleFileSelect(file);
                       }}
+                      disabled={isChatDisabled}
                       className="hidden"
                       accept="image/*,video/*,audio/*,application/pdf,.doc,.docx,.txt,.zip,.rar,.heic,.heif"
                     />
@@ -859,7 +881,7 @@ export default function Chat() {
                       type="button"
                       variant="ghost"
                       size="sm"
-                      disabled={sendingMessage || uploadingFile || !connected}
+                      disabled={sendingMessage || uploadingFile || !connected || isChatDisabled}
                       onClick={() => fileInputRef.current?.click()}
                       className="h-10 w-10 p-0 rounded-lg hover:bg-muted flex-shrink-0"
                       title="Attach file"
@@ -885,7 +907,7 @@ export default function Chat() {
                     
                     <Button
                       type="submit"
-                      disabled={(!messageInput.trim() && !uploadedAttachment) || sendingMessage || uploadingFile || !connected}
+                      disabled={(!messageInput.trim() && !uploadedAttachment) || sendingMessage || uploadingFile || !connected || isChatDisabled}
                       className="h-10 w-10 p-0 rounded-lg flex-shrink-0"
                       title={!connected ? "Not connected" : uploadingFile ? "Uploading file..." : "Send message"}
                     >
