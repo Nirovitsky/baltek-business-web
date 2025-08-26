@@ -15,7 +15,7 @@ let globalConnected = false;
 let globalMessages: ChatMessage[] = [];
 let globalCurrentRoom: number | null = null;
 let globalListeners: Set<() => void> = new Set();
-let messageQueue: Array<{ roomId: number; content: string; attachments?: number[] }> = [];
+let messageQueue: Array<{ roomId: number; content: string; attachments?: number[]; optimisticId?: string; timestamp: number }> = [];
 let reconnectInterval: NodeJS.Timeout | null = null;
 let reconnectAttempts = 0;
 let maxReconnectAttempts = 10;
@@ -71,9 +71,28 @@ const WebSocketManager = {
         
         // Send queued messages
         if (messageQueue.length > 0) {
-          console.log(`Sending ${messageQueue.length} queued messages`);
+          console.log('🔄 [WebSocket] Sending', messageQueue.length, 'queued messages after reconnection');
           messageQueue.forEach(queuedMessage => {
-            WebSocketManager.sendMessage(queuedMessage.roomId, queuedMessage.content, queuedMessage.attachments);
+            // If the queued message has an optimistic message, update its status to sending
+            if (queuedMessage.optimisticId) {
+              const messageIndex = globalMessages.findIndex(m => m.id === queuedMessage.optimisticId);
+              if (messageIndex !== -1) {
+                console.log('📤 [WebSocket] Retrying queued message with optimistic ID:', queuedMessage.optimisticId);
+                globalMessages[messageIndex] = {
+                  ...globalMessages[messageIndex],
+                  status: 'sending'
+                };
+                globalListeners.forEach(listener => listener());
+              }
+            }
+            
+            // Try to send the queued message
+            WebSocketManager.sendMessage(
+              queuedMessage.roomId, 
+              queuedMessage.content, 
+              queuedMessage.attachments, 
+              queuedMessage.optimisticId
+            );
           });
           messageQueue = []; // Clear queue after sending
         }
@@ -296,7 +315,13 @@ const WebSocketManager = {
     if (!globalSocket || globalSocket.readyState !== WebSocket.OPEN) {
       // Queue message for later sending
       console.log('⚠️ [WebSocket] Not connected, queuing message. State:', globalSocket?.readyState);
-      messageQueue.push({ roomId, content: limitedText, attachments });
+      messageQueue.push({ 
+        roomId, 
+        content: limitedText, 
+        attachments, 
+        optimisticId,
+        timestamp: Date.now()
+      });
       
       // Mark optimistic message as failed if provided
       if (optimisticId) {
@@ -331,7 +356,13 @@ const WebSocketManager = {
     } catch (error) {
       console.error('❌ [WebSocket] Failed to send message:', error);
       // Queue message for retry
-      messageQueue.push({ roomId, content: limitedText, attachments });
+      messageQueue.push({ 
+        roomId, 
+        content: limitedText, 
+        attachments, 
+        optimisticId,
+        timestamp: Date.now()
+      });
       
       // Mark optimistic message as failed if provided
       if (optimisticId) {
@@ -426,6 +457,31 @@ const WebSocketManager = {
   addResyncCallback: (callback: () => void) => {
     resyncCallbacks.add(callback);
     return () => resyncCallbacks.delete(callback);
+  },
+
+  // Connection status and cleanup
+  isConnected: () => globalConnected,
+  
+  cleanupOldFailedMessages: () => {
+    const oneDayAgo = Date.now() / 1000 - (24 * 60 * 60);
+    const initialCount = globalMessages.length;
+    
+    globalMessages = globalMessages.filter(m => {
+      // Keep all non-optimistic messages
+      if (!m.isOptimistic) return true;
+      
+      // Keep all non-failed optimistic messages  
+      if (m.status !== 'failed') return true;
+      
+      // Remove failed optimistic messages older than 24 hours
+      return (m.date_created || 0) > oneDayAgo;
+    });
+    
+    const removedCount = initialCount - globalMessages.length;
+    if (removedCount > 0) {
+      console.log(`🧹 [WebSocket] Cleaned up ${removedCount} old failed messages`);
+      globalListeners.forEach(listener => listener());
+    }
   }
 };
 
@@ -483,5 +539,6 @@ export function useWebSocketGlobal() {
     reconnectAttempts,
     maxReconnectAttempts,
     addResyncCallback: WebSocketManager.addResyncCallback,
+    cleanupOldFailedMessages: WebSocketManager.cleanupOldFailedMessages,
   };
 }

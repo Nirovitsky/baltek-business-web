@@ -88,7 +88,11 @@ export default function Chat() {
     joinRoom,
     addOptimisticMessage,
     removeOptimisticMessage,
-    updateOptimisticMessage
+    updateOptimisticMessage,
+    cleanupOldFailedMessages,
+    reconnect,
+    reconnectAttempts,
+    maxReconnectAttempts
   } = useWebSocketGlobal();
 
   // Fetch chat rooms filtered by selected organization
@@ -694,6 +698,20 @@ export default function Chat() {
     );
   }
 
+  // Count failed messages for status display
+  const failedMessageCount = useMemo(() => {
+    return wsMessages.filter(m => m.status === 'failed' && m.isOptimistic).length;
+  }, [wsMessages]);
+
+  // Clean up old failed messages periodically (every 10 minutes)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      cleanupOldFailedMessages();
+    }, 10 * 60 * 1000); // 10 minutes
+
+    return () => clearInterval(interval);
+  }, [cleanupOldFailedMessages]);
+
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <TopBar 
@@ -701,6 +719,44 @@ export default function Chat() {
         description={`Chat with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
         showCreateButton={false}
       />
+      {/* Connection Status Bar */}
+      {(!connected || failedMessageCount > 0) && (
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border-b border-yellow-200 dark:border-yellow-800 px-4 py-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {!connected && (
+                <>
+                  <AlertTriangle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+                  <span className="text-sm text-yellow-700 dark:text-yellow-300">
+                    {reconnectAttempts > 0 && reconnectAttempts < maxReconnectAttempts
+                      ? `Reconnecting... (attempt ${reconnectAttempts}/${maxReconnectAttempts})`
+                      : 'Connection lost - messages may not send properly'
+                    }
+                  </span>
+                </>
+              )}
+              {failedMessageCount > 0 && (
+                <>
+                  <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />
+                  <span className="text-sm text-red-700 dark:text-red-300">
+                    {failedMessageCount} message{failedMessageCount > 1 ? 's' : ''} failed to send
+                  </span>
+                </>
+              )}
+            </div>
+            {(!connected && reconnectAttempts < maxReconnectAttempts) && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={reconnect}
+                className="h-6 text-xs border-yellow-300 text-yellow-700 hover:bg-yellow-100 dark:border-yellow-600 dark:text-yellow-300 dark:hover:bg-yellow-800"
+              >
+                Retry Connection
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
       
       <div className="flex-1 flex overflow-hidden">
         {/* Conversations List */}
