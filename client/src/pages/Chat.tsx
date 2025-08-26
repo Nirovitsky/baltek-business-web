@@ -117,6 +117,15 @@ export default function Chat() {
     return wsMessages.filter(m => m.status === 'failed' && m.isOptimistic).length;
   }, [wsMessages]);
 
+  // Clean up old failed messages periodically (every 10 minutes)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      cleanupOldFailedMessages();
+    }, 10 * 60 * 1000); // 10 minutes
+
+    return () => clearInterval(interval);
+  }, [cleanupOldFailedMessages]);
+
   // Get selected conversation data
   const selectedConversationData = chatRooms?.results?.find(
     (room: ChatRoom) => room.id === selectedConversation
@@ -702,16 +711,6 @@ export default function Chat() {
       </div>
     );
   }
-
-
-  // Clean up old failed messages periodically (every 10 minutes)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      cleanupOldFailedMessages();
-    }, 10 * 60 * 1000); // 10 minutes
-
-    return () => clearInterval(interval);
-  }, [cleanupOldFailedMessages]);
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
