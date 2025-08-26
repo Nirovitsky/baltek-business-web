@@ -112,6 +112,11 @@ export default function Chat() {
   // File upload hook
   const { uploadFile } = useUploadFile();
 
+  // Count failed messages for status display (moved here to avoid hooks order issues)
+  const failedMessageCount = useMemo(() => {
+    return wsMessages.filter(m => m.status === 'failed' && m.isOptimistic).length;
+  }, [wsMessages]);
+
   // Get selected conversation data
   const selectedConversationData = chatRooms?.results?.find(
     (room: ChatRoom) => room.id === selectedConversation
@@ -698,10 +703,6 @@ export default function Chat() {
     );
   }
 
-  // Count failed messages for status display
-  const failedMessageCount = useMemo(() => {
-    return wsMessages.filter(m => m.status === 'failed' && m.isOptimistic).length;
-  }, [wsMessages]);
 
   // Clean up old failed messages periodically (every 10 minutes)
   useEffect(() => {
