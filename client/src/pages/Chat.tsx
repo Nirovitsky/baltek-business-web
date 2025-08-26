@@ -62,6 +62,22 @@ export default function Chat() {
   const [imageModal, setImageModal] = useState<{ src: string; alt: string } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Check URL parameters for room selection
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomParam = urlParams.get('room');
+    if (roomParam) {
+      const roomId = parseInt(roomParam, 10);
+      if (!isNaN(roomId)) {
+        setSelectedConversation(roomId);
+        // Refresh room data to get latest application status
+        queryClient.invalidateQueries({ queryKey: ['/chat/rooms/'] });
+        // Clear URL parameter after setting the room
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    }
+  }, [queryClient]);
   
   // WebSocket connection for real-time messaging
   const {

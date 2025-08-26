@@ -235,14 +235,17 @@ export default function Applications() {
         // Navigate to existing chat room
         navigate(`/chat?room=${existingRoom.id}`);
       } else {
-        // Create new chat room using application ID
+        // Update status to ongoing FIRST if application is in_review
+        if (application.status === 'in_review') {
+          await updateApplicationMutation.mutateAsync({ id: application.id, status: 'ongoing' });
+        }
+        
+        // Then create new chat room using application ID
         const roomData = await createChatMutation.mutateAsync(application.id);
         
-        // If chat room was created successfully and application is in_review, update status to ongoing
         if (roomData?.id) {
-          if (application.status === 'in_review') {
-            await updateApplicationMutation.mutateAsync({ id: application.id, status: 'ongoing' });
-          }
+          // Invalidate chat rooms to ensure fresh data in Chat page
+          queryClient.invalidateQueries({ queryKey: ['/chat/rooms/'] });
           navigate(`/chat?room=${roomData.id}`);
         }
       }
