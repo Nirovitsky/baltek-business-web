@@ -81,13 +81,18 @@ const formatStatusText = (status: string) => {
 
 // Helper function to determine actual status (check for active chats for this specific application)
 const getActualStatus = (application: JobApplication, findExistingRoom: any, roomsData: any) => {
+  console.log(`🔍 [STATUS DEBUG] Checking status for application ${application.id}`);
+  console.log(`📊 [STATUS DEBUG] Backend status: "${application.status}"`);
+  console.log(`👤 [STATUS DEBUG] Application owner:`, application.owner);
+  
   // If there's an existing chat room for this specific application, status should be ongoing
-  console.log('Rooms data available:', roomsData?.results?.length || 0, 'rooms');
+  console.log(`💬 [STATUS DEBUG] Rooms data available: ${roomsData?.results?.length || 0} rooms`);
+  
   if (application.owner?.id && application.id) {
-    console.log(`Checking chat for user ${application.owner.id} and application ${application.id}, name: ${application.owner.first_name} ${application.owner.last_name}`);
+    console.log(`🔎 [STATUS DEBUG] Checking chat for user ${application.owner.id} and application ${application.id}, name: ${application.owner.first_name} ${application.owner.last_name}`);
     
     if (roomsData?.results) {
-      console.log('Available rooms:', roomsData.results.map((room: any) => ({
+      console.log(`🏠 [STATUS DEBUG] Available rooms:`, roomsData.results.map((room: any) => ({
         id: room.id,
         members: room.members,
         participants: room.participants,
@@ -98,14 +103,14 @@ const getActualStatus = (application: JobApplication, findExistingRoom: any, roo
     
     // Check for room specific to this application
     const existingRoom = findExistingRoom(application.owner.id, application.id);
-    console.log(`Found existing room for user ${application.owner.id} and application ${application.id}:`, existingRoom);
+    console.log(`🏠 [STATUS DEBUG] Found existing room for user ${application.owner.id} and application ${application.id}:`, existingRoom);
     
     if (existingRoom) {
-      console.log(`Setting status to ongoing for application ${application.id}`);
+      console.log(`⚡ [STATUS DEBUG] OVERRIDING status from "${application.status}" to "ongoing" for application ${application.id} because chat room exists`);
       return 'ongoing';
     }
   }
-  console.log(`No chat found for application ${application.id}, keeping status: ${application.status}`);
+  console.log(`✅ [STATUS DEBUG] No chat found for application ${application.id}, keeping original status: "${application.status}"`);
   return application.status;
 };
 

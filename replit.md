@@ -51,6 +51,8 @@ The Baltek Business Dashboard is a React and Express-based application for HR ma
   - Fixed status inconsistency between Dashboard and Applications pages
   - All components now consistently use 'in_review' status instead of 'pending'
   - Application runs smoothly on port 5000 with all dependencies properly installed
+  - Added comprehensive status debugging to identify backend/frontend status mismatches
+  - Enhanced console logging to track status override logic in Applications page
 
 ## System Architecture
 

@@ -68,6 +68,7 @@ export default function RecentApplications() {
     [];
 
   const getStatusColor = (status: string) => {
+    console.log(`🎨 [DASHBOARD DEBUG] RecentApplications getStatusColor called with status: "${status}"`);
     switch (status) {
       case 'in_review':
         return 'bg-primary/10 text-primary';
@@ -80,6 +81,7 @@ export default function RecentApplications() {
       case 'expired':
         return 'bg-muted text-foreground';
       default:
+        console.log(`⚠️ [DASHBOARD DEBUG] Unknown status in RecentApplications: "${status}"`);
         return 'bg-muted text-foreground';
     }
   };
