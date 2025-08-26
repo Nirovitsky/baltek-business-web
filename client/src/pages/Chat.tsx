@@ -923,8 +923,65 @@ export default function Chat() {
               {/* Messages */}
               <ScrollArea className="flex-1 p-4 bg-gray-50 dark:bg-gray-900/50">
                 {messagesLoading ? (
-                  <div className="flex justify-center py-8">
-                    <Loader2 className="h-6 w-6 animate-spin" />
+                  <div className="space-y-4 animate-pulse">
+                    {/* Skeleton for received message */}
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex-shrink-0"></div>
+                      <div className="flex-1">
+                        <div className="bg-white dark:bg-gray-800 rounded-lg rounded-tl-none p-3 max-w-xs shadow-sm">
+                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-3/4 mb-2"></div>
+                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-1/2"></div>
+                        </div>
+                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-12 mt-1"></div>
+                      </div>
+                    </div>
+                    
+                    {/* Skeleton for sent message */}
+                    <div className="flex items-start gap-3 justify-end">
+                      <div className="flex-1 flex justify-end">
+                        <div className="bg-blue-500 dark:bg-blue-600 rounded-lg rounded-tr-none p-3 max-w-xs shadow-sm">
+                          <div className="h-4 bg-blue-400 dark:bg-blue-500 rounded w-2/3 mb-2"></div>
+                          <div className="h-4 bg-blue-400 dark:bg-blue-500 rounded w-4/5"></div>
+                        </div>
+                      </div>
+                      <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex-shrink-0"></div>
+                    </div>
+
+                    {/* Skeleton for received message */}
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex-shrink-0"></div>
+                      <div className="flex-1">
+                        <div className="bg-white dark:bg-gray-800 rounded-lg rounded-tl-none p-3 max-w-sm shadow-sm">
+                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-full mb-2"></div>
+                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-3/4 mb-2"></div>
+                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-1/3"></div>
+                        </div>
+                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-12 mt-1"></div>
+                      </div>
+                    </div>
+                    
+                    {/* Skeleton for sent message */}
+                    <div className="flex items-start gap-3 justify-end">
+                      <div className="flex-1 flex justify-end">
+                        <div className="bg-blue-500 dark:bg-blue-600 rounded-lg rounded-tr-none p-3 max-w-xs shadow-sm">
+                          <div className="h-4 bg-blue-400 dark:bg-blue-500 rounded w-4/5"></div>
+                        </div>
+                      </div>
+                      <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex-shrink-0"></div>
+                    </div>
+
+                    {/* Skeleton for received message with longer content */}
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex-shrink-0"></div>
+                      <div className="flex-1">
+                        <div className="bg-white dark:bg-gray-800 rounded-lg rounded-tl-none p-3 max-w-md shadow-sm">
+                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-full mb-2"></div>
+                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-5/6 mb-2"></div>
+                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-2/3"></div>
+                        </div>
+                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-12 mt-1"></div>
+                      </div>
+                    </div>
                   </div>
                 ) : unifiedMessages.length === 0 ? (
                   <div className="text-center py-8">
