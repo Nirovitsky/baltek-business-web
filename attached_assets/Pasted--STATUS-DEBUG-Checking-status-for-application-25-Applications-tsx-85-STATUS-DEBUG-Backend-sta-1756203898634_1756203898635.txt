@@ -1,0 +1,69 @@
+ [STATUS DEBUG] Checking status for application 25
+Applications.tsx:85 📊 [STATUS DEBUG] Backend status: "ongoing"
+Applications.tsx:86 👤 [STATUS DEBUG] Application owner: {id: 1, first_name: 'Ata', last_name: 'Saparov', profession: 'Programmer', avatar: 'https://api.baltek.net/media/lemoneta_1_WVu7W9h.jpg', …}
+Applications.tsx:89 💬 [STATUS DEBUG] Rooms data available: 4 rooms
+Applications.tsx:92 🔎 [STATUS DEBUG] Checking chat for user 1 and application 25, name: Ata Saparov
+Applications.tsx:95 🏠 [STATUS DEBUG] Available rooms: (4) [{…}, {…}, {…}, {…}]
+useUserProfile.ts:66 🔍 Searching for rooms with user ID: 1 and application ID: 25
+useUserProfile.ts:67 📋 Available rooms: (4) [{…}, {…}, {…}, {…}]
+useUserProfile.ts:88 🏠 Room 9: isForThisUser=false, isForSameApplication=false, applicationId=17
+useUserProfile.ts:88 🏠 Room 12: isForThisUser=false, isForSameApplication=false, applicationId=21
+useUserProfile.ts:88 🏠 Room 13: isForThisUser=false, isForSameApplication=false, applicationId=24
+useUserProfile.ts:88 🏠 Room 14: isForThisUser=true, isForSameApplication=true, applicationId=25
+useUserProfile.ts:94 ✅ Found existing room: 14 for application: 25
+Applications.tsx:106 🏠 [STATUS DEBUG] Found existing room for user 1 and application 25: {id: 14, content_type: 'jobapplication', object_id: 25, content_object: {…}, unread_message_count: 0, …}
+Applications.tsx:109 ⚡ [STATUS DEBUG] OVERRIDING status from "ongoing" to "ongoing" for application 25 because chat room exists
+Applications.tsx:84 🔍 [STATUS DEBUG] Checking status for application 24
+Applications.tsx:85 📊 [STATUS DEBUG] Backend status: "ongoing"
+Applications.tsx:86 👤 [STATUS DEBUG] Application owner: {id: 6, first_name: 'Rovshen', last_name: 'Tagangylyjov', profession: '', avatar: 'https://api.baltek.net/media/avatar_yQYkYzO.png', …}
+Applications.tsx:89 💬 [STATUS DEBUG] Rooms data available: 4 rooms
+Applications.tsx:92 🔎 [STATUS DEBUG] Checking chat for user 6 and application 24, name: Rovshen Tagangylyjov
+Applications.tsx:95 🏠 [STATUS DEBUG] Available rooms: (4) [{…}, {…}, {…}, {…}]
+useUserProfile.ts:66 🔍 Searching for rooms with user ID: 6 and application ID: 24
+useUserProfile.ts:67 📋 Available rooms: (4) [{…}, {…}, {…}, {…}]
+useUserProfile.ts:88 🏠 Room 9: isForThisUser=false, isForSameApplication=false, applicationId=17
+useUserProfile.ts:88 🏠 Room 12: isForThisUser=true, isForSameApplication=false, applicationId=21
+useUserProfile.ts:88 🏠 Room 13: isForThisUser=true, isForSameApplication=true, applicationId=24
+useUserProfile.ts:94 ✅ Found existing room: 13 for application: 24
+Applications.tsx:106 🏠 [STATUS DEBUG] Found existing room for user 6 and application 24: {id: 13, content_type: 'jobapplication', object_id: 24, content_object: {…}, unread_message_count: 0, …}
+Applications.tsx:109 ⚡ [STATUS DEBUG] OVERRIDING status from "ongoing" to "ongoing" for application 24 because chat room exists
+Applications.tsx:84 🔍 [STATUS DEBUG] Checking status for application 21
+Applications.tsx:85 📊 [STATUS DEBUG] Backend status: "hired"
+Applications.tsx:86 👤 [STATUS DEBUG] Application owner: {id: 6, first_name: 'Rovshen', last_name: 'Tagangylyjov', profession: '', avatar: 'https://api.baltek.net/media/avatar_yQYkYzO.png', …}
+Applications.tsx:89 💬 [STATUS DEBUG] Rooms data available: 4 rooms
+Applications.tsx:92 🔎 [STATUS DEBUG] Checking chat for user 6 and application 21, name: Rovshen Tagangylyjov
+Applications.tsx:95 🏠 [STATUS DEBUG] Available rooms: (4) [{…}, {…}, {…}, {…}]
+useUserProfile.ts:66 🔍 Searching for rooms with user ID: 6 and application ID: 21
+useUserProfile.ts:67 📋 Available rooms: (4) [{…}, {…}, {…}, {…}]
+useUserProfile.ts:88 🏠 Room 9: isForThisUser=false, isForSameApplication=false, applicationId=17
+useUserProfile.ts:88 🏠 Room 12: isForThisUser=true, isForSameApplication=true, applicationId=21
+useUserProfile.ts:94 ✅ Found existing room: 12 for application: 21
+Applications.tsx:106 🏠 [STATUS DEBUG] Found existing room for user 6 and application 21: {id: 12, content_type: 'jobapplication', object_id: 21, content_object: {…}, unread_message_count: 0, …}
+Applications.tsx:109 ⚡ [STATUS DEBUG] OVERRIDING status from "hired" to "ongoing" for application 21 because chat room exists
+Applications.tsx:84 🔍 [STATUS DEBUG] Checking status for application 20
+Applications.tsx:85 📊 [STATUS DEBUG] Backend status: "hired"
+Applications.tsx:86 👤 [STATUS DEBUG] Application owner: {id: 1, first_name: 'Ata', last_name: 'Saparov', profession: 'Programmer', avatar: 'https://api.baltek.net/media/lemoneta_1_WVu7W9h.jpg', …}
+Applications.tsx:89 💬 [STATUS DEBUG] Rooms data available: 4 rooms
+Applications.tsx:92 🔎 [STATUS DEBUG] Checking chat for user 1 and application 20, name: Ata Saparov
+Applications.tsx:95 🏠 [STATUS DEBUG] Available rooms: (4) [{…}, {…}, {…}, {…}]
+useUserProfile.ts:66 🔍 Searching for rooms with user ID: 1 and application ID: 20
+useUserProfile.ts:67 📋 Available rooms: (4) [{…}, {…}, {…}, {…}]
+useUserProfile.ts:88 🏠 Room 9: isForThisUser=false, isForSameApplication=false, applicationId=17
+useUserProfile.ts:88 🏠 Room 12: isForThisUser=false, isForSameApplication=false, applicationId=21
+useUserProfile.ts:88 🏠 Room 13: isForThisUser=false, isForSameApplication=false, applicationId=24
+useUserProfile.ts:88 🏠 Room 14: isForThisUser=true, isForSameApplication=false, applicationId=25
+useUserProfile.ts:96 ❌ No existing room found for user: 1 and application: 20
+Applications.tsx:106 🏠 [STATUS DEBUG] Found existing room for user 1 and application 20: undefined
+Applications.tsx:113 ✅ [STATUS DEBUG] No chat found for application 20, keeping original status: "hired"
+Applications.tsx:84 🔍 [STATUS DEBUG] Checking status for application 17
+Applications.tsx:85 📊 [STATUS DEBUG] Backend status: "rejected"
+Applications.tsx:86 👤 [STATUS DEBUG] Application owner: {id: 2, first_name: 'Emir', last_name: 'Nazarov', profession: '', avatar: 'https://api.baltek.net/media/600px_-_600px.jpg', …}
+Applications.tsx:89 💬 [STATUS DEBUG] Rooms data available: 4 rooms
+Applications.tsx:92 🔎 [STATUS DEBUG] Checking chat for user 2 and application 17, name: Emir Nazarov
+Applications.tsx:95 🏠 [STATUS DEBUG] Available rooms: (4) [{…}, {…}, {…}, {…}]
+useUserProfile.ts:66 🔍 Searching for rooms with user ID: 2 and application ID: 17
+useUserProfile.ts:67 📋 Available rooms: (4) [{…}, {…}, {…}, {…}]
+useUserProfile.ts:88 🏠 Room 9: isForThisUser=true, isForSameApplication=true, applicationId=17
+useUserProfile.ts:94 ✅ Found existing room: 9 for application: 17
+Applications.tsx:106 🏠 [STATUS DEBUG] Found existing room for user 2 and application 17: {id: 9, content_type: 'jobapplication', object_id: 17, content_object: {…}, unread_message_count: 0, …}content_object: date_created: 1755935118date_updated: 1756110402id: 17job: {id: 110, organization: {…}, title: 'AI Engineer', date_started: 1755933505, date_ended: null, …}owner: {id: 2, first_name: 'Emir', last_name: 'Nazarov', profession: '', avatar: 'https://api.baltek.net/media/600px_-_600px.jpg', …}status: "rejected"[[Prototype]]: Objectcontent_type: "jobapplication"id: 9last_message_date_created: 1756102574last_message_text: "hey"object_id: 17unread_message_count: 0[[Prototype]]: Objectconstructor: ƒ Object()hasOwnProperty: ƒ hasOwnProperty()isPrototypeOf: ƒ isPrototypeOf()propertyIsEnumerable: ƒ propertyIsEnumerable()toLocaleString: ƒ toLocaleString()toString: ƒ toString()valueOf: ƒ valueOf()__defineGetter__: ƒ __defineGetter__()__defineSetter__: ƒ __defineSetter__()__lookupGetter__: ƒ __lookupGetter__()__lookupSetter__: ƒ __lookupSetter__()__proto__: (...)get __proto__: ƒ __proto__()set __proto__: ƒ __proto__()
+Applications.tsx:109 ⚡ [STATUS DEBUG] OVERRIDING status from "rejected" to "ongoing" for application 17 because chat room exists

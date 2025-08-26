@@ -83,34 +83,33 @@ const formatStatusText = (status: string) => {
 const getActualStatus = (application: JobApplication, findExistingRoom: any, roomsData: any) => {
   console.log(`🔍 [STATUS DEBUG] Checking status for application ${application.id}`);
   console.log(`📊 [STATUS DEBUG] Backend status: "${application.status}"`);
+  
+  // Don't override final statuses - keep hired, rejected, and expired as-is
+  if (['hired', 'rejected', 'expired'].includes(application.status)) {
+    console.log(`🔒 [STATUS DEBUG] Final status "${application.status}" for application ${application.id}, not checking for chat rooms`);
+    return application.status;
+  }
+  
   console.log(`👤 [STATUS DEBUG] Application owner:`, application.owner);
   
-  // If there's an existing chat room for this specific application, status should be ongoing
+  // Only override in_review status to ongoing when chat exists
   console.log(`💬 [STATUS DEBUG] Rooms data available: ${roomsData?.results?.length || 0} rooms`);
   
   if (application.owner?.id && application.id) {
     console.log(`🔎 [STATUS DEBUG] Checking chat for user ${application.owner.id} and application ${application.id}, name: ${application.owner.first_name} ${application.owner.last_name}`);
     
-    if (roomsData?.results) {
-      console.log(`🏠 [STATUS DEBUG] Available rooms:`, roomsData.results.map((room: any) => ({
-        id: room.id,
-        members: room.members,
-        participants: room.participants,
-        application_id: room.content_object?.id,
-        owner_id: room.content_object?.owner?.id
-      })));
-    }
-    
     // Check for room specific to this application
     const existingRoom = findExistingRoom(application.owner.id, application.id);
     console.log(`🏠 [STATUS DEBUG] Found existing room for user ${application.owner.id} and application ${application.id}:`, existingRoom);
     
-    if (existingRoom) {
-      console.log(`⚡ [STATUS DEBUG] OVERRIDING status from "${application.status}" to "ongoing" for application ${application.id} because chat room exists`);
+    if (existingRoom && application.status === 'in_review') {
+      console.log(`⚡ [STATUS DEBUG] OVERRIDING status from "in_review" to "ongoing" for application ${application.id} because chat room exists`);
       return 'ongoing';
+    } else if (existingRoom) {
+      console.log(`ℹ️ [STATUS DEBUG] Chat room exists but status is "${application.status}" (not in_review), keeping original status`);
     }
   }
-  console.log(`✅ [STATUS DEBUG] No chat found for application ${application.id}, keeping original status: "${application.status}"`);
+  console.log(`✅ [STATUS DEBUG] No status change needed for application ${application.id}, keeping original status: "${application.status}"`);
   return application.status;
 };
 
