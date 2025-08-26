@@ -127,11 +127,15 @@ const WebSocketManager = {
               
               // Check if this message replaces an optimistic message
               const receivedMessage = message.message;
+              
+              // Find optimistic message to replace - use more flexible matching
               const optimisticIndex = globalMessages.findIndex(m => 
                 m.isOptimistic && 
                 m.room === receivedMessage.room && 
                 m.text === receivedMessage.text &&
-                m.owner === receivedMessage.owner
+                m.owner === receivedMessage.owner &&
+                // Also check timestamps are close (within 30 seconds)
+                Math.abs((m.date_created || 0) - (receivedMessage.date_created || 0)) < 30
               );
 
               if (optimisticIndex !== -1) {
@@ -142,12 +146,23 @@ const WebSocketManager = {
                   status: 'delivered',
                   isOptimistic: false
                 };
+                globalListeners.forEach(listener => listener());
               } else {
-                // Avoid duplicates by checking message ID
-                if (!globalMessages.some(m => m.id === receivedMessage.id)) {
-                  globalMessages = [...globalMessages, { ...receivedMessage, status: 'delivered' }];
+                // Check for exact duplicate by ID first
+                const duplicateIndex = globalMessages.findIndex(m => 
+                  !m.isOptimistic && m.id === receivedMessage.id
+                );
+                
+                if (duplicateIndex === -1) {
+                  // No duplicate found, add new message
+                  globalMessages = [...globalMessages, { 
+                    ...receivedMessage, 
+                    status: 'delivered',
+                    isOptimistic: false 
+                  }];
                   lastSeenMessageId = Math.max(lastSeenMessageId || 0, receivedMessage.id);
-                  console.log('📋 [WebSocket] Global messages updated, count:', globalMessages.length);
+                  console.log('📋 [WebSocket] New message added, count:', globalMessages.length);
+                  globalListeners.forEach(listener => listener());
                 } else {
                   console.log('⚠️ [WebSocket] Duplicate message received, skipping');
                 }

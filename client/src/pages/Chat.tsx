@@ -489,6 +489,8 @@ export default function Chat() {
             size: att.size || null,
           })) : [],
         date_created: message.date_created,
+        isOptimistic: false, // API messages are never optimistic
+        isFromWebSocket: false
       };
     }).sort((a, b) => a.date_created - b.date_created);
   }, [messages?.results, selectedConversationData, activeUser]);
@@ -533,7 +535,6 @@ export default function Chat() {
         owner: messageOwnerId,
         senderInfo: senderInfo,
         text: message.text || "",
-        status: "delivered" as const,
         attachments: message.attachments && message.attachments.length > 0 ? 
           message.attachments.map((att: any) => ({
             id: att.id,
@@ -544,20 +545,33 @@ export default function Chat() {
           })) : [],
         date_created: message.date_created,
         isFromWebSocket: true, // Mark WebSocket messages
+        isOptimistic: message.isOptimistic || false,
+        status: message.isOptimistic ? message.status : "delivered" as const
       };
     });
     
     // Combine API and WebSocket messages
     const allMessages = [...transformedApiMessages, ...transformedWsMessages];
     
-    // Deduplicate by message ID (prefer WebSocket messages for real-time updates)
+    // Deduplicate by message ID with proper optimistic handling
     const messageMap = new Map();
     allMessages.forEach(message => {
       const existingMessage = messageMap.get(message.id);
-      // Prefer WebSocket messages over API messages for real-time updates
-      if (!existingMessage || (message as any).isFromWebSocket) {
+      
+      // Priority logic:
+      // 1. Real messages (non-optimistic) always replace optimistic ones
+      // 2. Among real messages, prefer WebSocket for real-time updates
+      // 3. Don't replace real messages with optimistic ones
+      if (!existingMessage) {
+        messageMap.set(message.id, message);
+      } else if ((existingMessage as any).isOptimistic && !(message as any).isOptimistic) {
+        // Real message replaces optimistic message
+        messageMap.set(message.id, message);
+      } else if (!(existingMessage as any).isOptimistic && !(message as any).isOptimistic && (message as any).isFromWebSocket) {
+        // Among real messages, prefer WebSocket for real-time updates
         messageMap.set(message.id, message);
       }
+      // Don't replace real messages with optimistic ones
     });
     
     // Convert back to array and sort by timestamp (oldest to newest)
