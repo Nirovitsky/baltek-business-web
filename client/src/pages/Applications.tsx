@@ -237,7 +237,12 @@ export default function Applications() {
       } else {
         // Create new chat room using application ID
         const roomData = await createChatMutation.mutateAsync(application.id);
+        
+        // If chat room was created successfully and application is in_review, update status to ongoing
         if (roomData?.id) {
+          if (application.status === 'in_review') {
+            await updateApplicationMutation.mutateAsync({ id: application.id, status: 'ongoing' });
+          }
           navigate(`/chat?room=${roomData.id}`);
         }
       }
