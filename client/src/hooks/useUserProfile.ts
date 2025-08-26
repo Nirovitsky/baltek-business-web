@@ -58,18 +58,43 @@ export function useUserProfile(userId?: string, options?: { fetchRooms?: boolean
 
   // Helper function to find existing chat room with user
   const findExistingRoom = (targetUserId: number) => {
-    if (!roomsData?.results) return null;
+    if (!roomsData?.results) {
+      console.log('❌ No rooms data available for search');
+      return null;
+    }
     
-    return roomsData.results.find((room: Room) => {
+    console.log('🔍 Searching for rooms with user ID:', targetUserId);
+    console.log('📋 Available rooms:', roomsData.results.map(r => ({
+      id: r.id,
+      participants: r.participants || r.members || [],
+      content_object: r.content_object?.owner?.id
+    })));
+    
+    const existingRoom = roomsData.results.find((room: Room) => {
       // Check both participants and members fields
       const roomMembers = room.participants || room.members || [];
-      if (roomMembers.length === 0) return false;
       
-      return roomMembers.some((member: any) => {
+      // Also check if this room is for this specific user via content_object
+      const isForThisUser = room.content_object?.owner?.id === targetUserId;
+      
+      // Check if user is in participants/members
+      const isParticipant = roomMembers.some((member: any) => {
         const memberId = typeof member === 'object' ? member.id : member;
         return memberId === targetUserId;
       });
+      
+      console.log(`🏠 Room ${room.id}: isForThisUser=${isForThisUser}, isParticipant=${isParticipant}`);
+      
+      return isForThisUser || isParticipant;
     });
+    
+    if (existingRoom) {
+      console.log('✅ Found existing room:', existingRoom.id);
+    } else {
+      console.log('❌ No existing room found for user:', targetUserId);
+    }
+    
+    return existingRoom;
   };
 
   return {

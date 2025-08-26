@@ -229,25 +229,36 @@ export default function Applications() {
 
     try {
       // Check if chat room already exists for this application
+      console.log('🔍 Checking for existing room for user:', application.owner.id);
+      console.log('🏠 Available rooms data:', roomsData?.results?.length || 0, 'rooms');
+      
       const existingRoom = findExistingRoom(application.owner.id);
+      console.log('🎯 Found existing room:', existingRoom?.id || 'none');
       
       if (existingRoom) {
+        console.log('✅ Using existing chat room:', existingRoom.id);
         // Navigate to existing chat room
         navigate(`/chat?room=${existingRoom.id}`);
-      } else {
-        // Update status to ongoing FIRST if application is in_review
-        if (application.status === 'in_review') {
-          await updateApplicationMutation.mutateAsync({ id: application.id, status: 'ongoing' });
-        }
-        
-        // Then create new chat room using application ID
-        const roomData = await createChatMutation.mutateAsync(application.id);
-        
-        if (roomData?.id) {
-          // Invalidate chat rooms to ensure fresh data in Chat page
-          queryClient.invalidateQueries({ queryKey: ['/chat/rooms/'] });
-          navigate(`/chat?room=${roomData.id}`);
-        }
+        return;
+      }
+
+      console.log('🆕 No existing room found, creating new one');
+      
+      // Update status to ongoing FIRST if application is in_review
+      if (application.status === 'in_review') {
+        console.log('📝 Updating application status from in_review to ongoing');
+        await updateApplicationMutation.mutateAsync({ id: application.id, status: 'ongoing' });
+      }
+      
+      // Then create new chat room using application ID
+      console.log('🏗️ Creating new chat room for application:', application.id);
+      const roomData = await createChatMutation.mutateAsync(application.id);
+      
+      if (roomData?.id) {
+        console.log('✅ Chat room created successfully:', roomData.id);
+        // Invalidate chat rooms to ensure fresh data in Chat page
+        queryClient.invalidateQueries({ queryKey: ['/chat/rooms/'] });
+        navigate(`/chat?room=${roomData.id}`);
       }
     } catch (error: any) {
       toast({
