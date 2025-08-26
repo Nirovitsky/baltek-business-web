@@ -924,60 +924,61 @@ export default function Chat() {
               <ScrollArea className="flex-1 p-4 bg-gray-50 dark:bg-gray-900/50">
                 {messagesLoading ? (
                   <div className="space-y-4 animate-pulse">
-                    {/* Skeleton for received message */}
-                    <div className="flex items-start gap-3">
+                    {/* Skeleton for received message (with avatar, left-aligned) */}
+                    <div className="flex gap-3 mb-4">
                       <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex-shrink-0"></div>
-                      <div className="flex-1">
-                        <div className="bg-white dark:bg-gray-800 rounded-lg rounded-tl-none p-3 max-w-xs shadow-sm">
-                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-3/4 mb-2"></div>
-                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-1/2"></div>
+                      <div className="flex flex-col max-w-[70%] items-start">
+                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-16 mb-1"></div>
+                        <div className="rounded-lg px-3 py-2 bg-gray-100 dark:bg-gray-700">
+                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-32 mb-1"></div>
+                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-24"></div>
                         </div>
                         <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-12 mt-1"></div>
                       </div>
                     </div>
                     
-                    {/* Skeleton for sent message */}
-                    <div className="flex items-start gap-3 justify-end">
-                      <div className="flex-1 flex justify-end">
-                        <div className="bg-blue-500 dark:bg-blue-600 rounded-lg rounded-tr-none p-3 max-w-xs shadow-sm">
-                          <div className="h-4 bg-blue-400 dark:bg-blue-500 rounded w-2/3 mb-2"></div>
-                          <div className="h-4 bg-blue-400 dark:bg-blue-500 rounded w-4/5"></div>
+                    {/* Skeleton for organization message (no avatar, right-aligned) */}
+                    <div className="flex gap-3 mb-4 flex-row-reverse">
+                      <div className="flex flex-col max-w-[70%] items-end">
+                        <div className="rounded-lg px-3 py-2 bg-blue-500">
+                          <div className="h-4 bg-blue-400 rounded w-28 mb-1"></div>
+                          <div className="h-4 bg-blue-400 rounded w-20"></div>
                         </div>
+                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-16 mt-1"></div>
                       </div>
-                      <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex-shrink-0"></div>
                     </div>
 
-                    {/* Skeleton for received message */}
-                    <div className="flex items-start gap-3">
+                    {/* Skeleton for received message (longer) */}
+                    <div className="flex gap-3 mb-4">
                       <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex-shrink-0"></div>
-                      <div className="flex-1">
-                        <div className="bg-white dark:bg-gray-800 rounded-lg rounded-tl-none p-3 max-w-sm shadow-sm">
-                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-full mb-2"></div>
-                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-3/4 mb-2"></div>
-                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-1/3"></div>
+                      <div className="flex flex-col max-w-[70%] items-start">
+                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-16 mb-1"></div>
+                        <div className="rounded-lg px-3 py-2 bg-gray-100 dark:bg-gray-700">
+                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-48 mb-1"></div>
+                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-40 mb-1"></div>
+                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-28"></div>
                         </div>
                         <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-12 mt-1"></div>
                       </div>
                     </div>
                     
-                    {/* Skeleton for sent message */}
-                    <div className="flex items-start gap-3 justify-end">
-                      <div className="flex-1 flex justify-end">
-                        <div className="bg-blue-500 dark:bg-blue-600 rounded-lg rounded-tr-none p-3 max-w-xs shadow-sm">
-                          <div className="h-4 bg-blue-400 dark:bg-blue-500 rounded w-4/5"></div>
+                    {/* Skeleton for organization message (short) */}
+                    <div className="flex gap-3 mb-4 flex-row-reverse">
+                      <div className="flex flex-col max-w-[70%] items-end">
+                        <div className="rounded-lg px-3 py-2 bg-blue-500">
+                          <div className="h-4 bg-blue-400 rounded w-16"></div>
                         </div>
+                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-14 mt-1"></div>
                       </div>
-                      <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex-shrink-0"></div>
                     </div>
 
-                    {/* Skeleton for received message with longer content */}
-                    <div className="flex items-start gap-3">
+                    {/* Skeleton for received message */}
+                    <div className="flex gap-3 mb-4">
                       <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex-shrink-0"></div>
-                      <div className="flex-1">
-                        <div className="bg-white dark:bg-gray-800 rounded-lg rounded-tl-none p-3 max-w-md shadow-sm">
-                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-full mb-2"></div>
-                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-5/6 mb-2"></div>
-                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-2/3"></div>
+                      <div className="flex flex-col max-w-[70%] items-start">
+                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-16 mb-1"></div>
+                        <div className="rounded-lg px-3 py-2 bg-gray-100 dark:bg-gray-700">
+                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-36"></div>
                         </div>
                         <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-12 mt-1"></div>
                       </div>
