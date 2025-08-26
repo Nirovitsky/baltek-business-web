@@ -500,6 +500,21 @@ export default function Applications() {
                                 </AlertDialog>
                               </div>
 
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (application.owner?.id) {
+                                    navigate(`/user/${application.owner.id}`);
+                                  }
+                                }}
+                                title="Start conversation"
+                              >
+                                <MessageCircle className="h-4 w-4" />
+                              </Button>
+
                               <div onClick={(e) => e.stopPropagation()}>
                                 <AlertDialog>
                                   <AlertDialogTrigger asChild>
@@ -535,20 +550,7 @@ export default function Applications() {
                                 </AlertDialog>
                               </div>
 
-                              {(application.status === 'pending' || application.status === 'ongoing') && (
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-8 w-8 p-0 text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleStartChat(application);
-                                  }}
-                                  disabled={createChatMutation.isPending}
-                                >
-                                  <MessageCircle className="h-4 w-4" />
-                                </Button>
-                              )}
+
                             </>
                           ) : (
                             <span className="text-sm text-muted-foreground">-</span>
