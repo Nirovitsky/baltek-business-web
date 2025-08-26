@@ -22,7 +22,7 @@ const requestNotificationPermission = async (): Promise<NotificationPermission> 
   return Notification.permission;
 };
 
-export function useNotifications(enabled: boolean = true) {
+export function useNotifications(enabled: boolean = true, enablePolling: boolean = false) {
   const [permission, setPermission] = useState<NotificationPermission>(
     isNotificationSupported() ? Notification.permission : "denied"
   );
@@ -62,7 +62,7 @@ export function useNotifications(enabled: boolean = true) {
     gcTime: 15 * 60 * 1000, // Keep in cache for 15 minutes
     refetchOnWindowFocus: false, // Don't refetch on window focus
     refetchOnMount: false, // Don't refetch on component mount if data exists  
-    refetchInterval: false, // Disable automatic polling - only refetch manually
+    refetchInterval: enablePolling ? 30 * 1000 : false, // Poll every 30 seconds if enabled
   });
 
   // Extract notifications from API response

@@ -54,6 +54,12 @@ The Baltek Business Dashboard is a React and Express-based application for HR ma
   - Added comprehensive status debugging to identify backend/frontend status mismatches
   - Enhanced console logging to track status override logic in Applications page
   - **Status Logic Fixed**: Corrected status override behavior to only convert "in_review" to "ongoing" when chat exists, preserving final statuses like "hired" and "rejected"
+- **Background Notifications Polling (January 26, 2025)**: Implemented global background polling for notifications
+  - Added polling parameter to useNotifications hook with 30-second interval
+  - Notifications now automatically check for updates when user is authenticated
+  - Organizations receive real-time notification updates even when not on notifications page
+  - Polling only runs when authenticated to optimize performance
+  - Enhanced notification system for better user engagement
 
 ## System Architecture
 
