@@ -50,7 +50,7 @@ export default function Dashboard() {
   // Calculate real stats from API data
   const activeJobs = jobs.filter(job => job.status === 'open').length;
   const totalApplications = applicationsData?.count || 0;
-  const pendingApplications = applications.filter(app => app.status === 'pending').length;
+  const pendingApplications = applications.filter(app => app.status === 'in_review').length;
   const hiredThisMonth = applications.filter(app => app.status === 'hired').length;
   
   // Calculate changes (simplified calculation based on available data)
@@ -110,14 +110,14 @@ export default function Dashboard() {
             icon={Users}
             iconColor="text-primary"
             change={{
-              value: `${pendingApplications} pending`,
+              value: `${pendingApplications} in review`,
               label: `${ongoingApplications} ongoing`,
               type: "positive"
             }}
           />
 
           <StatsCard
-            title="Pending Reviews"
+            title="Applications In Review"
             value={pendingApplications}
             icon={Clock}
             iconColor="text-yellow-600"
