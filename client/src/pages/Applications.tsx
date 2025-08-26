@@ -18,7 +18,7 @@ import { useUserProfile } from "@/hooks/useUserProfile";
 import { apiService } from "@/lib/api";
 import { User, Search, MessageCircle, FileText, Download, MapPin, Calendar, Briefcase, X, Eye, UserX, UserCheck, AlertTriangle } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import type { JobApplication, PaginatedResponse } from "@/types";
+import type { JobApplication, PaginatedResponse, Room } from "@/types";
 
 // Helper function to format dates properly
 const formatDate = (timestamp?: number | string) => {
@@ -541,10 +541,9 @@ export default function Applications() {
                                 className="h-8 w-8 p-0 text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  if (application.owner?.id) {
-                                    navigate(`/user/${application.owner.id}`);
-                                  }
+                                  handleStartChat(application);
                                 }}
+                                disabled={createChatMutation.isPending}
                                 title="Start conversation"
                               >
                                 <MessageCircle className="h-4 w-4" />
