@@ -56,42 +56,44 @@ export function useUserProfile(userId?: string, options?: { fetchRooms?: boolean
     },
   });
 
-  // Helper function to find existing chat room with user
-  const findExistingRoom = (targetUserId: number) => {
+  // Helper function to find existing chat room with user and specific application/job
+  const findExistingRoom = (targetUserId: number, applicationId?: number) => {
     if (!roomsData?.results) {
       console.log('❌ No rooms data available for search');
       return null;
     }
     
-    console.log('🔍 Searching for rooms with user ID:', targetUserId);
+    console.log('🔍 Searching for rooms with user ID:', targetUserId, 'and application ID:', applicationId);
     console.log('📋 Available rooms:', roomsData.results.map(r => ({
       id: r.id,
       participants: r.participants || r.members || [],
-      content_object: r.content_object?.owner?.id
+      content_object: {
+        owner_id: (r as any).content_object?.owner?.id,
+        application_id: (r as any).content_object?.id,
+        job_id: (r as any).content_object?.job?.id
+      }
     })));
     
     const existingRoom = roomsData.results.find((room: Room) => {
-      // Check both participants and members fields
-      const roomMembers = room.participants || room.members || [];
+      const roomData = room as any;
+      // Check if this room is for this specific user via content_object
+      const isForThisUser = roomData.content_object?.owner?.id === targetUserId;
       
-      // Also check if this room is for this specific user via content_object
-      const isForThisUser = room.content_object?.owner?.id === targetUserId;
+      // If we have an application ID, also check if it's for the same application
+      let isForSameApplication = true;
+      if (applicationId && roomData.content_object?.id) {
+        isForSameApplication = roomData.content_object.id === applicationId;
+      }
       
-      // Check if user is in participants/members
-      const isParticipant = roomMembers.some((member: any) => {
-        const memberId = typeof member === 'object' ? member.id : member;
-        return memberId === targetUserId;
-      });
+      console.log(`🏠 Room ${room.id}: isForThisUser=${isForThisUser}, isForSameApplication=${isForSameApplication}, applicationId=${roomData.content_object?.id}`);
       
-      console.log(`🏠 Room ${room.id}: isForThisUser=${isForThisUser}, isParticipant=${isParticipant}`);
-      
-      return isForThisUser || isParticipant;
+      return isForThisUser && isForSameApplication;
     });
     
     if (existingRoom) {
-      console.log('✅ Found existing room:', existingRoom.id);
+      console.log('✅ Found existing room:', existingRoom.id, 'for application:', (existingRoom as any).content_object?.id);
     } else {
-      console.log('❌ No existing room found for user:', targetUserId);
+      console.log('❌ No existing room found for user:', targetUserId, 'and application:', applicationId);
     }
     
     return existingRoom;

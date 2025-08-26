@@ -79,31 +79,33 @@ const formatStatusText = (status: string) => {
   }
 };
 
-// Helper function to determine actual status (check for active chats)
+// Helper function to determine actual status (check for active chats for this specific application)
 const getActualStatus = (application: JobApplication, findExistingRoom: any, roomsData: any) => {
-  // If there's an existing chat room with this user, status should be ongoing
+  // If there's an existing chat room for this specific application, status should be ongoing
   console.log('Rooms data available:', roomsData?.results?.length || 0, 'rooms');
-  if (application.owner?.id) {
-    console.log(`Checking chat for user ${application.owner.id}, name: ${application.owner.first_name} ${application.owner.last_name}`);
+  if (application.owner?.id && application.id) {
+    console.log(`Checking chat for user ${application.owner.id} and application ${application.id}, name: ${application.owner.first_name} ${application.owner.last_name}`);
     
     if (roomsData?.results) {
       console.log('Available rooms:', roomsData.results.map((room: any) => ({
         id: room.id,
         members: room.members,
         participants: room.participants,
-        memberIds: (room.participants || room.members || []).map((m: any) => typeof m === 'object' ? m.id : m)
+        application_id: room.content_object?.id,
+        owner_id: room.content_object?.owner?.id
       })));
     }
     
-    const existingRoom = findExistingRoom(application.owner.id);
-    console.log(`Found existing room for user ${application.owner.id}:`, existingRoom);
+    // Check for room specific to this application
+    const existingRoom = findExistingRoom(application.owner.id, application.id);
+    console.log(`Found existing room for user ${application.owner.id} and application ${application.id}:`, existingRoom);
     
     if (existingRoom) {
-      console.log(`Setting status to ongoing for user ${application.owner.id}`);
+      console.log(`Setting status to ongoing for application ${application.id}`);
       return 'ongoing';
     }
   }
-  console.log(`No chat found, keeping status: ${application.status}`);
+  console.log(`No chat found for application ${application.id}, keeping status: ${application.status}`);
   return application.status;
 };
 
@@ -228,11 +230,11 @@ export default function Applications() {
     }
 
     try {
-      // Check if chat room already exists for this application
-      console.log('🔍 Checking for existing room for user:', application.owner.id);
+      // Check if chat room already exists for this specific application
+      console.log('🔍 Checking for existing room for user:', application.owner.id, 'and application:', application.id);
       console.log('🏠 Available rooms data:', roomsData?.results?.length || 0, 'rooms');
       
-      const existingRoom = findExistingRoom(application.owner.id);
+      const existingRoom = findExistingRoom(application.owner.id, application.id);
       console.log('🎯 Found existing room:', existingRoom?.id || 'none');
       
       if (existingRoom) {
