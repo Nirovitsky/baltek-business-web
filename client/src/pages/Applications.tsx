@@ -61,6 +61,24 @@ const getStatusTextColor = (status: string) => {
   }
 };
 
+// Helper function to format status text for display
+const formatStatusText = (status: string) => {
+  switch (status) {
+    case 'in_review':
+      return 'In Review';
+    case 'ongoing':
+      return 'Ongoing';
+    case 'rejected':
+      return 'Rejected';
+    case 'hired':
+      return 'Hired';
+    case 'expired':
+      return 'Expired';
+    default:
+      return 'Unknown';
+  }
+};
+
 // Helper function to determine actual status (check for active chats)
 const getActualStatus = (application: JobApplication, findExistingRoom: any, roomsData: any) => {
   // If there's an existing chat room with this user, status should be ongoing
@@ -417,7 +435,7 @@ export default function Applications() {
                           const actualStatus = getActualStatus(application, findExistingRoom, roomsData);
                           return (
                             <span className={`text-sm font-medium ${getStatusTextColor(actualStatus)}`}>
-                              {actualStatus ? actualStatus.charAt(0).toUpperCase() + actualStatus.slice(1) : 'Unknown'}
+                              {formatStatusText(actualStatus)}
                             </span>
                           );
                         })()}
@@ -623,7 +641,7 @@ export default function Applications() {
                       <span className={`text-sm font-medium ${getStatusTextColor(getActualStatus(selectedApplication, findExistingRoom, roomsData))}`}>
                         {(() => {
                           const actualStatus = getActualStatus(selectedApplication, findExistingRoom, roomsData);
-                          return actualStatus ? actualStatus.charAt(0).toUpperCase() + actualStatus.slice(1) : 'Unknown';
+                          return formatStatusText(actualStatus);
                         })()}
                       </span>
                       <div className="flex items-center space-x-2">
