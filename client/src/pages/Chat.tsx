@@ -893,8 +893,8 @@ export default function Chat() {
                       <Input
                         value={messageInput}
                         onChange={(e) => setMessageInput(e.target.value)}
-                        placeholder="Type a message..."
-                        disabled={sendingMessage || !connected}
+                        placeholder={isChatDisabled ? "Chat is disabled" : "Type a message..."}
+                        disabled={sendingMessage || !connected || isChatDisabled}
                         className="h-10"
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' && !e.shiftKey) {
