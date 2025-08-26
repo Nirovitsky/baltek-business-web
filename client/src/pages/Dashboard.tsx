@@ -47,17 +47,6 @@ export default function Dashboard() {
   const jobs = jobsData?.results || [];
   const applications = applicationsData?.results || [];
 
-  // Debug: Log all application statuses from backend
-  console.log(`📊 [DASHBOARD DEBUG] Total applications from backend: ${applications.length}`);
-  if (applications.length > 0) {
-    console.log(`📊 [DASHBOARD DEBUG] Application statuses:`, applications.map(app => ({ id: app.id, status: app.status })));
-    const statusCounts = applications.reduce((acc: any, app) => {
-      acc[app.status] = (acc[app.status] || 0) + 1;
-      return acc;
-    }, {});
-    console.log(`📊 [DASHBOARD DEBUG] Status counts:`, statusCounts);
-  }
-
   // Calculate real stats from API data
   const activeJobs = jobs.filter(job => job.status === 'open').length;
   const totalApplications = applicationsData?.count || 0;
