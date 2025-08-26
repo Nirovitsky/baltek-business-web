@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import type { ChatMessage } from "@/types";
+import type { ChatMessage, MessageAttachment } from "@/types";
 
 interface WebSocketMessage {
   type: string;
@@ -124,13 +124,33 @@ const WebSocketManager = {
             // Only add to current room's message list if it matches
             if (message.message.room === globalCurrentRoom) {
               console.log('✅ [WebSocket] Adding received message to current room:', globalCurrentRoom);
-              // Avoid duplicates by checking message ID
-              if (!globalMessages.some(m => m.id === message.message.id)) {
-                globalMessages = [...globalMessages, message.message];
-                lastSeenMessageId = Math.max(lastSeenMessageId || 0, message.message.id);
-                console.log('📋 [WebSocket] Global messages updated, count:', globalMessages.length);
+              
+              // Check if this message replaces an optimistic message
+              const receivedMessage = message.message;
+              const optimisticIndex = globalMessages.findIndex(m => 
+                m.isOptimistic && 
+                m.room === receivedMessage.room && 
+                m.text === receivedMessage.text &&
+                m.owner === receivedMessage.owner
+              );
+
+              if (optimisticIndex !== -1) {
+                // Replace optimistic message with real one
+                console.log('🔄 [WebSocket] Replacing optimistic message with real message');
+                globalMessages[optimisticIndex] = {
+                  ...receivedMessage,
+                  status: 'delivered',
+                  isOptimistic: false
+                };
               } else {
-                console.log('⚠️ [WebSocket] Duplicate message received, skipping');
+                // Avoid duplicates by checking message ID
+                if (!globalMessages.some(m => m.id === receivedMessage.id)) {
+                  globalMessages = [...globalMessages, { ...receivedMessage, status: 'delivered' }];
+                  lastSeenMessageId = Math.max(lastSeenMessageId || 0, receivedMessage.id);
+                  console.log('📋 [WebSocket] Global messages updated, count:', globalMessages.length);
+                } else {
+                  console.log('⚠️ [WebSocket] Duplicate message received, skipping');
+                }
               }
             } else {
               console.log('📝 [WebSocket] Message received for different room:', message.message.room, 'current:', globalCurrentRoom, '- will update room list only');
@@ -222,8 +242,8 @@ const WebSocketManager = {
 
   cleanup,
 
-  sendMessage: (roomId: number, text: string, attachments?: number[]) => {
-    console.log('📤 [WebSocket] Send message request:', { roomId, text, attachments });
+  sendMessage: (roomId: number, text: string, attachments?: number[], optimisticId?: string) => {
+    console.log('📤 [WebSocket] Send message request:', { roomId, text, attachments, optimisticId });
     // Apply 1024 character limit
     const trimmedText = text?.trim() || '';
     const limitedText = trimmedText.length > 1024 ? trimmedText.substring(0, 1024) : trimmedText;
@@ -232,7 +252,20 @@ const WebSocketManager = {
       // Queue message for later sending
       console.log('⚠️ [WebSocket] Not connected, queuing message. State:', globalSocket?.readyState);
       messageQueue.push({ roomId, content: limitedText, attachments });
-      return true; // Return true to indicate message was queued
+      
+      // Mark optimistic message as failed if provided
+      if (optimisticId) {
+        const messageIndex = globalMessages.findIndex(m => m.id === optimisticId);
+        if (messageIndex !== -1) {
+          globalMessages[messageIndex] = {
+            ...globalMessages[messageIndex],
+            status: 'failed',
+            error: 'No connection'
+          };
+          globalListeners.forEach(listener => listener());
+        }
+      }
+      return false;
     }
 
     try {
@@ -254,7 +287,56 @@ const WebSocketManager = {
       console.error('❌ [WebSocket] Failed to send message:', error);
       // Queue message for retry
       messageQueue.push({ roomId, content: limitedText, attachments });
-      return true; // Still return true as message was queued
+      
+      // Mark optimistic message as failed if provided
+      if (optimisticId) {
+        const messageIndex = globalMessages.findIndex(m => m.id === optimisticId);
+        if (messageIndex !== -1) {
+          globalMessages[messageIndex] = {
+            ...globalMessages[messageIndex],
+            status: 'failed',
+            error: 'Send failed'
+          };
+          globalListeners.forEach(listener => listener());
+        }
+      }
+      return false;
+    }
+  },
+
+  addOptimisticMessage: (roomId: number, text: string, senderId: number, senderInfo?: any, attachments?: MessageAttachment[]) => {
+    const optimisticId = `optimistic_${Date.now()}_${Math.random()}`;
+    const optimisticMessage: ChatMessage = {
+      id: optimisticId,
+      room: roomId,
+      owner: senderId,
+      text: text,
+      status: 'sending',
+      attachments: attachments || [],
+      date_created: Date.now() / 1000,
+      isOptimistic: true,
+      senderInfo: senderInfo
+    };
+
+    // Only add to current room
+    if (roomId === globalCurrentRoom) {
+      globalMessages = [...globalMessages, optimisticMessage];
+      globalListeners.forEach(listener => listener());
+    }
+
+    return optimisticId;
+  },
+
+  removeOptimisticMessage: (optimisticId: string) => {
+    globalMessages = globalMessages.filter(m => m.id !== optimisticId);
+    globalListeners.forEach(listener => listener());
+  },
+
+  updateOptimisticMessage: (optimisticId: string, updates: Partial<ChatMessage>) => {
+    const messageIndex = globalMessages.findIndex(m => m.id === optimisticId);
+    if (messageIndex !== -1) {
+      globalMessages[messageIndex] = { ...globalMessages[messageIndex], ...updates };
+      globalListeners.forEach(listener => listener());
     }
   },
 
@@ -334,6 +416,9 @@ export function useWebSocketGlobal() {
     currentRoom: globalCurrentRoom,
     sendMessage: WebSocketManager.sendMessage,
     joinRoom: WebSocketManager.joinRoom,
+    addOptimisticMessage: WebSocketManager.addOptimisticMessage,
+    removeOptimisticMessage: WebSocketManager.removeOptimisticMessage,
+    updateOptimisticMessage: WebSocketManager.updateOptimisticMessage,
     connect: (token: string) => WebSocketManager.connect(token),
     disconnect: WebSocketManager.disconnect,
     reconnect: () => {

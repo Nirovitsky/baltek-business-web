@@ -80,9 +80,20 @@ function MessageRenderer({ message, currentUser, onRetry, onImageClick }: Messag
         );
       case 'failed':
         return (
-          <div className="flex items-center gap-1 text-red-500">
+          <div className="flex items-center gap-2 text-red-500">
             <AlertTriangle className="h-3 w-3" />
             <span className="text-xs">Failed</span>
+            {onRetry && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-5 w-5 p-0 text-red-500 hover:text-red-600"
+                onClick={() => onRetry(message.id)}
+                title="Retry sending message"
+              >
+                <RotateCcw className="h-3 w-3" />
+              </Button>
+            )}
           </div>
         );
       default:
@@ -263,7 +274,7 @@ function MessageRenderer({ message, currentUser, onRetry, onImageClick }: Messag
   // If message has both text and attachments, show them as separate bubbles
   if (hasText && hasAttachments) {
     return (
-      <div className="space-y-2 mb-4">
+      <div className={`space-y-2 mb-4 ${message.isOptimistic ? 'opacity-75' : ''}`}>
         {/* Text bubble */}
         <div className={`flex gap-3 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
           {renderAvatar()}
@@ -276,7 +287,7 @@ function MessageRenderer({ message, currentUser, onRetry, onImageClick }: Messag
             
             <div className={`rounded-lg px-3 py-2 ${
               isOwn 
-                ? 'bg-blue-500 text-white' 
+                ? `bg-blue-500 text-white ${message.isOptimistic ? 'bg-blue-400' : ''}` 
                 : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
             }`}>
               <div className="whitespace-pre-wrap break-words">
@@ -309,7 +320,9 @@ function MessageRenderer({ message, currentUser, onRetry, onImageClick }: Messag
 
   // Single bubble for text only or attachments only
   return (
-    <div className={`flex gap-3 mb-4 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
+    <div className={`flex gap-3 mb-4 ${isOwn ? 'flex-row-reverse' : 'flex-row'} ${
+      message.isOptimistic ? 'opacity-75' : ''
+    }`}>
       {renderAvatar()}
       
       <div className={`flex flex-col max-w-[70%] ${isOwn ? 'items-end' : 'items-start'}`}>
@@ -322,7 +335,7 @@ function MessageRenderer({ message, currentUser, onRetry, onImageClick }: Messag
         {hasText && (
           <div className={`rounded-lg px-3 py-2 ${
             isOwn 
-              ? 'bg-blue-500 text-white' 
+              ? `bg-blue-500 text-white ${message.isOptimistic ? 'bg-blue-400' : ''}` 
               : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
           }`}>
             <div className="whitespace-pre-wrap break-words">

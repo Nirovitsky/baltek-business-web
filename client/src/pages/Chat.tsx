@@ -86,6 +86,9 @@ export default function Chat() {
     currentRoom,
     sendMessage,
     joinRoom,
+    addOptimisticMessage,
+    removeOptimisticMessage,
+    updateOptimisticMessage
   } = useWebSocketGlobal();
 
   // Fetch chat rooms filtered by selected organization
@@ -185,48 +188,80 @@ export default function Chat() {
     }
   };
 
-  // Handle sending messages
+  // Handle sending messages with optimistic UI
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if ((!messageInput.trim() && !uploadedAttachment) || !selectedConversation || isChatDisabled) return;
 
-    console.log('📤 [Chat] Sending message started:', {
-      text: messageInput.trim(),
-      room: selectedConversation,
-      hasAttachment: !!uploadedAttachment,
-      connected
-    });
+    const messageText = messageInput.trim();
+    const attachments = uploadedAttachment ? [{
+      id: uploadedAttachment.id,
+      file_name: uploadedAttachment.name,
+      file_url: uploadedAttachment.url,
+      content_type: '',
+      size: 0
+    }] : undefined;
+    
+    // Create optimistic message immediately
+    const optimisticId = addOptimisticMessage(
+      selectedConversation,
+      messageText,
+      activeUser.id,
+      {
+        id: activeUser.id,
+        first_name: activeUser.first_name,
+        last_name: activeUser.last_name,
+        avatar: user?.avatar,
+        profession: (user as any)?.profession || '',
+        is_online: true
+      },
+      attachments
+    );
+    
+    // Clear input immediately for better UX
+    setMessageInput("");
+    setSelectedFile(null);
+    setUploadedAttachment(null);
+    setTimeout(scrollToBottom, 100);
     
     setSendingMessage(true);
     
     try {
-      // Use the already uploaded attachment if available
-      const attachmentId = uploadedAttachment?.id;
-      
       // Send message via WebSocket
       const success = sendMessage(
         selectedConversation, 
-        messageInput.trim(), 
-        attachmentId ? [attachmentId] : undefined
+        messageText, 
+        uploadedAttachment ? [uploadedAttachment.id] : undefined,
+        optimisticId
       );
       
-      console.log('📤 [Chat] Message send result:', success);
-      
       if (success) {
-        setMessageInput("");
-        setSelectedFile(null);
-        setUploadedAttachment(null);
-        setTimeout(scrollToBottom, 100);
+        // Update optimistic message status to indicate it's being sent
+        updateOptimisticMessage(optimisticId, { status: 'sending' });
         
         // Immediately invalidate room list to update last message and sorting
-        console.log('🔄 [Chat] Message sent - immediately updating room list');
         queryClient.invalidateQueries({ 
           queryKey: ['/chat/rooms/']
         });
         
-        console.log('✅ [Chat] Message sent successfully');
+        // Set a timeout to mark as failed if no response comes back
+        setTimeout(() => {
+          // Check if optimistic message still exists (not replaced by real message)
+          if (wsMessages.some(m => m.id === optimisticId && m.isOptimistic)) {
+            updateOptimisticMessage(optimisticId, { 
+              status: 'failed',
+              error: 'Message delivery timeout'
+            });
+          }
+        }, 10000); // 10 second timeout
+        
       } else {
-        console.error('❌ [Chat] Message send failed');
+        // Mark optimistic message as failed
+        updateOptimisticMessage(optimisticId, { 
+          status: 'failed',
+          error: 'Failed to send'
+        });
+        
         toast({
           title: "Failed to send message",
           description: "Please check your connection and try again",
@@ -235,6 +270,13 @@ export default function Chat() {
       }
     } catch (error) {
       console.error('❌ [Chat] Message send error:', error);
+      
+      // Mark optimistic message as failed
+      updateOptimisticMessage(optimisticId, { 
+        status: 'failed',
+        error: 'Send error'
+      });
+      
       toast({
         title: "Failed to send message",
         description: "An error occurred while sending your message",
@@ -242,6 +284,39 @@ export default function Chat() {
       });
     } finally {
       setSendingMessage(false);
+    }
+  };
+
+  // Handle retrying failed messages
+  const handleRetryMessage = (messageId: string | number) => {
+    const messageToRetry = wsMessages.find(m => m.id === messageId);
+    if (!messageToRetry || !messageToRetry.isOptimistic) return;
+
+    // Remove the failed optimistic message
+    removeOptimisticMessage(messageId as string);
+
+    // Create a new optimistic message and try sending again
+    const optimisticId = addOptimisticMessage(
+      messageToRetry.room,
+      messageToRetry.text,
+      messageToRetry.owner,
+      messageToRetry.senderInfo,
+      messageToRetry.attachments
+    );
+
+    // Try sending the message again
+    const success = sendMessage(
+      messageToRetry.room,
+      messageToRetry.text,
+      messageToRetry.attachments?.map(a => a.id) || undefined,
+      optimisticId
+    );
+
+    if (!success) {
+      updateOptimisticMessage(optimisticId, { 
+        status: 'failed',
+        error: 'Retry failed'
+      });
     }
   };
 
@@ -804,6 +879,7 @@ export default function Chat() {
                           message={chatMessage}
                           currentUser={activeUser}
                           onImageClick={(src, alt) => setImageModal({ src, alt })}
+                          onRetry={handleRetryMessage}
                         />
                       );
                     })}
