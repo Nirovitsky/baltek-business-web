@@ -46,7 +46,7 @@ const formatDate = (timestamp?: number | string) => {
 // Helper function to get status colors for applications (plain text, no borders)
 const getStatusTextColor = (status: string) => {
   switch (status) {
-    case 'pending':
+    case 'in_review':
       return 'text-primary';
     case 'ongoing':
       return 'text-green-700 dark:text-green-300';
@@ -270,7 +270,7 @@ export default function Applications() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="in_review">In Review</SelectItem>
               <SelectItem value="ongoing">Ongoing</SelectItem>
               <SelectItem value="rejected">Rejected</SelectItem>
               <SelectItem value="hired">Hired</SelectItem>

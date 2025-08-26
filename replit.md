@@ -39,6 +39,11 @@ The Baltek Business Dashboard is a React and Express-based application for HR ma
     - Application verified working with external API connections
     - Date formatting fixed in RecentJobs dashboard component
     - Ready for deployment to production environment
+- **Status Enum Update (January 26, 2025)**: Updated application status handling to reflect API changes
+  - Changed "pending" status to "in_review" across all components
+  - Updated status filters, colors, and display text
+  - Status enum now includes: in_review, ongoing, rejected, hired, expired
+  - Maintained consistent status handling across Applications, RecentApplications, QuickActions, and modal components
 
 ## System Architecture
 

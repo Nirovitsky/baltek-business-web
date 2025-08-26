@@ -206,7 +206,7 @@ export default function JobDetailDialog({
                 </span>
                 <span className="text-sm text-muted-foreground flex items-center">
                   <Calendar className="w-4 h-4 mr-1" />
-                  Posted {formatDate(job.date_started)}
+                  Posted {formatDate(job.date_started?.toString())}
                 </span>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -293,7 +293,7 @@ export default function JobDetailDialog({
                     <div className="flex flex-wrap gap-2">
                       {languages.map((lang, index) => (
                         <Badge key={index} variant="outline">
-                          {typeof lang === 'object' && 'name' in lang ? lang.name : `Language ${lang}`}
+                          {typeof lang === 'object' && lang && 'name' in lang ? (lang as any).name : `Language ${lang}`}
                         </Badge>
                       ))}
                     </div>
@@ -320,11 +320,11 @@ export default function JobDetailDialog({
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm text-muted-foreground">Start Date:</span>
-                    <span className="text-sm font-medium">{formatDate(job.date_started)}</span>
+                    <span className="text-sm font-medium">{formatDate(job.date_started?.toString())}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm text-muted-foreground">End Date:</span>
-                    <span className="text-sm font-medium">{formatDate(job.date_ended)}</span>
+                    <span className="text-sm font-medium">{formatDate(job.date_ended?.toString())}</span>
                   </div>
                 </CardContent>
               </Card>

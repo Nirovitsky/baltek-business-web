@@ -35,7 +35,7 @@ export default function QuickActions({
     },
     {
       title: "Review Applications",
-      description: "Check pending applications",
+      description: "Check applications in review",
       icon: ClipboardList,
       iconBg: "bg-primary/10",
       iconColor: "text-primary",

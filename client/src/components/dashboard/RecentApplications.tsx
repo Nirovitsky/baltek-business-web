@@ -69,7 +69,7 @@ export default function RecentApplications() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending':
+      case 'in_review':
         return 'bg-primary/10 text-primary';
       case 'ongoing':
         return 'bg-green-100 text-green-800';
