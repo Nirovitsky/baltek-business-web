@@ -117,12 +117,17 @@ const WebSocketManager = {
               if (optimisticIndex !== -1) {
                 // Replace optimistic message with delivered message
                 console.log('🔄 [WebSocket] Replacing optimistic message with delivered message');
+                console.log('🔍 [WebSocket] Optimistic message before replacement:', globalMessages[optimisticIndex]);
                 globalMessages[optimisticIndex] = {
                   ...deliveredMessage,
                   status: 'delivered',
                   isOptimistic: false
                 };
                 lastSeenMessageId = Math.max(lastSeenMessageId || 0, deliveredMessage.id);
+                console.log('✅ [WebSocket] Optimistic message replaced:', globalMessages[optimisticIndex]);
+                
+                // Trigger UI update
+                globalListeners.forEach(listener => listener());
               } else {
                 // Avoid duplicates by checking message ID
                 if (!globalMessages.some(m => m.id === message.message.id)) {
@@ -358,10 +363,16 @@ const WebSocketManager = {
       senderInfo: senderInfo
     };
 
+    console.log('📝 [WebSocket] Adding optimistic message:', optimisticMessage);
+    console.log('🏠 [WebSocket] Current room:', globalCurrentRoom, 'Message room:', roomId);
+
     // Only add to current room
     if (roomId === globalCurrentRoom) {
       globalMessages = [...globalMessages, optimisticMessage];
+      console.log('✅ [WebSocket] Optimistic message added to UI, total messages:', globalMessages.length);
       globalListeners.forEach(listener => listener());
+    } else {
+      console.log('⚠️ [WebSocket] Not adding optimistic message - room mismatch');
     }
 
     return optimisticId;
