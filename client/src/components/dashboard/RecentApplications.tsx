@@ -84,6 +84,23 @@ export default function RecentApplications() {
     }
   };
 
+  const formatStatusText = (status: string) => {
+    switch (status) {
+      case 'in_review':
+        return 'In Review';
+      case 'ongoing':
+        return 'Ongoing';
+      case 'rejected':
+        return 'Rejected';
+      case 'hired':
+        return 'Hired';
+      case 'expired':
+        return 'Expired';
+      default:
+        return 'Unknown';
+    }
+  };
+
   const formatApplicationDate = (timestamp: number | string) => {
     try {
       let date: Date;
@@ -179,7 +196,7 @@ export default function RecentApplications() {
                 </div>
                 <div className="flex items-center space-x-2">
                   <Badge variant="secondary" className={getStatusColor(application.status)}>
-                    {application.status ? application.status.charAt(0).toUpperCase() + application.status.slice(1) : 'Unknown'}
+                    {formatStatusText(application.status)}
                   </Badge>
                   <ChevronRight 
                     className="text-gray-400 w-4 h-4 cursor-pointer hover:text-primary"
