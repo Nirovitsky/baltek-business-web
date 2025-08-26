@@ -58,8 +58,8 @@ export function useNotifications(enabled: boolean = true) {
     queryKey: ['/notifications/'],
     queryFn: () => apiService.request<PaginatedResponse<Notification>>('/notifications/'),
     enabled: enabled, // Only fetch when explicitly enabled
-    staleTime: 10 * 60 * 1000, // Consider data fresh for 10 minutes 
-    gcTime: 30 * 60 * 1000, // Keep in cache for 30 minutes
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes 
+    gcTime: 15 * 60 * 1000, // Keep in cache for 15 minutes
     refetchOnWindowFocus: false, // Don't refetch on window focus
     refetchOnMount: false, // Don't refetch on component mount if data exists  
     refetchInterval: false, // Disable automatic polling - only refetch manually
@@ -217,8 +217,36 @@ export function useNotifications(enabled: boolean = true) {
         headers: { 'Content-Type': 'application/json' }
       });
     },
-    onSuccess: () => {
-      // Invalidate notifications to refetch updated data
+    onMutate: async (notificationId) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['/notifications/'] });
+
+      // Snapshot the previous value
+      const previousNotifications = queryClient.getQueryData(['/notifications/']);
+
+      // Optimistically update to the new value
+      queryClient.setQueryData(['/notifications/'], (old: any) => {
+        if (!old?.results) return old;
+        return {
+          ...old,
+          results: old.results.map((notification: Notification) => 
+            notification.id === notificationId 
+              ? { ...notification, is_read: true }
+              : notification
+          )
+        };
+      });
+
+      return { previousNotifications };
+    },
+    onError: (err, notificationId, context) => {
+      // Rollback on error
+      if (context?.previousNotifications) {
+        queryClient.setQueryData(['/notifications/'], context.previousNotifications);
+      }
+    },
+    onSettled: () => {
+      // Always refetch after error or success
       queryClient.invalidateQueries({ queryKey: ['/notifications/'] });
     },
   });
@@ -236,11 +264,36 @@ export function useNotifications(enabled: boolean = true) {
       );
       return Promise.all(promises);
     },
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ['/notifications/'] });
+      const previousNotifications = queryClient.getQueryData(['/notifications/']);
+
+      // Optimistically mark all as read
+      queryClient.setQueryData(['/notifications/'], (old: any) => {
+        if (!old?.results) return old;
+        return {
+          ...old,
+          results: old.results.map((notification: Notification) => ({ 
+            ...notification, 
+            is_read: true 
+          }))
+        };
+      });
+
+      return { previousNotifications };
+    },
+    onError: (err, variables, context) => {
+      if (context?.previousNotifications) {
+        queryClient.setQueryData(['/notifications/'], context.previousNotifications);
+      }
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/notifications/'] });
       toast({
         title: "All notifications marked as read",
       });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['/notifications/'] });
     },
   });
 
@@ -250,7 +303,28 @@ export function useNotifications(enabled: boolean = true) {
         method: 'DELETE'
       });
     },
-    onSuccess: () => {
+    onMutate: async (notificationId) => {
+      await queryClient.cancelQueries({ queryKey: ['/notifications/'] });
+      const previousNotifications = queryClient.getQueryData(['/notifications/']);
+
+      // Optimistically remove the notification
+      queryClient.setQueryData(['/notifications/'], (old: any) => {
+        if (!old?.results) return old;
+        return {
+          ...old,
+          results: old.results.filter((notification: Notification) => notification.id !== notificationId),
+          count: old.count - 1
+        };
+      });
+
+      return { previousNotifications };
+    },
+    onError: (err, notificationId, context) => {
+      if (context?.previousNotifications) {
+        queryClient.setQueryData(['/notifications/'], context.previousNotifications);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['/notifications/'] });
     },
   });

@@ -4,6 +4,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { useAuth } from "@/hooks/useAuth";
 import { useWebSocketGlobal } from "@/hooks/useWebSocketGlobal";
 import { useEffect, useState } from "react";
@@ -219,16 +220,20 @@ function AppRoutes() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <ThemeProvider defaultTheme="system" storageKey="baltek-ui-theme">
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <Toaster />
-            <AppRoutes />
-          </TooltipProvider>
-        </QueryClientProvider>
-      </ThemeProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <ThemeProvider defaultTheme="system" storageKey="baltek-ui-theme">
+          <QueryClientProvider client={queryClient}>
+            <TooltipProvider>
+              <Toaster />
+              <ErrorBoundary>
+                <AppRoutes />
+              </ErrorBoundary>
+            </TooltipProvider>
+          </QueryClientProvider>
+        </ThemeProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 

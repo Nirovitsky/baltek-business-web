@@ -12,7 +12,7 @@ export function useReferenceData() {
     data: categories = [], 
     isLoading: isLoadingCategories 
   } = useQuery({
-    queryKey: ['/api/categories/'],
+    queryKey: ['/categories/'],
     queryFn: () => apiService.request<Category[]>('/categories/'),
     staleTime: 15 * 60 * 1000, // 15 minutes - categories don't change often
     gcTime: 30 * 60 * 1000, // Keep in cache for 30 minutes
@@ -24,7 +24,7 @@ export function useReferenceData() {
     data: locationsResponse, 
     isLoading: isLoadingLocations 
   } = useQuery({
-    queryKey: ['/api/locations/'],
+    queryKey: ['/locations/'],
     queryFn: () => apiService.request<PaginatedResponse<Location>>('/locations/'),
     staleTime: 15 * 60 * 1000, // 15 minutes - locations don't change often
     gcTime: 30 * 60 * 1000, // Keep in cache for 30 minutes

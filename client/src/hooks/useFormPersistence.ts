@@ -1,7 +1,7 @@
 import { useCallback, useState, useEffect } from 'react';
-import { UseFormReturn } from 'react-hook-form';
+import { UseFormReturn, FieldValues } from 'react-hook-form';
 
-export function useFormPersistence<T>(
+export function useFormPersistence<T extends FieldValues>(
   form: UseFormReturn<T>,
   storageKey: string,
   options: {
@@ -60,15 +60,18 @@ export function useFormPersistence<T>(
   useEffect(() => {
     if (!enabled) return;
 
+    let timeoutId: NodeJS.Timeout;
     const subscription = form.watch((data) => {
-      const timeoutId = setTimeout(() => {
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
         saveDraft(data);
       }, debounceMs);
-      
-      return () => clearTimeout(timeoutId);
     });
     
-    return () => subscription.unsubscribe();
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      subscription.unsubscribe();
+    };
   }, [form, saveDraft, debounceMs, enabled]);
 
   return {

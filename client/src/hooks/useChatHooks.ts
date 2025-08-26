@@ -5,11 +5,13 @@ import type { User, ChatRoom, ChatMessage, PaginatedResponse } from "@/types";
 // Chat rooms hook with optional organization filtering
 export function useChatRooms(organizationId?: number) {
   return useQuery({
-    queryKey: ['/chat/rooms/', organizationId],
+    queryKey: ['/chat/rooms/'],  // Use consistent cache key
     queryFn: () => apiService.request<PaginatedResponse<ChatRoom>>('/chat/rooms/'),
-    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    staleTime: 2 * 60 * 1000, // Consider data fresh for 2 minutes
+    gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
+    refetchOnWindowFocus: false,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
     select: (data) => {
       if (!organizationId) return data;
       
@@ -33,6 +35,9 @@ export function useChatMessages(roomId?: number) {
     queryKey: ['/chat/messages/', roomId],
     queryFn: () => apiService.request<PaginatedResponse<ChatMessage>>(`/chat/messages/?room=${roomId}`),
     enabled: !!roomId,
+    staleTime: 30 * 1000, // Consider fresh for 30 seconds
+    gcTime: 2 * 60 * 1000, // Keep in cache for 2 minutes
+    refetchOnWindowFocus: false,
     retry: 2,
     retryDelay: 1000,
   });

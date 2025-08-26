@@ -12,7 +12,7 @@ export function useOrganizations() {
     error,
     refetch
   } = useQuery({
-    queryKey: ['/api/organizations/', 'owned'],
+    queryKey: ['/organizations/', 'owned'],
     queryFn: () => apiService.request<Organization[]>('/organizations/?owned=true'),
     staleTime: 5 * 60 * 1000, // Consider fresh for 5 minutes
     gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
@@ -29,7 +29,7 @@ export function useOrganizations() {
       }),
     onSuccess: () => {
       // Invalidate and refetch organizations
-      queryClient.invalidateQueries({ queryKey: ['/api/organizations/', 'owned'] });
+      queryClient.invalidateQueries({ queryKey: ['/organizations/', 'owned'] });
     },
   });
 
@@ -42,7 +42,7 @@ export function useOrganizations() {
       }),
     onSuccess: () => {
       // Invalidate and refetch organizations
-      queryClient.invalidateQueries({ queryKey: ['/api/organizations/', 'owned'] });
+      queryClient.invalidateQueries({ queryKey: ['/organizations/', 'owned'] });
     },
   });
 
@@ -53,7 +53,7 @@ export function useOrganizations() {
 
   // Force refresh organizations
   const refreshOrganizations = () => {
-    return queryClient.invalidateQueries({ queryKey: ['/api/organizations/', 'owned'] });
+    return queryClient.invalidateQueries({ queryKey: ['/organizations/', 'owned'] });
   };
 
   return {
@@ -71,7 +71,7 @@ export function useOrganizations() {
 // Separate hook to fetch organization by ID
 export function useOrganizationById(id: number | undefined) {
   return useQuery({
-    queryKey: ['/api/organizations/', id],
+    queryKey: ['/organizations/', id],
     queryFn: () => apiService.request<Organization>(`/organizations/${id}/`),
     enabled: !!id,
     staleTime: 5 * 60 * 1000,
@@ -94,7 +94,7 @@ export function useOrganizationMutations() {
       }),
     onSuccess: () => {
       // Invalidate organization details and list
-      queryClient.invalidateQueries({ queryKey: ['/api/organizations/'] });
+      queryClient.invalidateQueries({ queryKey: ['/organizations/'] });
     },
   });
 

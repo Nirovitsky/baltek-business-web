@@ -136,20 +136,48 @@ export default function Applications() {
         },
       });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/jobs/applications/'] });
-      toast({
-        title: "Success",
-        description: "Application status updated successfully",
+    onMutate: async ({ id, status }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['/jobs/applications/'] });
+
+      // Snapshot the previous value
+      const previousApplications = queryClient.getQueryData(['/jobs/applications/', statusFilter, selectedOrganization?.id]);
+
+      // Optimistically update to the new value
+      queryClient.setQueryData(['/jobs/applications/', statusFilter, selectedOrganization?.id], (old: any) => {
+        if (!old?.results) return old;
+        return {
+          ...old,
+          results: old.results.map((app: JobApplication) => 
+            app.id === id ? { ...app, status } : app
+          )
+        };
       });
+
+      return { previousApplications };
     },
-    onError: (error: any) => {
+    onError: (error: any, variables, context) => {
+      // Rollback on error
+      if (context?.previousApplications) {
+        queryClient.setQueryData(['/jobs/applications/', statusFilter, selectedOrganization?.id], context.previousApplications);
+      }
+      
       console.error('Application status update error:', error);
       toast({
         title: "Error",
         description: `Failed to update status: ${error.message || 'Unknown error'}. The backend may still have references to old status values.`,
         variant: "destructive",
       });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Application status updated successfully",
+      });
+    },
+    onSettled: () => {
+      // Always refetch after error or success
+      queryClient.invalidateQueries({ queryKey: ['/jobs/applications/'] });
     },
   });
 

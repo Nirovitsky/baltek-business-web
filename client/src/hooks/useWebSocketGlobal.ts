@@ -23,6 +23,24 @@ let lastSeenMessageId: number | null = null;
 let resyncCallbacks: Set<() => void> = new Set();
 let wasDisconnected = false;
 
+// Cleanup function for global state
+const cleanup = () => {
+  globalSocket = null;
+  globalConnected = false;
+  globalMessages = [];
+  globalCurrentRoom = null;
+  globalListeners.clear();
+  messageQueue = [];
+  lastSeenMessageId = null;
+  resyncCallbacks.clear();
+  wasDisconnected = false;
+  if (reconnectInterval) {
+    clearTimeout(reconnectInterval);
+    reconnectInterval = null;
+  }
+  reconnectAttempts = 0;
+};
+
 // Global WebSocket manager
 const WebSocketManager = {
   connect: (token: string) => {
@@ -190,24 +208,19 @@ const WebSocketManager = {
   },
 
   disconnect: () => {
-    // Clear reconnection attempts when manually disconnecting
-    if (reconnectInterval) {
-      clearTimeout(reconnectInterval);
-      reconnectInterval = null;
-    }
-    reconnectAttempts = 0;
+    // Proper cleanup of all global state
+    cleanup();
     
+    // Close existing connection
     if (globalSocket && globalSocket.readyState === WebSocket.OPEN) {
       globalSocket.close();
     }
-    globalSocket = null;
-    globalConnected = false;
-    globalMessages = [];
-    globalCurrentRoom = null;
     
-    // Notify all listeners
+    // Notify all listeners about disconnection
     globalListeners.forEach(listener => listener());
   },
+
+  cleanup,
 
   sendMessage: (roomId: number, text: string, attachments?: number[]) => {
     console.log('📤 [WebSocket] Send message request:', { roomId, text, attachments });
