@@ -86,19 +86,46 @@ export default function Profile() {
         method: "PATCH",
         body: JSON.stringify(data),
       }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/users", user?.id] });
-      setIsEditing(false);
-      toast({
-        title: "Profile updated",
-        description: "Your profile has been successfully updated.",
+    onMutate: async (data) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ["/users", user?.id] });
+      
+      // Snapshot the previous value
+      const previousProfile = queryClient.getQueryData(["/users", user?.id]);
+      
+      // Optimistically update the profile
+      queryClient.setQueryData(["/users", user?.id], (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          ...data,
+          updated_at: new Date().toISOString()
+        };
       });
+      
+      // Immediately exit editing mode to show updated values
+      setIsEditing(false);
+      
+      return { previousProfile };
     },
-    onError: () => {
+    onError: (err, data, context) => {
+      // Rollback on error
+      if (context?.previousProfile) {
+        queryClient.setQueryData(["/users", user?.id], context.previousProfile);
+      }
+      // Re-enter editing mode on error
+      setIsEditing(true);
       toast({
         title: "Error",
         description: "Failed to update profile. Please try again.",
         variant: "destructive",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/users", user?.id] });
+      toast({
+        title: "Profile updated",
+        description: "Your profile has been successfully updated.",
       });
     },
   });

@@ -45,19 +45,63 @@ export default function JobDetails() {
       method: 'PATCH',
       body: JSON.stringify({ status: job?.status === 'archived' ? 'open' : 'archived' }),
     }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
-      queryClient.invalidateQueries({ queryKey: ['/jobs/', id] });
-      toast({
-        title: "Success",
-        description: `Job ${job?.status === 'archived' ? 'unarchived' : 'archived'} successfully`,
+    onMutate: async () => {
+      const newStatus = job?.status === 'archived' ? 'open' : 'archived';
+      
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['/jobs/', id] });
+      await queryClient.cancelQueries({ queryKey: ['/jobs/'] });
+      
+      // Snapshot the previous values
+      const previousJob = queryClient.getQueryData(['/jobs/', id]);
+      
+      // Optimistically update the individual job
+      queryClient.setQueryData(['/jobs/', id], (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          status: newStatus,
+          updated_at: new Date().toISOString()
+        };
       });
+      
+      // Optimistically update the job in all job lists
+      const updateJobInList = (old: any) => {
+        if (!old?.results) return old;
+        return {
+          ...old,
+          results: old.results.map((j: any) => 
+            j.id === parseInt(id!) 
+              ? { ...j, status: newStatus, updated_at: new Date().toISOString() }
+              : j
+          )
+        };
+      };
+      
+      // Update all possible job list queries
+      queryClient.setQueriesData({ queryKey: ['/jobs/'] }, updateJobInList);
+      
+      return { previousJob, newStatus };
     },
-    onError: (error: any) => {
+    onError: (error: any, variables, context) => {
+      // Rollback on error
+      if (context?.previousJob) {
+        queryClient.setQueryData(['/jobs/', id], context.previousJob);
+      }
+      // Invalidate to refresh from server
+      queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
       toast({
         title: "Error",
         description: error.message || "Failed to update job status",
         variant: "destructive",
+      });
+    },
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
+      queryClient.invalidateQueries({ queryKey: ['/jobs/', id] });
+      toast({
+        title: "Success",
+        description: `Job ${context?.newStatus === 'archived' ? 'archived' : 'unarchived'} successfully`,
       });
     },
   });
@@ -66,19 +110,52 @@ export default function JobDetails() {
     mutationFn: () => apiService.request(`/jobs/${id}/`, {
       method: 'DELETE',
     }),
+    onMutate: async () => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['/jobs/'] });
+      
+      // Snapshot the previous job lists
+      const previousJobsQueries = queryClient.getQueriesData({ queryKey: ['/jobs/'] });
+      
+      // Optimistically remove the job from all job lists
+      const updateJobLists = (old: any) => {
+        if (!old?.results) return old;
+        return {
+          ...old,
+          results: old.results.filter((j: any) => j.id !== parseInt(id!)),
+          count: old.count - 1
+        };
+      };
+      
+      queryClient.setQueriesData({ queryKey: ['/jobs/'] }, updateJobLists);
+      
+      // Immediately navigate away since job will be deleted
+      navigate('/jobs');
+      
+      return { previousJobsQueries };
+    },
+    onError: (error: any, variables, context) => {
+      // Rollback on error - restore all job lists
+      if (context?.previousJobsQueries) {
+        context.previousJobsQueries.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
+      // Navigate back if we already left
+      if (window.location.pathname === '/jobs') {
+        navigate(`/jobs/${id}`);
+      }
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete job",
+        variant: "destructive",
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
       toast({
         title: "Success",
         description: "Job deleted successfully",
-      });
-      navigate('/jobs');
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to delete job",
-        variant: "destructive",
       });
     },
   });

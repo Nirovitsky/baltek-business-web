@@ -173,19 +173,63 @@ export default function CreateJob() {
       method: 'POST',
       body: JSON.stringify(data),
     }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
-      queryClient.invalidateQueries({ queryKey: ['/jobs/', selectedOrganization?.id] });
-      queryClient.refetchQueries({ queryKey: ['/jobs/'] });
-      // Clear draft on successful submission
-      clearDraft();
-      toast({
-        title: "Success",
-        description: "Job posting created successfully",
-      });
+    onMutate: async (data) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['/jobs/'] });
+      
+      // Snapshot the previous job lists
+      const previousJobsQueries = queryClient.getQueriesData({ queryKey: ['/jobs/'] });
+      
+      // Create optimistic job
+      const tempId = Date.now();
+      const optimisticJob = {
+        id: tempId,
+        title: data.title,
+        description: data.description,
+        organization: selectedOrganization,
+        location: locations.find(l => l.id === data.location) || data.location,
+        category: categories.find(c => c.id === data.category) || data.category,
+        job_type: data.job_type,
+        experience_level: data.experience_level,
+        min_education_level: data.min_education_level,
+        salary_from: data.salary_from,
+        salary_to: data.salary_to,
+        salary_payment_type: data.salary_payment_type,
+        currency: data.currency,
+        required_languages: data.required_languages,
+        date_started: data.date_started,
+        date_ended: data.date_ended,
+        status: data.status || 'open',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        applications_count: 0
+      };
+      
+      // Optimistically add to all relevant job lists
+      const updateJobLists = (old: any) => {
+        if (!old?.results) return { results: [optimisticJob], count: 1 };
+        return {
+          ...old,
+          results: [optimisticJob, ...old.results],
+          count: old.count + 1
+        };
+      };
+      
+      queryClient.setQueriesData({ queryKey: ['/jobs/'] }, updateJobLists);
+      
+      // Immediately navigate to jobs page
       navigate('/jobs');
+      
+      return { previousJobsQueries, tempId };
     },
-    onError: (error: any) => {
+    onError: (error: any, data, context) => {
+      // Rollback on error - restore all job lists
+      if (context?.previousJobsQueries) {
+        context.previousJobsQueries.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
+      
       console.error("Job creation error:", error);
       let errorMessage = "Failed to create job posting";
       
@@ -209,6 +253,30 @@ export default function CreateJob() {
         variant: "destructive",
       });
     },
+    onSuccess: (data, variables, context) => {
+      // Replace optimistic job with real data
+      if (context?.tempId && data) {
+        const updateWithRealData = (old: any) => {
+          if (!old?.results) return old;
+          return {
+            ...old,
+            results: old.results.map((job: any) => 
+              job.id === context.tempId ? data : job
+            )
+          };
+        };
+        
+        queryClient.setQueriesData({ queryKey: ['/jobs/'] }, updateWithRealData);
+      }
+      
+      queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
+      // Clear draft on successful submission
+      clearDraft();
+      toast({
+        title: "Success",
+        description: "Job posting created successfully",
+      });
+    },
   });
 
   const updateMutation = useMutation({
@@ -216,24 +284,83 @@ export default function CreateJob() {
       method: 'PUT',
       body: JSON.stringify(data),
     }),
+    onMutate: async (data) => {
+      const jobId = job!.id;
+      
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['/jobs/'] });
+      await queryClient.cancelQueries({ queryKey: ['/jobs/', jobId] });
+      
+      // Snapshot the previous values
+      const previousJobsQueries = queryClient.getQueriesData({ queryKey: ['/jobs/'] });
+      const previousJob = queryClient.getQueryData(['/jobs/', jobId]);
+      
+      // Create updated job data
+      const updatedJob = {
+        ...job,
+        title: data.title,
+        description: data.description,
+        location: locations.find(l => l.id === data.location) || data.location,
+        category: categories.find(c => c.id === data.category) || data.category,
+        job_type: data.job_type,
+        experience_level: data.experience_level,
+        min_education_level: data.min_education_level,
+        salary_from: data.salary_from,
+        salary_to: data.salary_to,
+        salary_payment_type: data.salary_payment_type,
+        currency: data.currency,
+        required_languages: data.required_languages,
+        date_started: data.date_started,
+        date_ended: data.date_ended,
+        status: data.status,
+        updated_at: new Date().toISOString()
+      };
+      
+      // Update individual job
+      queryClient.setQueryData(['/jobs/', jobId], updatedJob);
+      
+      // Update job in all job lists
+      const updateJobInLists = (old: any) => {
+        if (!old?.results) return old;
+        return {
+          ...old,
+          results: old.results.map((j: any) => 
+            j.id === jobId ? updatedJob : j
+          )
+        };
+      };
+      
+      queryClient.setQueriesData({ queryKey: ['/jobs/'] }, updateJobInLists);
+      
+      // Immediately navigate to jobs page
+      navigate('/jobs');
+      
+      return { previousJobsQueries, previousJob, jobId };
+    },
+    onError: (error: any, data, context) => {
+      // Rollback on error
+      if (context?.previousJobsQueries) {
+        context.previousJobsQueries.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
+      if (context?.previousJob && context?.jobId) {
+        queryClient.setQueryData(['/jobs/', context.jobId], context.previousJob);
+      }
+      
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update job posting",
+        variant: "destructive",
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
-      queryClient.invalidateQueries({ queryKey: ['/jobs/', selectedOrganization?.id] });
-      queryClient.invalidateQueries({ queryKey: ['/jobs/', job!.id] });
-      queryClient.refetchQueries({ queryKey: ['/jobs/'] });
       // Clear draft on successful submission
       clearDraft();
       toast({
         title: "Success",
         description: "Job posting updated successfully",
-      });
-      navigate('/jobs');
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update job posting",
-        variant: "destructive",
       });
     },
   });

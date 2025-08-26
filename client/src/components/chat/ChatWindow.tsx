@@ -33,7 +33,7 @@ export default function ChatWindow({ roomId }: ChatWindowProps) {
     enabled: !!roomId,
   });
 
-  // Send message mutation
+  // Send message mutation with optimistic updates
   const sendMessageMutation = useMutation({
     mutationFn: (content: string) => apiService.request<Message>('/chat/messages/', {
       method: 'POST',
@@ -42,9 +42,65 @@ export default function ChatWindow({ roomId }: ChatWindowProps) {
         content,
       }),
     }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/chat/messages/', roomId] });
+    onMutate: async (content) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['/chat/messages/', roomId] });
+      
+      // Snapshot the previous messages
+      const previousMessages = queryClient.getQueryData(['/chat/messages/', roomId]);
+      
+      // Create optimistic message
+      const tempId = Date.now();
+      const optimisticMessage = {
+        id: tempId,
+        room: roomId,
+        content,
+        owner: {
+          id: 0, // Will be filled by server
+          first_name: 'You',
+          last_name: '',
+        },
+        date_created: new Date().toISOString(),
+        isOptimistic: true
+      };
+      
+      // Optimistically add the message
+      queryClient.setQueryData(['/chat/messages/', roomId], (old: any) => {
+        if (!old?.results) return { results: [optimisticMessage], count: 1 };
+        return {
+          ...old,
+          results: [...old.results, optimisticMessage],
+          count: old.count + 1
+        };
+      });
+      
+      // Clear input immediately
       setNewMessage("");
+      
+      return { previousMessages, tempId };
+    },
+    onError: (err, content, context) => {
+      // Rollback on error
+      if (context?.previousMessages) {
+        queryClient.setQueryData(['/chat/messages/', roomId], context.previousMessages);
+      }
+      // Restore the message in input
+      setNewMessage(content);
+    },
+    onSuccess: (data, content, context) => {
+      // Replace optimistic message with real data
+      if (context?.tempId && data) {
+        queryClient.setQueryData(['/chat/messages/', roomId], (old: any) => {
+          if (!old?.results) return old;
+          return {
+            ...old,
+            results: old.results.map((msg: any) => 
+              msg.id === context.tempId ? data : msg
+            )
+          };
+        });
+      }
+      queryClient.invalidateQueries({ queryKey: ['/chat/messages/', roomId] });
     },
   });
 

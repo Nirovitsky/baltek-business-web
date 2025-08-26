@@ -43,18 +43,41 @@ export default function Jobs() {
     mutationFn: (jobId: number) => apiService.request(`/jobs/${jobId}/`, {
       method: 'DELETE',
     }),
+    onMutate: async (jobId) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['/jobs/'] });
+      
+      // Snapshot the previous value
+      const previousJobs = queryClient.getQueryData(['/jobs/', selectedOrganization?.id, searchTerm, statusFilter]);
+      
+      // Optimistically remove the job
+      queryClient.setQueryData(['/jobs/', selectedOrganization?.id, searchTerm, statusFilter], (old: any) => {
+        if (!old?.results) return old;
+        return {
+          ...old,
+          results: old.results.filter((job: Job) => job.id !== jobId),
+          count: old.count - 1
+        };
+      });
+      
+      return { previousJobs, jobId };
+    },
+    onError: (error: any, jobId, context) => {
+      // Rollback on error
+      if (context?.previousJobs) {
+        queryClient.setQueryData(['/jobs/', selectedOrganization?.id, searchTerm, statusFilter], context.previousJobs);
+      }
+      toast({
+        title: "Error", 
+        description: error.message || "Failed to delete job posting",
+        variant: "destructive",
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
       toast({
         title: "Success",
         description: "Job posting deleted successfully",
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error", 
-        description: error.message || "Failed to delete job posting",
-        variant: "destructive",
       });
     },
   });

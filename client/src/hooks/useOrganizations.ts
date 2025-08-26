@@ -27,7 +27,53 @@ export function useOrganizations() {
         method: 'POST',
         body: JSON.stringify(organizationData),
       }),
-    onSuccess: () => {
+    onMutate: async (organizationData) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['/organizations/', 'owned'] });
+      
+      // Snapshot the previous value
+      const previousOrganizations = queryClient.getQueryData(['/organizations/', 'owned']);
+      
+      // Optimistically update the cache with temporary organization
+      const tempId = Date.now(); // Temporary ID for optimistic update
+      const optimisticOrganization = {
+        id: tempId,
+        official_name: organizationData.official_name,
+        display_name: organizationData.display_name || organizationData.official_name,
+        about_us: organizationData.about_us || '',
+        website: organizationData.website || '',
+        email: organizationData.email || '',
+        phone: organizationData.phone || '',
+        category: organizationData.category,
+        location: organizationData.location,
+        logo: organizationData.logo || null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        is_owner: true,
+        projects: []
+      };
+      
+      queryClient.setQueryData(['/organizations/', 'owned'], (old: any) => {
+        if (!old || !Array.isArray(old)) return [optimisticOrganization];
+        return [optimisticOrganization, ...old];
+      });
+      
+      return { previousOrganizations, tempId };
+    },
+    onError: (err, organizationData, context) => {
+      // Rollback on error
+      if (context?.previousOrganizations) {
+        queryClient.setQueryData(['/organizations/', 'owned'], context.previousOrganizations);
+      }
+    },
+    onSuccess: (data, variables, context) => {
+      // Replace temporary organization with real data
+      if (context?.tempId && data) {
+        queryClient.setQueryData(['/organizations/', 'owned'], (old: any) => {
+          if (!old || !Array.isArray(old)) return [data];
+          return old.map((org: any) => org.id === context.tempId ? data : org);
+        });
+      }
       // Invalidate and refetch organizations
       queryClient.invalidateQueries({ queryKey: ['/organizations/', 'owned'] });
     },
@@ -40,6 +86,50 @@ export function useOrganizations() {
         method: 'PATCH',
         body: JSON.stringify(data),
       }),
+    onMutate: async ({ id, data }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['/organizations/', 'owned'] });
+      await queryClient.cancelQueries({ queryKey: ['/organizations/', id] });
+      
+      // Snapshot the previous values
+      const previousOrganizations = queryClient.getQueryData(['/organizations/', 'owned']);
+      const previousOrganization = queryClient.getQueryData(['/organizations/', id]);
+      
+      // Optimistically update organization in list
+      queryClient.setQueryData(['/organizations/', 'owned'], (old: any) => {
+        if (!old || !Array.isArray(old)) return old;
+        return old.map((org: any) => {
+          if (org.id === id) {
+            return { 
+              ...org, 
+              ...data,
+              updated_at: new Date().toISOString()
+            };
+          }
+          return org;
+        });
+      });
+      
+      // Optimistically update individual organization if cached
+      if (previousOrganization) {
+        queryClient.setQueryData(['/organizations/', id], (old: any) => ({
+          ...old,
+          ...data,
+          updated_at: new Date().toISOString()
+        }));
+      }
+      
+      return { previousOrganizations, previousOrganization, id };
+    },
+    onError: (err, variables, context) => {
+      // Rollback on error
+      if (context?.previousOrganizations) {
+        queryClient.setQueryData(['/organizations/', 'owned'], context.previousOrganizations);
+      }
+      if (context?.previousOrganization && context?.id) {
+        queryClient.setQueryData(['/organizations/', context.id], context.previousOrganization);
+      }
+    },
     onSuccess: () => {
       // Invalidate and refetch organizations
       queryClient.invalidateQueries({ queryKey: ['/organizations/', 'owned'] });
@@ -92,6 +182,49 @@ export function useOrganizationMutations() {
         method: 'PATCH',
         body: JSON.stringify(data),
       }),
+    onMutate: async ({ id, data }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['/organizations/'] });
+      
+      // Snapshot the previous values
+      const previousOrganizations = queryClient.getQueryData(['/organizations/', 'owned']);
+      const previousOrganization = queryClient.getQueryData(['/organizations/', id]);
+      
+      // Optimistically update organization in list
+      queryClient.setQueryData(['/organizations/', 'owned'], (old: any) => {
+        if (!old || !Array.isArray(old)) return old;
+        return old.map((org: any) => {
+          if (org.id === id) {
+            return { 
+              ...org, 
+              ...data,
+              updated_at: new Date().toISOString()
+            };
+          }
+          return org;
+        });
+      });
+      
+      // Optimistically update individual organization if cached
+      if (previousOrganization) {
+        queryClient.setQueryData(['/organizations/', id], (old: any) => ({
+          ...old,
+          ...data,
+          updated_at: new Date().toISOString()
+        }));
+      }
+      
+      return { previousOrganizations, previousOrganization, id };
+    },
+    onError: (err, variables, context) => {
+      // Rollback on error
+      if (context?.previousOrganizations) {
+        queryClient.setQueryData(['/organizations/', 'owned'], context.previousOrganizations);
+      }
+      if (context?.previousOrganization && context?.id) {
+        queryClient.setQueryData(['/organizations/', context.id], context.previousOrganization);
+      }
+    },
     onSuccess: () => {
       // Invalidate organization details and list
       queryClient.invalidateQueries({ queryKey: ['/organizations/'] });
