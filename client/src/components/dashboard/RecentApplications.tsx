@@ -19,14 +19,15 @@ export default function RecentApplications() {
   const [selectedApplication, setSelectedApplication] = useState<JobApplication | null>(null);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['/jobs/applications/'],
+    queryKey: ['/jobs/applications/', selectedOrganization?.id], // Use same cache key as Dashboard
     queryFn: () => {
       const params = new URLSearchParams();
-      params.append('limit', '4');
-      params.append('ordering', '-created_at'); // Get most recent first
+      if (selectedOrganization) {
+        params.append('organization', selectedOrganization.id.toString());
+      }
       return apiService.request<PaginatedResponse<JobApplication>>(`/jobs/applications/?${params.toString()}`);
     },
-    enabled: true,
+    enabled: !!selectedOrganization, // Only enabled when organization is selected
   });
 
   if (isLoading) {
@@ -61,20 +62,10 @@ export default function RecentApplications() {
   }
 
   // Sort applications by ID in descending order (newest first, since higher ID = more recent)
-  const applications = data?.results ? 
-    [...data.results].sort((a, b) => b.id - a.id) : 
+  // and limit to 4 for the recent applications widget
+  const filteredApplications = data?.results ? 
+    [...data.results].sort((a, b) => b.id - a.id).slice(0, 4) : 
     [];
-  
-  // Additional client-side filtering to ensure we only show applications 
-  // for jobs that belong to the selected organization
-  const filteredApplications = applications.filter(app => {
-    // If the application has job organization info, check it matches
-    if (typeof app.job === 'object' && app.job?.organization && selectedOrganization) {
-      return (app.job.organization as any).id === selectedOrganization.id;
-    }
-    // Otherwise rely on backend filtering
-    return true;
-  });
 
   const getStatusColor = (status: string) => {
     switch (status) {
