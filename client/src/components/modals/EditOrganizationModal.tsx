@@ -272,7 +272,7 @@ export default function EditOrganizationModal({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* Logo Upload Section */}
-            <div className="flex items-center gap-6 p-4 bg-muted/50 rounded-lg">
+            <div className="flex justify-center p-4 bg-muted/50 rounded-lg">
               <div className="relative group">
                 <div 
                   className="relative cursor-pointer transition-all duration-200 hover:opacity-80"
@@ -308,21 +308,6 @@ export default function EditOrganizationModal({
                   className="hidden"
                   id="logo-upload"
                 />
-              </div>
-              
-              <div className="flex flex-col gap-2">
-                <h3 className="font-medium text-foreground">Organization Logo</h3>
-                <p className="text-sm text-muted-foreground">
-                  Click on the logo to change it
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  JPG, PNG up to 2MB
-                </p>
-                {isUploading && (
-                  <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">
-                    Uploading...
-                  </p>
-                )}
               </div>
             </div>
 
