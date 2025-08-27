@@ -41,6 +41,14 @@ import type { ChatMessage, ChatRoom, MessageAttachment, User } from "@/types";
 
 export default function Chat() {
   const { user, selectedOrganization } = useAuth();
+  
+  // Add chat layout class to body to prevent scrolling
+  useEffect(() => {
+    document.body.classList.add('chat-layout');
+    return () => {
+      document.body.classList.remove('chat-layout');
+    };
+  }, []);
   const { unreadCount } = useNotifications(false);
   const navigate = useNavigate();
   

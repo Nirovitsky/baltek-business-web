@@ -143,6 +143,17 @@ html, body {
   overflow-y: auto;
 }
 
+/* Chat page layout - no body scroll, full screen */
+.chat-layout {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.chat-layout body {
+  overflow: hidden;
+  height: 100vh;
+}
+
 /* Prevent body scroll when modal is open */
 .modal-open {
   position: fixed;
