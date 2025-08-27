@@ -44,21 +44,21 @@ const formatDate = (timestamp?: number | string) => {
   }
 };
 
-// Helper function to get status colors for applications (plain text, no borders)
-const getStatusTextColor = (status: string) => {
+// Helper function to get badge styling for application statuses
+const getStatusBadge = (status: string) => {
   switch (status) {
     case 'in_review':
-      return 'text-primary';
+      return 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:border-blue-800';
     case 'ongoing':
-      return 'text-green-700 dark:text-green-300';
+      return 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-300 dark:border-green-800';
     case 'rejected':
-      return 'text-red-700 dark:text-red-300';
+      return 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900 dark:text-red-300 dark:border-red-800';
     case 'hired':
-      return 'text-green-700 dark:text-green-300';
+      return 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-300 dark:border-green-800';
     case 'expired':
-      return 'text-muted-foreground';
+      return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-800';
     default:
-      return 'text-muted-foreground';  
+      return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-800';
   }
 };
 
@@ -443,9 +443,9 @@ export default function Applications() {
                         {(() => {
                           const actualStatus = getActualStatus(application, findExistingRoom, roomsData);
                           return (
-                            <span className={`text-sm font-medium ${getStatusTextColor(actualStatus)}`}>
+                            <Badge className={getStatusBadge(actualStatus)} variant="outline">
                               {formatStatusText(actualStatus)}
-                            </span>
+                            </Badge>
                           );
                         })()}
                       </TableCell>
