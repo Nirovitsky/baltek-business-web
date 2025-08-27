@@ -63,6 +63,7 @@ export interface ChatRoom {
   unread_message_count: number;
   last_message_text: string | null;
   last_message_date_created: number | null;
+  chat_disabled?: boolean;
 }
 
 export interface Organization {

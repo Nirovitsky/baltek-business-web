@@ -125,6 +125,48 @@ export default function Chat() {
   // File upload hook
   const { uploadFile } = useUploadFile();
 
+  // Toggle chat disabled state
+  const toggleChatMutation = useMutation({
+    mutationFn: async ({ roomId, disabled }: { roomId: number; disabled: boolean }) => {
+      const token = localStorage.getItem('access_token');
+      if (!token) throw new Error('No access token');
+      
+      const response = await fetch(`https://api.baltek.net/api/chat/rooms/${roomId}/toggle-chat/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ disabled }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to toggle chat');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      // Refresh room data
+      queryClient.invalidateQueries({ queryKey: ['/chat/rooms/'] });
+      toast({
+        title: isChatDisabled ? "Chat enabled" : "Chat disabled",
+        description: isChatDisabled ? "You can now send messages" : "Messages are now blocked",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Failed to toggle chat",
+        description: "Please try again later",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleToggleChat = (roomId: number, disable: boolean) => {
+    toggleChatMutation.mutate({ roomId, disabled: disable });
+  };
+
   // Count failed messages for status display (moved here to avoid hooks order issues)
   const failedMessageCount = useMemo(() => {
     return wsMessages.filter(m => m.status === 'failed' && m.isOptimistic).length;
@@ -144,9 +186,8 @@ export default function Chat() {
     (room: ChatRoom) => room.id === selectedConversation
   );
 
-  // Check if current applicant's status allows chat
-  const applicantStatus = selectedConversationData?.content_object?.status;
-  const isChatDisabled = applicantStatus && applicantStatus !== 'ongoing';
+  // Check if chat is manually disabled by organization
+  const isChatDisabled = selectedConversationData?.chat_disabled || false;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -929,6 +970,17 @@ export default function Chat() {
                         Applied for {selectedConversationData.content_object?.job?.title}
                       </p>
                     </div>
+                    {!isChatDisabled && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleToggleChat(selectedConversation!, true)}
+                        disabled={toggleChatMutation.isPending}
+                        className="text-xs border-red-300 text-red-700 hover:bg-red-50 dark:border-red-600 dark:text-red-300 dark:hover:bg-red-900/20"
+                      >
+                        {toggleChatMutation.isPending ? 'Disabling...' : 'Disable Chat'}
+                      </Button>
+                    )}
                   </div>
                 </div>
               )}
@@ -1035,11 +1087,23 @@ export default function Chat() {
                 <div className="border-t bg-white dark:bg-background">
                   <div className="p-4">
                     <Alert className="border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950">
-                      <AlertTriangle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
-                      <AlertDescription className="text-yellow-800 dark:text-yellow-200">
-                        Chat is disabled because the applicant's status is "{applicantStatus}". 
-                        Chat is only available for ongoing applications.
-                      </AlertDescription>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-start gap-2">
+                          <AlertTriangle className="h-4 w-4 text-yellow-600 dark:text-yellow-400 mt-0.5" />
+                          <AlertDescription className="text-yellow-800 dark:text-yellow-200">
+                            Chat has been disabled for this conversation.
+                          </AlertDescription>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleToggleChat(selectedConversation!, false)}
+                          disabled={toggleChatMutation.isPending}
+                          className="h-8 text-xs border-yellow-300 text-yellow-700 hover:bg-yellow-100 dark:border-yellow-600 dark:text-yellow-300 dark:hover:bg-yellow-800"
+                        >
+                          {toggleChatMutation.isPending ? 'Enabling...' : 'Enable Chat'}
+                        </Button>
+                      </div>
                     </Alert>
                   </div>
                 </div>
