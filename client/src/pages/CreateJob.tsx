@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SearchableLocation } from "@/components/ui/searchable-location";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -562,24 +563,15 @@ export default function CreateJob() {
                       name="location"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium flex items-center">
-                            <MapPin className="h-4 w-4 mr-1 text-primary" />
-                            Location *
-                          </FormLabel>
-                          <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
-                            <FormControl>
-                              <SelectTrigger className="mt-1">
-                                <SelectValue placeholder="Select location" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {locations.map((location) => (
-                                <SelectItem key={location.id} value={location.id.toString()}>
-                                  {location.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <FormLabel className="text-sm font-medium">Location *</FormLabel>
+                          <FormControl>
+                            <SearchableLocation
+                              value={typeof field.value === 'number' ? field.value : undefined}
+                              onValueChange={field.onChange}
+                              placeholder="Search for location..."
+                              className="mt-1"
+                            />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}

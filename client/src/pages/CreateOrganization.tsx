@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SearchableLocation } from "@/components/ui/searchable-location";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building2, Upload, X, Sparkles, Users, Target, Zap, Loader2, Globe, Mail, Phone, MapPin, Tag, ArrowRight, ArrowLeft, CheckCircle } from "lucide-react";
 import { apiService } from "@/lib/api";
@@ -320,18 +321,12 @@ export default function CreateOrganization() {
             <MapPin className="w-4 h-4 mr-2" />
             Location *
           </Label>
-          <Select onValueChange={(value) => handleSelectChange('location_id', value)} required>
-            <SelectTrigger className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary">
-              <SelectValue placeholder="Select your location" />
-            </SelectTrigger>
-            <SelectContent>
-              {locations.map((location) => (
-                <SelectItem key={location.id} value={location.id.toString()}>
-                  {location.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <SearchableLocation
+            value={formData.location_id || undefined}
+            onValueChange={(value) => handleSelectChange('location_id', value.toString())}
+            placeholder="Search for your location..."
+            className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary"
+          />
         </div>
 
         <Button 
