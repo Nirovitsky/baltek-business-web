@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import TopBar from "@/components/layout/TopBar";
 import MessageRenderer from "@/components/MessageRenderer";
 import ImageModal from "@/components/ImageModal";
 import { useChatRooms, useChatMessages, useUploadFile } from "@/hooks/useChatHooks";
@@ -664,12 +663,13 @@ export default function Chat() {
 
   if (roomsLoading) {
     return (
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar 
-          title="Chat"
-          description={`Chat with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
-          showCreateButton={false}
-        />
+      <div className="flex flex-col gap-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Chat</h1>
+          <p className="text-muted-foreground">
+            Chat with job seekers{selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}
+          </p>
+        </div>
         <div className="flex-1 flex">
           <div className="w-80 border-r bg-white dark:bg-background flex flex-col">
             <div className="p-4 border-b">
@@ -693,12 +693,13 @@ export default function Chat() {
 
   if (roomsError) {
     return (
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar 
-          title="Chat"
-          description={`Chat with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
-          showCreateButton={false}
-        />
+      <div className="flex flex-col gap-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Chat</h1>
+          <p className="text-muted-foreground">
+            Chat with job seekers{selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}
+          </p>
+        </div>
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <MessageCircle className="h-12 w-12 mx-auto text-gray-400 mb-4" />
@@ -713,12 +714,14 @@ export default function Chat() {
   }
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <TopBar 
-        title="Chat"
-        description={`Chat with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
-        showCreateButton={false}
-      />
+    <div className="flex flex-col h-full">
+      <div className="mb-4">
+        <h1 className="text-3xl font-bold tracking-tight">Chat</h1>
+        <p className="text-muted-foreground">
+          Chat with job seekers{selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}
+        </p>
+      </div>
+      
       {/* Connection Status Bar */}
       {(!connected || failedMessageCount > 0) && (
         <div className="bg-yellow-50 dark:bg-yellow-900/20 border-b border-yellow-200 dark:border-yellow-800 px-4 py-2">

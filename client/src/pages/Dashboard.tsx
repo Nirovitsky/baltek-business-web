@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import TopBar from "@/components/layout/TopBar";
 import StatsCard from "@/components/dashboard/StatsCard";
 import RecentJobs from "@/components/dashboard/RecentJobs";
 import RecentApplications from "@/components/dashboard/RecentApplications";
@@ -74,13 +73,15 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <TopBar 
-        title="Dashboard Overview"
-        description="Manage your job postings and applications"
-      />
+    <div className="flex flex-col gap-6">
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Dashboard Overview</h1>
+        <p className="text-muted-foreground">
+          Manage your job postings and applications{selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}
+        </p>
+      </div>
 
-      <main className="flex-1 overflow-y-auto p-6 space-y-8 bg-muted/30">
+      <div className="space-y-6">
         {/* Organization Approval Notice */}
         {selectedOrganization && selectedOrganization.is_public === false && (
           <Alert className="border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950">
@@ -152,7 +153,7 @@ export default function Dashboard() {
           onReviewApplications={handleReviewApplications}
           onOpenMessages={handleOpenMessages}
         />
-      </main>
+      </div>
 
       <JobDetailDialog
         jobId={selectedJobId}
