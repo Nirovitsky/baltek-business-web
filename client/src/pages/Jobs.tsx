@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import TopBar from "@/components/layout/TopBar";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -144,18 +145,13 @@ export default function Jobs() {
     [];
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Job Postings</h1>
-          <p className="text-muted-foreground">
-            Manage your job opportunities{selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}
-          </p>
-        </div>
-        <Button onClick={handleCreateJob}>Create Job</Button>
-      </div>
+    <div className="flex-1 flex flex-col h-full overflow-hidden">
+      <TopBar 
+        title="Job Postings"
+        description="Manage your job opportunities"
+      />
 
-      <div className="space-y-6">
+      <main className="flex-1 overflow-y-auto p-6 bg-muted/30 custom-scrollbar">
         {/* Filters */}
         <div className="mb-6 flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
@@ -380,7 +376,8 @@ export default function Jobs() {
             })}
           </div>
         )}
-      </div>
+      </main>
+
     </div>
   );
 }

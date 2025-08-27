@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import TopBar from "@/components/layout/TopBar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -271,15 +272,14 @@ export default function Applications() {
   );
 
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Applications</h1>
-        <p className="text-muted-foreground">
-          Review and manage job applications{selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}
-        </p>
-      </div>
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <TopBar 
+        title="Applications"
+        description="Review and manage job applications"
+        showCreateButton={false}
+      />
 
-      <div className="space-y-6">
+      <main className="flex-1 overflow-y-auto p-6 bg-muted/30">
         {/* Filters */}
         <div className="mb-6 flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
@@ -787,7 +787,7 @@ export default function Applications() {
             </DialogContent>
           </Dialog>
         )}
-      </div>
+      </main>
     </div>
   );
 }
