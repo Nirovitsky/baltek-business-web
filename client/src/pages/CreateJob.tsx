@@ -431,13 +431,6 @@ export default function CreateJob() {
 
   const isLoading = createMutation.isPending || updateMutation.isPending;
 
-  // Prevent body scroll for this page
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, []);
 
   return (
     <div className="flex-1 flex flex-col bg-background overflow-hidden">
