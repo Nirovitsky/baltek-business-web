@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/useAuth";
 import { useWebSocketGlobal } from "@/hooks/useWebSocketGlobal";
 import { useNotifications } from "@/hooks/useNotifications";
+import { usePrefetch } from "@/hooks/usePrefetch";
 import { useEffect, useState } from "react";
 
 // Layout Components
@@ -47,6 +48,9 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   // Initialize global notifications polling when authenticated
   useNotifications(isAuthenticated, isAuthenticated); // Enable both fetching and polling when authenticated
+  
+  // Initialize prefetching for smooth navigation
+  usePrefetch();
 
   useEffect(() => {
     checkAuth();

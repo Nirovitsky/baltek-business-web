@@ -12,6 +12,7 @@ import {
   Building
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useHoverPrefetch } from "@/hooks/usePrefetch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -84,6 +85,7 @@ const data = {
 export default function AppSidebar() {
   const location = useLocation();
   const { logout, selectedOrganization, user } = useAuth();
+  const { prefetchRoute } = useHoverPrefetch();
 
   return (
     <Sidebar variant="inset" collapsible="icon">
@@ -102,7 +104,10 @@ export default function AppSidebar() {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild isActive={isActive}>
-                      <Link to={item.url}>
+                      <Link 
+                        to={item.url}
+                        onMouseEnter={() => prefetchRoute(item.url)}
+                      >
                         <item.icon />
                         <span>{item.title}</span>
                       </Link>
@@ -123,7 +128,10 @@ export default function AppSidebar() {
               return (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={isActive}>
-                    <Link to={item.url}>
+                    <Link 
+                      to={item.url}
+                      onMouseEnter={() => prefetchRoute(item.url)}
+                    >
                       <item.icon />
                       <span>{item.title}</span>
                     </Link>

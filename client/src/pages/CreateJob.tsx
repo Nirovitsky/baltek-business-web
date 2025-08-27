@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { usePrefetch } from "@/hooks/usePrefetch";
 import { apiService } from "@/lib/api";
 import { useReferenceData } from "@/hooks/useReferencedData";
 import { createJobSchema, type CreateJob, type Job, type Category, type Location, type Language, type PaginatedResponse } from "@/types";
@@ -27,6 +28,9 @@ export default function CreateJob() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { id } = useParams<{ id?: string }>();
+  
+  // Use prefetch hook to ensure form data is ready
+  const { prefetchFormData } = usePrefetch();
   
   const isEditing = Boolean(id);
   const DRAFT_KEY = `job_draft_${isEditing ? id : 'new'}`;

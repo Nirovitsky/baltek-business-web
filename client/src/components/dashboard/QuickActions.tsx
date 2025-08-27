@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, ClipboardList, MessageCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useHoverPrefetch } from "@/hooks/usePrefetch";
 
 interface QuickActionsProps {
   onReviewApplications?: () => void;
@@ -14,6 +15,7 @@ export default function QuickActions({
 }: QuickActionsProps) {
   const navigate = useNavigate();
   const { selectedOrganization } = useAuth();
+  const { prefetchRoute } = useHoverPrefetch();
 
   const handleCreateJob = () => {
     if (selectedOrganization?.is_public === false) {
@@ -62,6 +64,13 @@ export default function QuickActions({
               <button
                 key={index}
                 onClick={action.onClick}
+                onMouseEnter={() => {
+                  if (!action.disabled) {
+                    if (action.title === "Create Job Posting") prefetchRoute('/jobs');
+                    if (action.title === "Review Applications") prefetchRoute('/applications');
+                    if (action.title === "Message Candidates") prefetchRoute('/chat');
+                  }
+                }}
                 disabled={action.disabled}
                 className={`flex items-center p-4 border-2 border-dashed rounded-lg transition-colors text-left ${
                   action.disabled 

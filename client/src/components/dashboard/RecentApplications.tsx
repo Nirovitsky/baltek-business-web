@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { apiService } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { useHoverPrefetch } from "@/hooks/usePrefetch";
 import type { JobApplication, PaginatedResponse } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format, parseISO, isValid } from "date-fns";
@@ -16,6 +17,7 @@ import ApplicationDetailsModal from "@/components/modals/ApplicationDetailsModal
 export default function RecentApplications() {
   const { selectedOrganization } = useAuth();
   const navigate = useNavigate();
+  const { prefetchRoute } = useHoverPrefetch();
   const [selectedApplication, setSelectedApplication] = useState<JobApplication | null>(null);
 
   const { data, isLoading, error } = useQuery({
@@ -130,7 +132,14 @@ export default function RecentApplications() {
       <CardHeader className="border-b">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold">Recent Applications</h3>
-          <Button variant="ghost" size="sm" onClick={() => navigate('/applications')}>View All</Button>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => navigate('/applications')}
+            onMouseEnter={() => prefetchRoute('/applications')}
+          >
+            View All
+          </Button>
         </div>
       </CardHeader>
       <CardContent className="p-6">

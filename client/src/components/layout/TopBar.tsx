@@ -7,6 +7,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useNotifications } from "@/hooks/useNotifications";
+import { useHoverPrefetch } from "@/hooks/usePrefetch";
 
 interface TopBarProps {
   title: string;
@@ -25,6 +26,7 @@ export default function TopBar({
   const { selectedOrganization } = useAuth();
   const { toast } = useToast();
   const { unreadCount } = useNotifications(false);
+  const { prefetchRoute } = useHoverPrefetch();
 
   const handleCreateJob = () => {
     if (selectedOrganization?.is_public === false) {
@@ -61,6 +63,7 @@ export default function TopBar({
               variant="ghost"
               size="icon"
               onClick={handleNotifications}
+              onMouseEnter={() => prefetchRoute('/notifications')}
               className="relative"
             >
               <Bell className="w-4 h-4" />
@@ -77,6 +80,7 @@ export default function TopBar({
           {showCreateButton && (
             <Button 
               onClick={handleCreateJob} 
+              onMouseEnter={() => prefetchRoute('/jobs')}
               disabled={selectedOrganization?.is_public === false}
               className={`${
                 selectedOrganization?.is_public === false 

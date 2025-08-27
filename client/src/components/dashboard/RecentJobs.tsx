@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { apiService } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { useHoverPrefetch } from "@/hooks/usePrefetch";
 import type { Job, PaginatedResponse } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
@@ -22,6 +23,7 @@ interface RecentJobsProps {
 export default function RecentJobs({ onJobClick }: RecentJobsProps) {
   const { selectedOrganization } = useAuth();
   const navigate = useNavigate();
+  const { prefetchRoute } = useHoverPrefetch();
 
   const formatDate = (timestamp?: number | string) => {
     if (!timestamp) return 'No date';
@@ -103,7 +105,14 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
         <CardHeader className="border-b border">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-foreground">Recent Job Postings</h3>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/jobs')}>View All</Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => navigate('/jobs')}
+              onMouseEnter={() => prefetchRoute('/jobs')}
+            >
+              View All
+            </Button>
           </div>
         </CardHeader>
         <CardContent className="p-6">
@@ -125,7 +134,14 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
       <CardHeader className="border-b border">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-foreground">Recent Job Postings</h3>
-          <Button variant="ghost" size="sm" onClick={() => navigate('/jobs')}>View All</Button>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => navigate('/jobs')}
+            onMouseEnter={() => prefetchRoute('/jobs')}
+          >
+            View All
+          </Button>
         </div>
       </CardHeader>
       <CardContent className="p-6">

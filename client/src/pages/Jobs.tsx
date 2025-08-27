@@ -14,6 +14,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
 import { Edit, Trash2, Search, Eye, Briefcase, MapPin, Users, DollarSign, Calendar, Building2, Bell } from "lucide-react";
 import { useNotifications } from "@/hooks/useNotifications";
+import { useHoverPrefetch } from "@/hooks/usePrefetch";
 import type { Job, PaginatedResponse } from "@/types";
 import { format } from "date-fns";
 
@@ -25,6 +26,7 @@ export default function Jobs() {
   const { toast } = useToast();
   const { selectedOrganization } = useAuth();
   const { unreadCount } = useNotifications(false);
+  const { prefetchRoute } = useHoverPrefetch();
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
