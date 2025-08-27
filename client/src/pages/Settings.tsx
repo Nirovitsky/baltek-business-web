@@ -4,6 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { LogOut, Settings as SettingsIcon, Shield, Globe, Palette, Monitor, Sun, Moon } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -16,7 +27,7 @@ export default function Settings() {
   const { theme, setTheme } = useTheme();
 
 
-  const handleLogout = () => {
+  const handleConfirmLogout = () => {
     logout();
     toast({
       title: "Logged out",
@@ -135,15 +146,35 @@ export default function Settings() {
                     </p>
                   </div>
                 </div>
-                <Button 
-                  variant="destructive" 
-                  size="sm"
-                  onClick={handleLogout}
-                  className="bg-red-600 hover:bg-red-700"
-                >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Log Out
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button 
+                      variant="destructive" 
+                      size="sm"
+                      className="bg-red-600 hover:bg-red-700"
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Log Out
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you sure you want to log out?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will end your current session and you'll need to log in again to access your account.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction 
+                        onClick={handleConfirmLogout}
+                        className="bg-red-600 hover:bg-red-700"
+                      >
+                        Log Out
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </CardContent>
           </Card>
