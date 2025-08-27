@@ -440,7 +440,7 @@ export default function CreateJob() {
   }, []);
 
   return (
-    <div className="flex-1 flex flex-col bg-background h-screen overflow-hidden">
+    <div className="flex-1 flex flex-col bg-background overflow-hidden">
       {/* Header */}
       <div className="bg-card border-b flex-shrink-0">
         <div className="max-w-4xl mx-auto px-6 py-6">
