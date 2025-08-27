@@ -144,10 +144,6 @@ export default function ApplicationDetailsModal({
                   <Badge variant="secondary" className={`${getStatusColor(application.status)} text-sm`}>
                     {application.status ? application.status.charAt(0).toUpperCase() + application.status.slice(1) : 'Unknown'}
                   </Badge>
-                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                    <Calendar className="w-4 h-4" />
-                    <span>Applied on {formatDate((detailedApplication as any)?.date_applied || (detailedApplication as any)?.created_at || (application as any).date_applied || (application as any).created_at || (application as any).date_created || '')}</span>
-                  </div>
                 </div>
               </div>
             </div>
