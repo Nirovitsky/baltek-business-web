@@ -410,7 +410,10 @@ export default function CreateOrganization() {
           <Label className="text-sm font-semibold text-gray-700 dark:text-gray-200">
             Organization Logo
           </Label>
-          <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center">
+          <label 
+            htmlFor="logo-upload" 
+            className="block border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center cursor-pointer hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+          >
             {logoPreview ? (
               <div className="space-y-4">
                 <div className="relative inline-block">
@@ -421,7 +424,11 @@ export default function CreateOrganization() {
                   />
                   <button
                     type="button"
-                    onClick={clearLogo}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      clearLogo();
+                    }}
                     className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-xs transition-colors"
                   >
                     <X className="w-3 h-3" />
@@ -430,31 +437,32 @@ export default function CreateOrganization() {
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Logo uploaded successfully
                 </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Click to change image
+                </p>
               </div>
             ) : (
               <div className="space-y-3">
                 <Upload className="w-8 h-8 text-gray-400 mx-auto" />
                 <div>
-                  <label htmlFor="logo-upload" className="cursor-pointer">
-                    <span className="text-primary hover:text-primary/80 font-medium">
-                      Choose a file
-                    </span>
-                    <span className="text-gray-500 dark:text-gray-400"> or drag and drop</span>
-                  </label>
-                  <input
-                    id="logo-upload"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleLogoUpload}
-                    className="hidden"
-                  />
+                  <span className="text-primary hover:text-primary/80 font-medium">
+                    Choose a file
+                  </span>
+                  <span className="text-gray-500 dark:text-gray-400"> or drag and drop</span>
                 </div>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
                   PNG, JPG up to 5MB
                 </p>
               </div>
             )}
-          </div>
+            <input
+              id="logo-upload"
+              type="file"
+              accept="image/*"
+              onChange={handleLogoUpload}
+              className="hidden"
+            />
+          </label>
         </div>
 
         <div className="flex gap-4 pt-4">
