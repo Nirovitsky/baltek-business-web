@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
-import { Separator } from "@/components/ui/separator";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import TopBar from "@/components/layout/TopBar";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { useNotifications } from "@/hooks/useNotifications";
 import MessageRenderer from "@/components/MessageRenderer";
 import ImageModal from "@/components/ImageModal";
@@ -669,35 +669,12 @@ export default function Chat() {
 
   if (roomsLoading) {
     return (
-      <>
-        <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 border-b px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 h-4" />
-          <div className="flex flex-1 items-center justify-between">
-            <div>
-              <h1 className="text-lg font-semibold">Chat</h1>
-              <p className="text-sm text-muted-foreground">Chat with job seekers{selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}</p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate('/notifications')}
-                className="relative"
-              >
-                <Bell className="w-4 h-4" />
-                {unreadCount > 0 && (
-                  <Badge 
-                    variant="destructive" 
-                    className="absolute -top-1 -right-1 bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full px-1"
-                  >
-                    {unreadCount > 99 ? "99+" : unreadCount}
-                  </Badge>
-                )}
-              </Button>
-            </div>
-          </div>
-        </header>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <TopBar 
+          title="Chat" 
+          description={`Chat with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
+          showCreateButton={false}
+        />
         <div className="flex-1 flex">
           <div className="w-80 border-r bg-white dark:bg-background flex flex-col">
             <div className="p-4 border-b">
@@ -715,41 +692,18 @@ export default function Chat() {
             <Loader2 className="h-8 w-8 animate-spin" />
           </div>
         </div>
-      </>
+      </div>
     );
   }
 
   if (roomsError) {
     return (
-      <>
-        <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 border-b px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 h-4" />
-          <div className="flex flex-1 items-center justify-between">
-            <div>
-              <h1 className="text-lg font-semibold">Chat</h1>
-              <p className="text-sm text-muted-foreground">Chat with job seekers{selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}</p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate('/notifications')}
-                className="relative"
-              >
-                <Bell className="w-4 h-4" />
-                {unreadCount > 0 && (
-                  <Badge 
-                    variant="destructive" 
-                    className="absolute -top-1 -right-1 bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full px-1"
-                  >
-                    {unreadCount > 99 ? "99+" : unreadCount}
-                  </Badge>
-                )}
-              </Button>
-            </div>
-          </div>
-        </header>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <TopBar 
+          title="Chat" 
+          description={`Chat with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
+          showCreateButton={false}
+        />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <MessageCircle className="h-12 w-12 mx-auto text-gray-400 mb-4" />
@@ -759,25 +713,17 @@ export default function Chat() {
             </p>
           </div>
         </div>
-      </>
+      </div>
     );
   }
 
   return (
-    <>
-      <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 border-b px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <SidebarTrigger className="-ml-1" />
-        <Separator orientation="vertical" className="mr-2 h-4" />
-        <div className="flex flex-1 items-center justify-between">
-          <div>
-            <h1 className="text-lg font-semibold">Chat</h1>
-            <p className="text-sm text-muted-foreground">Chat with job seekers{selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}</p>
-          </div>
-          <div className="flex items-center space-x-4">
-            <ThemeToggle />
-          </div>
-        </div>
-      </header>
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <TopBar 
+        title="Chat" 
+        description={`Chat with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
+        showCreateButton={false}
+      />
       {/* Connection Status Bar */}
       {(!connected || failedMessageCount > 0) && (
         <div className="bg-yellow-50 dark:bg-yellow-900/20 border-b border-yellow-200 dark:border-yellow-800 px-4 py-2">
@@ -1212,6 +1158,6 @@ export default function Chat() {
           onClose={() => setImageModal(null)}
         />
       )}
-    </>
+    </div>
   );
 }

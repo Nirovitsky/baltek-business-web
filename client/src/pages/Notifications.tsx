@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
+import TopBar from "@/components/layout/TopBar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -182,19 +181,13 @@ export default function Notifications() {
 
   if (isLoading) {
     return (
-      <>
-        <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 border-b px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 h-4" />
-          <div className="flex flex-1 items-center justify-between">
-            <div>
-              <h1 className="text-lg font-semibold">Notifications</h1>
-              <p className="text-sm text-muted-foreground">Stay updated with your latest notifications</p>
-            </div>
-            <div className="flex items-center space-x-4">
-            </div>
-          </div>
-        </header>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <TopBar 
+          title="Notifications" 
+          description="Stay updated with your latest notifications"
+          showCreateButton={false}
+          hideNotifications={true}
+        />
         <div className="flex flex-1 flex-col gap-4 p-4">
         <main className="flex-1 overflow-y-auto p-8 bg-gradient-to-b from-muted/20 to-background">
           <div className="max-w-5xl mx-auto space-y-8">
@@ -243,24 +236,18 @@ export default function Notifications() {
           </div>
         </main>
         </div>
-      </>
+      </div>
     );
   }
 
   return (
-    <>
-      <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 border-b px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <SidebarTrigger className="-ml-1" />
-        <Separator orientation="vertical" className="mr-2 h-4" />
-        <div className="flex flex-1 items-center justify-between">
-          <div>
-            <h1 className="text-lg font-semibold">Notifications</h1>
-            <p className="text-sm text-muted-foreground">Stay updated with your latest notifications</p>
-          </div>
-          <div className="flex items-center space-x-4">
-          </div>
-        </div>
-      </header>
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <TopBar 
+        title="Notifications" 
+        description="Stay updated with your latest notifications"
+        showCreateButton={false}
+        hideNotifications={true}
+      />
       <div className="flex flex-1 flex-col gap-4 p-4">
 
       <main className="flex-1 overflow-y-auto p-8 bg-gradient-to-b from-muted/20 to-background">
@@ -384,6 +371,6 @@ export default function Notifications() {
         </div>
       </main>
       </div>
-    </>
+    </div>
   );
 }

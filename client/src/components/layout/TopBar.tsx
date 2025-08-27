@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { Plus, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useNotifications } from "@/hooks/useNotifications";
@@ -10,12 +12,14 @@ interface TopBarProps {
   title: string;
   description?: string;
   showCreateButton?: boolean;
+  hideNotifications?: boolean;
 }
 
 export default function TopBar({ 
   title, 
   description, 
-  showCreateButton = true 
+  showCreateButton = true,
+  hideNotifications = false
 }: TopBarProps) {
   const navigate = useNavigate();
   const { selectedOrganization } = useAuth();
@@ -37,32 +41,37 @@ export default function TopBar({
   const handleNotifications = () => {
     navigate('/notifications');
   };
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border px-6 py-4">
-      <div className="flex items-center justify-between">
+    <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 border-b px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <SidebarTrigger className="-ml-1" />
+      <Separator orientation="vertical" className="mr-2 h-4" />
+      <div className="flex flex-1 items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-foreground">{title}</h2>
+          <h1 className="text-lg font-semibold text-foreground">{title}</h1>
           {description && (
             <p className="text-sm text-muted-foreground">{description}</p>
           )}
         </div>
         <div className="flex items-center space-x-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleNotifications}
-            className="relative"
-          >
-            <Bell className="w-4 h-4" />
-            {unreadCount > 0 && (
-              <Badge 
-                variant="destructive" 
-                className="absolute -top-1 -right-1 bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full px-1"
-              >
-                {unreadCount > 99 ? "99+" : unreadCount}
-              </Badge>
-            )}
-          </Button>
+          {!hideNotifications && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleNotifications}
+              className="relative"
+            >
+              <Bell className="w-4 h-4" />
+              {unreadCount > 0 && (
+                <Badge 
+                  variant="destructive" 
+                  className="absolute -top-1 -right-1 bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full px-1"
+                >
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </Badge>
+              )}
+            </Button>
+          )}
           {showCreateButton && (
             <Button 
               onClick={handleCreateJob} 

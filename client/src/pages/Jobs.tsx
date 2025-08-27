@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Separator } from "@/components/ui/separator";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import TopBar from "@/components/layout/TopBar";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -148,47 +147,12 @@ export default function Jobs() {
     [];
 
   return (
-    <>
-      <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 border-b px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <SidebarTrigger className="-ml-1" />
-        <Separator orientation="vertical" className="mr-2 h-4" />
-        <div className="flex flex-1 items-center justify-between">
-          <div>
-            <h1 className="text-lg font-semibold">Job Postings</h1>
-            <p className="text-sm text-muted-foreground">Manage your job opportunities</p>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate('/notifications')}
-              className="relative"
-            >
-              <Bell className="w-4 h-4" />
-              {unreadCount > 0 && (
-                <Badge 
-                  variant="destructive" 
-                  className="absolute -top-1 -right-1 bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full px-1"
-                >
-                  {unreadCount > 99 ? "99+" : unreadCount}
-                </Badge>
-              )}
-            </Button>
-            <Button 
-              onClick={handleCreateJob}
-              disabled={selectedOrganization?.is_public === false}
-              className={`${
-                selectedOrganization?.is_public === false 
-                  ? 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed opacity-60' 
-                  : 'bg-primary hover:bg-primary/90'
-              }`}
-            >
-              <Edit className="w-4 h-4 mr-2" />
-              Post New Job
-            </Button>
-          </div>
-        </div>
-      </header>
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <TopBar 
+        title="Job Postings" 
+        description="Manage your job listings and applications"
+        showCreateButton={true}
+      />
       <div className="flex flex-1 flex-col gap-4 p-4">
         <div className="space-y-6">
         {/* Filters */}
@@ -417,6 +381,6 @@ export default function Jobs() {
         )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

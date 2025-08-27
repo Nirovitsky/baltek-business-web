@@ -88,14 +88,13 @@ export default function Dashboard() {
   };
 
   return (
-    <>
+    <div className="flex-1 flex flex-col overflow-hidden">
       <TopBar
         title="Dashboard Overview"
         description="Manage your job postings and applications"
         showCreateButton={true}
       />
-      <div className="flex h-screen pt-16">
-        <div className="flex flex-1 flex-col gap-4 p-4">
+      <div className="flex flex-1 flex-col gap-4 p-4">
         <div className="space-y-8">
         {/* Organization Approval Notice */}
         {selectedOrganization && selectedOrganization.is_public === false && (
@@ -169,7 +168,6 @@ export default function Dashboard() {
             onOpenMessages={handleOpenMessages}
           />
         </div>
-        </div>
       </div>
 
       {/* Job Detail Modal */}
@@ -180,6 +178,6 @@ export default function Dashboard() {
           onOpenChange={setIsJobDetailOpen}
         />
       )}
-    </>
+    </div>
   );
 }
