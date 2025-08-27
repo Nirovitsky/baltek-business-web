@@ -17,7 +17,7 @@ import BusinessSwitcher from "./BusinessSwitcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useNotifications } from "@/hooks/useNotifications";
 
-const navigationItems = [
+const mainNavigationItems = [
   {
     name: "Dashboard",
     href: "/",
@@ -44,10 +44,13 @@ const navigationItems = [
     icon: Bell,
     showBadge: true,
   },
+];
+
+const bottomNavigationItems = [
   {
-    name: "Organization",
+    name: "Profile",
     href: "/organization",
-    icon: Building2,
+    icon: UserCircle,
   },
   {
     name: "Settings",
@@ -68,9 +71,9 @@ export default function Sidebar() {
         <BusinessSwitcher />
       </div>
 
-      {/* Navigation Menu */}
+      {/* Main Navigation Menu */}
       <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto custom-scrollbar">
-        {navigationItems.map((item) => {
+        {mainNavigationItems.map((item) => {
           const isActive = location.pathname === item.href || (item.href !== "/" && location.pathname.startsWith(item.href));
           const Icon = item.icon;
 
@@ -98,6 +101,32 @@ export default function Sidebar() {
           );
         })}
       </nav>
+
+      {/* Bottom Navigation Items */}
+      <div className="px-4 py-4 border-t border-sidebar-border space-y-2">
+        {bottomNavigationItems.map((item) => {
+          const isActive = location.pathname === item.href || (item.href !== "/" && location.pathname.startsWith(item.href));
+          const Icon = item.icon;
+
+          return (
+            <Link key={item.href} to={item.href}>
+              <div
+                className={cn(
+                  "flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg transition-colors cursor-pointer",
+                  isActive
+                    ? "bg-primary/10 text-primary border-l-4 border-primary"
+                    : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                )}
+              >
+                <div className="flex items-center">
+                  <Icon className="mr-3 h-5 w-5" />
+                  {item.name}
+                </div>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
 
     </div>
   );

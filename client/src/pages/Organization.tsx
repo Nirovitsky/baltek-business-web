@@ -27,7 +27,7 @@ function OrganizationProfileSkeleton() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <TopBar 
-        title="Organization"
+        title="Profile"
         description="Manage your organization profile"
         showCreateButton={false}
       />
@@ -98,7 +98,7 @@ export default function Organization() {
     return (
       <div className="flex-1 flex flex-col overflow-hidden">
         <TopBar 
-          title="Organization"
+          title="Profile"
           description="Manage your organization profile"
           showCreateButton={false}
         />
@@ -130,7 +130,7 @@ export default function Organization() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <TopBar 
-        title="Organization"
+        title="Profile"
         description="Manage your organization profile"
         showCreateButton={false}
       />
