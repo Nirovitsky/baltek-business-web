@@ -17,6 +17,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { apiService } from "@/lib/api";
 import { User, Search, MessageCircle, FileText, Download, MapPin, Calendar, Briefcase, X, Eye, UserX, UserCheck, AlertTriangle } from "lucide-react";
+import { format } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { JobApplication, PaginatedResponse, Room } from "@/types";
 
@@ -37,7 +38,7 @@ const formatDate = (timestamp?: number | string) => {
     }
     
     if (isNaN(date.getTime())) return 'Not specified';
-    return date.toLocaleDateString();
+    return format(date, 'MMM d, yyyy');
   } catch {
     return 'Not specified';
   }

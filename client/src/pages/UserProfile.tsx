@@ -298,9 +298,9 @@ export default function UserProfile() {
                     <h4 className="font-semibold text-foreground">{exp.position}</h4>
                     <p className="text-primary font-medium">{exp.company}</p>
                     <p className="text-sm text-muted-foreground mt-1">
-                      {new Date(exp.start_date).toLocaleDateString()} - {
+                      {format(new Date(exp.start_date), 'MMM yyyy')} - {
                         exp.is_current ? 'Present' : 
-                        exp.end_date ? new Date(exp.end_date).toLocaleDateString() : 'Present'
+                        exp.end_date ? format(new Date(exp.end_date), 'MMM yyyy') : 'Present'
                       }
                     </p>
                     {exp.description && (
@@ -361,9 +361,9 @@ export default function UserProfile() {
                       <p className="text-sm text-muted-foreground">{edu.field_of_study}</p>
                     )}
                     <p className="text-sm text-muted-foreground mt-1">
-                      {new Date(edu.start_date).toLocaleDateString()} - {
+                      {format(new Date(edu.start_date), 'MMM yyyy')} - {
                         edu.is_current ? 'Present' : 
-                        edu.end_date ? new Date(edu.end_date).toLocaleDateString() : 'Present'
+                        edu.end_date ? format(new Date(edu.end_date), 'MMM yyyy') : 'Present'
                       }
                     </p>
                   </div>
@@ -424,7 +424,7 @@ export default function UserProfile() {
                         <div>
                           <h4 className="font-medium">{resume.title || resume.filename}</h4>
                           <p className="text-sm text-muted-foreground">
-                            Uploaded: {new Date(resume.created_at || resume.uploaded_at).toLocaleDateString()}
+                            Uploaded: {format(new Date(resume.created_at || resume.uploaded_at), 'MMM d, yyyy')}
                           </p>
                         </div>
                       </div>

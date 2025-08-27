@@ -4,10 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, User } from "lucide-react";
+import { format } from "date-fns";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiService } from "@/lib/api";
 import { useWebSocket } from "@/hooks/useWebSocket";
-import type { Message, Room, PaginatedResponse } from "@/types";
+import type { ChatMessage, Room, PaginatedResponse } from "@/types";
 
 interface ChatWindowProps {
   roomId: number;
@@ -29,13 +30,13 @@ export default function ChatWindow({ roomId }: ChatWindowProps) {
   // Fetch messages
   const { data: messagesData, isLoading } = useQuery({
     queryKey: ['/chat/messages/', roomId],
-    queryFn: () => apiService.request<PaginatedResponse<Message>>(`/chat/messages/?room=${roomId}`),
+    queryFn: () => apiService.request<PaginatedResponse<ChatMessage>>(`/chat/messages/?room=${roomId}`),
     enabled: !!roomId,
   });
 
   // Send message mutation with optimistic updates
   const sendMessageMutation = useMutation({
-    mutationFn: (content: string) => apiService.request<Message>('/chat/messages/', {
+    mutationFn: (content: string) => apiService.request<ChatMessage>('/chat/messages/', {
       method: 'POST',
       body: JSON.stringify({
         room: roomId,
@@ -146,7 +147,7 @@ export default function ChatWindow({ roomId }: ChatWindowProps) {
               {room?.name || `Chat Room #${roomId}`}
             </h3>
             <p className="text-sm text-muted-foreground">
-              {room?.members.length || 0} participants
+              {room?.members?.length || 0} participants
             </p>
           </div>
         </div>
@@ -178,10 +179,10 @@ export default function ChatWindow({ roomId }: ChatWindowProps) {
                         {`${message.owner.first_name} ${message.owner.last_name}`}
                       </span>
                       <span className="text-xs text-muted-foreground">
-                        {new Date(message.date_created).toLocaleTimeString()}
+                        {format(new Date(message.date_created), 'MMM d, h:mm a')}
                       </span>
                     </div>
-                    <p className="text-sm whitespace-pre-wrap">{message.text}</p>
+                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                   </div>
                 </div>
               ))}

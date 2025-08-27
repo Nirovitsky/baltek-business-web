@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Check, CheckCheck, Clock, AlertTriangle, RotateCcw, Download, FileText, Image, Video, Music, File } from 'lucide-react';
+import { format, isToday, isYesterday, isThisWeek } from 'date-fns';
 import type { ChatMessage, User } from '@/types';
 
 interface MessageRendererProps {
@@ -26,18 +27,15 @@ function MessageRenderer({ message, currentUser, onRetry, onImageClick }: Messag
       
       if (isNaN(date.getTime())) return '';
       
-      const now = new Date();
-      const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
-      
-      // Always show time for messages from today (including future timestamps)
-      if (Math.abs(diffInDays) <= 0) {
-        return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-      } else if (diffInDays === 1) {
-        return "Yesterday";
-      } else if (diffInDays < 7 && diffInDays > 0) {
-        return date.toLocaleDateString([], { weekday: "short" });
+      // Use date-fns for more readable formatting
+      if (isToday(date)) {
+        return format(date, 'h:mm a');
+      } else if (isYesterday(date)) {
+        return 'Yesterday';
+      } else if (isThisWeek(date)) {
+        return format(date, 'EEEE'); // Day of week
       } else {
-        return date.toLocaleDateString([], { month: "short", day: "numeric" });
+        return format(date, 'MMM d');
       }
     } catch (error) {
       console.error('MessageRenderer formatTime error:', error, timestamp);
