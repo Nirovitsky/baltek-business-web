@@ -26,7 +26,14 @@ export default function Dashboard() {
   const { selectedOrganization } = useAuth();
   const { unreadCount } = useNotifications(false);
 
-  // Fetch data for stats filtered by organization
+  // Fetch organization statistics from dedicated stats endpoint
+  const { data: orgStats } = useQuery({
+    queryKey: ['/organizations/', selectedOrganization?.id, '/stats'],
+    queryFn: () => apiService.request(`/organizations/${selectedOrganization!.id}/stats`),
+    enabled: !!selectedOrganization,
+  });
+
+  // Keep the jobs and applications queries for the recent items sections
   const { data: jobsData } = useQuery({
     queryKey: ['/jobs/', selectedOrganization?.id],
     queryFn: () => {
@@ -54,54 +61,17 @@ export default function Dashboard() {
   const jobs = jobsData?.results || [];
   const applications = applicationsData?.results || [];
 
-  // Debug: Log job data to understand the structure
-  console.log('Dashboard - Jobs data:', jobs);
-  console.log('Dashboard - Total jobs from API:', jobsData?.count);
-  console.log('Dashboard - Jobs array length:', jobs.length);
+  // Use statistics from the organization stats endpoint
+  console.log('Dashboard - Organization Stats:', orgStats);
   
-  // Log each job's status and is_active values
-  jobs.forEach((job, index) => {
-    console.log(`Job ${index + 1} (ID: ${job.id}):`, {
-      title: job.title,
-      status: job.status,
-      is_active: job.is_active,
-      statusType: typeof job.status,
-      isActiveType: typeof job.is_active
-    });
-  });
-
-  // Calculate real stats from API data
-  // Handle both status field and is_active boolean for backwards compatibility
-  const activeJobs = jobs.filter(job => {
-    // If status field exists, use it
-    if (job.status) {
-      const isActive = job.status.toLowerCase() === 'open';
-      console.log(`Job ${job.id} with status "${job.status}": isActive = ${isActive}`);
-      return isActive;
-    }
-    // Fallback to is_active boolean field
-    const isActive = job.is_active === true;
-    console.log(`Job ${job.id} with is_active "${job.is_active}": isActive = ${isActive}`);
-    return isActive;
-  }).length;
-  
-  console.log('Dashboard - Active Jobs Count:', activeJobs);
-  
-  const totalApplications = applicationsData?.count || 0;
-  const pendingApplications = applications.filter(app => app.status === 'in_review').length;
-  const hiredThisMonth = applications.filter(app => app.status === 'hired').length;
-  
-  // Calculate changes (simplified calculation based on available data)
-  const totalJobs = jobsData?.count || 0;
-  const archivedJobs = jobs.filter(job => {
-    // If status field exists, use it
-    if (job.status) {
-      return job.status.toLowerCase() === 'archived';
-    }
-    // Fallback to is_active boolean field (inactive jobs are considered archived)
-    return job.is_active === false;
-  }).length;
-  const ongoingApplications = applications.filter(app => app.status === 'ongoing').length;
+  // Extract stats from API response or use fallback values
+  const activeJobs = orgStats?.active_jobs || 0;
+  const totalJobs = orgStats?.total_jobs || 0;
+  const archivedJobs = orgStats?.archived_jobs || 0;
+  const totalApplications = orgStats?.total_applications || 0;
+  const pendingApplications = orgStats?.pending_applications || 0;
+  const ongoingApplications = orgStats?.ongoing_applications || 0;
+  const hiredThisMonth = orgStats?.hired_this_month || 0;
 
 
 

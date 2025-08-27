@@ -1,0 +1,23 @@
+Job status from backend: undefined for job: 110
+Dashboard.tsx?t=1756300957856:63 Dashboard - Jobs data: [{…}]
+Dashboard.tsx?t=1756300957856:64 Dashboard - Total jobs from API: 1
+Dashboard.tsx?t=1756300957856:65 Dashboard - Jobs array length: 1
+Dashboard.tsx?t=1756300957856:67 Job 1 (ID: 110): {title: 'AI Engineer', status: undefined, is_active: undefined, statusType: 'undefined', isActiveType: 'undefined'}
+Dashboard.tsx?t=1756300957856:82 Job 110 with is_active "undefined": isActive = false
+Dashboard.tsx?t=1756300957856:63 Dashboard - Jobs data: [{…}]
+Dashboard.tsx?t=1756300957856:64 Dashboard - Total jobs from API: 1
+Dashboard.tsx?t=1756300957856:65 Dashboard - Jobs array length: 1
+Dashboard.tsx?t=1756300957856:67 Job 1 (ID: 110): {title: 'AI Engineer', status: undefined, is_active: undefined, statusType: 'undefined', isActiveType: 'undefined'}isActiveType: "undefined"is_active: undefinedstatus: undefinedstatusType: "undefined"title: "AI Engineer"[[Prototype]]: Object
+Dashboard.tsx?t=1756300957856:82 Job 110 with is_active "undefined": isActive = false
+Dashboard.tsx:58 Dashboard - Jobs data: [{…}]
+Dashboard.tsx:59 Dashboard - Total jobs from API: 1
+Dashboard.tsx:60 Dashboard - Jobs array length: 1
+Dashboard.tsx:64 Job 1 (ID: 110): {title: 'AI Engineer', status: undefined, is_active: undefined, statusType: 'undefined', isActiveType: 'undefined'}isActiveType: "undefined"is_active: undefinedstatus: undefinedstatusType: "undefined"title: "AI Engineer"[[Prototype]]: Object
+Dashboard.tsx:84 Job 110 with is_active "undefined": isActive = false
+Dashboard.tsx:88 Dashboard - Active Jobs Count: 0
+Dashboard.tsx:58 Dashboard - Jobs data: [{…}]
+Dashboard.tsx:59 Dashboard - Total jobs from API: 1
+Dashboard.tsx:60 Dashboard - Jobs array length: 1
+Dashboard.tsx:64 Job 1 (ID: 110): {title: 'AI Engineer', status: undefined, is_active: undefined, statusType: 'undefined', isActiveType: 'undefined'}
+Dashboard.tsx:84 Job 110 with is_active "undefined": isActive = false
+Dashboard.tsx:88 Dashboard - Active Jobs Count: 0
