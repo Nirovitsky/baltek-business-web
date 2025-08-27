@@ -676,7 +676,7 @@ export default function Chat() {
           showCreateButton={true}
         />
         <div className="flex-1 flex">
-          <div className="w-80 border-r bg-white dark:bg-background flex flex-col">
+          <div className="w-96 border-r bg-white dark:bg-background flex flex-col">
             <div className="p-4 border-b">
               <Skeleton className="h-10 w-full rounded-md" />
             </div>
@@ -765,7 +765,7 @@ export default function Chat() {
       
       <div className="flex-1 flex overflow-hidden">
         {/* Conversations List */}
-        <div className="w-80 border-r bg-white dark:bg-background flex flex-col">
+        <div className="w-96 border-r bg-white dark:bg-background flex flex-col">
           <div className="p-4 border-b">
             {roomsLoading ? (
               <Skeleton className="h-10 w-full rounded-md" />
