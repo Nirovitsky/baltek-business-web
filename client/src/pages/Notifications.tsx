@@ -189,8 +189,7 @@ export default function Notifications() {
           hideNotifications={true}
         />
         <div className="flex flex-1 flex-col gap-4 p-4">
-        <main className="flex-1 overflow-y-auto p-8 bg-gradient-to-b from-muted/20 to-background">
-          <div className="max-w-5xl mx-auto space-y-8">
+          <div className="max-w-5xl mx-auto w-full space-y-6">
             {/* Loading Header */}
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
@@ -234,7 +233,6 @@ export default function Notifications() {
               ))}
             </div>
           </div>
-        </main>
         </div>
       </div>
     );
@@ -249,80 +247,76 @@ export default function Notifications() {
         hideNotifications={true}
       />
       <div className="flex flex-1 flex-col gap-4 p-4">
-
-      <main className="flex-1 overflow-y-auto p-8 bg-gradient-to-b from-muted/20 to-background">
-        <div className="max-w-5xl mx-auto space-y-8">
-          {/* Modern Header */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <Bell className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <h1 className="text-2xl font-bold tracking-tight">Notifications</h1>
-                    <p className="text-sm text-muted-foreground">Stay updated with your latest activity</p>
-                  </div>
+        <div className="max-w-5xl mx-auto w-full space-y-6">
+          {/* Header with Mark All Read */}
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Bell className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold tracking-tight">Notifications</h1>
+                  <p className="text-sm text-muted-foreground">Stay updated with your latest activity</p>
                 </div>
               </div>
-              
-              {unreadNotifications.length > 0 && (
-                <Button
-                  onClick={() => markAllAsRead()}
-                  disabled={isMarkingAllAsRead}
-                  className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-md transition-all duration-300"
-                >
-                  <CheckCheck className="w-4 h-4 mr-2" />
-                  Mark All Read
-                  <Badge variant="secondary" className="ml-2 bg-white/20 text-white">
-                    {unreadNotifications.length}
-                  </Badge>
-                </Button>
-              )}
             </div>
             
-            {/* Filter Tabs */}
-            <div className="flex items-center space-x-1 bg-muted/50 p-1 rounded-lg w-fit">
+            {unreadNotifications.length > 0 && (
               <Button
-                variant={filter === 'all' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setFilter('all')}
-                className="transition-all duration-200"
+                onClick={() => markAllAsRead()}
+                disabled={isMarkingAllAsRead}
+                className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-md transition-all duration-300"
               >
-                <Mail className="w-4 h-4 mr-1.5" />
-                All
-                <Badge variant="secondary" className="ml-1.5">
-                  {(notifications as any[])?.length || 0}
+                <CheckCheck className="w-4 h-4 mr-2" />
+                Mark All Read
+                <Badge variant="secondary" className="ml-2 bg-white/20 text-white">
+                  {unreadNotifications.length}
                 </Badge>
               </Button>
-              <Button
-                variant={filter === 'unread' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setFilter('unread')}
-                className="transition-all duration-200"
-              >
-                <Bell className="w-4 h-4 mr-1.5" />
-                Unread
-                {unreadNotifications.length > 0 && (
-                  <Badge variant="destructive" className="ml-1.5">
-                    {unreadNotifications.length}
-                  </Badge>
-                )}
-              </Button>
-              <Button
-                variant={filter === 'read' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setFilter('read')}
-                className="transition-all duration-200"
-              >
-                <Archive className="w-4 h-4 mr-1.5" />
-                Read
-                <Badge variant="secondary" className="ml-1.5">
-                  {readNotifications.length}
+            )}
+          </div>
+          
+          {/* Filter Tabs */}
+          <div className="flex items-center space-x-1 bg-muted/50 p-1 rounded-lg w-fit">
+            <Button
+              variant={filter === 'all' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setFilter('all')}
+              className="transition-all duration-200"
+            >
+              <Mail className="w-4 h-4 mr-1.5" />
+              All
+              <Badge variant="secondary" className="ml-1.5">
+                {(notifications as any[])?.length || 0}
+              </Badge>
+            </Button>
+            <Button
+              variant={filter === 'unread' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setFilter('unread')}
+              className="transition-all duration-200"
+            >
+              <Bell className="w-4 h-4 mr-1.5" />
+              Unread
+              {unreadNotifications.length > 0 && (
+                <Badge variant="destructive" className="ml-1.5">
+                  {unreadNotifications.length}
                 </Badge>
-              </Button>
-            </div>
+              )}
+            </Button>
+            <Button
+              variant={filter === 'read' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setFilter('read')}
+              className="transition-all duration-200"
+            >
+              <Archive className="w-4 h-4 mr-1.5" />
+              Read
+              <Badge variant="secondary" className="ml-1.5">
+                {readNotifications.length}
+              </Badge>
+            </Button>
           </div>
 
           {/* Notifications List */}
@@ -369,7 +363,6 @@ export default function Notifications() {
           )}
 
         </div>
-      </main>
       </div>
     </div>
   );
