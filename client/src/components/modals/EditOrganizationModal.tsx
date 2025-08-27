@@ -273,17 +273,34 @@ export default function EditOrganizationModal({
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* Logo Upload Section */}
             <div className="flex items-center gap-6 p-4 bg-muted/50 rounded-lg">
-              <Avatar className="h-20 w-20">
-                <AvatarImage 
-                  src={logoPreview || organization?.logo} 
-                  alt="Organization logo" 
-                />
-                <AvatarFallback className="bg-primary/10 text-primary text-xl font-bold">
-                  {getOrgInitials(organization?.display_name || organization?.official_name)}
-                </AvatarFallback>
-              </Avatar>
-              
-              <div className="flex flex-col gap-3">
+              <div className="relative group">
+                <div 
+                  className="relative cursor-pointer transition-all duration-200 hover:opacity-80"
+                  onClick={() => document.getElementById('logo-upload')?.click()}
+                >
+                  <Avatar className="h-20 w-20">
+                    <AvatarImage 
+                      src={logoPreview || organization?.logo} 
+                      alt="Organization logo" 
+                    />
+                    <AvatarFallback className="bg-primary/10 text-primary text-xl font-bold">
+                      {getOrgInitials(organization?.display_name || organization?.official_name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  
+                  {/* Overlay on hover */}
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-full flex items-center justify-center">
+                    <Upload className="w-6 h-6 text-white" />
+                  </div>
+                  
+                  {/* Loading overlay */}
+                  {isUploading && (
+                    <div className="absolute inset-0 bg-black/70 rounded-full flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent"></div>
+                    </div>
+                  )}
+                </div>
+                
                 <input
                   type="file"
                   accept="image/jpeg,image/jpg,image/png"
@@ -291,17 +308,21 @@ export default function EditOrganizationModal({
                   className="hidden"
                   id="logo-upload"
                 />
-                <Button 
-                  variant="outline" 
-                  type="button" 
-                  size="sm"
-                  disabled={isUploading}
-                  onClick={() => document.getElementById('logo-upload')?.click()}
-                >
-                  <Upload className="w-4 h-4 mr-2" />
-                  {isUploading ? "Uploading..." : "Upload Logo"}
-                </Button>
-                <p className="text-xs text-muted-foreground">JPG, PNG up to 2MB</p>
+              </div>
+              
+              <div className="flex flex-col gap-2">
+                <h3 className="font-medium text-foreground">Organization Logo</h3>
+                <p className="text-sm text-muted-foreground">
+                  Click on the logo to change it
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  JPG, PNG up to 2MB
+                </p>
+                {isUploading && (
+                  <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                    Uploading...
+                  </p>
+                )}
               </div>
             </div>
 
