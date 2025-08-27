@@ -844,7 +844,7 @@ export default function Chat() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
                           <div className="flex-1 min-w-0 pr-2">
-                            <p className="font-medium text-sm truncate">
+                            <p className="font-medium text-sm truncate overflow-hidden text-ellipsis whitespace-nowrap">
                               {room.content_object?.owner?.first_name && room.content_object?.owner?.last_name 
                                 ? `${room.content_object.owner.first_name} ${room.content_object.owner.last_name} - ${room.content_object?.job?.title || 'Job Application'}`
                                 : room.content_object?.job?.title || 'Job Application'
@@ -858,7 +858,7 @@ export default function Chat() {
                           )}
                         </div>
                         {room.last_message_text && (
-                          <p className="text-xs text-gray-400 truncate max-w-full">
+                          <p className="text-xs text-gray-400 truncate overflow-hidden text-ellipsis whitespace-nowrap max-w-full">
                             {room.last_message_text}
                           </p>
                         )}
@@ -925,7 +925,7 @@ export default function Chat() {
                           {selectedConversationData.content_object?.owner?.last_name}
                         </p>
                       </div>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500 truncate overflow-hidden text-ellipsis whitespace-nowrap">
                         Applied for {selectedConversationData.content_object?.job?.title}
                       </p>
                     </div>
