@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { 
@@ -73,6 +74,8 @@ export default function Chat() {
   const [uploadingFile, setUploadingFile] = useState(false);
   const [uploadedAttachment, setUploadedAttachment] = useState<{id: number, name: string, url: string} | null>(null);
   const [imageModal, setImageModal] = useState<{ src: string; alt: string } | null>(null);
+  const [chatDisabledRooms, setChatDisabledRooms] = useState<Set<number>>(new Set());
+  const [showDisableConfirm, setShowDisableConfirm] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -125,46 +128,33 @@ export default function Chat() {
   // File upload hook
   const { uploadFile } = useUploadFile();
 
-  // Toggle chat disabled state
-  const toggleChatMutation = useMutation({
-    mutationFn: async ({ roomId, disabled }: { roomId: number; disabled: boolean }) => {
-      const token = localStorage.getItem('access_token');
-      if (!token) throw new Error('No access token');
-      
-      const response = await fetch(`https://api.baltek.net/api/chat/rooms/${roomId}/toggle-chat/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ disabled }),
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to toggle chat');
-      }
-      
-      return response.json();
-    },
-    onSuccess: () => {
-      // Refresh room data
-      queryClient.invalidateQueries({ queryKey: ['/chat/rooms/'] });
-      toast({
-        title: isChatDisabled ? "Chat enabled" : "Chat disabled",
-        description: isChatDisabled ? "You can now send messages" : "Messages are now blocked",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to toggle chat",
-        description: "Please try again later",
-        variant: "destructive",
-      });
-    },
-  });
-
+  // Toggle chat disabled state (frontend-only implementation)
   const handleToggleChat = (roomId: number, disable: boolean) => {
-    toggleChatMutation.mutate({ roomId, disabled: disable });
+    setChatDisabledRooms(prev => {
+      const newSet = new Set(prev);
+      if (disable) {
+        newSet.add(roomId);
+      } else {
+        newSet.delete(roomId);
+      }
+      return newSet;
+    });
+    
+    toast({
+      title: disable ? "Chat disabled" : "Chat enabled",
+      description: disable ? "Messages are now blocked for this conversation" : "You can now send messages",
+    });
+  };
+
+  const handleDisableChat = () => {
+    setShowDisableConfirm(true);
+  };
+
+  const confirmDisableChat = () => {
+    if (selectedConversation) {
+      handleToggleChat(selectedConversation, true);
+    }
+    setShowDisableConfirm(false);
   };
 
   // Count failed messages for status display (moved here to avoid hooks order issues)
@@ -186,8 +176,8 @@ export default function Chat() {
     (room: ChatRoom) => room.id === selectedConversation
   );
 
-  // Check if chat is manually disabled by organization
-  const isChatDisabled = selectedConversationData?.chat_disabled || false;
+  // Check if chat is manually disabled by organization (frontend-only for now)
+  const isChatDisabled = selectedConversation ? chatDisabledRooms.has(selectedConversation) : false;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -974,11 +964,10 @@ export default function Chat() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleToggleChat(selectedConversation!, true)}
-                        disabled={toggleChatMutation.isPending}
+                        onClick={handleDisableChat}
                         className="text-xs border-red-300 text-red-700 hover:bg-red-50 dark:border-red-600 dark:text-red-300 dark:hover:bg-red-900/20"
                       >
-                        {toggleChatMutation.isPending ? 'Disabling...' : 'Disable Chat'}
+                        Disable Chat
                       </Button>
                     )}
                   </div>
@@ -1098,10 +1087,9 @@ export default function Chat() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleToggleChat(selectedConversation!, false)}
-                          disabled={toggleChatMutation.isPending}
                           className="h-8 text-xs border-yellow-300 text-yellow-700 hover:bg-yellow-100 dark:border-yellow-600 dark:text-yellow-300 dark:hover:bg-yellow-800"
                         >
-                          {toggleChatMutation.isPending ? 'Enabling...' : 'Enable Chat'}
+                          Enable Chat
                         </Button>
                       </div>
                     </Alert>
@@ -1230,6 +1218,24 @@ export default function Chat() {
           onClose={() => setImageModal(null)}
         />
       )}
+      
+      {/* Disable Chat Confirmation Dialog */}
+      <AlertDialog open={showDisableConfirm} onOpenChange={setShowDisableConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Disable Chat</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to disable chat for this conversation? The candidate will no longer be able to send messages to you.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDisableChat} className="bg-red-600 hover:bg-red-700">
+              Disable Chat
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
