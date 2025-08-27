@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { useNotifications } from "@/hooks/useNotifications";
 import MessageRenderer from "@/components/MessageRenderer";
 import ImageModal from "@/components/ImageModal";
 import { useChatRooms, useChatMessages, useUploadFile } from "@/hooks/useChatHooks";
@@ -34,12 +34,15 @@ import {
   Check,
   FileText,
   X,
-  AlertTriangle
+  AlertTriangle,
+  Bell
 } from "lucide-react";
 import type { ChatMessage, ChatRoom, MessageAttachment, User } from "@/types";
 
 export default function Chat() {
   const { user, selectedOrganization } = useAuth();
+  const { unreadCount } = useNotifications(false);
+  const navigate = useNavigate();
   
   // Use organization user ID directly since we know it's 8 from the debug output
   const currentUser: User = {
@@ -676,7 +679,22 @@ export default function Chat() {
               <p className="text-sm text-muted-foreground">Chat with job seekers{selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}</p>
             </div>
             <div className="flex items-center space-x-4">
-              <ThemeToggle />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate('/notifications')}
+                className="relative"
+              >
+                <Bell className="w-4 h-4" />
+                {unreadCount > 0 && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-1 -right-1 bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full px-1"
+                  >
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </Badge>
+                )}
+              </Button>
             </div>
           </div>
         </header>
@@ -713,7 +731,22 @@ export default function Chat() {
               <p className="text-sm text-muted-foreground">Chat with job seekers{selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}</p>
             </div>
             <div className="flex items-center space-x-4">
-              <ThemeToggle />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate('/notifications')}
+                className="relative"
+              >
+                <Bell className="w-4 h-4" />
+                {unreadCount > 0 && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-1 -right-1 bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full px-1"
+                  >
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </Badge>
+                )}
+              </Button>
             </div>
           </div>
         </header>

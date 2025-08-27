@@ -3,8 +3,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { Plus } from "lucide-react";
+import { Plus, Bell } from "lucide-react";
+import { useNotifications } from "@/hooks/useNotifications";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -111,6 +111,7 @@ export default function Applications() {
   
   const { toast } = useToast();
   const { selectedOrganization } = useAuth();
+  const { unreadCount } = useNotifications(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -292,7 +293,22 @@ export default function Applications() {
             <p className="text-sm text-muted-foreground">Review and manage job applications</p>
           </div>
           <div className="flex items-center space-x-4">
-            <ThemeToggle />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/notifications')}
+              className="relative"
+            >
+              <Bell className="w-4 h-4" />
+              {unreadCount > 0 && (
+                <Badge 
+                  variant="destructive" 
+                  className="absolute -top-1 -right-1 bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full px-1"
+                >
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </Badge>
+              )}
+            </Button>
             <Button 
               onClick={handleCreateJob}
               disabled={selectedOrganization?.is_public === false}

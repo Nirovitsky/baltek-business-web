@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { ThemeToggle } from "@/components/theme-toggle";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,7 +13,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
-import { Edit, Trash2, Search, Eye, Briefcase, MapPin, Users, DollarSign, Calendar, Building2 } from "lucide-react";
+import { Edit, Trash2, Search, Eye, Briefcase, MapPin, Users, DollarSign, Calendar, Building2, Bell } from "lucide-react";
+import { useNotifications } from "@/hooks/useNotifications";
 import type { Job, PaginatedResponse } from "@/types";
 
 export default function Jobs() {
@@ -24,6 +24,7 @@ export default function Jobs() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { selectedOrganization } = useAuth();
+  const { unreadCount } = useNotifications(false);
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
@@ -157,7 +158,22 @@ export default function Jobs() {
             <p className="text-sm text-muted-foreground">Manage your job opportunities</p>
           </div>
           <div className="flex items-center space-x-4">
-            <ThemeToggle />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/notifications')}
+              className="relative"
+            >
+              <Bell className="w-4 h-4" />
+              {unreadCount > 0 && (
+                <Badge 
+                  variant="destructive" 
+                  className="absolute -top-1 -right-1 bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full px-1"
+                >
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </Badge>
+              )}
+            </Button>
             <Button 
               onClick={handleCreateJob}
               disabled={selectedOrganization?.is_public === false}

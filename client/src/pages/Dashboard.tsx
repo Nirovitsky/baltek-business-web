@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Bell } from "lucide-react";
+import { useNotifications } from "@/hooks/useNotifications";
 import StatsCard from "@/components/dashboard/StatsCard";
 import RecentJobs from "@/components/dashboard/RecentJobs";
 import RecentApplications from "@/components/dashboard/RecentApplications";
@@ -22,6 +23,7 @@ export default function Dashboard() {
   const [isJobDetailOpen, setIsJobDetailOpen] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState<number | null>(null);
   const { selectedOrganization } = useAuth();
+  const { unreadCount } = useNotifications(false);
 
   // Fetch data for stats filtered by organization
   const { data: jobsData } = useQuery({
@@ -95,7 +97,22 @@ export default function Dashboard() {
             <p className="text-sm text-muted-foreground">Manage your job postings and applications</p>
           </div>
           <div className="flex items-center space-x-4">
-            <ThemeToggle />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/notifications')}
+              className="relative"
+            >
+              <Bell className="w-4 h-4" />
+              {unreadCount > 0 && (
+                <Badge 
+                  variant="destructive" 
+                  className="absolute -top-1 -right-1 bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full px-1"
+                >
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </Badge>
+              )}
+            </Button>
             <Button 
               onClick={handleCreateJob} 
               disabled={selectedOrganization?.is_public === false}

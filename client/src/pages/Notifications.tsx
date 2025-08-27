@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -193,7 +192,6 @@ export default function Notifications() {
               <p className="text-sm text-muted-foreground">Stay updated with your latest notifications</p>
             </div>
             <div className="flex items-center space-x-4">
-              <ThemeToggle />
             </div>
           </div>
         </header>
