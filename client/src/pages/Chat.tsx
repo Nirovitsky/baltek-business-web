@@ -673,7 +673,7 @@ export default function Chat() {
         <TopBar 
           title="Chat" 
           description={`Chat with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
-          showCreateButton={false}
+          showCreateButton={true}
         />
         <div className="flex-1 flex">
           <div className="w-80 border-r bg-white dark:bg-background flex flex-col">
@@ -702,7 +702,7 @@ export default function Chat() {
         <TopBar 
           title="Chat" 
           description={`Chat with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
-          showCreateButton={false}
+          showCreateButton={true}
         />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
@@ -722,7 +722,7 @@ export default function Chat() {
       <TopBar 
         title="Chat" 
         description={`Chat with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
-        showCreateButton={false}
+        showCreateButton={true}
       />
       {/* Connection Status Bar */}
       {(!connected || failedMessageCount > 0) && (

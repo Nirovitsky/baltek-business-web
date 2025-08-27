@@ -30,7 +30,7 @@ export default function Settings() {
       <TopBar 
         title="Settings"
         description="Manage your account settings and preferences"
-        showCreateButton={false}
+        showCreateButton={true}
       />
 
       <main className="flex-1 overflow-y-auto p-6 bg-muted/30">

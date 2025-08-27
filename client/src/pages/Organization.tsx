@@ -29,7 +29,7 @@ function OrganizationProfileSkeleton() {
       <TopBar 
         title="Profile"
         description="Manage your organization profile"
-        showCreateButton={false}
+        showCreateButton={true}
       />
       
       <main className="flex-1 overflow-y-auto p-6">
@@ -100,7 +100,7 @@ export default function Organization() {
         <TopBar 
           title="Profile"
           description="Manage your organization profile"
-          showCreateButton={false}
+          showCreateButton={true}
         />
         
         <main className="flex-1 overflow-y-auto p-6">
@@ -132,7 +132,7 @@ export default function Organization() {
       <TopBar 
         title="Profile"
         description="Manage your organization profile"
-        showCreateButton={false}
+        showCreateButton={true}
       />
 
       <main className="flex-1 overflow-y-auto p-6">
