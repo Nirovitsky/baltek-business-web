@@ -185,8 +185,8 @@ export default function Notifications() {
         <TopBar 
           title="Notifications" 
           description="Stay updated with your latest notifications"
-          showCreateButton={false}
-          hideNotifications={true}
+          showCreateButton={true}
+          hideNotifications={false}
         />
         <div className="flex flex-1 flex-col gap-4 p-4">
           <div className="max-w-5xl mx-auto w-full space-y-6">
@@ -243,8 +243,8 @@ export default function Notifications() {
       <TopBar 
         title="Notifications" 
         description="Stay updated with your latest notifications"
-        showCreateButton={false}
-        hideNotifications={true}
+        showCreateButton={true}
+        hideNotifications={false}
       />
       <div className="flex flex-1 flex-col gap-4 p-4">
         <div className="max-w-5xl mx-auto w-full space-y-6">
