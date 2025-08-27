@@ -17,7 +17,7 @@ import { Briefcase, Users, Clock, UserCheck, AlertCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Job, JobApplication, PaginatedResponse } from "@/types";
+import type { Job, JobApplication, PaginatedResponse, OrganizationStats } from "@/types";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ export default function Dashboard() {
   // Fetch organization statistics from dedicated stats endpoint
   const { data: orgStats } = useQuery({
     queryKey: ['/organizations/', selectedOrganization?.id, '/stats'],
-    queryFn: () => apiService.request(`/organizations/${selectedOrganization!.id}/stats`),
+    queryFn: () => apiService.request<OrganizationStats>(`/organizations/${selectedOrganization!.id}/stats`),
     enabled: !!selectedOrganization,
   });
 
@@ -62,7 +62,6 @@ export default function Dashboard() {
   const applications = applicationsData?.results || [];
 
   // Use statistics from the organization stats endpoint
-  console.log('Dashboard - Organization Stats:', orgStats);
   
   // Extract stats from API response or use fallback values
   const activeJobs = orgStats?.active_jobs || 0;

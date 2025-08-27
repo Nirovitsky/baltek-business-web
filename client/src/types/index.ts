@@ -87,6 +87,16 @@ export interface Organization {
   updated_at?: string;
 }
 
+export interface OrganizationStats {
+  active_jobs: number;
+  total_jobs: number;
+  archived_jobs: number;
+  total_applications: number;
+  pending_applications: number;
+  ongoing_applications: number;
+  hired_this_month: number;
+}
+
 export interface Job {
   id: number;
   title: string;
