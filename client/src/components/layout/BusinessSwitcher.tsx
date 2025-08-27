@@ -209,7 +209,7 @@ export default function BusinessSwitcher() {
                 <Building2 className="h-4 w-4" />
               )}
             </div>
-            <span className="truncate">
+            <span className="truncate max-w-[120px]">
               {selectedOrganization?.display_name || selectedOrganization?.official_name || "Select business..."}
             </span>
           </div>
