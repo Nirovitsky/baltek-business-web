@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import TopBar from "@/components/layout/TopBar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Bell } from "lucide-react";
@@ -88,47 +89,13 @@ export default function Dashboard() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 border-b px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <SidebarTrigger className="-ml-1" />
-        <Separator orientation="vertical" className="mr-2 h-4" />
-        <div className="flex flex-1 items-center justify-between">
-          <div>
-            <h1 className="text-lg font-semibold">Dashboard Overview</h1>
-            <p className="text-sm text-muted-foreground">Manage your job postings and applications</p>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate('/notifications')}
-              className="relative"
-            >
-              <Bell className="w-4 h-4" />
-              {unreadCount > 0 && (
-                <Badge 
-                  variant="destructive" 
-                  className="absolute -top-1 -right-1 bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full px-1"
-                >
-                  {unreadCount > 99 ? "99+" : unreadCount}
-                </Badge>
-              )}
-            </Button>
-            <Button 
-              onClick={handleCreateJob} 
-              disabled={selectedOrganization?.is_public === false}
-              className={`${
-                selectedOrganization?.is_public === false 
-                  ? 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed opacity-60' 
-                  : 'bg-primary hover:bg-primary/90'
-              }`}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Post New Job
-            </Button>
-          </div>
-        </div>
-      </header>
-      <div className="flex flex-1 flex-col gap-4 p-4">
+      <TopBar
+        title="Dashboard Overview"
+        description="Manage your job postings and applications"
+        showCreateButton={true}
+      />
+      <div className="flex h-screen pt-16">
+        <div className="flex flex-1 flex-col gap-4 p-4">
         <div className="space-y-8">
         {/* Organization Approval Notice */}
         {selectedOrganization && selectedOrganization.is_public === false && (
@@ -201,6 +168,7 @@ export default function Dashboard() {
             onReviewApplications={handleReviewApplications}
             onOpenMessages={handleOpenMessages}
           />
+        </div>
         </div>
       </div>
 

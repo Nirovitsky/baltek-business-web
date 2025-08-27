@@ -38,12 +38,12 @@ export default function TopBar({
     navigate('/notifications');
   };
   return (
-    <header className="bg-background border-b border-border px-6 py-4">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border px-6 py-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-foreground">{title}</h2>
+          <h2 className="text-lg font-semibold text-foreground">{title}</h2>
           {description && (
-            <p className="text-muted-foreground">{description}</p>
+            <p className="text-sm text-muted-foreground">{description}</p>
           )}
         </div>
         <div className="flex items-center space-x-4">
@@ -63,17 +63,20 @@ export default function TopBar({
               </Badge>
             )}
           </Button>
-          <Button 
-            onClick={handleCreateJob} 
-            disabled={selectedOrganization?.is_public === false}
-            className={`${
-              selectedOrganization?.is_public === false 
-                ? 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed opacity-60' 
-                : 'bg-primary hover:bg-primary/90'
-            }`}
-          >
-            <Plus className="w-4 h-4" />
-          </Button>
+          {showCreateButton && (
+            <Button 
+              onClick={handleCreateJob} 
+              disabled={selectedOrganization?.is_public === false}
+              className={`${
+                selectedOrganization?.is_public === false 
+                  ? 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed opacity-60' 
+                  : 'bg-primary hover:bg-primary/90'
+              }`}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Post New Job
+            </Button>
+          )}
         </div>
       </div>
     </header>
