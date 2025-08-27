@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import TopBar from "@/components/layout/TopBar";
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import StatsCard from "@/components/dashboard/StatsCard";
 import RecentJobs from "@/components/dashboard/RecentJobs";
 import RecentApplications from "@/components/dashboard/RecentApplications";
@@ -73,14 +77,42 @@ export default function Dashboard() {
     setIsJobDetailOpen(true);
   };
 
-  return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <TopBar 
-        title="Dashboard Overview"
-        description="Manage your job postings and applications"
-      />
+  const handleCreateJob = () => {
+    if (selectedOrganization?.is_public === false) {
+      return;
+    }
+    navigate('/jobs/create');
+  };
 
-      <main className="flex-1 overflow-y-auto p-6 space-y-8 bg-muted/30">
+  return (
+    <>
+      <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+        <SidebarTrigger className="-ml-1" />
+        <Separator orientation="vertical" className="mr-2 h-4" />
+        <div className="flex flex-1 items-center justify-between">
+          <div>
+            <h1 className="text-lg font-semibold">Dashboard Overview</h1>
+            <p className="text-sm text-muted-foreground">Manage your job postings and applications</p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <ThemeToggle />
+            <Button 
+              onClick={handleCreateJob} 
+              disabled={selectedOrganization?.is_public === false}
+              className={`${
+                selectedOrganization?.is_public === false 
+                  ? 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed opacity-60' 
+                  : 'bg-primary hover:bg-primary/90'
+              }`}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Post New Job
+            </Button>
+          </div>
+        </div>
+      </header>
+      <div className="flex flex-1 flex-col gap-4 p-4">
+        <div className="space-y-8">
         {/* Organization Approval Notice */}
         {selectedOrganization && selectedOrganization.is_public === false && (
           <Alert className="border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950">
@@ -147,18 +179,22 @@ export default function Dashboard() {
           <RecentApplications />
         </div>
 
-        {/* Quick Actions */}
-        <QuickActions
-          onReviewApplications={handleReviewApplications}
-          onOpenMessages={handleOpenMessages}
-        />
-      </main>
+          {/* Quick Actions */}
+          <QuickActions
+            onReviewApplications={handleReviewApplications}
+            onOpenMessages={handleOpenMessages}
+          />
+        </div>
+      </div>
 
-      <JobDetailDialog
-        jobId={selectedJobId}
-        open={isJobDetailOpen}
-        onOpenChange={setIsJobDetailOpen}
-      />
-    </div>
+      {/* Job Detail Modal */}
+      {selectedJobId && (
+        <JobDetailDialog 
+          jobId={selectedJobId}
+          isOpen={isJobDetailOpen}
+          onClose={() => setIsJobDetailOpen(false)}
+        />
+      )}
+    </>
   );
 }

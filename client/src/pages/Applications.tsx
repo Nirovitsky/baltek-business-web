@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import TopBar from "@/components/layout/TopBar";
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { Plus } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -271,15 +274,42 @@ export default function Applications() {
     (typeof app.job === 'object' && app.job.title?.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <TopBar 
-        title="Applications"
-        description="Review and manage job applications"
-        showCreateButton={false}
-      />
+  const handleCreateJob = () => {
+    if (selectedOrganization?.is_public === false) {
+      return;
+    }
+    navigate('/jobs/create');
+  };
 
-      <main className="flex-1 overflow-y-auto p-6 bg-muted/30">
+  return (
+    <>
+      <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+        <SidebarTrigger className="-ml-1" />
+        <Separator orientation="vertical" className="mr-2 h-4" />
+        <div className="flex flex-1 items-center justify-between">
+          <div>
+            <h1 className="text-lg font-semibold">Applications</h1>
+            <p className="text-sm text-muted-foreground">Review and manage job applications</p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <ThemeToggle />
+            <Button 
+              onClick={handleCreateJob}
+              disabled={selectedOrganization?.is_public === false}
+              className={`${
+                selectedOrganization?.is_public === false 
+                  ? 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed opacity-60' 
+                  : 'bg-primary hover:bg-primary/90'
+              }`}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Post New Job
+            </Button>
+          </div>
+        </div>
+      </header>
+      <div className="flex flex-1 flex-col gap-4 p-4">
+        <div className="space-y-6">
         {/* Filters */}
         <div className="mb-6 flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
@@ -787,7 +817,8 @@ export default function Applications() {
             </DialogContent>
           </Dialog>
         )}
-      </main>
-    </div>
+        </div>
+      </div>
+    </>
   );
 }

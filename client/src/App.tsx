@@ -86,14 +86,10 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider>
-      <div className="dashboard-layout flex h-screen bg-background overflow-hidden">
-        <AppSidebar />
-        <SidebarInset>
-          <div className="flex flex-1 flex-col overflow-hidden">
-            {children}
-          </div>
-        </SidebarInset>
-      </div>
+      <AppSidebar />
+      <SidebarInset>
+        {children}
+      </SidebarInset>
     </SidebarProvider>
   );
 }

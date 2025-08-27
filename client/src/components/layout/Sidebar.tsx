@@ -4,18 +4,17 @@ import {
   Briefcase,
   Users,
   MessageCircle,
-  Building2,
   Settings, 
   UserCircle,
   Bell,
   ChevronUp,
-  User2
+  User2,
+  MoreHorizontal,
+  Building
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,64 +24,69 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Sidebar as SidebarContainer,
+  Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
+  SidebarMenuAction,
 } from "@/components/ui/sidebar";
 import BusinessSwitcher from "./BusinessSwitcher";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { useNotifications } from "@/hooks/useNotifications";
 
-const mainNavigationItems = [
-  {
-    name: "Dashboard",
-    href: "/",
-    icon: BarChart3,
-  },
-  {
-    name: "Jobs",
-    href: "/jobs",
-    icon: Briefcase,
-  },
-  {
-    name: "Applications",
-    href: "/applications",
-    icon: Users,
-  },
-  {
-    name: "Chat",
-    href: "/chat",
-    icon: MessageCircle,
-  },
-  {
-    name: "Notifications",
-    href: "/notifications",
-    icon: Bell,
-    showBadge: true,
-  },
-];
-
-const bottomNavigationItems = [
-  {
-    name: "Profile",
-    href: "/organization",
-    icon: UserCircle,
-  },
-  {
-    name: "Settings",
-    href: "/settings",
-    icon: Settings,
-  },
-];
+// Navigation data structure following shadcn/ui blocks pattern
+const data = {
+  navMain: [
+    {
+      title: "Platform",
+      url: "#",
+      items: [
+        {
+          title: "Dashboard",
+          url: "/",
+          icon: BarChart3,
+        },
+        {
+          title: "Jobs",
+          url: "/jobs", 
+          icon: Briefcase,
+        },
+        {
+          title: "Applications",
+          url: "/applications",
+          icon: Users,
+        },
+        {
+          title: "Chat",
+          url: "/chat",
+          icon: MessageCircle,
+        },
+        {
+          title: "Notifications",
+          url: "/notifications",
+          icon: Bell,
+          showBadge: true,
+        },
+      ],
+    },
+  ],
+  navSecondary: [
+    {
+      title: "Profile",
+      url: "/organization",
+      icon: UserCircle,
+    },
+    {
+      title: "Settings", 
+      url: "/settings",
+      icon: Settings,
+    },
+  ],
+};
 
 export default function AppSidebar() {
   const location = useLocation();
@@ -90,110 +94,133 @@ export default function AppSidebar() {
   const { unreadCount } = useNotifications(false); // Don't fetch notifications in sidebar
 
   return (
-    <SidebarContainer variant="inset" className="w-64">
-      <SidebarHeader className="border-b border-sidebar-border">
-        <div className="p-4">
-          <BusinessSwitcher />
-        </div>
+    <Sidebar variant="inset">
+      <SidebarHeader>
+        <BusinessSwitcher />
       </SidebarHeader>
-      
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
+        {/* Main Navigation */}
+        {data.navMain.map((group) => (
+          <SidebarGroup key={group.title}>
+            <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
             <SidebarMenu>
-              {mainNavigationItems.map((item) => {
-                const isActive = location.pathname === item.href || (item.href !== "/" && location.pathname.startsWith(item.href));
-                const Icon = item.icon;
-
+              {group.items.map((item) => {
+                const isActive = location.pathname === item.url || (item.url !== "/" && location.pathname.startsWith(item.url));
+                
                 return (
-                  <SidebarMenuItem key={item.href}>
+                  <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild isActive={isActive}>
-                      <Link to={item.href} className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <Icon className="mr-3 h-4 w-4" />
-                          <span>{item.name}</span>
-                        </div>
-                        {item.showBadge && unreadCount > 0 && (
-                          <Badge variant="destructive" className="bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full">
-                            {unreadCount > 99 ? "99+" : unreadCount}
-                          </Badge>
-                        )}
+                      <Link to={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
+                    {item.showBadge && unreadCount > 0 && (
+                      <SidebarMenuAction className="peer-data-[size=sm]/menu-button:top-1">
+                        <Badge variant="destructive" className="bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full">
+                          {unreadCount > 99 ? "99+" : unreadCount}
+                        </Badge>
+                      </SidebarMenuAction>
+                    )}
                   </SidebarMenuItem>
                 );
               })}
             </SidebarMenu>
-          </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
+
+        {/* Secondary Navigation */}
+        <SidebarGroup className="mt-auto">
+          <SidebarMenu>
+            {data.navSecondary.map((item) => {
+              const isActive = location.pathname === item.url || (item.url !== "/" && location.pathname.startsWith(item.url));
+              
+              return (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild isActive={isActive}>
+                    <Link to={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+            })}
+          </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-
-      <SidebarFooter className="border-t border-sidebar-border">
+      <SidebarFooter>
         <SidebarMenu>
-          {bottomNavigationItems.map((item) => {
-            const isActive = location.pathname === item.href || (item.href !== "/" && location.pathname.startsWith(item.href));
-            const Icon = item.icon;
-
-            return (
-              <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton asChild isActive={isActive}>
-                  <Link to={item.href}>
-                    <Icon className="mr-3 h-4 w-4" />
-                    <span>{item.name}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            );
-          })}
-        </SidebarMenu>
-        
-        {/* User Profile Section */}
-        <div className="mt-auto p-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="w-full justify-between h-auto p-2">
-                <div className="flex items-center gap-2">
-                  <Avatar className="h-8 w-8">
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton
+                  size="lg"
+                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                >
+                  <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage src={user?.avatar} alt={user?.first_name} />
-                    <AvatarFallback>
+                    <AvatarFallback className="rounded-lg">
                       {user?.first_name?.[0]}{user?.last_name?.[0]}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="text-left">
-                    <div className="text-sm font-medium">
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-semibold">
                       {user?.first_name} {user?.last_name}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
+                    </span>
+                    <span className="truncate text-xs">
                       {selectedOrganization?.official_name}
+                    </span>
+                  </div>
+                  <ChevronUp className="ml-auto size-4" />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                side="bottom"
+                align="end"
+                sideOffset={4}
+              >
+                <DropdownMenuLabel className="p-0 font-normal">
+                  <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                    <Avatar className="h-8 w-8 rounded-lg">
+                      <AvatarImage src={user?.avatar} alt={user?.first_name} />
+                      <AvatarFallback className="rounded-lg">
+                        {user?.first_name?.[0]}{user?.last_name?.[0]}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-semibold">
+                        {user?.first_name} {user?.last_name}
+                      </span>
+                      <span className="truncate text-xs">
+                        {selectedOrganization?.official_name}
+                      </span>
                     </div>
                   </div>
-                </div>
-                <ChevronUp className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link to="/profile">
-                  <User2 className="mr-2 h-4 w-4" />
-                  Profile
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/settings">
-                  <Settings className="mr-2 h-4 w-4" />
-                  Settings
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={logout}>
-                Log out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/organization">
+                    <UserCircle />
+                    Account
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/settings">
+                    <Settings />
+                    Settings
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={logout}>
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
-    </SidebarContainer>
+    </Sidebar>
   );
 }
