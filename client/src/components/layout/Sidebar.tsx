@@ -74,7 +74,18 @@ const data = {
       ],
     },
   ],
-  navSecondary: [],
+  navSecondary: [
+    {
+      title: "Profile",
+      url: "/organization",
+      icon: UserCircle,
+    },
+    {
+      title: "Settings", 
+      url: "/settings",
+      icon: Settings,
+    },
+  ],
 };
 
 export default function AppSidebar() {
