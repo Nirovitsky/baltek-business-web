@@ -50,12 +50,25 @@ export default function ApplicationDetailsModal({
     }
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | number) => {
+    if (!dateString) return 'Not specified';
     try {
-      const date = new Date(dateString);
+      let date: Date;
+      
+      // Handle timestamp (number or string)
+      if (typeof dateString === 'number') {
+        date = new Date(dateString * 1000); // Convert from seconds to milliseconds
+      } else if (typeof dateString === 'string' && /^\d+$/.test(dateString)) {
+        date = new Date(parseInt(dateString) * 1000);
+      } else {
+        // Fallback: try parsing as other date format
+        date = new Date(dateString as string);
+      }
+      
+      if (isNaN(date.getTime())) return 'Not specified';
       return format(date, 'MMMM d, yyyy');
     } catch {
-      return dateString;
+      return 'Not specified';
     }
   };
 
