@@ -54,16 +54,39 @@ export default function Dashboard() {
   const jobs = jobsData?.results || [];
   const applications = applicationsData?.results || [];
 
+  // Debug: Log job data to understand the structure
+  console.log('Dashboard - Jobs data:', jobs);
+  console.log('Dashboard - Total jobs from API:', jobsData?.count);
+  console.log('Dashboard - Jobs array length:', jobs.length);
+  
+  // Log each job's status and is_active values
+  jobs.forEach((job, index) => {
+    console.log(`Job ${index + 1} (ID: ${job.id}):`, {
+      title: job.title,
+      status: job.status,
+      is_active: job.is_active,
+      statusType: typeof job.status,
+      isActiveType: typeof job.is_active
+    });
+  });
+
   // Calculate real stats from API data
   // Handle both status field and is_active boolean for backwards compatibility
   const activeJobs = jobs.filter(job => {
     // If status field exists, use it
     if (job.status) {
-      return job.status.toLowerCase() === 'open';
+      const isActive = job.status.toLowerCase() === 'open';
+      console.log(`Job ${job.id} with status "${job.status}": isActive = ${isActive}`);
+      return isActive;
     }
     // Fallback to is_active boolean field
-    return job.is_active === true;
+    const isActive = job.is_active === true;
+    console.log(`Job ${job.id} with is_active "${job.is_active}": isActive = ${isActive}`);
+    return isActive;
   }).length;
+  
+  console.log('Dashboard - Active Jobs Count:', activeJobs);
+  
   const totalApplications = applicationsData?.count || 0;
   const pendingApplications = applications.filter(app => app.status === 'in_review').length;
   const hiredThisMonth = applications.filter(app => app.status === 'hired').length;
