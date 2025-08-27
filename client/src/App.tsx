@@ -5,13 +5,15 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/useAuth";
 import { useWebSocketGlobal } from "@/hooks/useWebSocketGlobal";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useEffect, useState } from "react";
 
 // Layout Components
-import Sidebar from "@/components/layout/Sidebar";
+import AppSidebar from "@/components/layout/Sidebar";
 
 // Pages
 import OAuth2Login from "@/pages/OAuth2Login";
@@ -83,10 +85,22 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="dashboard-layout flex h-screen bg-background overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">{children}</div>
-    </div>
+    <SidebarProvider>
+      <div className="dashboard-layout flex h-screen bg-background">
+        <AppSidebar />
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+            <div className="flex items-center gap-2 px-4">
+              <SidebarTrigger className="-ml-1" />
+              <Separator orientation="vertical" className="mr-2 h-4" />
+            </div>
+          </header>
+          <div className="flex flex-1 flex-col overflow-hidden">
+            {children}
+          </div>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 }
 

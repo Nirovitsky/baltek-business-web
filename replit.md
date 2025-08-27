@@ -80,6 +80,13 @@ The Baltek Business Dashboard is a React and Express-based application for HR ma
   - Updated Organization page title to "Profile" for better user clarity
   - Changed Organization navigation icon from Building2 to UserCircle for Profile section
   - Improved navigation hierarchy with dedicated sections for main features vs. user settings
+- **Sidebar Migration to shadcn/ui Blocks (January 27, 2025)**: Modernized sidebar to match shadcn/ui design patterns
+  - Migrated sidebar to use shadcn/ui Sidebar components (SidebarProvider, SidebarContent, SidebarHeader, SidebarFooter)
+  - Implemented collapsible sidebar functionality with SidebarTrigger
+  - Enhanced user profile section with dropdown menu for account actions
+  - Updated navigation structure with SidebarMenu and SidebarMenuItem components
+  - Added professional header with collapse trigger and separator
+  - Maintained all existing functionality while improving visual design and user experience
 
 ## System Architecture
 
