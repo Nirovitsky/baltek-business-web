@@ -476,7 +476,7 @@ export default function CreateJob() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto scrollbar-hide">
+      <div className="flex-1 overflow-y-auto">
         <div className="max-w-4xl mx-auto px-6 py-8">
           {/* Organization Approval Notice */}
           {selectedOrganization && selectedOrganization.is_public === false && (
