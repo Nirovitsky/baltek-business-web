@@ -19,6 +19,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useOrganizationMutations } from "@/hooks/useOrganizations";
 import { Building2, Globe, Upload, X, Save, Plus, Trash2, Calendar } from "lucide-react";
+import { SearchableLocation } from "@/components/ui/searchable-location";
+import { SearchableCategory } from "@/components/ui/searchable-category";
 import type { Organization, Project } from "@/types";
 
 const projectSchema = z.object({
@@ -340,6 +342,45 @@ export default function EditOrganizationModal({
                       <Input 
                         {...field} 
                         placeholder="Display name (optional)"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Category and Location */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category</FormLabel>
+                    <FormControl>
+                      <SearchableCategory
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        placeholder="Select category..."
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="location"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Location</FormLabel>
+                    <FormControl>
+                      <SearchableLocation
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        placeholder="Select location..."
                       />
                     </FormControl>
                     <FormMessage />
