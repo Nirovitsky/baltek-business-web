@@ -124,6 +124,8 @@
 /* Base styles for html and body */
 html, body {
   height: 100%;
+  /* Prevent layout shifts from scrollbar changes */
+  scrollbar-gutter: stable;
 }
 
 /* Main app container */
@@ -152,6 +154,8 @@ html, body {
 .chat-layout body {
   overflow: hidden;
   height: 100vh;
+  /* Prevent scrollbar-related layout shifts */
+  scrollbar-gutter: stable;
 }
 
 /* Prevent body scroll when modal is open */
