@@ -228,9 +228,12 @@ export function useHoverPrefetch() {
 
   const prefetchRoute = useCallback((route: string) => {
     if (!selectedOrganization?.id) return;
+    
+    console.log(`[Prefetch] Attempting to prefetch route: ${route}`);
 
     const prefetchMap: Record<string, () => void> = {
       '/jobs': () => {
+        console.log(`[Prefetch] Fetching jobs for organization: ${selectedOrganization.id}`);
         queryClient.prefetchQuery({
           queryKey: ['/jobs/', selectedOrganization.id],
           queryFn: () => apiService.request(`/jobs/?organization=${selectedOrganization.id}`),
@@ -249,6 +252,7 @@ export function useHoverPrefetch() {
         });
       },
       '/applications': () => {
+        console.log(`[Prefetch] Fetching applications for organization: ${selectedOrganization.id}`);
         queryClient.prefetchQuery({
           queryKey: ['/jobs/applications/', selectedOrganization.id],
           queryFn: () => apiService.request(`/jobs/applications/?organization=${selectedOrganization.id}`),
@@ -270,10 +274,31 @@ export function useHoverPrefetch() {
         });
       },
       '/organization': () => {
+        console.log(`[Prefetch] Fetching organizations data`);
         queryClient.prefetchQuery({
           queryKey: ['/organizations/', 'owned'],
           queryFn: () => apiService.request('/organizations/?owned=true'),
           staleTime: 5 * 60 * 1000,
+        });
+      },
+      '/profile': () => {
+        queryClient.prefetchQuery({
+          queryKey: ['/organizations/', 'owned'],
+          queryFn: () => apiService.request('/organizations/?owned=true'),
+          staleTime: 5 * 60 * 1000,
+        });
+      },
+      '/jobs/create': () => {
+        // Prefetch form data for job creation
+        queryClient.prefetchQuery({
+          queryKey: ['/categories/'],
+          queryFn: () => apiService.request('/categories/'),
+          staleTime: 15 * 60 * 1000,
+        });
+        queryClient.prefetchQuery({
+          queryKey: ['/locations/'],
+          queryFn: () => apiService.request('/locations/'),
+          staleTime: 15 * 60 * 1000,
         });
       },
       '/settings': () => {
@@ -283,7 +308,10 @@ export function useHoverPrefetch() {
 
     const prefetchFn = prefetchMap[route];
     if (prefetchFn) {
+      console.log(`[Prefetch] Executing prefetch for: ${route}`);
       prefetchFn();
+    } else {
+      console.log(`[Prefetch] No prefetch function found for route: ${route}`);
     }
   }, [queryClient, selectedOrganization?.id]);
 

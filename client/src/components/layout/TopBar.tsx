@@ -80,7 +80,10 @@ export default function TopBar({
           {showCreateButton && (
             <Button 
               onClick={handleCreateJob} 
-              onMouseEnter={() => prefetchRoute('/jobs')}
+              onMouseEnter={() => {
+                prefetchRoute('/jobs');
+                prefetchRoute('/jobs/create');
+              }}
               disabled={selectedOrganization?.is_public === false}
               className={`${
                 selectedOrganization?.is_public === false 
