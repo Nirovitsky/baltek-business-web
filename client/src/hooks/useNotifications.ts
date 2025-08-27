@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
 import type { Notification, NotificationPreferences, PaginatedResponse } from "@/types";
 
@@ -28,6 +29,7 @@ export function useNotifications(enabled: boolean = true, enablePolling: boolean
   );
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { selectedOrganization } = useAuth();
   
 
   // Use local storage for preferences since API endpoint doesn't exist
@@ -53,11 +55,11 @@ export function useNotifications(enabled: boolean = true, enablePolling: boolean
     };
   });
 
-  // Fetch notifications from the actual API endpoint
+  // Fetch organization-specific notifications from the correct API endpoint
   const { data: notificationsData, isLoading: notificationsLoading } = useQuery({
-    queryKey: ['/notifications/'],
-    queryFn: () => apiService.request<PaginatedResponse<Notification>>('/notifications/'),
-    enabled: enabled, // Only fetch when explicitly enabled
+    queryKey: ['/notifications/', selectedOrganization?.id],
+    queryFn: () => apiService.request<PaginatedResponse<Notification>>(`/notifications/${selectedOrganization?.id}/`),
+    enabled: enabled && !!selectedOrganization?.id, // Only fetch when enabled and organization is selected
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes 
     gcTime: 15 * 60 * 1000, // Keep in cache for 15 minutes
     refetchOnWindowFocus: false, // Don't refetch on window focus
@@ -219,13 +221,13 @@ export function useNotifications(enabled: boolean = true, enablePolling: boolean
     },
     onMutate: async (notificationId) => {
       // Cancel any outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ['/notifications/'] });
+      await queryClient.cancelQueries({ queryKey: ['/notifications/', selectedOrganization?.id] });
 
       // Snapshot the previous value
-      const previousNotifications = queryClient.getQueryData(['/notifications/']);
+      const previousNotifications = queryClient.getQueryData(['/notifications/', selectedOrganization?.id]);
 
       // Optimistically update to the new value
-      queryClient.setQueryData(['/notifications/'], (old: any) => {
+      queryClient.setQueryData(['/notifications/', selectedOrganization?.id], (old: any) => {
         if (!old?.results) return old;
         return {
           ...old,
@@ -242,12 +244,12 @@ export function useNotifications(enabled: boolean = true, enablePolling: boolean
     onError: (err, notificationId, context) => {
       // Rollback on error
       if (context?.previousNotifications) {
-        queryClient.setQueryData(['/notifications/'], context.previousNotifications);
+        queryClient.setQueryData(['/notifications/', selectedOrganization?.id], context.previousNotifications);
       }
     },
     onSettled: () => {
       // Always refetch after error or success
-      queryClient.invalidateQueries({ queryKey: ['/notifications/'] });
+      queryClient.invalidateQueries({ queryKey: ['/notifications/', selectedOrganization?.id] });
     },
   });
 
@@ -265,11 +267,11 @@ export function useNotifications(enabled: boolean = true, enablePolling: boolean
       return Promise.all(promises);
     },
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ['/notifications/'] });
-      const previousNotifications = queryClient.getQueryData(['/notifications/']);
+      await queryClient.cancelQueries({ queryKey: ['/notifications/', selectedOrganization?.id] });
+      const previousNotifications = queryClient.getQueryData(['/notifications/', selectedOrganization?.id]);
 
       // Optimistically mark all as read
-      queryClient.setQueryData(['/notifications/'], (old: any) => {
+      queryClient.setQueryData(['/notifications/', selectedOrganization?.id], (old: any) => {
         if (!old?.results) return old;
         return {
           ...old,
@@ -284,7 +286,7 @@ export function useNotifications(enabled: boolean = true, enablePolling: boolean
     },
     onError: (err, variables, context) => {
       if (context?.previousNotifications) {
-        queryClient.setQueryData(['/notifications/'], context.previousNotifications);
+        queryClient.setQueryData(['/notifications/', selectedOrganization?.id], context.previousNotifications);
       }
     },
     onSuccess: () => {
@@ -293,7 +295,7 @@ export function useNotifications(enabled: boolean = true, enablePolling: boolean
       });
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['/notifications/'] });
+      queryClient.invalidateQueries({ queryKey: ['/notifications/', selectedOrganization?.id] });
     },
   });
 
@@ -304,11 +306,11 @@ export function useNotifications(enabled: boolean = true, enablePolling: boolean
       });
     },
     onMutate: async (notificationId) => {
-      await queryClient.cancelQueries({ queryKey: ['/notifications/'] });
-      const previousNotifications = queryClient.getQueryData(['/notifications/']);
+      await queryClient.cancelQueries({ queryKey: ['/notifications/', selectedOrganization?.id] });
+      const previousNotifications = queryClient.getQueryData(['/notifications/', selectedOrganization?.id]);
 
       // Optimistically remove the notification
-      queryClient.setQueryData(['/notifications/'], (old: any) => {
+      queryClient.setQueryData(['/notifications/', selectedOrganization?.id], (old: any) => {
         if (!old?.results) return old;
         return {
           ...old,
@@ -321,11 +323,11 @@ export function useNotifications(enabled: boolean = true, enablePolling: boolean
     },
     onError: (err, notificationId, context) => {
       if (context?.previousNotifications) {
-        queryClient.setQueryData(['/notifications/'], context.previousNotifications);
+        queryClient.setQueryData(['/notifications/', selectedOrganization?.id], context.previousNotifications);
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['/notifications/'] });
+      queryClient.invalidateQueries({ queryKey: ['/notifications/', selectedOrganization?.id] });
     },
   });
 
