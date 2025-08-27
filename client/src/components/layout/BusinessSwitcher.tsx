@@ -88,34 +88,29 @@ export default function BusinessSwitcher() {
   if (isCollapsed) {
     return (
       <Popover open={open} onOpenChange={setOpen}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                role="combobox"
-                aria-expanded={open}
-                className="w-8 h-8"
-              >
-                <div className="w-4 h-4 overflow-hidden rounded-sm flex-shrink-0">
-                  {selectedOrganization?.logo ? (
-                    <img 
-                      src={selectedOrganization.logo} 
-                      alt={selectedOrganization.official_name} 
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <Building2 className="h-4 w-4" />
-                  )}
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            size="icon"
+            role="combobox"
+            aria-expanded={open}
+            className="w-8 h-8 p-0"
+          >
+            <div className="w-full h-full overflow-hidden rounded-sm">
+              {selectedOrganization?.logo ? (
+                <img 
+                  src={selectedOrganization.logo} 
+                  alt={selectedOrganization.official_name} 
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <Building2 className="h-4 w-4" />
                 </div>
-              </Button>
-            </PopoverTrigger>
-          </TooltipTrigger>
-          <TooltipContent side="right">
-            <p>{selectedOrganization?.display_name || selectedOrganization?.official_name || "Select business"}</p>
-          </TooltipContent>
-        </Tooltip>
+              )}
+            </div>
+          </Button>
+        </PopoverTrigger>
         <PopoverContent className="w-56 p-0" side="right">
           <Command>
             <CommandInput placeholder="Search businesses..." />
