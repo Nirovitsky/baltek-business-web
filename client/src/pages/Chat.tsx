@@ -36,7 +36,9 @@ import {
   FileText,
   X,
   AlertTriangle,
-  Bell
+  Bell,
+  MessageSquare,
+  Shield
 } from "lucide-react";
 import type { ChatMessage, ChatRoom, MessageAttachment, User } from "@/types";
 
@@ -965,8 +967,9 @@ export default function Chat() {
                         variant="outline"
                         size="sm"
                         onClick={handleDisableChat}
-                        className="text-xs border-red-300 text-red-700 hover:bg-red-50 dark:border-red-600 dark:text-red-300 dark:hover:bg-red-900/20"
+                        className="text-xs border-red-300 text-red-700 hover:bg-red-50 dark:border-red-600 dark:text-red-300 dark:hover:bg-red-900/20 gap-1.5 px-3 font-medium"
                       >
+                        <Shield className="h-3 w-3" />
                         Disable Chat
                       </Button>
                     )}
@@ -1087,8 +1090,9 @@ export default function Chat() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleToggleChat(selectedConversation!, false)}
-                          className="h-8 text-xs border-yellow-300 text-yellow-700 hover:bg-yellow-100 dark:border-yellow-600 dark:text-yellow-300 dark:hover:bg-yellow-800"
+                          className="h-8 text-xs border-green-300 text-green-700 hover:bg-green-50 dark:border-green-600 dark:text-green-300 dark:hover:bg-green-900/20 gap-1.5 px-3 font-medium"
                         >
+                          <MessageSquare className="h-3 w-3" />
                           Enable Chat
                         </Button>
                       </div>
@@ -1230,7 +1234,8 @@ export default function Chat() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDisableChat} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction onClick={confirmDisableChat} className="bg-red-600 hover:bg-red-700 gap-1.5 font-medium">
+              <Shield className="h-4 w-4" />
               Disable Chat
             </AlertDialogAction>
           </AlertDialogFooter>
