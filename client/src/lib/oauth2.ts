@@ -324,15 +324,12 @@ export class OAuth2Service {
    */
   async logout(): Promise<void> {
     const refreshToken = localStorage.getItem("refresh_token");
-    const idToken = localStorage.getItem("id_token"); // If available
     
     try {
-      const config = await this.getOIDCConfig();
-      
-      // Try to revoke refresh token first
-      if (refreshToken && config.revocation_endpoint) {
+      // Revoke the refresh token using api/oauth2/revoke_token/
+      if (refreshToken) {
         try {
-          await fetch(config.revocation_endpoint, {
+          await fetch(`${API_BASE_URL}/oauth2/revoke_token/`, {
             method: "POST",
             headers: {
               "Content-Type": "application/x-www-form-urlencoded",
@@ -346,43 +343,13 @@ export class OAuth2Service {
           console.error("Token revocation failed:", error);
         }
       }
-
-      // Clear local storage and query cache
-      this.clearTokens();
-      queryClient.clear();
-      
-      // Initiate RP-initiated logout with proper OAuth2 flow
-      if (config.end_session_endpoint) {
-        const logoutParams = new URLSearchParams({
-          client_id: OAUTH2_CONFIG.clientId,
-        });
-
-        // Include id_token_hint if available (recommended for better logout experience)
-        if (idToken) {
-          logoutParams.append('id_token_hint', idToken);
-        }
-
-        const logoutUrl = `${config.end_session_endpoint}?${logoutParams.toString()}`;
-        
-        // Open logout in a new window/tab to avoid navigation issues
-        // Then redirect locally after a short delay
-        window.open(logoutUrl, '_blank');
-        
-        // Redirect to login page after initiating server logout
-        setTimeout(() => {
-          window.location.href = '/login';
-        }, 1000);
-      } else {
-        // Fallback to local redirect if no logout endpoint
-        window.location.href = '/login';
-      }
     } catch (error) {
       console.error('Logout error:', error);
-      // Fallback: just clear tokens and redirect
-      this.clearTokens();
-      queryClient.clear();
-      window.location.href = '/login';
     }
+
+    // Always clear local tokens and cache
+    this.clearTokens();
+    queryClient.clear();
   }
 
   /**

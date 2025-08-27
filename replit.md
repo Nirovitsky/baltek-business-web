@@ -97,6 +97,7 @@ The baltek business Dashboard is a React and Express-based application for HR ma
   - **Development Readiness**: Application running smoothly on port 5000 with all dependencies properly configured
   - **Migration Tracking**: Completed comprehensive progress tracker with all items marked as done
   - **OAuth2 Configuration**: Confirmed prompt="login" parameter is properly configured for fresh authentication
+  - **Logout Optimization**: Simplified logout flow to use direct API call to `/oauth2/revoke_token/` with token and client_id, followed by local token cleanup
   - **Production Ready**: All environment variables configured, security best practices implemented, deployment ready
 
 ## System Architecture
