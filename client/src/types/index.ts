@@ -1,4 +1,4 @@
-// Types for the Baltek Business Dashboard
+// Types for the baltek business Dashboard
 // These types match the external API structure
 
 import { z } from "zod";

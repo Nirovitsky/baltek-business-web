@@ -1,7 +1,7 @@
-# Baltek Business Dashboard
+# baltek business Dashboard
 
 ## Overview
-The Baltek Business Dashboard is a React and Express-based application for HR managers using the Baltek Karyera platform. It facilitates managing job postings, reviewing applications, and communicating with candidates by connecting to an existing OpenAPI backend. The project aims to provide a professional UI, streamline HR operations, and enhance candidate engagement.
+The baltek business Dashboard is a React and Express-based application for HR managers using the baltek Karyera platform. It facilitates managing job postings, reviewing applications, and communicating with candidates by connecting to an existing OpenAPI backend. The project aims to provide a professional UI, streamline HR operations, and enhance candidate engagement.
 
 ## User Preferences
 - Preferred communication style: Simple, everyday language

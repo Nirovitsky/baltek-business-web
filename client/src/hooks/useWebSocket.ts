@@ -15,7 +15,7 @@ export function useWebSocket({ onMessage, reconnectInterval = 3000 }: UseWebSock
   const connect = () => {
     if (!isAuthenticated) return;
 
-    // Use external WebSocket server at Baltek API
+    // Use external WebSocket server at baltek API
     const token = localStorage.getItem('access_token');
     if (!token) return;
     

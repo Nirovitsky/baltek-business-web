@@ -44,12 +44,12 @@ export default function OAuth2Login() {
 
         <CardContent className="space-y-4">
           <div className="text-center text-sm text-muted-foreground">
-            Click the button below to sign in with your Baltek account.
+            Click the button below to sign in with your baltek account.
           </div>
 
           <Button onClick={handleLogin} className="w-full" disabled={isSigningIn}>
             <ExternalLink className="w-4 h-4 mr-2" />
-            {isSigningIn ? "Signing in..." : "Sign In with Baltek"}
+            {isSigningIn ? "Signing in..." : "Sign In with baltek"}
           </Button>
 
           <div className="text-xs text-center text-muted-foreground">

@@ -102,14 +102,14 @@ export default function CreateOrganization() {
   }, [formData]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({
+    setFormData((prev: typeof formData) => ({
       ...prev,
       [e.target.name]: e.target.value
     }));
   };
 
   const handleSelectChange = (name: string, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev: typeof formData) => ({
       ...prev,
       [name]: parseInt(value)
     }));
@@ -186,9 +186,7 @@ export default function CreateOrganization() {
     setCurrentStep(2);
   };
 
-  const handleSkip = () => {
-    handleSubmit();
-  };
+
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -221,7 +219,7 @@ export default function CreateOrganization() {
         ...(logoUrl && { logo: logoUrl })
       };
 
-      await createOrganization.mutateAsync(organizationData);
+      const newOrganization = await createOrganization.mutateAsync(organizationData);
       
       toast({
         title: "Organization created",
@@ -233,7 +231,8 @@ export default function CreateOrganization() {
       } catch (error) {
         console.warn('Failed to clear organization draft:', error);
       }
-      navigate('/');
+      // Redirect to the newly created organization profile
+      navigate(`/organization/${(newOrganization as any).id}`);
       
     } catch (error: any) {
       console.error('Error creating organization:', error);
@@ -469,22 +468,6 @@ export default function CreateOrganization() {
           </Button>
           
           <Button 
-            variant="outline"
-            onClick={handleSkip}
-            disabled={isLoading}
-            className="flex-1 h-12 border-2"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Creating...
-              </>
-            ) : (
-              'Skip & Create'
-            )}
-          </Button>
-          
-          <Button 
             onClick={handleSubmit}
             disabled={isLoading}
             className="flex-1 h-12 bg-primary hover:bg-primary/90"
@@ -519,11 +502,11 @@ export default function CreateOrganization() {
           <div className="text-center space-y-6 mb-8">
             <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium">
               <Sparkles className="w-4 h-4 mr-2" />
-              Welcome to Baltek Business
+              Welcome to baltek business
             </div>
             <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
               Create Your
-              <span className="block bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent leading-tight">
                 Organization
               </span>
             </h1>

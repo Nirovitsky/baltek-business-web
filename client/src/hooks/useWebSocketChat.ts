@@ -27,7 +27,7 @@ export function useWebSocketChat() {
     if (!token || !isAuthenticated) return;
 
     try {
-      // Use external WebSocket server at Baltek API
+      // Use external WebSocket server at baltek API
       const encodedToken = encodeURIComponent(token);
       const wsUrl = `wss://api.baltek.net/ws/chat/?token=${encodedToken}`;
       
