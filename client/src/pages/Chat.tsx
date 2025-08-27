@@ -757,7 +757,7 @@ export default function Chat() {
   }
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
+    <div className="h-screen flex flex-col overflow-hidden relative">
       <TopBar 
         title="Chat" 
         description={`Chat with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}

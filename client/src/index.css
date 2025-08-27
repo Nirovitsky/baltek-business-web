@@ -152,10 +152,14 @@ html, body {
 }
 
 .chat-layout body {
-  overflow: hidden;
-  height: 100vh;
+  overflow: hidden !important;
+  height: 100vh !important;
   /* Prevent scrollbar-related layout shifts */
   scrollbar-gutter: stable;
+  /* Prevent any vertical movement */
+  position: relative;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 /* Prevent body scroll when modal is open */
