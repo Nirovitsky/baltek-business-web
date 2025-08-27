@@ -654,7 +654,7 @@ export default function Applications() {
                       </span>
                       <div className="flex items-center space-x-2">
                         <Calendar className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-sm">Applied recently</span>
+                        <span className="text-sm">Applied on {formatDate((detailedApplication as any)?.date_applied || (detailedApplication as any)?.created_at || (selectedApplication as any).date_applied || (selectedApplication as any).created_at || (selectedApplication as any).date_created)}</span>
                       </div>
                     </div>
                   </div>
