@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SearchableLocation } from "@/components/ui/searchable-location";
+import { SearchableCategory } from "@/components/ui/searchable-category";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building2, Upload, X, Sparkles, Users, Target, Zap, Loader2, Globe, Mail, Phone, MapPin, Tag, ArrowRight, ArrowLeft, CheckCircle } from "lucide-react";
 import { apiService } from "@/lib/api";
@@ -302,18 +303,12 @@ export default function CreateOrganization() {
             <Tag className="w-4 h-4 mr-2" />
             Category *
           </Label>
-          <Select onValueChange={(value) => handleSelectChange('category_id', value)} required>
-            <SelectTrigger className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary">
-              <SelectValue placeholder="Select your industry category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((category) => (
-                <SelectItem key={category.id} value={category.id.toString()}>
-                  {category.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <SearchableCategory
+            value={formData.category_id || undefined}
+            onValueChange={(value) => handleSelectChange('category_id', value.toString())}
+            placeholder="Search for your industry category..."
+            className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary"
+          />
         </div>
 
         <div className="space-y-2">
