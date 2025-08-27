@@ -45,7 +45,7 @@ export default function QuickActions({
       title: "Message Candidates",
       description: "Chat with applicants",
       icon: MessageCircle,
-      iconBg: "bg-green-100",
+      iconBg: "",
       iconColor: "text-green-600",
       onClick: onOpenMessages,
     },
