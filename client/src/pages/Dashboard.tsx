@@ -55,14 +55,29 @@ export default function Dashboard() {
   const applications = applicationsData?.results || [];
 
   // Calculate real stats from API data
-  const activeJobs = jobs.filter(job => job.status === 'open').length;
+  // Handle both status field and is_active boolean for backwards compatibility
+  const activeJobs = jobs.filter(job => {
+    // If status field exists, use it
+    if (job.status) {
+      return job.status.toLowerCase() === 'open';
+    }
+    // Fallback to is_active boolean field
+    return job.is_active === true;
+  }).length;
   const totalApplications = applicationsData?.count || 0;
   const pendingApplications = applications.filter(app => app.status === 'in_review').length;
   const hiredThisMonth = applications.filter(app => app.status === 'hired').length;
   
   // Calculate changes (simplified calculation based on available data)
   const totalJobs = jobsData?.count || 0;
-  const archivedJobs = jobs.filter(job => job.status === 'archived').length;
+  const archivedJobs = jobs.filter(job => {
+    // If status field exists, use it
+    if (job.status) {
+      return job.status.toLowerCase() === 'archived';
+    }
+    // Fallback to is_active boolean field (inactive jobs are considered archived)
+    return job.is_active === false;
+  }).length;
   const ongoingApplications = applications.filter(app => app.status === 'ongoing').length;
 
 
