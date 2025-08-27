@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { Plus } from "lucide-react";
+import { Plus, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { useNotifications } from "@/hooks/useNotifications";
 
 interface TopBarProps {
   title: string;
@@ -19,6 +20,7 @@ export default function TopBar({
   const navigate = useNavigate();
   const { selectedOrganization } = useAuth();
   const { toast } = useToast();
+  const { unreadCount } = useNotifications(false);
 
   const handleCreateJob = () => {
     if (selectedOrganization?.is_public === false) {
@@ -31,6 +33,10 @@ export default function TopBar({
     }
     navigate('/jobs/create');
   };
+
+  const handleNotifications = () => {
+    navigate('/notifications');
+  };
   return (
     <header className="bg-background border-b border-border px-6 py-4">
       <div className="flex items-center justify-between">
@@ -41,7 +47,22 @@ export default function TopBar({
           )}
         </div>
         <div className="flex items-center space-x-4">
-          <ThemeToggle />
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleNotifications}
+            className="relative"
+          >
+            <Bell className="w-4 h-4" />
+            {unreadCount > 0 && (
+              <Badge 
+                variant="destructive" 
+                className="absolute -top-1 -right-1 bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full px-1"
+              >
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </Badge>
+            )}
+          </Button>
           <Button 
             onClick={handleCreateJob} 
             disabled={selectedOrganization?.is_public === false}

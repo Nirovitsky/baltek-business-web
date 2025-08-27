@@ -6,7 +6,6 @@ import {
   MessageCircle,
   Settings, 
   UserCircle,
-  Bell,
   ChevronUp,
   User2,
   MoreHorizontal,
@@ -65,12 +64,6 @@ const data = {
           url: "/chat",
           icon: MessageCircle,
         },
-        {
-          title: "Notifications",
-          url: "/notifications",
-          icon: Bell,
-          showBadge: true,
-        },
       ],
     },
   ],
@@ -91,7 +84,6 @@ const data = {
 export default function AppSidebar() {
   const location = useLocation();
   const { logout, selectedOrganization, user } = useAuth();
-  const { unreadCount } = useNotifications(false); // Don't fetch notifications in sidebar
 
   return (
     <Sidebar variant="inset" collapsible="icon">
@@ -115,13 +107,6 @@ export default function AppSidebar() {
                         <span>{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
-                    {item.showBadge && unreadCount > 0 && (
-                      <SidebarMenuAction className="peer-data-[size=sm]/menu-button:top-1">
-                        <Badge variant="destructive" className="bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full">
-                          {unreadCount > 99 ? "99+" : unreadCount}
-                        </Badge>
-                      </SidebarMenuAction>
-                    )}
                   </SidebarMenuItem>
                 );
               })}
