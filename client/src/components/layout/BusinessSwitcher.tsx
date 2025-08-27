@@ -113,8 +113,6 @@ export default function BusinessSwitcher() {
         </PopoverTrigger>
         <PopoverContent className="w-56 p-0" side="right">
           <Command>
-            <CommandInput placeholder="Search businesses..." />
-            <CommandEmpty>No business found.</CommandEmpty>
             <CommandGroup>
               {organizations.map((org) => (
                 <CommandItem
@@ -220,8 +218,6 @@ export default function BusinessSwitcher() {
       </PopoverTrigger>
       <PopoverContent className="w-72 p-0">
         <Command>
-          <CommandInput placeholder="Search businesses..." />
-          <CommandEmpty>No business found.</CommandEmpty>
           <CommandGroup>
             {organizations.map((org) => (
               <CommandItem
