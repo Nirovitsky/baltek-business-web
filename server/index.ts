@@ -26,6 +26,10 @@ async function startServer() {
       },
       optimizeDeps: {
         force: true
+      },
+      define: {
+        // Pass OAuth2 Client ID from server environment to client
+        'import.meta.env.VITE_OAUTH2_CLIENT_ID': JSON.stringify(process.env.OAUTH2_CLIENT_ID || ''),
       }
     });
 
