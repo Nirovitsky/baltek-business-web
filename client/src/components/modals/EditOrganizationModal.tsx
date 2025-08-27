@@ -135,7 +135,7 @@ export default function EditOrganizationModal({
     }
   };
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -167,6 +167,29 @@ export default function EditOrganizationModal({
       setLogoPreview(e.target?.result as string);
     };
     reader.readAsDataURL(file);
+
+    // Start uploading immediately
+    setIsUploading(true);
+    try {
+      const uploadResult = await uploadFile.mutateAsync(file);
+      
+      form.setValue('logo', uploadResult.url);
+      setLogoFile(null);
+      setLogoPreview("");
+      
+      toast({
+        title: "Success",
+        description: "Logo uploaded successfully",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Upload failed",
+        description: error.message || "Failed to upload logo",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleLogoUpload = async () => {
@@ -261,46 +284,23 @@ export default function EditOrganizationModal({
               </Avatar>
               
               <div className="flex flex-col gap-3">
-                {logoFile ? (
-                  <>
-                    <Button 
-                      type="button" 
-                      size="sm" 
-                      onClick={handleLogoUpload}
-                      disabled={isUploading}
-                    >
-                      {isUploading ? "Uploading..." : "Save Logo"}
-                    </Button>
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      size="sm"
-                      onClick={removeLogo}
-                    >
-                      <X className="w-4 h-4 mr-2" />
-                      Remove
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/jpg,image/png"
-                      onChange={handleFileSelect}
-                      className="hidden"
-                      id="logo-upload"
-                    />
-                    <Button 
-                      variant="outline" 
-                      type="button" 
-                      size="sm"
-                      onClick={() => document.getElementById('logo-upload')?.click()}
-                    >
-                      <Upload className="w-4 h-4 mr-2" />
-                      Upload Logo
-                    </Button>
-                  </>
-                )}
+                <input
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                  id="logo-upload"
+                />
+                <Button 
+                  variant="outline" 
+                  type="button" 
+                  size="sm"
+                  disabled={isUploading}
+                  onClick={() => document.getElementById('logo-upload')?.click()}
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  {isUploading ? "Uploading..." : "Upload Logo"}
+                </Button>
                 <p className="text-xs text-muted-foreground">JPG, PNG up to 2MB</p>
               </div>
             </div>

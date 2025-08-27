@@ -164,12 +164,6 @@ export default function Organization() {
                     )}
                   </div>
                   <div className="flex gap-2">
-                    <Link to="/jobs">
-                      <Button size="sm" variant="outline">
-                        <Building2 className="h-3 w-3 mr-1.5" />
-                        View Jobs
-                      </Button>
-                    </Link>
                     <Button 
                       size="sm" 
                       onClick={() => setIsEditModalOpen(true)}
