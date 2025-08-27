@@ -1,11 +1,10 @@
-import { useState } from "react";
 import TopBar from "@/components/layout/TopBar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { LogOut, Settings as SettingsIcon, Shield, Globe, Palette } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { LogOut, Settings as SettingsIcon, Shield, Globe, Palette, Monitor, Sun, Moon } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "@/components/theme-provider";
@@ -47,23 +46,46 @@ export default function Settings() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="flex items-center justify-between">
+              <div className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center">
                     <Palette className="w-5 h-5 text-muted-foreground" />
                   </div>
                   <div className="space-y-1">
-                    <Label htmlFor="dark-mode">Dark Mode</Label>
+                    <Label>Theme</Label>
                     <p className="text-sm text-muted-foreground">
-                      Switch between light and dark themes
+                      Choose your preferred theme
                     </p>
                   </div>
                 </div>
-                <Switch
-                  id="dark-mode"
-                  checked={theme === "dark"}
-                  onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
-                />
+                
+                <RadioGroup
+                  value={theme}
+                  onValueChange={setTheme}
+                  className="grid grid-cols-3 gap-4 pt-2"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="light" id="light" />
+                    <Label htmlFor="light" className="flex items-center gap-2 cursor-pointer">
+                      <Sun className="w-4 h-4" />
+                      Light
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="dark" id="dark" />
+                    <Label htmlFor="dark" className="flex items-center gap-2 cursor-pointer">
+                      <Moon className="w-4 h-4" />
+                      Dark
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="system" id="system" />
+                    <Label htmlFor="system" className="flex items-center gap-2 cursor-pointer">
+                      <Monitor className="w-4 h-4" />
+                      System
+                    </Label>
+                  </div>
+                </RadioGroup>
               </div>
 
               <Separator />
@@ -101,25 +123,6 @@ export default function Settings() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-                    <Shield className="w-5 h-5 text-yellow-600" />
-                  </div>
-                  <div className="space-y-1">
-                    <Label>Password</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Update your account password
-                    </p>
-                  </div>
-                </div>
-                <Button variant="outline" size="sm">
-                  Change Password
-                </Button>
-              </div>
-
-              <Separator />
-
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-destructive/10 rounded-lg flex items-center justify-center">
