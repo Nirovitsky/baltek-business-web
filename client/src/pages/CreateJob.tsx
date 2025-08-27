@@ -431,16 +431,8 @@ export default function CreateJob() {
 
   const isLoading = createMutation.isPending || updateMutation.isPending;
 
-  // Prevent body scroll for this page
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, []);
-
   return (
-    <div className="flex-1 flex flex-col bg-background overflow-hidden">
+    <div className="flex flex-col h-full min-h-screen bg-background">
       {/* Header */}
       <div className="bg-card border-b flex-shrink-0">
         <div className="max-w-4xl mx-auto px-6 py-6">
@@ -476,7 +468,7 @@ export default function CreateJob() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto min-h-0">
         <div className="max-w-4xl mx-auto px-6 py-8">
           {/* Organization Approval Notice */}
           {selectedOrganization && selectedOrganization.is_public === false && (
