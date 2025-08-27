@@ -228,7 +228,17 @@ export default function UserProfile() {
                     </label>
                     <p className="text-foreground flex items-center">
                       <Calendar className="w-4 h-4 mr-2 text-muted-foreground/60" />
-                      {format(new Date(user.date_joined || user.created_at || ''), 'MMMM d, yyyy')}
+                      {(() => {
+                        const dateStr = user.date_joined || user.created_at;
+                        if (!dateStr) return 'Not specified';
+                        try {
+                          const date = new Date(dateStr);
+                          if (isNaN(date.getTime())) return 'Not specified';
+                          return format(date, 'MMMM d, yyyy');
+                        } catch {
+                          return 'Not specified';
+                        }
+                      })()}
                     </p>
                   </div>
                 </div>
