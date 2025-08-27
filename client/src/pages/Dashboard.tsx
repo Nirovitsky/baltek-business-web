@@ -65,12 +65,12 @@ export default function Dashboard() {
   
   // Extract stats from API response or use fallback values
   const activeJobs = orgStats?.active_jobs || 0;
-  const totalJobs = orgStats?.total_jobs || 0;
-  const archivedJobs = orgStats?.archived_jobs || 0;
-  const totalApplications = orgStats?.total_applications || 0;
-  const pendingApplications = orgStats?.pending_applications || 0;
-  const ongoingApplications = orgStats?.ongoing_applications || 0;
-  const hiredThisMonth = orgStats?.hired_this_month || 0;
+  const totalJobs = orgStats?.posted_jobs || 0;
+  const archivedJobs = Math.max(0, totalJobs - activeJobs); // Calculate archived jobs
+  const totalApplications = orgStats?.applications || 0;
+  const pendingApplications = orgStats?.in_review_applications || 0;
+  const ongoingApplications = Math.max(0, totalApplications - pendingApplications - (orgStats?.hired_applications || 0)); // Calculate ongoing
+  const hiredThisMonth = orgStats?.hired_applications_last_month || 0;
 
 
 

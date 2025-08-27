@@ -89,12 +89,14 @@ export interface Organization {
 
 export interface OrganizationStats {
   active_jobs: number;
-  total_jobs: number;
-  archived_jobs: number;
-  total_applications: number;
-  pending_applications: number;
-  ongoing_applications: number;
-  hired_this_month: number;
+  posted_jobs: number;
+  posted_jobs_last_month: number;
+  applications: number;
+  applications_last_month: number;
+  hired_applications: number;
+  hired_applications_last_month: number;
+  in_review_applications: number;
+  in_review_applications_yesterday: number;
 }
 
 export interface Job {
