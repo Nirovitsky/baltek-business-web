@@ -669,7 +669,7 @@ export default function Chat() {
 
   if (roomsLoading) {
     return (
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="h-screen flex flex-col overflow-hidden">
         <TopBar 
           title="Chat" 
           description={`Chat with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
@@ -698,7 +698,7 @@ export default function Chat() {
 
   if (roomsError) {
     return (
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="h-screen flex flex-col overflow-hidden">
         <TopBar 
           title="Chat" 
           description={`Chat with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
@@ -718,7 +718,7 @@ export default function Chat() {
   }
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
+    <div className="h-screen flex flex-col overflow-hidden">
       <TopBar 
         title="Chat" 
         description={`Chat with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
@@ -926,7 +926,7 @@ export default function Chat() {
               )}
 
               {/* Messages */}
-              <ScrollArea className="flex-1 p-4 bg-gray-50 dark:bg-gray-900/50">
+              <ScrollArea className="flex-1 min-h-0 p-4 bg-gray-50 dark:bg-gray-900/50">
                 {messagesLoading ? (
                   <div className="space-y-4 animate-pulse">
                     {/* Skeleton for received message (with avatar, left-aligned) */}
