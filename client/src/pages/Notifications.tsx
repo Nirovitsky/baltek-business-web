@@ -258,7 +258,6 @@ export default function Notifications() {
             <p className="text-sm text-muted-foreground">Stay updated with your latest notifications</p>
           </div>
           <div className="flex items-center space-x-4">
-            <ThemeToggle />
           </div>
         </div>
       </header>
