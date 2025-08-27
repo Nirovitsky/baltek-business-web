@@ -1,0 +1,67 @@
+oauth2.ts:417  GET https://api.baltek.net/api/notifications/54/ 404 (Not Found)
+request @ oauth2.ts:417
+request @ api.ts:46
+queryFn @ useNotifications.ts:61
+fetchFn @ @tanstack_react-query.js?v=4bb7874e:840
+run @ @tanstack_react-query.js?v=4bb7874e:494
+start @ @tanstack_react-query.js?v=4bb7874e:536
+fetch @ @tanstack_react-query.js?v=4bb7874e:926
+executeFetch_fn @ @tanstack_react-query.js?v=4bb7874e:2211
+onSubscribe @ @tanstack_react-query.js?v=4bb7874e:1898
+subscribe @ @tanstack_react-query.js?v=4bb7874e:24
+(anonymous) @ @tanstack_react-query.js?v=4bb7874e:3022
+subscribeToStore @ chunk-RPCDYKBN.js?v=3c83eef7:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=3c83eef7:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=3c83eef7:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=3c83eef7:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=3c83eef7:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=3c83eef7:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=3c83eef7:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=3c83eef7:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=3c83eef7:19416
+commitRoot @ chunk-RPCDYKBN.js?v=3c83eef7:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=3c83eef7:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=3c83eef7:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=3c83eef7:18627Understand this error
+oauth2.ts:417  GET https://api.baltek.net/api/notifications/54/ 404 (Not Found)
+request @ oauth2.ts:417
+request @ api.ts:46
+queryFn @ useNotifications.ts:61
+fetchFn @ @tanstack_react-query.js?v=4bb7874e:840
+run @ @tanstack_react-query.js?v=4bb7874e:494
+start @ @tanstack_react-query.js?v=4bb7874e:536
+fetch @ @tanstack_react-query.js?v=4bb7874e:926
+executeFetch_fn @ @tanstack_react-query.js?v=4bb7874e:2211
+(anonymous) @ @tanstack_react-query.js?v=4bb7874e:2245
+setInterval
+updateRefetchInterval_fn @ @tanstack_react-query.js?v=4bb7874e:2243
+updateTimers_fn @ @tanstack_react-query.js?v=4bb7874e:2250
+onQueryUpdate @ @tanstack_react-query.js?v=4bb7874e:2206
+(anonymous) @ @tanstack_react-query.js?v=4bb7874e:998
+(anonymous) @ @tanstack_react-query.js?v=4bb7874e:997
+batch @ @tanstack_react-query.js?v=4bb7874e:583
+dispatch_fn @ @tanstack_react-query.js?v=4bb7874e:996
+onError @ @tanstack_react-query.js?v=4bb7874e:861
+reject @ @tanstack_react-query.js?v=4bb7874e:465
+(anonymous) @ @tanstack_react-query.js?v=4bb7874e:508
+Promise.catch
+run @ @tanstack_react-query.js?v=4bb7874e:498
+start @ @tanstack_react-query.js?v=4bb7874e:536
+fetch @ @tanstack_react-query.js?v=4bb7874e:926
+executeFetch_fn @ @tanstack_react-query.js?v=4bb7874e:2211
+onSubscribe @ @tanstack_react-query.js?v=4bb7874e:1898
+subscribe @ @tanstack_react-query.js?v=4bb7874e:24
+(anonymous) @ @tanstack_react-query.js?v=4bb7874e:3022
+subscribeToStore @ chunk-RPCDYKBN.js?v=3c83eef7:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=3c83eef7:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=3c83eef7:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=3c83eef7:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=3c83eef7:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=3c83eef7:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=3c83eef7:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=3c83eef7:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=3c83eef7:19416
+commitRoot @ chunk-RPCDYKBN.js?v=3c83eef7:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=3c83eef7:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=3c83eef7:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=3c83eef7:18627Understand this error

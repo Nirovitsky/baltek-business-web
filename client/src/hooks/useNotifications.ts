@@ -55,10 +55,10 @@ export function useNotifications(enabled: boolean = true, enablePolling: boolean
     };
   });
 
-  // Fetch organization-specific notifications from the correct API endpoint
+  // Fetch notifications with organization filter parameter
   const { data: notificationsData, isLoading: notificationsLoading } = useQuery({
     queryKey: ['/notifications/', selectedOrganization?.id],
-    queryFn: () => apiService.request<PaginatedResponse<Notification>>(`/notifications/${selectedOrganization?.id}/`),
+    queryFn: () => apiService.request<PaginatedResponse<Notification>>(`/notifications/?organization=${selectedOrganization?.id}`),
     enabled: enabled && !!selectedOrganization?.id, // Only fetch when enabled and organization is selected
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes 
     gcTime: 15 * 60 * 1000, // Keep in cache for 15 minutes
