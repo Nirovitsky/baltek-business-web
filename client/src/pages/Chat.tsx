@@ -38,7 +38,7 @@ import {
   AlertTriangle,
   Bell,
   MessageSquare,
-  Shield
+  Ban
 } from "lucide-react";
 import type { ChatMessage, ChatRoom, MessageAttachment, User } from "@/types";
 
@@ -967,9 +967,9 @@ export default function Chat() {
                         variant="outline"
                         size="sm"
                         onClick={handleDisableChat}
-                        className="text-xs border-red-300 text-red-700 hover:bg-red-50 dark:border-red-600 dark:text-red-300 dark:hover:bg-red-900/20 gap-1.5 px-3 font-medium"
+                        className="text-xs bg-red-600 text-white border-red-600 hover:bg-red-700 hover:border-red-700 gap-1.5 px-3 font-medium"
                       >
-                        <Shield className="h-3 w-3" />
+                        <Ban className="h-3 w-3" />
                         Disable Chat
                       </Button>
                     )}
@@ -1235,7 +1235,7 @@ export default function Chat() {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDisableChat} className="bg-red-600 hover:bg-red-700 gap-1.5 font-medium">
-              <Shield className="h-4 w-4" />
+              <Ban className="h-4 w-4" />
               Disable Chat
             </AlertDialogAction>
           </AlertDialogFooter>
