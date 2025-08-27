@@ -201,14 +201,16 @@ export default function UserProfile() {
                     </p>
                   </div>
 
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-foreground">
-                      Date of Birth
-                    </label>
-                    <p className="text-foreground">
-                      {user.date_of_birth ? format(new Date(user.date_of_birth), 'MMMM d, yyyy') : "Not provided"}
-                    </p>
-                  </div>
+                  {user.date_of_birth && (
+                    <div className="space-y-1">
+                      <label className="text-sm font-medium text-foreground">
+                        Date of Birth
+                      </label>
+                      <p className="text-foreground">
+                        {format(new Date(user.date_of_birth), 'MMMM d, yyyy')}
+                      </p>
+                    </div>
+                  )}
 
                   <div className="space-y-1">
                     <label className="text-sm font-medium text-foreground">
@@ -222,25 +224,6 @@ export default function UserProfile() {
                     </p>
                   </div>
 
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-foreground">
-                      Member Since
-                    </label>
-                    <p className="text-foreground flex items-center">
-                      <Calendar className="w-4 h-4 mr-2 text-muted-foreground/60" />
-                      {(() => {
-                        const dateStr = user.date_joined || user.created_at;
-                        if (!dateStr) return 'Not specified';
-                        try {
-                          const date = new Date(dateStr);
-                          if (isNaN(date.getTime())) return 'Not specified';
-                          return format(date, 'MMMM d, yyyy');
-                        } catch {
-                          return 'Not specified';
-                        }
-                      })()}
-                    </p>
-                  </div>
                 </div>
 
                 {/* Skills Section */}
