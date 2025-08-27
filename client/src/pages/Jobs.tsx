@@ -15,6 +15,7 @@ import { apiService } from "@/lib/api";
 import { Edit, Trash2, Search, Eye, Briefcase, MapPin, Users, DollarSign, Calendar, Building2, Bell } from "lucide-react";
 import { useNotifications } from "@/hooks/useNotifications";
 import type { Job, PaginatedResponse } from "@/types";
+import { format } from "date-fns";
 
 export default function Jobs() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -118,7 +119,7 @@ export default function Jobs() {
       }
       
       if (isNaN(date.getTime())) return 'Not specified';
-      return date.toLocaleDateString();
+      return format(date, 'MMM d, yyyy');
     } catch {
       return 'Not specified';
     }

@@ -9,6 +9,7 @@ import { Briefcase, MapPin, MessageCircle, FileText, Calendar, Clock } from "luc
 import { useNavigate } from "react-router-dom";
 import { apiService } from "@/lib/api";
 import type { JobApplication } from "@/types";
+import { format } from "date-fns";
 
 interface ApplicationDetailsModalProps {
   application: JobApplication | null;
@@ -52,11 +53,7 @@ export default function ApplicationDetailsModal({
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      });
+      return format(date, 'MMMM d, yyyy');
     } catch {
       return dateString;
     }

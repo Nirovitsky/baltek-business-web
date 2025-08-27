@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -205,7 +206,7 @@ export default function UserProfile() {
                       Date of Birth
                     </label>
                     <p className="text-foreground">
-                      {user.date_of_birth || "Not provided"}
+                      {user.date_of_birth ? format(new Date(user.date_of_birth), 'MMMM d, yyyy') : "Not provided"}
                     </p>
                   </div>
 
@@ -227,7 +228,7 @@ export default function UserProfile() {
                     </label>
                     <p className="text-foreground flex items-center">
                       <Calendar className="w-4 h-4 mr-2 text-muted-foreground/60" />
-                      {new Date(user.date_joined || user.created_at || '').toLocaleDateString()}
+                      {format(new Date(user.date_joined || user.created_at || ''), 'MMMM d, yyyy')}
                     </p>
                   </div>
                 </div>

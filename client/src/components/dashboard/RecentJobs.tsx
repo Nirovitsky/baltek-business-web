@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import type { Job, PaginatedResponse } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { format } from "date-fns";
 
 const jobIcons: Record<string, any> = {
   technology: Code,
@@ -38,7 +39,7 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
       }
       
       if (isNaN(date.getTime())) return 'No date';
-      return date.toLocaleDateString();
+      return format(date, 'MMM d, yyyy');
     } catch {
       return 'No date';
     }

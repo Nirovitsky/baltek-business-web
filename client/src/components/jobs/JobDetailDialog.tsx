@@ -23,6 +23,7 @@ import {
   Eye
 } from "lucide-react";
 import type { Job, Location, Category, Language } from "@/types";
+import { format } from "date-fns";
 
 interface JobDetailDialogProps {
   jobId: number | null;
@@ -110,7 +111,7 @@ export default function JobDetailDialog({
     try {
       const date = new Date(dateString);
       if (isNaN(date.getTime())) return 'Not specified';
-      return date.toLocaleDateString();
+      return format(date, 'MMMM d, yyyy');
     } catch {
       return 'Not specified';
     }

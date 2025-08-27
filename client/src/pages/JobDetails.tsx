@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { apiService } from "@/lib/api";
+import { format } from "date-fns";
 import { 
   ArrowLeft,
   Briefcase,
@@ -206,7 +207,7 @@ export default function JobDetails() {
       }
       
       if (isNaN(date.getTime())) return 'Not specified';
-      return date.toLocaleDateString();
+      return format(date, 'MMMM d, yyyy');
     } catch {
       return 'Not specified';
     }
