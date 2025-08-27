@@ -144,7 +144,7 @@ export function NotificationCenter() {
                           {notification.title}
                         </p>
                         <p className="text-muted-foreground text-xs mt-1 line-clamp-2">
-                          {notification.message}
+                          {notification.body || notification.message || ''}
                         </p>
                         <p className="text-muted-foreground text-xs mt-2">
                           {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}

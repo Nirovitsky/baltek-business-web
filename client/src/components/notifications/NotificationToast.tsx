@@ -59,7 +59,7 @@ export function NotificationToast({ notification, onClose, onAction }: Notificat
                   {notification.title}
                 </h4>
                 <p className="text-muted-foreground text-xs mt-1 line-clamp-2">
-                  {notification.message}
+                  {notification.body || notification.message || ''}
                 </p>
                 
                 {notification.action_url && onAction && (

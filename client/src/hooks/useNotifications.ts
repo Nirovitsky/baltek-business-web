@@ -122,7 +122,7 @@ export function useNotifications(enabled: boolean = true, enablePolling: boolean
       }
 
       const browserNotification = new Notification(notification.title, {
-        body: notification.message,
+        body: notification.body || notification.message || '',
         icon: "/favicon.ico",
         badge: "/favicon.ico",
         tag: `notification-${notification.id}`,
@@ -165,7 +165,7 @@ export function useNotifications(enabled: boolean = true, enablePolling: boolean
 
       toast({
         title: notification.title,
-        description: notification.message,
+        description: notification.body || notification.message || '',
         variant: getVariant(notification.type),
       });
     },

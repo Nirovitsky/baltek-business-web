@@ -123,7 +123,7 @@ export default function Notifications() {
               </div>
               
               <p className="text-sm text-muted-foreground leading-relaxed">
-                {notification.message}
+                {notification.body || notification.message || ''}
               </p>
             </div>
           </div>

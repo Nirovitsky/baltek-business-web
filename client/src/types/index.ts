@@ -243,7 +243,8 @@ export interface Notification {
   id: number;
   type: string;
   title: string;
-  message: string;
+  body: string;
+  message?: string; // Keep for backward compatibility during transition
   description?: string;
   is_read: boolean;
   read: boolean;
