@@ -23,8 +23,8 @@ function useIdlePrefetch(queryClient: any, selectedOrganization: any) {
             staleTime: 2 * 60 * 1000,
           }),
           queryClient.prefetchQuery({
-            queryKey: ['/api/jobs/applications/', selectedOrganization.id],
-            queryFn: () => apiService.request(`/api/jobs/applications/?organization=${selectedOrganization.id}`),
+            queryKey: ['/jobs/applications/', selectedOrganization.id],
+            queryFn: () => apiService.request(`/jobs/applications/?organization=${selectedOrganization.id}`),
             staleTime: 2 * 60 * 1000,
           }),
           queryClient.prefetchQuery({
@@ -129,8 +129,8 @@ export function usePrefetch() {
     if (!selectedOrganization?.id) return;
 
     queryClient.prefetchQuery({
-      queryKey: ['/api/jobs/applications/', selectedOrganization.id],
-      queryFn: () => apiService.request(`/api/jobs/applications/?organization=${selectedOrganization.id}`),
+      queryKey: ['/jobs/applications/', selectedOrganization.id],
+      queryFn: () => apiService.request(`/jobs/applications/?organization=${selectedOrganization.id}`),
       staleTime: 2 * 60 * 1000, // 2 minutes
     });
   }, [queryClient, selectedOrganization?.id]);
@@ -250,8 +250,8 @@ export function useHoverPrefetch() {
       },
       '/applications': () => {
         queryClient.prefetchQuery({
-          queryKey: ['/api/jobs/applications/', selectedOrganization.id],
-          queryFn: () => apiService.request(`/api/jobs/applications/?organization=${selectedOrganization.id}`),
+          queryKey: ['/jobs/applications/', selectedOrganization.id],
+          queryFn: () => apiService.request(`/jobs/applications/?organization=${selectedOrganization.id}`),
           staleTime: 2 * 60 * 1000,
         });
       },
