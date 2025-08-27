@@ -21,6 +21,7 @@ export default function CreateOrganization() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { organizations, createOrganization, uploadFile } = useOrganizations();
+  const { refreshOrganizations, switchOrganization } = useAuth();
   
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -225,14 +226,26 @@ export default function CreateOrganization() {
         title: "Organization created",
         description: "Your organization has been created successfully",
       });
+      
       // Clear draft on successful creation
       try {
         localStorage.removeItem(DRAFT_KEY);
       } catch (error) {
         console.warn('Failed to clear organization draft:', error);
       }
-      // Redirect to the newly created organization profile
-      navigate(`/organization/${(newOrganization as any).id}`);
+      
+      // Refresh organizations in auth context to include the new one
+      await refreshOrganizations();
+      
+      // Since refreshOrganizations updates the auth context, 
+      // the new organization should now be automatically selected as it's the first one
+      // We can also manually select it to ensure it's the active organization
+      if (newOrganization) {
+        switchOrganization(newOrganization as any);
+      }
+      
+      // Redirect to the organization profile page
+      navigate('/organization');
       
     } catch (error: any) {
       console.error('Error creating organization:', error);
