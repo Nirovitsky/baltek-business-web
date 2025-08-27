@@ -6,8 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building2, Upload, X, Sparkles, Users, Target, Zap, Loader2, Globe, Mail, Phone, MapPin, Tag, ArrowRight, ArrowLeft, CheckCircle } from "lucide-react";
+import { Building2, Upload, X, Sparkles, Users, Target, Zap, Loader2, Globe, Mail, Phone, MapPin, Tag, ArrowRight, ArrowLeft, CheckCircle, Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { apiService } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useOrganizations } from "@/hooks/useOrganizations";
@@ -320,18 +323,50 @@ export default function CreateOrganization() {
             <MapPin className="w-4 h-4 mr-2" />
             Location *
           </Label>
-          <Select onValueChange={(value) => handleSelectChange('location_id', value)} required>
-            <SelectTrigger className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary">
-              <SelectValue placeholder="Select your location" />
-            </SelectTrigger>
-            <SelectContent>
-              {locations.map((location) => (
-                <SelectItem key={location.id} value={location.id.toString()}>
-                  {location.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                className={cn(
+                  "w-full h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary justify-between",
+                  !formData.location_id && "text-muted-foreground"
+                )}
+              >
+                {formData.location_id
+                  ? locations.find((location) => location.id.toString() === formData.location_id)?.name
+                  : "Select your location"}
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-full p-0">
+              <Command>
+                <CommandInput placeholder="Search locations..." />
+                <CommandEmpty>No location found.</CommandEmpty>
+                <CommandGroup>
+                  {locations.map((location) => (
+                    <CommandItem
+                      value={location.name}
+                      key={location.id}
+                      onSelect={() => {
+                        handleSelectChange('location_id', location.id.toString());
+                      }}
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          location.id.toString() === formData.location_id
+                            ? "opacity-100"
+                            : "opacity-0"
+                        )}
+                      />
+                      {location.name}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </Command>
+            </PopoverContent>
+          </Popover>
         </div>
 
         <Button 
