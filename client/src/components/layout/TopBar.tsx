@@ -51,8 +51,7 @@ export default function TopBar({
                 : 'bg-primary hover:bg-primary/90'
             }`}
           >
-            <Plus className="w-4 h-4 mr-2" />
-            Post New Job
+            <Plus className="w-4 h-4" />
           </Button>
         </div>
       </div>
