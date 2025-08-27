@@ -102,7 +102,7 @@ export default function AppSidebar() {
         {/* Main Navigation */}
         {data.navMain.map((group) => (
           <SidebarGroup key={group.title}>
-            <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
+            {group.title !== "Platform" && <SidebarGroupLabel>{group.title}</SidebarGroupLabel>}
             <SidebarMenu>
               {group.items.map((item) => {
                 const isActive = location.pathname === item.url || (item.url !== "/" && location.pathname.startsWith(item.url));
