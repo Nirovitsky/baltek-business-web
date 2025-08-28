@@ -257,6 +257,7 @@ export default function Jobs() {
                   key={job.id} 
                   className="group hover:shadow-lg transition-all duration-200 cursor-pointer border hover:border-primary/20"
                   onClick={() => handleViewJob(job.id)}
+                  onMouseEnter={() => prefetchRoute(`/jobs/${job.id}`)}
                 >
                   <CardContent className="p-6">
                     {/* Header with title and applications count */}

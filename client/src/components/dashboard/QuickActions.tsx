@@ -68,12 +68,16 @@ export default function QuickActions({
                 onClick={action.onClick}
                 onMouseEnter={() => {
                   if (!action.disabled) {
-                    if (action.title === "Create Job Posting") {
+                    if (action.title === t('navigation.createJob')) {
                       prefetchRoute('/jobs');
                       prefetchRoute('/jobs/create'); // Also prefetch create form data
                     }
-                    if (action.title === "Review Applications") prefetchRoute('/applications');
-                    if (action.title === "Message Candidates") prefetchRoute('/chat');
+                    if (action.title === t('applications.title')) {
+                      prefetchRoute('/applications');
+                    }
+                    if (action.title === t('chat.title')) {
+                      prefetchRoute('/chat');
+                    }
                   }
                 }}
                 disabled={action.disabled}

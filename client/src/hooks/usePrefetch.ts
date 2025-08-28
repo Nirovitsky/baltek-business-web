@@ -306,6 +306,55 @@ export function useHoverPrefetch() {
       },
     };
 
+    // Handle dynamic routes like /jobs/:id
+    if (route.startsWith('/jobs/') && route !== '/jobs' && route !== '/jobs/create') {
+      const jobId = route.split('/')[2];
+      if (jobId && /^\d+$/.test(jobId)) {
+        console.log(`[Prefetch] Fetching individual job details: ${jobId}`);
+        queryClient.prefetchQuery({
+          queryKey: ['/jobs/', jobId, 'details'],
+          queryFn: () => apiService.request(`/jobs/${jobId}/`),
+          staleTime: 5 * 60 * 1000, // 5 minutes
+        });
+        
+        // Also prefetch applications for this job
+        queryClient.prefetchQuery({
+          queryKey: ['/jobs/', jobId, 'applications'],
+          queryFn: () => apiService.request(`/jobs/${jobId}/applications/`),
+          staleTime: 2 * 60 * 1000, // 2 minutes
+        });
+        return;
+      }
+    }
+
+    // Handle dynamic routes like /applications/:id  
+    if (route.startsWith('/applications/') && route !== '/applications') {
+      const applicationId = route.split('/')[2];
+      if (applicationId && /^\d+$/.test(applicationId)) {
+        console.log(`[Prefetch] Fetching individual application details: ${applicationId}`);
+        queryClient.prefetchQuery({
+          queryKey: ['/jobs/applications/', applicationId, 'details'],
+          queryFn: () => apiService.request(`/jobs/applications/${applicationId}/`),
+          staleTime: 5 * 60 * 1000, // 5 minutes
+        });
+        return;
+      }
+    }
+
+    // Handle dynamic routes like /user/:id
+    if (route.startsWith('/user/') && route !== '/user') {
+      const userId = route.split('/')[2];
+      if (userId && /^\d+$/.test(userId)) {
+        console.log(`[Prefetch] Fetching user profile: ${userId}`);
+        queryClient.prefetchQuery({
+          queryKey: ['/users/', userId],
+          queryFn: () => apiService.request(`/users/${userId}/`),
+          staleTime: 5 * 60 * 1000, // 5 minutes
+        });
+        return;
+      }
+    }
+
     const prefetchFn = prefetchMap[route];
     if (prefetchFn) {
       console.log(`[Prefetch] Executing prefetch for: ${route}`);

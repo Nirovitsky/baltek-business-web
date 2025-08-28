@@ -164,6 +164,7 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
                   key={job.id} 
                   className="flex items-start space-x-4 p-4 border rounded-lg hover:bg-background transition-colors cursor-pointer"
                   onClick={() => onJobClick?.(job.id)}
+                  onMouseEnter={() => prefetchRoute(`/jobs/${job.id}`)}
                 >
                   <div className="flex-1">
                     <h4 className="font-medium text-foreground">{job.title}</h4>

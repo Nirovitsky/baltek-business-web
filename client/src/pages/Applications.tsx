@@ -16,6 +16,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserProfile } from "@/hooks/useUserProfile";
+import { useHoverPrefetch } from "@/hooks/usePrefetch";
 import { apiService } from "@/lib/api";
 import { User, Search, MessageCircle, FileText, Download, MapPin, Calendar, Briefcase, X, Eye, UserX, UserCheck, AlertTriangle } from "lucide-react";
 import { format } from "date-fns";
@@ -111,6 +112,7 @@ export default function Applications() {
   
   const { toast } = useToast();
   const { selectedOrganization } = useAuth();
+  const { prefetchRoute } = useHoverPrefetch();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -394,6 +396,16 @@ export default function Applications() {
                       key={application.id} 
                       className="cursor-pointer hover:bg-background"
                       onClick={() => setSelectedApplication(application)}
+                      onMouseEnter={() => {
+                        // Prefetch detailed application data
+                        if (application.id) {
+                          prefetchRoute(`/applications/${application.id}`);
+                        }
+                        // Prefetch user profile data if available
+                        if (application.owner?.id) {
+                          prefetchRoute(`/user/${application.owner.id}`);
+                        }
+                      }}
                     >
                       <TableCell>
                         <div className="flex items-center space-x-3">
