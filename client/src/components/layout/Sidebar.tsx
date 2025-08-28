@@ -175,14 +175,14 @@ export default function AppSidebar() {
                 <AlertDialogTrigger asChild>
                   <SidebarMenuButton>
                     <LogOut className="h-4 w-4" />
-                    <span>{t('auth.logout')}</span>
+                    <span>{t('common.logout')}</span>
                   </SidebarMenuButton>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>{t('auth.confirmLogout')}</AlertDialogTitle>
+                    <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
                     <AlertDialogDescription>
-                      {t('auth.logoutConfirmation')}
+                      Are you sure you want to logout? You will need to sign in again to access your account.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -191,7 +191,7 @@ export default function AppSidebar() {
                       onClick={handleLogout}
                       className="bg-red-600 hover:bg-red-700"
                     >
-                      {t('auth.logout')}
+                      {t('common.logout')}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
