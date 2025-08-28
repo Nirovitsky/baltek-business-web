@@ -365,11 +365,11 @@ export default function Applications() {
               <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                 <User className="w-8 h-8 text-gray-400" />
               </div>
-              <h3 className="text-lg font-medium text-foreground mb-2">No applications found</h3>
+              <h3 className="text-lg font-medium text-foreground mb-2">{t('applications.noApplications')}</h3>
               <p className="text-muted-foreground">
                 {searchTerm || statusFilter !== 'all' 
-                  ? "Try adjusting your search or filters"
-                  : "Applications will appear here when candidates apply to your jobs"
+                  ? t('labels.tryAdjustingFilters')
+                  : t('labels.tryAdjustingFilters')
                 }
               </p>
             </CardContent>
@@ -380,12 +380,12 @@ export default function Applications() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Candidate</TableHead>
-                    <TableHead>Job Position</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Applied Date</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead>{t('applications.candidate')}</TableHead>
+                    <TableHead>{t('applications.jobPosition')}</TableHead>
+                    <TableHead>{t('applications.location')}</TableHead>
+                    <TableHead>{t('applications.status')}</TableHead>
+                    <TableHead>{t('applications.appliedDate')}</TableHead>
+                    <TableHead className="text-right">{t('common.actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

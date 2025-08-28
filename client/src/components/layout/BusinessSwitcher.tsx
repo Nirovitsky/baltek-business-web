@@ -19,9 +19,11 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from 'react-i18next';
 import { useSidebar } from "@/components/ui/sidebar";
 
 export default function BusinessSwitcher() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const { selectedOrganization, organizations, switchOrganization } = useAuth();
   const navigate = useNavigate();
@@ -34,8 +36,8 @@ export default function BusinessSwitcher() {
     
     if (organizations.length >= MAX_ORGANIZATIONS) {
       toast({
-        title: "Maximum organizations reached",
-        description: `You can only create up to ${MAX_ORGANIZATIONS} organizations.`,
+        title: t('createOrganization.maxOrganizationsReached'),
+        description: t('createOrganization.maxOrganizationsMessage', { max: MAX_ORGANIZATIONS }),
         variant: "destructive",
       });
       setOpen(false);
@@ -69,7 +71,7 @@ export default function BusinessSwitcher() {
             </Button>
           </TooltipTrigger>
           <TooltipContent side="right">
-            <p>Loading businesses...</p>
+            <p>{t('common.loading')}</p>
           </TooltipContent>
         </Tooltip>
       );
@@ -78,7 +80,7 @@ export default function BusinessSwitcher() {
       <Button variant="outline" className="w-full justify-between" disabled>
         <div className="flex items-center">
           <Building2 className="mr-2 h-4 w-4" />
-          <span className="truncate">Loading businesses...</span>
+          <span className="truncate">{t('common.loading')}</span>
         </div>
       </Button>
     );
@@ -173,10 +175,10 @@ export default function BusinessSwitcher() {
             >
               <Plus className="mr-2 h-4 w-4" />
               <div className="flex flex-col">
-                <span className="font-medium">Create New Organization</span>
+                <span className="font-medium">{t('createOrganization.createOrganization')}</span>
                 {organizations.length >= MAX_ORGANIZATIONS && (
                   <span className="text-xs text-muted-foreground">
-                    Maximum {MAX_ORGANIZATIONS} organizations reached
+                    {t('createOrganization.maxOrganizationsMessage', { max: MAX_ORGANIZATIONS })}
                   </span>
                 )}
               </div>
@@ -210,7 +212,7 @@ export default function BusinessSwitcher() {
               )}
             </div>
             <span className="truncate max-w-[120px]">
-              {selectedOrganization?.display_name || selectedOrganization?.official_name || "Select business..."}
+              {selectedOrganization?.display_name || selectedOrganization?.official_name || t('labels.selectBusiness', 'Select business...')}
             </span>
           </div>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -278,10 +280,10 @@ export default function BusinessSwitcher() {
           >
             <Plus className="mr-2 h-4 w-4" />
             <div className="flex flex-col">
-              <span className="font-medium">Create New Organization</span>
+              <span className="font-medium">{t('createOrganization.createOrganization')}</span>
               {organizations.length >= MAX_ORGANIZATIONS && (
                 <span className="text-xs text-muted-foreground">
-                  Maximum {MAX_ORGANIZATIONS} organizations reached
+                  {t('createOrganization.maxOrganizationsMessage', { max: MAX_ORGANIZATIONS })}
                 </span>
               )}
             </div>

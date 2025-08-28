@@ -408,7 +408,8 @@
     "closeImage": "Close image",
     "startConversation": "Start conversation",
     "cvPreview": "CV Preview",
-    "toggleSidebar": "Toggle Sidebar"
+    "toggleSidebar": "Toggle Sidebar",
+    "selectBusiness": "Select business..."
   },
   "notifications": {
     "title": "Notifications",

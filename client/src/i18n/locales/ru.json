@@ -409,7 +409,8 @@
     "closeImage": "Закрыть изображение",
     "startConversation": "Начать разговор",
     "cvPreview": "Предпросмотр CV",
-    "toggleSidebar": "Переключить боковую панель"
+    "toggleSidebar": "Переключить боковую панель",
+    "selectBusiness": "Выберите компанию..."
   },
   "notifications": {
     "title": "Уведомления",
