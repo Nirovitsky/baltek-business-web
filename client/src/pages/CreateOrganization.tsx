@@ -583,20 +583,22 @@ export default function CreateOrganization() {
 
   return (
     <div className="flex flex-col h-full min-h-screen bg-background">
-      {/* Header */}
+      {/* Header - only show back button if user has existing organizations */}
       <div className="bg-card border-b flex-shrink-0">
         <div className="max-w-4xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate("/")}
-                className="mr-4 text-muted-foreground hover:text-foreground"
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Dashboard
-              </Button>
+              {organizations.length > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate("/")}
+                  className="mr-4 text-muted-foreground hover:text-foreground"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back to Dashboard
+                </Button>
+              )}
             </div>
           </div>
         </div>
