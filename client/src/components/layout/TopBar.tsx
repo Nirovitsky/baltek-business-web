@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useHoverPrefetch } from "@/hooks/usePrefetch";
 import { useTranslation } from 'react-i18next';
+import { LanguageSelector } from "@/components/ui/language-selector";
 
 interface TopBarProps {
   title: string;
@@ -60,6 +61,7 @@ export default function TopBar({
           </div>
         </div>
         <div className="flex items-center space-x-4">
+          <LanguageSelector variant="compact" />
           {!hideNotifications && (
             <Button
               variant="ghost"

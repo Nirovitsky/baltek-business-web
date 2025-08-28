@@ -257,6 +257,7 @@
     "description": "Manage your account settings and preferences",
     "general": "General",
     "language": "Language",
+    "selectLanguage": "Select language",
     "theme": "Theme",
     "lightMode": "Light Mode",
     "darkMode": "Dark Mode",
