@@ -407,6 +407,35 @@
     "cvPreview": "CV görnüşi",
     "toggleSidebar": "Gapdal paneli aç/ýap"
   },
+  "notifications": {
+    "title": "Duýduryşlar",
+    "description": "Iň soňky duýduryşlary yzarlaň",
+    "activityDescription": "Iň soňky işjeňligi yzarlaň",
+    "markAllRead": "Ählisini okaldy diýip bellemek",
+    "all": "Ählisi",
+    "unread": "Okalynadyklar",
+    "read": "Okalandyklar",
+    "viewDetails": "Jikme-jiklikleri gör",
+    "markRead": "Okaldy diýip bellemek",
+    "recently": "Ýakynda",
+    "noUnreadNotifications": "Okalýan duýduryş ýok",
+    "noReadNotifications": "Okalanan duýduryş ýok",
+    "noNotifications": "Duýduryş ýok",
+    "allCaughtUp": "Siz ähli zatlardan habardarsyňyz! Täze duýduryşlar şu ýerde peýda bolar.",
+    "markToSeeHere": "Duýduryşlary okaldy diýip belläň, olary şu ýerde görmek üçin.",
+    "whenReceiveNotifications": "Arzalar, habarlar ýa-da iş ornuny täzelenmeler barada duýduryş alanyňyzda, olar şu ýerde peýda bolar."
+  },
+  "organizationProfile": {
+    "title": "Profil",
+    "description": "Guramanyňyzyň profilini dolandyryň",
+    "notFound": "Gurama tapylmady",
+    "createOrSelectMessage": "Guramasyny döredäň ýa-da gapdal panelinden bar bolany saýlaň.",
+    "createOrganization": "Gurama döret",
+    "editProfile": "Profili redaktirle",
+    "aboutUs": "Biz barada",
+    "noDescriptionAvailable": "Guramanyň düşündirişi ýok. Goşmak üçin \"Profili redaktirle\" basyň!",
+    "projects": "Taslamalar"
+  },
   "currencies": {
     "TMT": "TMT (Türkmen manady)",
     "USD": "USD (ABŞ dollary)"

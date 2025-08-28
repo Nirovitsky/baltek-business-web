@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import TopBar from "@/components/layout/TopBar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
 export default function Notifications() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [filter, setFilter] = useState<'all' | 'unread' | 'read'>('all');
   const { 
@@ -136,11 +138,11 @@ export default function Notifications() {
                   try {
                     const date = new Date(notification.created_at);
                     if (isNaN(date.getTime())) {
-                      return 'Recently';
+                      return t('notifications.recently');
                     }
                     return formatDistanceToNow(date, { addSuffix: true });
                   } catch {
-                    return 'Recently';
+                    return t('notifications.recently');
                   }
                 })()}
               </span>
@@ -155,7 +157,7 @@ export default function Notifications() {
                   className="h-8 px-3 text-xs font-medium text-primary hover:text-primary-foreground hover:bg-primary/90 transition-all duration-200"
                 >
                   <ExternalLink className="h-3 w-3 mr-1.5" />
-                  View Details
+                  {t('notifications.viewDetails')}
                 </Button>
               )}
               
@@ -168,7 +170,7 @@ export default function Notifications() {
                   className="h-8 px-3 text-xs font-medium hover:bg-green-50 hover:text-green-700 hover:border-green-200 transition-all duration-200"
                 >
                   <Check className="h-3 w-3 mr-1.5" />
-                  Mark Read
+                  {t('notifications.markRead')}
                 </Button>
               )}
               
@@ -241,8 +243,8 @@ export default function Notifications() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <TopBar 
-        title="Notifications" 
-        description="Stay updated with your latest notifications"
+        title={t('notifications.title')} 
+        description={t('notifications.description')}
         showCreateButton={true}
         hideNotifications={false}
       />
@@ -256,8 +258,8 @@ export default function Notifications() {
                   <Bell className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold tracking-tight">Notifications</h1>
-                  <p className="text-sm text-muted-foreground">Stay updated with your latest activity</p>
+                  <h1 className="text-2xl font-bold tracking-tight">{t('notifications.title')}</h1>
+                  <p className="text-sm text-muted-foreground">{t('notifications.activityDescription')}</p>
                 </div>
               </div>
             </div>
@@ -269,7 +271,7 @@ export default function Notifications() {
                 className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-md transition-all duration-300"
               >
                 <CheckCheck className="w-4 h-4 mr-2" />
-                Mark All Read
+                {t('notifications.markAllRead')}
                 <Badge variant="secondary" className="ml-2 bg-white/20 text-white">
                   {unreadNotifications.length}
                 </Badge>
@@ -286,7 +288,7 @@ export default function Notifications() {
               className="transition-all duration-200"
             >
               <Mail className="w-4 h-4 mr-1.5" />
-              All
+              {t('notifications.all')}
               <Badge variant="secondary" className="ml-1.5">
                 {(notifications as any[])?.length || 0}
               </Badge>
@@ -298,7 +300,7 @@ export default function Notifications() {
               className="transition-all duration-200"
             >
               <Bell className="w-4 h-4 mr-1.5" />
-              Unread
+              {t('notifications.unread')}
               {unreadNotifications.length > 0 && (
                 <Badge variant="destructive" className="ml-1.5">
                   {unreadNotifications.length}
@@ -312,7 +314,7 @@ export default function Notifications() {
               className="transition-all duration-200"
             >
               <Archive className="w-4 h-4 mr-1.5" />
-              Read
+              {t('notifications.read')}
               <Badge variant="secondary" className="ml-1.5">
                 {readNotifications.length}
               </Badge>
@@ -348,14 +350,14 @@ export default function Notifications() {
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-lg font-semibold">
-                    {filter === 'unread' ? 'No unread notifications' : 
-                     filter === 'read' ? 'No read notifications' : 
-                     'No notifications'}
+                    {filter === 'unread' ? t('notifications.noUnreadNotifications') : 
+                     filter === 'read' ? t('notifications.noReadNotifications') : 
+                     t('notifications.noNotifications')}
                   </h3>
                   <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                    {filter === 'unread' ? 'You\'re all caught up! New notifications will appear here.' :
-                     filter === 'read' ? 'Mark notifications as read to see them here.' :
-                     'When you receive notifications for applications, messages, or job updates, they\'ll appear here.'}
+                    {filter === 'unread' ? t('notifications.allCaughtUp') :
+                     filter === 'read' ? t('notifications.markToSeeHere') :
+                     t('notifications.whenReceiveNotifications')}
                   </p>
                 </div>
               </div>

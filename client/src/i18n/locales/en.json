@@ -410,6 +410,35 @@
     "cvPreview": "CV Preview",
     "toggleSidebar": "Toggle Sidebar"
   },
+  "notifications": {
+    "title": "Notifications",
+    "description": "Stay updated with your latest notifications",
+    "activityDescription": "Stay updated with your latest activity",
+    "markAllRead": "Mark All Read",
+    "all": "All",
+    "unread": "Unread",
+    "read": "Read",
+    "viewDetails": "View Details",
+    "markRead": "Mark Read",
+    "recently": "Recently",
+    "noUnreadNotifications": "No unread notifications",
+    "noReadNotifications": "No read notifications",
+    "noNotifications": "No notifications",
+    "allCaughtUp": "You're all caught up! New notifications will appear here.",
+    "markToSeeHere": "Mark notifications as read to see them here.",
+    "whenReceiveNotifications": "When you receive notifications for applications, messages, or job updates, they'll appear here."
+  },
+  "organizationProfile": {
+    "title": "Profile",
+    "description": "Manage your organization profile",
+    "notFound": "Organization Not Found",
+    "createOrSelectMessage": "Please create an organization or select an existing one from the sidebar.",
+    "createOrganization": "Create Organization",
+    "editProfile": "Edit Profile",
+    "aboutUs": "About Us",
+    "noDescriptionAvailable": "No organization description available. Click \"Edit Profile\" to add one!",
+    "projects": "Projects"
+  },
   "currencies": {
     "TMT": "TMT (Turkmenistan Manat)",
     "USD": "USD (US Dollar)"

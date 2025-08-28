@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import TopBar from "@/components/layout/TopBar";
 import EditOrganizationModal from "@/components/modals/EditOrganizationModal";
 
@@ -27,8 +28,8 @@ function OrganizationProfileSkeleton() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <TopBar 
-        title="Profile"
-        description="Manage your organization profile"
+        title={t('organizationProfile.title')}
+        description={t('organizationProfile.description')}
         showCreateButton={true}
       />
       
@@ -66,6 +67,7 @@ function OrganizationProfileSkeleton() {
 }
 
 export default function Organization() {
+  const { t } = useTranslation();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const { selectedOrganization } = useAuth();
   
@@ -98,8 +100,8 @@ export default function Organization() {
     return (
       <div className="flex-1 flex flex-col overflow-hidden">
         <TopBar 
-          title="Profile"
-          description="Manage your organization profile"
+          title={t('organizationProfile.title')}
+          description={t('organizationProfile.description')}
           showCreateButton={true}
         />
         
@@ -108,15 +110,15 @@ export default function Organization() {
             <div className="flex items-center justify-center min-h-[400px]">
               <div className="text-center">
                 <h1 className="text-2xl font-bold text-foreground dark:text-foreground mb-2">
-                  Organization Not Found
+                  {t('organizationProfile.notFound')}
                 </h1>
                 <p className="text-muted-foreground dark:text-muted-foreground/60 mb-4">
-                  Please create an organization or select an existing one from the sidebar.
+                  {t('organizationProfile.createOrSelectMessage')}
                 </p>
                 <Link to="/create-organization">
                   <Button>
                     <Building2 className="h-4 w-4 mr-2" />
-                    Create Organization
+                    {t('organizationProfile.createOrganization')}
                   </Button>
                 </Link>
               </div>
@@ -130,8 +132,8 @@ export default function Organization() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <TopBar 
-        title="Profile"
-        description="Manage your organization profile"
+        title={t('organizationProfile.title')}
+        description={t('organizationProfile.description')}
         showCreateButton={true}
       />
 
@@ -169,7 +171,7 @@ export default function Organization() {
                       onClick={() => setIsEditModalOpen(true)}
                     >
                       <Edit3 className="h-3 w-3 mr-1.5" />
-                      Edit Profile
+                      {t('organizationProfile.editProfile')}
                     </Button>
                   </div>
                 </div>
@@ -240,7 +242,7 @@ export default function Organization() {
           <div className="bg-white dark:bg-background rounded-lg shadow-sm border dark:border-gray-700 p-6">
             <h2 className="text-xl font-bold text-foreground dark:text-foreground mb-4 flex items-center gap-2">
               <Building2 className="h-5 w-5" />
-              About Us
+              {t('organizationProfile.aboutUs')}
             </h2>
             
             {(currentOrganization?.description || currentOrganization?.about_us) ? (
@@ -252,7 +254,7 @@ export default function Organization() {
             ) : (
               <div className="text-center py-8">
                 <p className="text-muted-foreground dark:text-muted-foreground/60 italic">
-                  No organization description available. Click "Edit Profile" to add one!
+                  {t('organizationProfile.noDescriptionAvailable')}
                 </p>
               </div>
             )}
@@ -263,7 +265,7 @@ export default function Organization() {
             <div className="bg-white dark:bg-background rounded-lg shadow-sm border dark:border-gray-700 p-6">
               <h2 className="text-xl font-bold text-foreground dark:text-foreground mb-4 flex items-center gap-2">
                 <FolderOpen className="h-5 w-5" />
-                Projects
+                {t('organizationProfile.projects')}
               </h2>
               
               <div className="grid gap-4">
