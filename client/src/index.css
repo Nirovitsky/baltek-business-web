@@ -162,7 +162,7 @@ html, body {
   padding: 0 !important;
 }
 
-/* Prevent body scroll when modal is open */
+/* Prevent body scroll when modal is open and compensate for scrollbar */
 .modal-open {
   position: fixed;
   top: 0;
@@ -171,6 +171,7 @@ html, body {
   height: 100%;
   overflow: hidden;
   overscroll-behavior: none;
+  padding-right: var(--scrollbar-width, 0);
 }
 
 .modal-open body {
@@ -181,6 +182,32 @@ html, body {
   height: 100%;
   overflow: hidden;
   overscroll-behavior: none;
+  padding-right: var(--scrollbar-width, 0);
+}
+
+/* Calculate and store scrollbar width to prevent layout shift */
+html {
+  --scrollbar-width: 0px;
+}
+
+/* When dropdown/select is open, prevent layout shift */
+html[data-radix-select-viewport] body,
+html[data-scroll-locked] body {
+  padding-right: var(--scrollbar-width, 0);
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+
+/* Modern browsers: use scrollbar-gutter for stable layout */
+body {
+  scrollbar-gutter: stable;
+}
+
+/* Compensate for scrollbar in dropdowns and modals */
+[data-radix-select-content],
+[data-radix-dropdown-menu-content],
+[role="dialog"] {
+  scrollbar-gutter: stable;
 }
 
 :root {
