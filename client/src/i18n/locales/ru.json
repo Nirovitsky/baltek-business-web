@@ -336,6 +336,8 @@
     "notProvided": "Не указано",
     "present": "Настоящее время",
     "ongoing": "В процессе",
+    "rejected": "Отклонено",
+    "hired": "Принят",
     "notSpecified": "Не указано",
     "tryAdjustingFilters": "Попробуйте настроить поиск или фильтры",
     "createFirstJob": "Создайте свою первую вакансию для начала",
