@@ -431,7 +431,6 @@ export default function Applications() {
                       
                       <TableCell>
                         <div className="font-medium">{typeof application.job === 'object' ? application.job.title : 'Job Title'}</div>
-                        <div className="text-sm text-muted-foreground">{typeof application.job === 'object' && application.job.organization && typeof application.job.organization === 'object' ? (application.job.organization as any).name || 'Organization' : 'Organization'}</div>
                       </TableCell>
                       
                       <TableCell>
