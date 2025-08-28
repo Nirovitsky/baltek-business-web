@@ -18,9 +18,9 @@ import {
 } from '@/components/ui/popover';
 
 const languages = [
-  { code: 'en', name: 'English', nativeName: 'English' },
-  { code: 'ru', name: 'Russian', nativeName: 'Русский' },
-  { code: 'tk', name: 'Turkmen', nativeName: 'Türkmençe' },
+  { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸' },
+  { code: 'ru', name: 'Russian', nativeName: 'Русский', flag: '🇷🇺' },
+  { code: 'tk', name: 'Turkmen', nativeName: 'Türkmençe', flag: '🇹🇲' },
 ];
 
 interface LanguageSelectorProps {
@@ -49,9 +49,8 @@ export function LanguageSelector({ variant = 'default', showIcon = true }: Langu
             className="w-auto px-2"
             aria-label={t('settings.selectLanguage')}
           >
-            {showIcon && <Languages className="h-4 w-4" />}
-            <span className="ml-1 text-xs font-medium">
-              {currentLanguage.code.toUpperCase()}
+            <span className="text-lg">
+              {currentLanguage.flag}
             </span>
           </Button>
         </PopoverTrigger>
@@ -66,16 +65,17 @@ export function LanguageSelector({ variant = 'default', showIcon = true }: Langu
                     onSelect={() => handleLanguageChange(language.code)}
                     className="cursor-pointer"
                   >
-                    <Check
-                      className={cn(
-                        'mr-2 h-4 w-4',
-                        currentLanguage.code === language.code ? 'opacity-100' : 'opacity-0'
-                      )}
-                    />
-                    <div className="flex flex-col">
+                    <span className="mr-3 text-lg">{language.flag}</span>
+                    <div className="flex flex-col flex-1">
                       <span className="font-medium">{language.nativeName}</span>
                       <span className="text-xs text-muted-foreground">{language.name}</span>
                     </div>
+                    <Check
+                      className={cn(
+                        'h-4 w-4 ml-2',
+                        currentLanguage.code === language.code ? 'opacity-100' : 'opacity-0'
+                      )}
+                    />
                   </CommandItem>
                 ))}
               </CommandGroup>
@@ -96,7 +96,7 @@ export function LanguageSelector({ variant = 'default', showIcon = true }: Langu
           className="w-[200px] justify-between"
         >
           <div className="flex items-center">
-            {showIcon && <Languages className="mr-2 h-4 w-4" />}
+            <span className="mr-2 text-lg">{currentLanguage.flag}</span>
             <span>{currentLanguage.nativeName}</span>
           </div>
         </Button>
@@ -114,16 +114,17 @@ export function LanguageSelector({ variant = 'default', showIcon = true }: Langu
                   onSelect={() => handleLanguageChange(language.code)}
                   className="cursor-pointer"
                 >
-                  <Check
-                    className={cn(
-                      'mr-2 h-4 w-4',
-                      currentLanguage.code === language.code ? 'opacity-100' : 'opacity-0'
-                    )}
-                  />
-                  <div className="flex flex-col">
+                  <span className="mr-3 text-lg">{language.flag}</span>
+                  <div className="flex flex-col flex-1">
                     <span className="font-medium">{language.nativeName}</span>
                     <span className="text-xs text-muted-foreground">{language.name}</span>
                   </div>
+                  <Check
+                    className={cn(
+                      'h-4 w-4 ml-2',
+                      currentLanguage.code === language.code ? 'opacity-100' : 'opacity-0'
+                    )}
+                  />
                 </CommandItem>
               ))}
             </CommandGroup>
