@@ -25,6 +25,7 @@ import type { Organization } from "@/types";
 
 // Loading Skeleton
 function OrganizationProfileSkeleton() {
+  const { t } = useTranslation();
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <TopBar 
