@@ -20,7 +20,7 @@ import {
 const languages = [
   { code: 'en', name: 'English', nativeName: 'English' },
   { code: 'ru', name: 'Russian', nativeName: 'Русский' },
-  { code: 'kz', name: 'Kazakh', nativeName: 'Қазақша' },
+  { code: 'tk', name: 'Turkmen', nativeName: 'Türkmençe' },
 ];
 
 interface LanguageSelectorProps {
