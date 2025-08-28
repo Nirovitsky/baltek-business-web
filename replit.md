@@ -109,14 +109,15 @@ The baltek business Dashboard is a React and Express-based application for HR ma
   - **Core Data Strategy**: Comprehensive prefetching of jobs, applications, chat rooms, notifications, and reference data
   - **Performance Enhancement**: App now feels instant with data ready before user navigation, dramatically improving perceived performance
 - **Comprehensive Localization Implementation (January 28, 2025)**: Added complete internationalization support
-  - **Multi-language Support**: Implemented support for English, Russian, and Kazakh languages
+  - **Multi-language Support**: Implemented support for English, Russian, and Turkmen languages (changed from Kazakh per user request)
   - **Translation Framework**: Integrated react-i18next with comprehensive translation keys for all UI elements
-  - **Language Switching**: Added language selector component with both compact and full variants
-  - **Settings Integration**: Language selection integrated into Settings page alongside theme preferences
+  - **Language Switching**: Added language selector component with both compact and full variants, fully functional in Settings page
+  - **Settings Integration**: Language selection integrated into Settings page alongside theme preferences with proper localStorage persistence
   - **Complete Translation Coverage**: All user-facing strings translated including navigation, dashboard, forms, notifications, and error messages
   - **Dynamic Language Detection**: Automatic language detection from browser preferences with localStorage persistence
   - **Authentication Localization**: Login page with language selector and localized authentication messages
   - **Translation Keys Organization**: Structured translation files with logical grouping (common, navigation, auth, dashboard, etc.)
+  - **Turkmen Language Support**: Complete Turkmen translations with proper language code 'tk' and native name 'Türkmençe'
   - **Future-Ready**: Translation framework ready for easy addition of new languages and expansion of content
 
 ## System Architecture
