@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import { useQuery } from "@tanstack/react-query";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -20,6 +21,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Job, JobApplication, PaginatedResponse, OrganizationStats } from "@/types";
 
 export default function Dashboard() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [isJobDetailOpen, setIsJobDetailOpen] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState<number | null>(null);
@@ -97,8 +99,8 @@ export default function Dashboard() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <TopBar
-        title="Dashboard Overview"
-        description="Manage your job postings and applications"
+        title={t('dashboard.title')}
+        description={t('dashboard.overview')}
         showCreateButton={true}
       />
       <div className="flex flex-1 flex-col gap-4 p-4">
@@ -108,7 +110,7 @@ export default function Dashboard() {
           <Alert className="border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950">
             <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
             <AlertDescription className="text-yellow-800 dark:text-yellow-200">
-              <strong>Organization Under Review:</strong> Your organization "{selectedOrganization.official_name}" is currently being reviewed by our moderators. Once approved, you'll be able to post job openings and access all features.
+              <strong>{t('dashboard.organizationUnderReview')}:</strong> {t('dashboard.organizationPendingDescription', { organizationName: selectedOrganization.official_name })}
             </AlertDescription>
           </Alert>
         )}
@@ -116,48 +118,48 @@ export default function Dashboard() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatsCard
-            title="Active Jobs"
+            title={t('dashboard.activeJobs')}
             value={activeJobs}
             icon={Briefcase}
             change={{
-              value: `${totalJobs} total`,
-              label: `${archivedJobs} archived`,
+              value: `${totalJobs} ${t('dashboard.totalLabel')}`,
+              label: `${archivedJobs} ${t('dashboard.archivedLabel')}`,
               type: "neutral"
             }}
           />
           
           <StatsCard
-            title="Total Applications"
+            title={t('dashboard.totalApplications')}
             value={totalApplications}
             icon={Users}
             iconColor="text-primary"
             change={{
-              value: `${pendingApplications} in review`,
-              label: `${ongoingApplications} ongoing`,
+              value: `${pendingApplications} ${t('dashboard.inReviewLabel')}`,
+              label: `${ongoingApplications} ${t('dashboard.ongoingLabel')}`,
               type: "positive"
             }}
           />
 
           <StatsCard
-            title="Applications In Review"
+            title={t('dashboard.applicationsInReview')}
             value={pendingApplications}
             icon={Clock}
             iconColor="text-yellow-600"
             change={{
               value: `${Math.round((pendingApplications / Math.max(totalApplications, 1)) * 100)}%`,
-              label: "of total applications",
+              label: t('applications.title'),
               type: "neutral"
             }}
           />
 
           <StatsCard
-            title="Hired This Month"
+            title={t('dashboard.hired')}
             value={hiredThisMonth}
             icon={UserCheck}
             iconColor="text-green-600"
             change={{
               value: `${Math.round((hiredThisMonth / Math.max(totalApplications, 1)) * 100)}%`,
-              label: "success rate",
+              label: t('applications.successRate'),
               type: "positive"
             }}
           />

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import TopBar from "@/components/layout/TopBar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,9 +20,11 @@ import { LogOut, Settings as SettingsIcon, Globe, Palette, Monitor, Sun, Moon } 
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "@/components/theme-provider";
+import { LanguageSelector } from "@/components/ui/language-selector";
 
 
 export default function Settings() {
+  const { t } = useTranslation();
   const { logout } = useAuth();
   const { toast } = useToast();
   const { theme, setTheme } = useTheme();
@@ -30,15 +33,15 @@ export default function Settings() {
   const handleConfirmLogout = () => {
     logout();
     toast({
-      title: "Logged out",
-      description: "You have been successfully logged out",
+      title: t('auth.logoutSuccess'),
+      description: t('auth.logoutSuccess'),
     });
   };
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <TopBar 
-        title="Settings"
+        title={t('settings.title')}
         description="Manage your account settings and preferences"
         showCreateButton={true}
       />
@@ -50,22 +53,43 @@ export default function Settings() {
             <CardHeader className="pb-4">
               <div className="flex items-center space-x-2">
                 <Palette className="w-5 h-5 text-primary" />
-                <CardTitle>Preferences</CardTitle>
+                <CardTitle>{t('settings.general')}</CardTitle>
               </div>
               <CardDescription>
                 Customize your application experience
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Language Settings */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center">
+                    <Globe className="w-5 h-5 text-muted-foreground" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label>{t('settings.language')}</Label>
+                    <p className="text-sm text-muted-foreground">
+                      {t('settings.selectLanguage')}
+                    </p>
+                  </div>
+                </div>
+                <div className="ml-13">
+                  <LanguageSelector />
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Theme Settings */}
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center">
                     <Palette className="w-5 h-5 text-muted-foreground" />
                   </div>
                   <div className="space-y-1">
-                    <Label>Theme</Label>
+                    <Label>{t('settings.theme')}</Label>
                     <p className="text-sm text-muted-foreground">
-                      Choose your preferred theme
+                      {t('settings.selectTheme')}
                     </p>
                   </div>
                 </div>

@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, ClipboardList, MessageCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -13,6 +14,7 @@ export default function QuickActions({
   onReviewApplications, 
   onOpenMessages 
 }: QuickActionsProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { selectedOrganization } = useAuth();
   const { prefetchRoute } = useHoverPrefetch();
@@ -27,8 +29,8 @@ export default function QuickActions({
   
   const actions = [
     {
-      title: "Create Job Posting",
-      description: isOrgNotPublic ? "Pending organization approval" : "Post a new job opportunity",
+      title: t('navigation.createJob'),
+      description: isOrgNotPublic ? t('dashboard.pendingApproval') : t('dashboard.postNewJobOpportunity'),
       icon: Plus,
       iconBg: isOrgNotPublic ? "bg-gray-100" : "bg-primary/10",
       iconColor: isOrgNotPublic ? "text-gray-400" : "text-primary",
@@ -36,16 +38,16 @@ export default function QuickActions({
       disabled: isOrgNotPublic,
     },
     {
-      title: "Review Applications",
-      description: "Check applications in review",
+      title: t('applications.title'),
+      description: t('dashboard.checkApplicationsInReview'),
       icon: ClipboardList,
       iconBg: "bg-primary/10",
       iconColor: "text-primary",
       onClick: onReviewApplications,
     },
     {
-      title: "Message Candidates",
-      description: "Chat with applicants",
+      title: t('chat.title'),
+      description: t('dashboard.chatWithApplicants'),
       icon: MessageCircle,
       iconBg: "",
       iconColor: "text-primary",
@@ -56,7 +58,7 @@ export default function QuickActions({
   return (
     <Card className="shadow-sm">
       <CardContent className="p-6">
-        <h3 className="text-lg font-semibold mb-6">Quick Actions</h3>
+        <h3 className="text-lg font-semibold mb-6">{t('dashboard.quickActions')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {actions.map((action, index) => {
             const Icon = action.icon;

@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import {
   BarChart3,
   Briefcase,
@@ -39,29 +40,29 @@ import BusinessSwitcher from "./BusinessSwitcher";
 import { useNotifications } from "@/hooks/useNotifications";
 
 // Navigation data structure following shadcn/ui blocks pattern
-const data = {
+const getNavigationData = (t: any) => ({
   navMain: [
     {
       title: "Platform",
       url: "#",
       items: [
         {
-          title: "Dashboard",
+          title: t('navigation.dashboard'),
           url: "/",
           icon: BarChart3,
         },
         {
-          title: "Jobs",
+          title: t('navigation.jobs'),
           url: "/jobs", 
           icon: Briefcase,
         },
         {
-          title: "Applications",
+          title: t('navigation.applications'),
           url: "/applications",
           icon: Users,
         },
         {
-          title: "Chat",
+          title: t('navigation.chat'),
           url: "/chat",
           icon: MessageCircle,
         },
@@ -70,22 +71,25 @@ const data = {
   ],
   navSecondary: [
     {
-      title: "Profile",
+      title: t('navigation.profile'),
       url: "/organization",
       icon: UserCircle,
     },
     {
-      title: "Settings", 
+      title: t('navigation.settings'), 
       url: "/settings",
       icon: Settings,
     },
   ],
-};
+});
 
 export default function AppSidebar() {
+  const { t } = useTranslation();
   const location = useLocation();
   const { logout, selectedOrganization, user } = useAuth();
   const { prefetchRoute } = useHoverPrefetch();
+  
+  const data = getNavigationData(t);
 
   return (
     <Sidebar variant="inset" collapsible="icon">

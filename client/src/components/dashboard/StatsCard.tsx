@@ -1,4 +1,5 @@
 import { LucideIcon } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from "@/components/ui/card";
 
 interface StatsCardProps {
