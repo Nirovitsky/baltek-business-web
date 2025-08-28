@@ -12,15 +12,11 @@ import { useTranslation } from 'react-i18next';
 import { LanguageSelector } from "@/components/ui/language-selector";
 
 interface TopBarProps {
-  title: string;
-  description?: string;
   showCreateButton?: boolean;
   hideNotifications?: boolean;
 }
 
 export default function TopBar({ 
-  title, 
-  description, 
   showCreateButton = true,
   hideNotifications = false
 }: TopBarProps) {
@@ -51,15 +47,7 @@ export default function TopBar({
     <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 border-b px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 min-h-16">
       <SidebarTrigger className="-ml-1" />
       <Separator orientation="vertical" className="mr-2 h-4" />
-      <div className="flex flex-1 items-center justify-between">
-        <div className="min-h-12 flex flex-col justify-center">
-          <h1 className="text-lg font-semibold text-foreground leading-tight">{title}</h1>
-          <div className="min-h-5">
-            {description && (
-              <p className="text-sm text-muted-foreground leading-tight">{description}</p>
-            )}
-          </div>
-        </div>
+      <div className="flex flex-1 items-center justify-end">
         <div className="flex items-center space-x-4">
           <LanguageSelector variant="compact" />
           {!hideNotifications && (
