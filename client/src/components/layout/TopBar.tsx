@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useHoverPrefetch } from "@/hooks/usePrefetch";
+import { useTranslation } from 'react-i18next';
 
 interface TopBarProps {
   title: string;
@@ -22,6 +23,7 @@ export default function TopBar({
   showCreateButton = true,
   hideNotifications = false
 }: TopBarProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { selectedOrganization } = useAuth();
   const { toast } = useToast();
@@ -31,8 +33,8 @@ export default function TopBar({
   const handleCreateJob = () => {
     if (selectedOrganization?.is_public === false) {
       toast({
-        title: "Organization Not Approved",
-        description: "Your organization is currently under review. You cannot create job postings until it's approved by our moderators.",
+        title: t('messages.organizationNotApproved'),
+        description: t('messages.organizationUnderReview'),
         variant: "destructive",
       });
       return;
@@ -84,15 +86,10 @@ export default function TopBar({
                 prefetchRoute('/jobs');
                 prefetchRoute('/jobs/create');
               }}
-              disabled={selectedOrganization?.is_public === false}
-              className={`${
-                selectedOrganization?.is_public === false 
-                  ? 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed opacity-60' 
-                  : 'bg-primary hover:bg-primary/90'
-              }`}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Post New Job
+              {t('jobs.createJob')}
             </Button>
           )}
         </div>

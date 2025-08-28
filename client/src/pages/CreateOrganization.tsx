@@ -5,11 +5,40 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { SearchableLocation } from "@/components/ui/searchable-location";
 import { SearchableCategory } from "@/components/ui/searchable-category";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building2, Upload, X, Sparkles, Users, Target, Zap, Loader2, Globe, Mail, Phone, MapPin, Tag, ArrowRight, ArrowLeft, CheckCircle } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Building2,
+  Upload,
+  X,
+  Sparkles,
+  Users,
+  Target,
+  Zap,
+  Loader2,
+  Globe,
+  Mail,
+  Phone,
+  MapPin,
+  Tag,
+  ArrowRight,
+  ArrowLeft,
+  CheckCircle,
+} from "lucide-react";
 import { apiService } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useOrganizations } from "@/hooks/useOrganizations";
@@ -22,10 +51,10 @@ export default function CreateOrganization() {
   const { toast } = useToast();
   const { organizations, createOrganization, uploadFile } = useOrganizations();
   const { refreshOrganizations, switchOrganization } = useAuth();
-  
+
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const DRAFT_KEY = 'organization_draft_new';
+  const DRAFT_KEY = "organization_draft_new";
   const [isDraftSaved, setIsDraftSaved] = useState(false);
 
   // Load draft or use defaults
@@ -36,7 +65,7 @@ export default function CreateOrganization() {
         return JSON.parse(saved);
       }
     } catch (error) {
-      console.warn('Failed to load organization draft:', error);
+      console.warn("Failed to load organization draft:", error);
     }
     return {
       official_name: "",
@@ -56,10 +85,12 @@ export default function CreateOrganization() {
 
   const MAX_ORGANIZATIONS = 10;
 
-
-
   // Use shared reference data to avoid duplication
-  const { categories, locations, isLoading: isLoadingRefData } = useReferenceData();
+  const {
+    categories,
+    locations,
+    isLoading: isLoadingRefData,
+  } = useReferenceData();
 
   // Check if user has reached maximum organizations
   if (organizations.length >= MAX_ORGANIZATIONS) {
@@ -72,12 +103,15 @@ export default function CreateOrganization() {
                 <Building2 className="w-8 h-8 text-red-600 dark:text-red-400" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Maximum Organizations Reached</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  Maximum Organizations Reached
+                </h1>
                 <p className="text-gray-600 dark:text-gray-300 mt-2">
-                  You can only create up to {MAX_ORGANIZATIONS} organizations. Please delete an existing organization to create a new one.
+                  You can only create up to {MAX_ORGANIZATIONS} organizations.
+                  Please delete an existing organization to create a new one.
                 </p>
               </div>
-              <Button onClick={() => navigate('/')} className="w-full">
+              <Button onClick={() => navigate("/")} className="w-full">
                 Back to Dashboard
               </Button>
             </div>
@@ -95,24 +129,26 @@ export default function CreateOrganization() {
         setIsDraftSaved(true);
         setTimeout(() => setIsDraftSaved(false), 2000);
       } catch (error) {
-        console.warn('Failed to save organization draft:', error);
+        console.warn("Failed to save organization draft:", error);
       }
     }, 1000);
-    
+
     return () => clearTimeout(timeoutId);
   }, [formData]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setFormData((prev: typeof formData) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
   };
 
   const handleSelectChange = (name: string, value: string) => {
     setFormData((prev: typeof formData) => ({
       ...prev,
-      [name]: parseInt(value)
+      [name]: parseInt(value),
     }));
   };
 
@@ -130,7 +166,7 @@ export default function CreateOrganization() {
       }
 
       // Validate file type
-      if (!file.type.startsWith('image/')) {
+      if (!file.type.startsWith("image/")) {
         toast({
           title: "Invalid file type",
           description: "Please upload an image file",
@@ -140,7 +176,7 @@ export default function CreateOrganization() {
       }
 
       setLogoFile(file);
-      
+
       // Create preview
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -187,8 +223,6 @@ export default function CreateOrganization() {
     setCurrentStep(2);
   };
 
-
-
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setIsLoading(true);
@@ -202,7 +236,7 @@ export default function CreateOrganization() {
           const uploadResponse = await uploadFile.mutateAsync(logoFile);
           logoUrl = uploadResponse.url;
         } catch (error) {
-          console.error('Logo upload failed:', error);
+          console.error("Logo upload failed:", error);
           // Continue without logo if upload fails
         }
       }
@@ -217,38 +251,38 @@ export default function CreateOrganization() {
         phone: formData.phone || "",
         category: formData.category_id,
         location: formData.location_id,
-        ...(logoUrl && { logo: logoUrl })
+        ...(logoUrl && { logo: logoUrl }),
       };
 
-      const newOrganization = await createOrganization.mutateAsync(organizationData);
-      
+      const newOrganization =
+        await createOrganization.mutateAsync(organizationData);
+
       toast({
         title: "Organization created",
         description: "Your organization has been created successfully",
       });
-      
+
       // Clear draft on successful creation
       try {
         localStorage.removeItem(DRAFT_KEY);
       } catch (error) {
-        console.warn('Failed to clear organization draft:', error);
+        console.warn("Failed to clear organization draft:", error);
       }
-      
+
       // Refresh organizations in auth context to include the new one
       await refreshOrganizations();
-      
-      // Since refreshOrganizations updates the auth context, 
+
+      // Since refreshOrganizations updates the auth context,
       // the new organization should now be automatically selected as it's the first one
       // We can also manually select it to ensure it's the active organization
       if (newOrganization) {
         switchOrganization(newOrganization as any);
       }
-      
+
       // Redirect to the organization profile page
-      navigate('/organization');
-      
+      navigate("/organization");
     } catch (error: any) {
-      console.error('Error creating organization:', error);
+      console.error("Error creating organization:", error);
       // Error handling is done in the mutation onError callback
     } finally {
       setIsLoading(false);
@@ -258,15 +292,25 @@ export default function CreateOrganization() {
   const renderStepIndicator = () => (
     <div className="flex items-center justify-center mb-8">
       <div className="flex items-center space-x-4">
-        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${
-          currentStep >= 1 ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-400'
-        }`}>
-          {currentStep > 1 ? <CheckCircle className="w-5 h-5" /> : '1'}
+        <div
+          className={`flex items-center justify-center w-8 h-8 rounded-full ${
+            currentStep >= 1
+              ? "bg-primary text-white"
+              : "bg-gray-200 dark:bg-gray-700 text-gray-400"
+          }`}
+        >
+          {currentStep > 1 ? <CheckCircle className="w-5 h-5" /> : "1"}
         </div>
-        <div className={`w-12 h-1 ${currentStep >= 2 ? 'bg-primary' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
-        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${
-          currentStep >= 2 ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-400'
-        }`}>
+        <div
+          className={`w-12 h-1 ${currentStep >= 2 ? "bg-primary" : "bg-gray-200 dark:bg-gray-700"}`}
+        ></div>
+        <div
+          className={`flex items-center justify-center w-8 h-8 rounded-full ${
+            currentStep >= 2
+              ? "bg-primary text-white"
+              : "bg-gray-200 dark:bg-gray-700 text-gray-400"
+          }`}
+        >
           2
         </div>
       </div>
@@ -276,14 +320,21 @@ export default function CreateOrganization() {
   const renderStep1 = () => (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Basic Information</h2>
-        <p className="text-gray-600 dark:text-gray-300">Tell us about your organization</p>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+          Basic Information
+        </h2>
+        <p className="text-gray-600 dark:text-gray-300">
+          Tell us about your organization
+        </p>
       </div>
 
       <div className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="official_name" className="text-sm font-semibold text-gray-700 dark:text-gray-200">
-            Organization Name *
+          <Label
+            htmlFor="official_name"
+            className="text-sm font-semibold text-gray-700 dark:text-gray-200"
+          >
+            Official Name *
           </Label>
           <Input
             id="official_name"
@@ -297,7 +348,10 @@ export default function CreateOrganization() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="display_name" className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+          <Label
+            htmlFor="display_name"
+            className="text-sm font-semibold text-gray-700 dark:text-gray-200"
+          >
             Display Name
           </Label>
           <Input
@@ -317,7 +371,9 @@ export default function CreateOrganization() {
           </Label>
           <SearchableCategory
             value={formData.category_id || undefined}
-            onValueChange={(value) => handleSelectChange('category_id', value.toString())}
+            onValueChange={(value) =>
+              handleSelectChange("category_id", value.toString())
+            }
             placeholder="Search for your industry category..."
             className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary"
           />
@@ -330,13 +386,15 @@ export default function CreateOrganization() {
           </Label>
           <SearchableLocation
             value={formData.location_id || undefined}
-            onValueChange={(value) => handleSelectChange('location_id', value.toString())}
+            onValueChange={(value) =>
+              handleSelectChange("location_id", value.toString())
+            }
             placeholder="Search for your location..."
             className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary"
           />
         </div>
 
-        <Button 
+        <Button
           onClick={handleNext}
           className="w-full h-12 bg-primary hover:bg-primary/90 text-white font-semibold"
         >
@@ -350,14 +408,20 @@ export default function CreateOrganization() {
   const renderStep2 = () => (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Additional Details</h2>
-        <p className="text-gray-600 dark:text-gray-300">Add more information about your organization (optional)</p>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+          Additional Details
+        </h2>
+        <p className="text-gray-600 dark:text-gray-300">
+          Add more information about your organization (optional)
+        </p>
       </div>
 
       <div className="space-y-6">
-
         <div className="space-y-2">
-          <Label htmlFor="about_us" className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+          <Label
+            htmlFor="about_us"
+            className="text-sm font-semibold text-gray-700 dark:text-gray-200"
+          >
             About Us
           </Label>
           <Textarea
@@ -372,7 +436,10 @@ export default function CreateOrganization() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="website" className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center">
+            <Label
+              htmlFor="website"
+              className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center"
+            >
               <Globe className="w-4 h-4 mr-2" />
               Website
             </Label>
@@ -387,7 +454,10 @@ export default function CreateOrganization() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center">
+            <Label
+              htmlFor="email"
+              className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center"
+            >
               <Mail className="w-4 h-4 mr-2" />
               Email
             </Label>
@@ -404,7 +474,10 @@ export default function CreateOrganization() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="phone" className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center">
+          <Label
+            htmlFor="phone"
+            className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center"
+          >
             <Phone className="w-4 h-4 mr-2" />
             Phone Number
           </Label>
@@ -423,8 +496,8 @@ export default function CreateOrganization() {
           <Label className="text-sm font-semibold text-gray-700 dark:text-gray-200">
             Organization Logo
           </Label>
-          <label 
-            htmlFor="logo-upload" 
+          <label
+            htmlFor="logo-upload"
             className="block border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center cursor-pointer hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
           >
             {logoPreview ? (
@@ -461,7 +534,10 @@ export default function CreateOrganization() {
                   <span className="text-primary hover:text-primary/80 font-medium">
                     Choose a file
                   </span>
-                  <span className="text-gray-500 dark:text-gray-400"> or drag and drop</span>
+                  <span className="text-gray-500 dark:text-gray-400">
+                    {" "}
+                    or drag and drop
+                  </span>
                 </div>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
                   PNG, JPG up to 5MB
@@ -479,7 +555,7 @@ export default function CreateOrganization() {
         </div>
 
         <div className="flex gap-4 pt-4">
-          <Button 
+          <Button
             variant="outline"
             onClick={() => setCurrentStep(1)}
             className="flex-1 h-12 border-2"
@@ -487,8 +563,8 @@ export default function CreateOrganization() {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </Button>
-          
-          <Button 
+
+          <Button
             onClick={handleSubmit}
             disabled={isLoading}
             className="flex-1 h-12 bg-primary hover:bg-primary/90"
@@ -499,7 +575,7 @@ export default function CreateOrganization() {
                 Creating...
               </>
             ) : (
-              'Create Organization'
+              "Create Organization"
             )}
           </Button>
         </div>
@@ -518,7 +594,6 @@ export default function CreateOrganization() {
 
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
         <div className="w-full max-w-2xl">
-          
           {/* Hero content */}
           <div className="text-center space-y-6 mb-8">
             <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium">
@@ -532,7 +607,8 @@ export default function CreateOrganization() {
               </span>
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl mx-auto">
-              Set up your company profile and start managing job postings, applications, and candidate communications.
+              Set up your company profile and start managing job postings,
+              applications, and candidate communications.
             </p>
           </div>
 

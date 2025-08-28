@@ -132,6 +132,10 @@
     "rejected": "Rejected",
     "hired": "Hired",
     "expired": "Expired",
+    "unknown": "Unknown",
+    "notSpecified": "Not specified",
+    "startConversation": "Start conversation",
+    "cvPreview": "CV Preview",
     "noApplications": "No applications found",
     "viewDetails": "View Details",
     "contactApplicant": "Contact Applicant",
@@ -314,7 +318,9 @@
     "categoryRequiredDesc": "Please select a category",
     "invalidFileType": "Invalid file type",
     "uploadImageFile": "Please upload an image file",
-    "noOrganization": "No organization found. Please contact support."
+    "noOrganization": "No organization found. Please contact support.",
+    "organizationNotApproved": "Organization Not Approved",
+    "organizationUnderReview": "Your organization is currently under review. You cannot create job postings until it's approved by our moderators."
   },
   "labels": {
     "jobPostings": "Job Postings",

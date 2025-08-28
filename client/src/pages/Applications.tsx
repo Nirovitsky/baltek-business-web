@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import TopBar from "@/components/layout/TopBar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,8 +23,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { JobApplication, PaginatedResponse, Room } from "@/types";
 
 // Helper function to format dates properly
-const formatDate = (timestamp?: number | string) => {
-  if (!timestamp) return 'Not specified';
+const formatDate = (t: any, timestamp?: number | string) => {
+  if (!timestamp) return t('labels.notSpecified');
   try {
     let date: Date;
     
@@ -37,10 +38,10 @@ const formatDate = (timestamp?: number | string) => {
       date = new Date(timestamp as string);
     }
     
-    if (isNaN(date.getTime())) return 'Not specified';
+    if (isNaN(date.getTime())) return t('labels.notSpecified');
     return format(date, 'MMM d, yyyy');
   } catch {
-    return 'Not specified';
+    return t('labels.notSpecified');
   }
 };
 
@@ -63,20 +64,20 @@ const getStatusBadge = (status: string) => {
 };
 
 // Helper function to format status text for display
-const formatStatusText = (status: string) => {
+const formatStatusText = (t: any, status: string) => {
   switch (status) {
     case 'in_review':
-      return 'In Review';
+      return t('labels.inReview');
     case 'ongoing':
-      return 'Ongoing';
+      return t('labels.ongoing');
     case 'rejected':
-      return 'Rejected';
+      return t('labels.rejected');
     case 'hired':
-      return 'Hired';
+      return t('labels.hired');
     case 'expired':
-      return 'Expired';
+      return t('labels.expired');
     default:
-      return 'Unknown';
+      return t('labels.unknown');
   }
 };
 
@@ -99,6 +100,7 @@ const getActualStatus = (application: JobApplication, findExistingRoom: any, roo
 };
 
 export default function Applications() {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedApplication, setSelectedApplication] = useState<JobApplication | null>(null);
@@ -444,7 +446,7 @@ export default function Applications() {
                           const actualStatus = getActualStatus(application, findExistingRoom, roomsData);
                           return (
                             <Badge className={getStatusBadge(actualStatus)} variant="secondary">
-                              {formatStatusText(actualStatus)}
+                              {formatStatusText(t, actualStatus)}
                             </Badge>
                           );
                         })()}
@@ -461,7 +463,7 @@ export default function Applications() {
                                             (typeof application.job === 'object' && (application.job as any).date_created);
                             
                             if (dateValue) {
-                              return formatDate(dateValue);
+                              return formatDate(t, dateValue);
                             }
                             
                             // Fallback: Show relative info based on ID (higher ID = more recent)
@@ -649,12 +651,12 @@ export default function Applications() {
                       <Badge className={getStatusBadge(getActualStatus(selectedApplication, findExistingRoom, roomsData))} variant="secondary">
                         {(() => {
                           const actualStatus = getActualStatus(selectedApplication, findExistingRoom, roomsData);
-                          return formatStatusText(actualStatus);
+                          return formatStatusText(t, actualStatus);
                         })()}
                       </Badge>
                       <div className="flex items-center space-x-2">
                         <Calendar className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-sm">Applied on {formatDate((detailedApplication as any)?.date_applied || (detailedApplication as any)?.created_at || (selectedApplication as any).date_applied || (selectedApplication as any).created_at || (selectedApplication as any).date_created)}</span>
+                        <span className="text-sm">Applied on {formatDate(t, (detailedApplication as any)?.date_applied || (detailedApplication as any)?.created_at || (selectedApplication as any).date_applied || (selectedApplication as any).created_at || (selectedApplication as any).date_created)}</span>
                       </div>
                     </div>
                   </div>
