@@ -44,10 +44,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { useOrganizations } from "@/hooks/useOrganizations";
 import { useReferenceData } from "@/hooks/useReferencedData";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import type { Category, Location, PaginatedResponse } from "@/types";
 
 export default function CreateOrganization() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { toast } = useToast();
   const { organizations, createOrganization, uploadFile } = useOrganizations();
   const { refreshOrganizations, switchOrganization } = useAuth();
@@ -104,15 +106,14 @@ export default function CreateOrganization() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  Maximum Organizations Reached
+                  {t('createOrganization.maxOrganizationsReached')}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-300 mt-2">
-                  You can only create up to {MAX_ORGANIZATIONS} organizations.
-                  Please delete an existing organization to create a new one.
+                  {t('createOrganization.maxOrganizationsMessage', { max: MAX_ORGANIZATIONS })}
                 </p>
               </div>
               <Button onClick={() => navigate("/")} className="w-full">
-                Back to Dashboard
+                {t('createOrganization.backToDashboard')}
               </Button>
             </div>
           </CardContent>
@@ -158,8 +159,8 @@ export default function CreateOrganization() {
       // Validate file size (5MB limit)
       if (file.size > 5 * 1024 * 1024) {
         toast({
-          title: "File too large",
-          description: "Logo must be less than 5MB",
+          title: t('createOrganization.fileTooLarge'),
+          description: t('createOrganization.logoSizeLimit'),
           variant: "destructive",
         });
         return;
@@ -168,8 +169,8 @@ export default function CreateOrganization() {
       // Validate file type
       if (!file.type.startsWith("image/")) {
         toast({
-          title: "Invalid file type",
-          description: "Please upload an image file",
+          title: t('createOrganization.invalidFileType'),
+          description: t('createOrganization.pleaseUploadImage'),
           variant: "destructive",
         });
         return;
@@ -195,8 +196,8 @@ export default function CreateOrganization() {
     // Validate required fields before moving to next step
     if (!formData.official_name.trim()) {
       toast({
-        title: "Organization name required",
-        description: "Please enter your organization name",
+        title: t('createOrganization.organizationNameRequired'),
+        description: t('createOrganization.pleaseEnterName'),
         variant: "destructive",
       });
       return;
@@ -204,8 +205,8 @@ export default function CreateOrganization() {
 
     if (formData.category_id === 0) {
       toast({
-        title: "Category required",
-        description: "Please select a category",
+        title: t('createOrganization.categoryRequired'),
+        description: t('createOrganization.pleaseSelectCategory'),
         variant: "destructive",
       });
       return;
@@ -213,8 +214,8 @@ export default function CreateOrganization() {
 
     if (formData.location_id === 0) {
       toast({
-        title: "Location required",
-        description: "Please select a location",
+        title: t('createOrganization.locationRequired'),
+        description: t('createOrganization.pleaseSelectLocation'),
         variant: "destructive",
       });
       return;
@@ -258,8 +259,8 @@ export default function CreateOrganization() {
         await createOrganization.mutateAsync(organizationData);
 
       toast({
-        title: "Organization created",
-        description: "Your organization has been created successfully",
+        title: t('createOrganization.organizationCreated'),
+        description: t('createOrganization.organizationCreatedSuccess'),
       });
 
       // Clear draft on successful creation
@@ -321,10 +322,10 @@ export default function CreateOrganization() {
     <div className="space-y-6">
       <div className="text-center space-y-2">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Basic Information
+          {t('createOrganization.basicInformation')}
         </h2>
         <p className="text-gray-600 dark:text-gray-300">
-          Tell us about your organization
+          {t('createOrganization.tellUsAbout')}
         </p>
       </div>
 
@@ -334,14 +335,14 @@ export default function CreateOrganization() {
             htmlFor="official_name"
             className="text-sm font-semibold text-gray-700 dark:text-gray-200"
           >
-            Official Name *
+{t('createOrganization.officialName')} *
           </Label>
           <Input
             id="official_name"
             name="official_name"
             value={formData.official_name}
             onChange={handleInputChange}
-            placeholder="Enter your organization name"
+            placeholder={t('createOrganization.enterOrganizationName')}
             required
             className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary transition-all duration-200"
           />
@@ -352,14 +353,14 @@ export default function CreateOrganization() {
             htmlFor="display_name"
             className="text-sm font-semibold text-gray-700 dark:text-gray-200"
           >
-            Display Name
+{t('createOrganization.displayName')}
           </Label>
           <Input
             id="display_name"
             name="display_name"
             value={formData.display_name}
             onChange={handleInputChange}
-            placeholder="How should we display your organization? (optional)"
+            placeholder={t('createOrganization.displayNamePlaceholder')}
             className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary transition-all duration-200"
           />
         </div>
@@ -367,14 +368,14 @@ export default function CreateOrganization() {
         <div className="space-y-2">
           <Label className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center">
             <Tag className="w-4 h-4 mr-2" />
-            Category *
+{t('createOrganization.category')} *
           </Label>
           <SearchableCategory
             value={formData.category_id || undefined}
             onValueChange={(value) =>
               handleSelectChange("category_id", value.toString())
             }
-            placeholder="Search for your industry category..."
+            placeholder={t('createOrganization.searchCategoryPlaceholder')}
             className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary"
           />
         </div>
@@ -382,14 +383,14 @@ export default function CreateOrganization() {
         <div className="space-y-2">
           <Label className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center">
             <MapPin className="w-4 h-4 mr-2" />
-            Location *
+{t('createOrganization.location')} *
           </Label>
           <SearchableLocation
             value={formData.location_id || undefined}
             onValueChange={(value) =>
               handleSelectChange("location_id", value.toString())
             }
-            placeholder="Search for your location..."
+            placeholder={t('createOrganization.searchLocationPlaceholder')}
             className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary"
           />
         </div>
@@ -398,7 +399,7 @@ export default function CreateOrganization() {
           onClick={handleNext}
           className="w-full h-12 bg-primary hover:bg-primary/90 text-white font-semibold"
         >
-          Continue
+{t('createOrganization.continue')}
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
       </div>
@@ -409,10 +410,10 @@ export default function CreateOrganization() {
     <div className="space-y-6">
       <div className="text-center space-y-2">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Additional Details
+          {t('createOrganization.additionalDetails')}
         </h2>
         <p className="text-gray-600 dark:text-gray-300">
-          Add more information about your organization (optional)
+          {t('createOrganization.additionalDetailsDescription')}
         </p>
       </div>
 
@@ -422,14 +423,14 @@ export default function CreateOrganization() {
             htmlFor="about_us"
             className="text-sm font-semibold text-gray-700 dark:text-gray-200"
           >
-            About Us
+{t('createOrganization.aboutUs')}
           </Label>
           <Textarea
             id="about_us"
             name="about_us"
             value={formData.about_us}
             onChange={handleInputChange}
-            placeholder="Tell us more about your organization, mission, and values"
+            placeholder={t('createOrganization.aboutUsPlaceholder')}
             className="min-h-[100px] border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary transition-all duration-200"
           />
         </div>
@@ -441,7 +442,7 @@ export default function CreateOrganization() {
               className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center"
             >
               <Globe className="w-4 h-4 mr-2" />
-              Website
+{t('createOrganization.website')}
             </Label>
             <Input
               id="website"
@@ -459,7 +460,7 @@ export default function CreateOrganization() {
               className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center"
             >
               <Mail className="w-4 h-4 mr-2" />
-              Email
+{t('createOrganization.email')}
             </Label>
             <Input
               id="email"
@@ -479,7 +480,7 @@ export default function CreateOrganization() {
             className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center"
           >
             <Phone className="w-4 h-4 mr-2" />
-            Phone Number
+{t('createOrganization.phoneNumber')}
           </Label>
           <Input
             id="phone"
@@ -494,7 +495,7 @@ export default function CreateOrganization() {
         {/* Logo Upload */}
         <div className="space-y-2">
           <Label className="text-sm font-semibold text-gray-700 dark:text-gray-200">
-            Organization Logo
+{t('createOrganization.organizationLogo')}
           </Label>
           <label
             htmlFor="logo-upload"
@@ -521,10 +522,10 @@ export default function CreateOrganization() {
                   </button>
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Logo uploaded successfully
+                  {t('createOrganization.logoUploadedSuccessfully')}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Click to change image
+                  {t('createOrganization.clickToChangeImage')}
                 </p>
               </div>
             ) : (
@@ -532,15 +533,15 @@ export default function CreateOrganization() {
                 <Upload className="w-8 h-8 text-gray-400 mx-auto" />
                 <div>
                   <span className="text-primary hover:text-primary/80 font-medium">
-                    Choose a file
+                    {t('createOrganization.chooseFile')}
                   </span>
                   <span className="text-gray-500 dark:text-gray-400">
                     {" "}
-                    or drag and drop
+                    {t('createOrganization.orDragAndDrop')}
                   </span>
                 </div>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  PNG, JPG up to 5MB
+                  {t('createOrganization.fileFormatLimit')}
                 </p>
               </div>
             )}
@@ -561,7 +562,7 @@ export default function CreateOrganization() {
             className="flex-1 h-12 border-2"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
+{t('createOrganization.back')}
           </Button>
 
           <Button
@@ -572,10 +573,10 @@ export default function CreateOrganization() {
             {isLoading ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Creating...
+                {t('createOrganization.creating')}
               </>
             ) : (
-              "Create Organization"
+              t('createOrganization.createOrganization')
             )}
           </Button>
         </div>
