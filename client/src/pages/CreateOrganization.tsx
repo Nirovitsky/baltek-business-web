@@ -97,27 +97,51 @@ export default function CreateOrganization() {
   // Check if user has reached maximum organizations
   if (organizations.length >= MAX_ORGANIZATIONS) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-950 dark:via-slate-900 dark:to-gray-900 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md shadow-2xl border-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl">
-          <CardContent className="pt-6">
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto">
-                <Building2 className="w-8 h-8 text-red-600 dark:text-red-400" />
+      <div className="flex flex-col h-full min-h-screen bg-background">
+        {/* Header */}
+        <div className="bg-card border-b flex-shrink-0">
+          <div className="max-w-4xl mx-auto px-6 py-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate("/")}
+                  className="mr-4 text-muted-foreground hover:text-foreground"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back to Dashboard
+                </Button>
               </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {t('createOrganization.maxOrganizationsReached')}
-                </h1>
-                <p className="text-gray-600 dark:text-gray-300 mt-2">
-                  {t('createOrganization.maxOrganizationsMessage', { max: MAX_ORGANIZATIONS })}
-                </p>
-              </div>
-              <Button onClick={() => navigate("/")} className="w-full">
-                {t('createOrganization.backToDashboard')}
-              </Button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto min-h-0">
+          <div className="max-w-4xl mx-auto px-6 py-8">
+            <Card className="shadow-sm">
+              <CardContent className="p-6">
+                <div className="text-center space-y-4">
+                  <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto">
+                    <Building2 className="w-8 h-8 text-red-600 dark:text-red-400" />
+                  </div>
+                  <div>
+                    <h1 className="text-2xl font-bold text-foreground">
+                      {t('createOrganization.maxOrganizationsReached')}
+                    </h1>
+                    <p className="text-muted-foreground mt-2">
+                      {t('createOrganization.maxOrganizationsMessage', { max: MAX_ORGANIZATIONS })}
+                    </p>
+                  </div>
+                  <Button onClick={() => navigate("/")} className="w-full">
+                    {t('createOrganization.backToDashboard')}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     );
   }
@@ -320,310 +344,295 @@ export default function CreateOrganization() {
 
   const renderStep1 = () => (
     <div className="space-y-6">
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-          {t('createOrganization.basicInformation')}
-        </h2>
-        <p className="text-gray-600 dark:text-gray-300">
-          {t('createOrganization.tellUsAbout')}
-        </p>
-      </div>
-
-      <div className="space-y-6">
-        <div className="space-y-2">
-          <Label
-            htmlFor="official_name"
-            className="text-sm font-semibold text-gray-700 dark:text-gray-200"
-          >
-{t('createOrganization.officialName')} *
-          </Label>
-          <Input
-            id="official_name"
-            name="official_name"
-            value={formData.official_name}
-            onChange={handleInputChange}
-            placeholder={t('createOrganization.enterOrganizationName')}
-            required
-            className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary transition-all duration-200"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label
-            htmlFor="display_name"
-            className="text-sm font-semibold text-gray-700 dark:text-gray-200"
-          >
-{t('createOrganization.displayName')}
-          </Label>
-          <Input
-            id="display_name"
-            name="display_name"
-            value={formData.display_name}
-            onChange={handleInputChange}
-            placeholder={t('createOrganization.displayNamePlaceholder')}
-            className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary transition-all duration-200"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center">
-            <Tag className="w-4 h-4 mr-2" />
-{t('createOrganization.category')} *
-          </Label>
-          <SearchableCategory
-            value={formData.category_id || undefined}
-            onValueChange={(value) =>
-              handleSelectChange("category_id", value.toString())
-            }
-            placeholder={t('createOrganization.searchCategoryPlaceholder')}
-            className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center">
-            <MapPin className="w-4 h-4 mr-2" />
-{t('createOrganization.location')} *
-          </Label>
-          <SearchableLocation
-            value={formData.location_id || undefined}
-            onValueChange={(value) =>
-              handleSelectChange("location_id", value.toString())
-            }
-            placeholder={t('createOrganization.searchLocationPlaceholder')}
-            className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary"
-          />
-        </div>
-
-        <Button
-          onClick={handleNext}
-          className="w-full h-12 bg-primary hover:bg-primary/90 text-white font-semibold"
+      <div className="space-y-2">
+        <Label
+          htmlFor="official_name"
+          className="text-sm font-medium"
         >
-{t('createOrganization.continue')}
-          <ArrowRight className="w-4 h-4 ml-2" />
-        </Button>
+          {t('createOrganization.officialName')} <span className="text-red-500">*</span>
+        </Label>
+        <Input
+          id="official_name"
+          name="official_name"
+          value={formData.official_name}
+          onChange={handleInputChange}
+          placeholder={t('createOrganization.enterOrganizationName')}
+          required
+          className="mt-1"
+        />
       </div>
+
+      <div className="space-y-2">
+        <Label
+          htmlFor="display_name"
+          className="text-sm font-medium"
+        >
+          {t('createOrganization.displayName')}
+        </Label>
+        <Input
+          id="display_name"
+          name="display_name"
+          value={formData.display_name}
+          onChange={handleInputChange}
+          placeholder={t('createOrganization.displayNamePlaceholder')}
+          className="mt-1"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label className="text-sm font-medium">
+          {t('createOrganization.category')} <span className="text-red-500">*</span>
+        </Label>
+        <SearchableCategory
+          value={formData.category_id || undefined}
+          onValueChange={(value) =>
+            handleSelectChange("category_id", value.toString())
+          }
+          placeholder={t('createOrganization.searchCategoryPlaceholder')}
+          className="mt-1"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label className="text-sm font-medium">
+          {t('createOrganization.location')} <span className="text-red-500">*</span>
+        </Label>
+        <SearchableLocation
+          value={formData.location_id || undefined}
+          onValueChange={(value) =>
+            handleSelectChange("location_id", value.toString())
+          }
+          placeholder={t('createOrganization.searchLocationPlaceholder')}
+          className="mt-1"
+        />
+      </div>
+
+      <Button
+        onClick={handleNext}
+        className="w-full"
+      >
+        {t('createOrganization.continue')}
+        <ArrowRight className="w-4 h-4 ml-2" />
+      </Button>
     </div>
   );
 
   const renderStep2 = () => (
     <div className="space-y-6">
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-          {t('createOrganization.additionalDetails')}
-        </h2>
-        <p className="text-gray-600 dark:text-gray-300">
-          {t('createOrganization.additionalDetailsDescription')}
-        </p>
+      <div className="space-y-2">
+        <Label
+          htmlFor="about_us"
+          className="text-sm font-medium"
+        >
+          {t('createOrganization.aboutUs')}
+        </Label>
+        <Textarea
+          id="about_us"
+          name="about_us"
+          value={formData.about_us}
+          onChange={handleInputChange}
+          placeholder={t('createOrganization.aboutUsPlaceholder')}
+          className="min-h-[100px] mt-1"
+        />
       </div>
 
-      <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label
-            htmlFor="about_us"
-            className="text-sm font-semibold text-gray-700 dark:text-gray-200"
+            htmlFor="website"
+            className="text-sm font-medium"
           >
-{t('createOrganization.aboutUs')}
-          </Label>
-          <Textarea
-            id="about_us"
-            name="about_us"
-            value={formData.about_us}
-            onChange={handleInputChange}
-            placeholder={t('createOrganization.aboutUsPlaceholder')}
-            className="min-h-[100px] border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary transition-all duration-200"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label
-              htmlFor="website"
-              className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center"
-            >
-              <Globe className="w-4 h-4 mr-2" />
-{t('createOrganization.website')}
-            </Label>
-            <Input
-              id="website"
-              name="website"
-              value={formData.website}
-              onChange={handleInputChange}
-              placeholder="https://example.com"
-              className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary transition-all duration-200"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label
-              htmlFor="email"
-              className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center"
-            >
-              <Mail className="w-4 h-4 mr-2" />
-{t('createOrganization.email')}
-            </Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              placeholder="contact@example.com"
-              className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary transition-all duration-200"
-            />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <Label
-            htmlFor="phone"
-            className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center"
-          >
-            <Phone className="w-4 h-4 mr-2" />
-{t('createOrganization.phoneNumber')}
+            {t('createOrganization.website')}
           </Label>
           <Input
-            id="phone"
-            name="phone"
-            value={formData.phone}
+            id="website"
+            name="website"
+            value={formData.website}
             onChange={handleInputChange}
-            placeholder="+993 12 345678"
-            className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary transition-all duration-200"
+            placeholder="https://example.com"
+            className="mt-1"
           />
         </div>
 
-        {/* Logo Upload */}
         <div className="space-y-2">
-          <Label className="text-sm font-semibold text-gray-700 dark:text-gray-200">
-{t('createOrganization.organizationLogo')}
+          <Label
+            htmlFor="email"
+            className="text-sm font-medium"
+          >
+            {t('createOrganization.email')}
           </Label>
-          <label
-            htmlFor="logo-upload"
-            className="block border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center cursor-pointer hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-          >
-            {logoPreview ? (
-              <div className="space-y-4">
-                <div className="relative inline-block">
-                  <img
-                    src={logoPreview}
-                    alt="Logo preview"
-                    className="w-20 h-20 object-cover rounded-lg border-2 border-gray-200 dark:border-gray-600"
-                  />
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      clearLogo();
-                    }}
-                    className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-xs transition-colors"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {t('createOrganization.logoUploadedSuccessfully')}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {t('createOrganization.clickToChangeImage')}
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <Upload className="w-8 h-8 text-gray-400 mx-auto" />
-                <div>
-                  <span className="text-primary hover:text-primary/80 font-medium">
-                    {t('createOrganization.chooseFile')}
-                  </span>
-                  <span className="text-gray-500 dark:text-gray-400">
-                    {" "}
-                    {t('createOrganization.orDragAndDrop')}
-                  </span>
-                </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {t('createOrganization.fileFormatLimit')}
-                </p>
-              </div>
-            )}
-            <input
-              id="logo-upload"
-              type="file"
-              accept="image/*"
-              onChange={handleLogoUpload}
-              className="hidden"
-            />
-          </label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            placeholder="contact@example.com"
+            className="mt-1"
+          />
         </div>
+      </div>
 
-        <div className="flex gap-4 pt-4">
-          <Button
-            variant="outline"
-            onClick={() => setCurrentStep(1)}
-            className="flex-1 h-12 border-2"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-{t('createOrganization.back')}
-          </Button>
+      <div className="space-y-2">
+        <Label
+          htmlFor="phone"
+          className="text-sm font-medium"
+        >
+          {t('createOrganization.phoneNumber')}
+        </Label>
+        <Input
+          id="phone"
+          name="phone"
+          value={formData.phone}
+          onChange={handleInputChange}
+          placeholder="+993 12 345678"
+          className="mt-1"
+        />
+      </div>
 
-          <Button
-            onClick={handleSubmit}
-            disabled={isLoading}
-            className="flex-1 h-12 bg-primary hover:bg-primary/90"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                {t('createOrganization.creating')}
-              </>
-            ) : (
-              t('createOrganization.createOrganization')
-            )}
-          </Button>
-        </div>
+      {/* Logo Upload */}
+      <div className="space-y-2">
+        <Label className="text-sm font-medium">
+          {t('createOrganization.organizationLogo')}
+        </Label>
+        <label
+          htmlFor="logo-upload"
+          className="block border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center cursor-pointer hover:border-primary hover:bg-muted/50 transition-colors"
+        >
+          {logoPreview ? (
+            <div className="space-y-4">
+              <div className="relative inline-block">
+                <img
+                  src={logoPreview}
+                  alt="Logo preview"
+                  className="w-20 h-20 object-cover rounded-lg border"
+                />
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    clearLogo();
+                  }}
+                  className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-xs transition-colors"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                {t('createOrganization.logoUploadedSuccessfully')}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {t('createOrganization.clickToChangeImage')}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <Upload className="w-8 h-8 text-muted-foreground mx-auto" />
+              <div>
+                <span className="text-primary hover:text-primary/80 font-medium">
+                  {t('createOrganization.chooseFile')}
+                </span>
+                <span className="text-muted-foreground">
+                  {" "}
+                  {t('createOrganization.orDragAndDrop')}
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {t('createOrganization.fileFormatLimit')}
+              </p>
+            </div>
+          )}
+          <input
+            id="logo-upload"
+            type="file"
+            accept="image/*"
+            onChange={handleLogoUpload}
+            className="hidden"
+          />
+        </label>
+      </div>
+
+      <div className="flex gap-4 pt-4">
+        <Button
+          variant="outline"
+          onClick={() => setCurrentStep(1)}
+          className="flex-1"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          {t('createOrganization.back')}
+        </Button>
+
+        <Button
+          onClick={handleSubmit}
+          disabled={isLoading}
+          className="flex-1"
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              {t('createOrganization.creating')}
+            </>
+          ) : (
+            t('createOrganization.createOrganization')
+          )}
+        </Button>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-950 dark:via-slate-900 dark:to-gray-900 relative overflow-hidden">
-      {/* Background decorations */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-indigo-600/20 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-purple-400/20 to-pink-600/20 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-cyan-300/10 to-blue-500/10 rounded-full blur-3xl"></div>
+    <div className="flex flex-col h-full min-h-screen bg-background">
+      {/* Header */}
+      <div className="bg-card border-b flex-shrink-0">
+        <div className="max-w-4xl mx-auto px-6 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate("/")}
+                className="mr-4 text-muted-foreground hover:text-foreground"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Dashboard
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
-        <div className="w-full max-w-2xl">
-          {/* Hero content */}
-          <div className="text-center space-y-6 mb-8">
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium">
-              <Sparkles className="w-4 h-4 mr-2" />
-              {t('createOrganization.welcomeToBaltekBusiness')}
-            </div>
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
-              {t('createOrganization.createYour')}
-              <span className="block bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent leading-tight">
-                {t('createOrganization.organization')}
-              </span>
-            </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl mx-auto">
-              {t('createOrganization.subtitle')}
-            </p>
-          </div>
-
+      {/* Content */}
+      <div className="flex-1 overflow-y-auto min-h-0">
+        <div className="max-w-4xl mx-auto px-6 py-8">
           {/* Step indicator */}
           {renderStepIndicator()}
 
           {/* Form Card */}
-          <Card className="shadow-2xl border-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl">
-            <CardHeader className="text-center pb-6">
-              <div className="mx-auto mb-4 w-14 h-14 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <Building2 className="h-7 w-7 text-white" />
+          <Card className="shadow-sm">
+            <CardHeader className="border-b bg-card">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                  <Building2 className="h-5 w-5 text-primary-foreground" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg font-semibold">
+                    {currentStep === 1 
+                      ? t('createOrganization.basicInformation')
+                      : t('createOrganization.additionalDetails')
+                    }
+                  </CardTitle>
+                  <CardDescription>
+                    {currentStep === 1
+                      ? t('createOrganization.tellUsAbout')
+                      : t('createOrganization.additionalDetailsDescription')
+                    }
+                  </CardDescription>
+                </div>
               </div>
             </CardHeader>
 
-            <CardContent>
+            <CardContent className="p-6 space-y-6 bg-card">
               {currentStep === 1 ? renderStep1() : renderStep2()}
             </CardContent>
           </Card>
