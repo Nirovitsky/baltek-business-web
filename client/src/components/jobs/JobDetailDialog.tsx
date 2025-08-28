@@ -54,6 +54,55 @@ export default function JobDetailDialog({
   const category = typeof job?.category === 'object' && job.category ? job.category : null;
   const languages = Array.isArray(job?.required_languages) ? job.required_languages : [];
 
+  const formatSalary = (from?: number, to?: number, type?: string, currency?: string) => {
+    if (!from && !to) return null;
+    const currencySymbol = currency === 'USD' ? '$' : currency === 'TMT' ? 'TMT' : (currency || 'TMT');
+    const typeLabel = type ? ` / ${type.replace('_', ' ')}` : '';
+    if (from && to) {
+      return `${currencySymbol} ${from.toLocaleString()} - ${currencySymbol} ${to.toLocaleString()}${typeLabel}`;
+    }
+    return `${currencySymbol} ${(from || to)?.toLocaleString()}${typeLabel}`;
+  };
+
+  const formatEducationLevel = (level?: string) => {
+    if (!level) return null;
+    return level.split('_').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+  };
+
+  const formatJobType = (type?: string) => {
+    if (!type) return 'Not specified';
+    return type.split('_').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+  };
+
+  const formatWorkplaceType = (type?: string) => {
+    if (!type) return 'Not specified';
+    return type.split('_').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+  };
+
+  const formatDate = (timestamp?: string) => {
+    if (!timestamp) return 'Not specified';
+    try {
+      let date: Date;
+      
+      if (/^\d+$/.test(timestamp)) {
+        date = new Date(parseInt(timestamp) * 1000);
+      } else {
+        date = new Date(timestamp);
+      }
+      
+      if (isNaN(date.getTime())) return 'Not specified';
+      return format(date, 'MMMM d, yyyy');
+    } catch {
+      return 'Not specified';
+    }
+  };
+
   const archiveMutation = useMutation({
     mutationFn: () => apiService.request(`/jobs/${jobId}/`, {
       method: 'PATCH',
@@ -89,53 +138,6 @@ export default function JobDetailDialog({
     }
   };
 
-  const formatSalary = (from?: number, to?: number, type?: string, currency?: string) => {
-    if (!from && !to) return null;
-    const currencySymbol = currency === 'USD' ? '$' : currency === 'TMT' ? 'TMT' : (currency || 'TMT');
-    const typeLabel = type ? ` / ${type.replace('_', ' ')}` : '';
-    if (from && to) {
-      return `${currencySymbol} ${from.toLocaleString()} - ${currencySymbol} ${to.toLocaleString()}${typeLabel}`;
-    }
-    return `${currencySymbol} ${(from || to)?.toLocaleString()}${typeLabel}`;
-  };
-
-  const formatEducationLevel = (level?: string) => {
-    if (!level) return null;
-    return level.split('_').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
-  };
-
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return 'Not specified';
-    try {
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) return 'Not specified';
-      return format(date, 'MMMM d, yyyy');
-    } catch {
-      return 'Not specified';
-    }
-  };
-
-  const getApplicationsCount = (job: Job) => {
-    // Use the applications_count field from the Job type
-    return job.applications_count || 0;
-  };
-
-  const formatJobType = (type?: string) => {
-    if (!type) return 'Unknown';
-    return type.split('_').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
-  };
-
-  const formatWorkplaceType = (type?: string) => {
-    if (!type) return 'Unknown';
-    return type.split('_').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
-  };
-
   if (!job && !isLoading) {
     return null;
   }
@@ -166,7 +168,7 @@ export default function JobDetailDialog({
               </Button>
               <Button
                 size="sm"
-                variant="outline"
+                variant="destructive"
                 onClick={() => onDelete?.(job.id)}
               >
                 <Trash2 className="w-4 h-4 mr-2" />
@@ -177,47 +179,39 @@ export default function JobDetailDialog({
         </DialogHeader>
 
         {isLoading ? (
-          <div className="space-y-6">
-            <div>
-              <Skeleton className="h-8 w-3/4 mb-2" />
-              <Skeleton className="h-6 w-1/2 mb-4" />
-              <div className="flex space-x-2">
-                <Skeleton className="h-6 w-16" />
-                <Skeleton className="h-6 w-20" />
-              </div>
-            </div>
-            <Skeleton className="h-32 w-full" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Skeleton className="h-24 w-full" />
-              <Skeleton className="h-24 w-full" />
+          <div className="space-y-4">
+            <Skeleton className="h-6 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+            <Skeleton className="h-20 w-full" />
+            <div className="grid grid-cols-2 gap-4">
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
             </div>
           </div>
         ) : job ? (
           <div className="space-y-6">
-            {/* Header */}
+            {/* Header with title and badges */}
             <div>
-              <h1 className="text-2xl font-bold text-foreground mb-2">{job.title}</h1>
-              <div className="flex items-center space-x-4 mb-4">
+              <h2 className="text-2xl font-bold mb-2">{job.title}</h2>
+              <div className="flex flex-wrap gap-2 mb-4">
                 <Badge className={getStatusColor(job.status)}>
-                  {job.status ? job.status.charAt(0).toUpperCase() + job.status.slice(1) : 'Open'}
+                  {job.status?.charAt(0).toUpperCase() + job.status?.slice(1)}
                 </Badge>
-                <span className="text-sm text-muted-foreground flex items-center">
-                  <Users className="w-4 h-4 mr-1" />
-                  {getApplicationsCount(job)} applications
-                </span>
-                <span className="text-sm text-muted-foreground flex items-center">
-                  <Calendar className="w-4 h-4 mr-1" />
-                  Posted {formatDate(job.date_started?.toString())}
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <Badge variant="secondary">
-                  <Clock className="w-3 h-3 mr-1" />
+                <Badge variant="outline">
+                  <Building className="w-3 h-3 mr-1" />
                   {formatJobType(job.job_type)}
                 </Badge>
-                <Badge variant="secondary">
-                  <Building className="w-3 h-3 mr-1" />
+                <Badge variant="outline">
+                  <Clock className="w-3 h-3 mr-1" />
                   {formatWorkplaceType(job.workplace_type)}
+                </Badge>
+                <Badge variant="outline">
+                  <Calendar className="w-3 h-3 mr-1" />
+                  {formatDate(job.date_started?.toString())}
+                </Badge>
+                <Badge variant="outline">
+                  <Users className="w-3 h-3 mr-1" />
+                  {job.applications_count || 0} applications
                 </Badge>
                 {location && (
                   <Badge variant="secondary">
