@@ -536,7 +536,7 @@ export default function CreateJob() {
                 className="mr-4 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Jobs
+                {t('jobs.backToJobs')}
               </Button>
             </div>
           </div>
@@ -551,11 +551,7 @@ export default function CreateJob() {
             <Alert className="mb-6 border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950">
               <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
               <AlertDescription className="text-yellow-800 dark:text-yellow-200">
-                <strong>Organization Under Review:</strong> Your organization "
-                {selectedOrganization.official_name}" is currently being
-                reviewed by our moderators. You won't be able to create job
-                postings until the review is complete and your organization is
-                approved.
+                <strong>{t('jobs.organizationUnderReviewTitle')}:</strong> {t('jobs.organizationUnderReviewDesc', { name: selectedOrganization.official_name })}
               </AlertDescription>
             </Alert>
           )}
@@ -566,7 +562,7 @@ export default function CreateJob() {
               <Card className="shadow-sm">
                 <CardHeader className="border-b bg-card">
                   <CardTitle className="flex items-center text-lg font-semibold">
-                    Basic Information
+                    {t('jobs.basicInformation')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-6 space-y-6 bg-card">
@@ -576,12 +572,12 @@ export default function CreateJob() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-sm font-medium">
-                          Job Title <span className="text-red-500">*</span>
+                          {t('jobs.jobTitle')} <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="e.g. Senior Software Engineer"
+                            placeholder={t('placeholders.enterJobTitle')}
                             className="mt-1"
                           />
                         </FormControl>
@@ -596,18 +592,18 @@ export default function CreateJob() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-sm font-medium">
-                          Job Description <span className="text-red-500">*</span>
+                          {t('jobs.jobDescription')} <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
                           <Textarea
                             {...field}
-                            placeholder="Describe the role, responsibilities, and what makes this position exciting..."
+                            placeholder={t('placeholders.describeRole')}
                             className="h-[300px] mt-1"
                             maxLength={1024}
                           />
                         </FormControl>
                         <FormDescription className="text-xs text-muted-foreground text-right">
-                          {field.value?.length || 0}/1024 characters
+                          {field.value?.length || 0}/1024 {t('jobs.characters')}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -621,7 +617,7 @@ export default function CreateJob() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-medium">
-                            Category <span className="text-red-500">*</span>
+                            {t('jobs.category')} <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
                             <SearchableCategory
@@ -631,7 +627,7 @@ export default function CreateJob() {
                                   : undefined
                               }
                               onValueChange={field.onChange}
-                              placeholder="Search for category..."
+                              placeholder={t('placeholders.searchCategory')}
                               className="mt-1"
                             />
                           </FormControl>
@@ -646,7 +642,7 @@ export default function CreateJob() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-medium">
-                            Location <span className="text-red-500">*</span>
+                            {t('jobs.location')} <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
                             <SearchableLocation
@@ -656,7 +652,7 @@ export default function CreateJob() {
                                   : undefined
                               }
                               onValueChange={field.onChange}
-                              placeholder="Search for location..."
+                              placeholder={t('placeholders.searchLocation')}
                               className="mt-1"
                             />
                           </FormControl>
@@ -673,7 +669,7 @@ export default function CreateJob() {
               <Card className="shadow-sm border border">
                 <CardHeader className="border-b border bg-card">
                   <CardTitle className="flex items-center text-lg font-semibold text-foreground">
-                    Job Details
+                    {t('jobs.jobDetails')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-6 space-y-6 bg-card">
@@ -684,7 +680,7 @@ export default function CreateJob() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-medium text-foreground">
-                            Employment Type *
+                            {t('jobs.employmentType')} *
                           </FormLabel>
                           <Select
                             onValueChange={field.onChange}
@@ -697,14 +693,14 @@ export default function CreateJob() {
                             </FormControl>
                             <SelectContent>
                               <SelectItem value="full_time">
-                                Full Time
+                                {t('jobs.fullTime')}
                               </SelectItem>
                               <SelectItem value="part_time">
-                                Part Time
+                                {t('jobs.partTime')}
                               </SelectItem>
-                              <SelectItem value="contract">Contract</SelectItem>
+                              <SelectItem value="contract">{t('jobs.contract')}</SelectItem>
                               <SelectItem value="internship">
-                                Internship
+                                {t('jobs.internship')}
                               </SelectItem>
                             </SelectContent>
                           </Select>
@@ -719,7 +715,7 @@ export default function CreateJob() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-medium text-foreground">
-                            Work Type *
+                            {t('jobs.workType')} *
                           </FormLabel>
                           <Select
                             onValueChange={field.onChange}
@@ -731,9 +727,9 @@ export default function CreateJob() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="remote">Remote</SelectItem>
-                              <SelectItem value="on_site">On Site</SelectItem>
-                              <SelectItem value="hybrid">Hybrid</SelectItem>
+                              <SelectItem value="remote">{t('jobs.remote')}</SelectItem>
+                              <SelectItem value="on_site">{t('jobs.onSite')}</SelectItem>
+                              <SelectItem value="hybrid">{t('jobs.hybrid')}</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -749,7 +745,7 @@ export default function CreateJob() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-medium text-foreground flex items-center">
-                            Minimum Education
+                            {t('jobs.minimumEducation')}
                           </FormLabel>
                           <Select
                             onValueChange={field.onChange}
@@ -757,19 +753,19 @@ export default function CreateJob() {
                           >
                             <FormControl>
                               <SelectTrigger className="mt-1">
-                                <SelectValue placeholder="Select minimum education (optional)" />
+                                <SelectValue placeholder={t('placeholders.selectMinEducation')} />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
                               <SelectItem value="secondary">
-                                Secondary
+                                {t('jobs.secondary')}
                               </SelectItem>
                               <SelectItem value="undergraduate">
-                                Undergraduate
+                                {t('jobs.undergraduate')}
                               </SelectItem>
-                              <SelectItem value="master">Master</SelectItem>
+                              <SelectItem value="master">{t('jobs.master')}</SelectItem>
                               <SelectItem value="doctorate">
-                                Doctorate
+                                {t('jobs.doctorate')}
                               </SelectItem>
                             </SelectContent>
                           </Select>
@@ -784,7 +780,7 @@ export default function CreateJob() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-medium text-foreground">
-                            Required Languages
+                            {t('jobs.requiredLanguages')}
                           </FormLabel>
                           <Select
                             onValueChange={(value) => {
@@ -797,7 +793,7 @@ export default function CreateJob() {
                           >
                             <FormControl>
                               <SelectTrigger className="mt-1">
-                                <SelectValue placeholder="Select languages" />
+                                <SelectValue placeholder={t('jobs.selectLanguagesPlaceholder')} />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -853,14 +849,14 @@ export default function CreateJob() {
               <Card className="shadow-sm border border">
                 <CardHeader className="border-b border bg-card">
                   <CardTitle className="flex items-center text-lg font-semibold text-foreground">
-                    Compensation & Timeline
+                    {t('jobs.compensationTimeline')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-6 space-y-6 bg-card">
                   <div className="space-y-6">
                     <div className="space-y-3">
                       <label className="text-sm font-medium text-foreground">
-                        Salary Range <span className="text-red-500">*</span>
+                        {t('jobs.salaryRange')} <span className="text-red-500">*</span>
                       </label>
                       <div className="flex gap-3 items-center">
                         <FormField
@@ -880,7 +876,7 @@ export default function CreateJob() {
                                       field.onChange(Number(value));
                                     }
                                   }}
-                                  placeholder="Min salary"
+                                  placeholder={t('jobs.minSalary')}
                                   min="0"
                                   step="100"
                                 />
@@ -889,7 +885,7 @@ export default function CreateJob() {
                             </FormItem>
                           )}
                         />
-                        <span className="text-muted-foreground text-sm">to</span>
+                        <span className="text-muted-foreground text-sm">{t('jobs.to')}</span>
                         <FormField
                           control={form.control}
                           name="salary_to"
@@ -907,7 +903,7 @@ export default function CreateJob() {
                                       field.onChange(Number(value));
                                     }
                                   }}
-                                  placeholder="Max salary (optional)"
+                                  placeholder={t('jobs.maxSalary')}
                                   min="0"
                                   step="100"
                                 />
@@ -956,7 +952,7 @@ export default function CreateJob() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-medium text-foreground">
-                            Payment Type
+                            {t('jobs.paymentType')}
                           </FormLabel>
                           <Select
                             onValueChange={field.onChange}
@@ -968,11 +964,11 @@ export default function CreateJob() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="hourly">Hourly</SelectItem>
-                              <SelectItem value="daily">Daily</SelectItem>
-                              <SelectItem value="weekly">Weekly</SelectItem>
-                              <SelectItem value="monthly">Monthly</SelectItem>
-                              <SelectItem value="yearly">Yearly</SelectItem>
+                              <SelectItem value="hourly">{t('jobs.hourly')}</SelectItem>
+                              <SelectItem value="daily">{t('jobs.daily')}</SelectItem>
+                              <SelectItem value="weekly">{t('jobs.weekly')}</SelectItem>
+                              <SelectItem value="monthly">{t('jobs.monthly')}</SelectItem>
+                              <SelectItem value="yearly">{t('jobs.yearly')}</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -993,7 +989,7 @@ export default function CreateJob() {
                   disabled={isLoading}
                   className="px-6"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
                 <Button
                   type="submit"
@@ -1001,10 +997,10 @@ export default function CreateJob() {
                   className="bg-primary hover:bg-blue-700 px-6"
                 >
                   {isLoading
-                    ? "Saving..."
+                    ? t('jobs.saving')
                     : isEditing
-                      ? "Update Job Posting"
-                      : "Create Job Posting"}
+                      ? t('jobs.updateJobPosting')
+                      : t('jobs.createJobPosting')}
                 </Button>
               </div>
             </form>
