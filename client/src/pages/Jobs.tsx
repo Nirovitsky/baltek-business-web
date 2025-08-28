@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from 'react-i18next';
 import TopBar from "@/components/layout/TopBar";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,6 +20,7 @@ import type { Job, PaginatedResponse } from "@/types";
 import { format } from "date-fns";
 
 export default function Jobs() {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   
@@ -73,16 +75,16 @@ export default function Jobs() {
         queryClient.setQueryData(['/jobs/', selectedOrganization?.id, searchTerm, statusFilter], context.previousJobs);
       }
       toast({
-        title: "Error", 
-        description: error.message || "Failed to delete job posting",
+        title: t('common.error'), 
+        description: error.message || t('messages.failedToDeleteJob'),
         variant: "destructive",
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
       toast({
-        title: "Success",
-        description: "Job posting deleted successfully",
+        title: t('common.success'),
+        description: t('messages.jobDeletedSuccess'),
       });
     },
   });
@@ -100,13 +102,13 @@ export default function Jobs() {
   };
 
   const handleDeleteJob = (jobId: number) => {
-    if (confirm('Are you sure you want to delete this job posting?')) {
+    if (confirm(t('messages.confirmDeleteJob'))) {
       deleteJobMutation.mutate(jobId);
     }
   };
 
   const formatDate = (timestamp?: number | string) => {
-    if (!timestamp) return 'Not specified';
+    if (!timestamp) return t('labels.notSpecified');
     try {
       let date: Date;
       
@@ -120,10 +122,10 @@ export default function Jobs() {
         date = new Date(timestamp as string);
       }
       
-      if (isNaN(date.getTime())) return 'Not specified';
+      if (isNaN(date.getTime())) return t('labels.notSpecified');
       return format(date, 'MMM d, yyyy');
     } catch {
-      return 'Not specified';
+      return t('labels.notSpecified');
     }
   };
 
@@ -152,8 +154,8 @@ export default function Jobs() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <TopBar 
-        title="Job Postings" 
-        description="Manage your job listings and applications"
+        title={t('labels.jobPostings')} 
+        description={t('labels.manageJobListings')}
         showCreateButton={true}
       />
       <div className="flex flex-1 flex-col gap-4 p-4">
@@ -163,7 +165,7 @@ export default function Jobs() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
-              placeholder="Search jobs..."
+              placeholder={t('placeholders.searchJobs')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -174,10 +176,10 @@ export default function Jobs() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="open">Open</SelectItem>
-              <SelectItem value="archived">Archived</SelectItem>
-              <SelectItem value="expired">Expired</SelectItem>
+              <SelectItem value="all">{t('labels.allStatus')}</SelectItem>
+              <SelectItem value="open">{t('labels.open')}</SelectItem>
+              <SelectItem value="archived">{t('labels.archived')}</SelectItem>
+              <SelectItem value="expired">{t('labels.expired')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -229,16 +231,16 @@ export default function Jobs() {
               <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                 <Briefcase className="w-8 h-8 text-gray-400" />
               </div>
-              <h3 className="text-lg font-medium text-foreground mb-2">No job postings found</h3>
+              <h3 className="text-lg font-medium text-foreground mb-2">{t('jobs.noJobs')}</h3>
               <p className="text-muted-foreground mb-6">
                 {searchTerm || statusFilter !== 'all' 
-                  ? "Try adjusting your search or filters"
-                  : "Create your first job posting to get started"
+                  ? t('labels.tryAdjustingFilters')
+                  : t('labels.createFirstJob')
                 }
               </p>
               {!searchTerm && statusFilter === 'all' && (
                 <Button onClick={handleCreateJob}>
-                  Create Job Posting
+                  {t('jobs.createJob')}
                 </Button>
               )}
             </CardContent>
@@ -272,7 +274,7 @@ export default function Jobs() {
                       </div>
                       <div className="flex items-center text-sm text-muted-foreground">
                         <Users className="w-4 h-4 mr-1 text-primary" />
-                        <span className="font-medium">{job.applications_count || 0} applications</span>
+                        <span className="font-medium">{job.applications_count || 0} {t('navigation.applications')}</span>
                       </div>
                     </div>
 
@@ -281,10 +283,10 @@ export default function Jobs() {
                       <div className="flex items-center text-sm text-muted-foreground">
                         <Briefcase className="w-4 h-4 mr-2 text-primary flex-shrink-0" />
                         <span>
-                          {job.workplace_type === 'remote' ? 'Remote' : 
-                           job.workplace_type === 'on_site' ? 'On Site' : 'Hybrid'} • {' '}
-                          {job.job_type === 'full_time' ? 'Full Time' : 
-                           job.job_type === 'part_time' ? 'Part Time' : 'Contract'}
+                          {job.workplace_type === 'remote' ? t('jobs.remote') : 
+                           job.workplace_type === 'on_site' ? t('jobs.onSite') : t('jobs.hybrid')} • {' '}
+                          {job.job_type === 'full_time' ? t('jobs.fullTime') : 
+                           job.job_type === 'part_time' ? t('jobs.partTime') : t('jobs.contract')}
                         </span>
                       </div>
                       {location && (
@@ -313,9 +315,9 @@ export default function Jobs() {
                             } else if (job.salary_from) {
                               return `${currencySymbol} ${job.salary_from.toLocaleString()}+`;
                             } else if (job.salary_to) {
-                              return `Up to ${currencySymbol} ${job.salary_to.toLocaleString()}`;
+                              return `${t('jobs.upTo')} ${currencySymbol} ${job.salary_to.toLocaleString()}`;
                             }
-                            return 'Salary not specified';
+                            return t('jobs.salaryNotSpecified');
                           })()}
                           {job.salary_payment_type && (
                             <span className="text-muted-foreground ml-1">
@@ -347,10 +349,10 @@ export default function Jobs() {
                             const status = job.status?.toLowerCase();
                             
                             // Map backend status values to display labels
-                            if (status === 'open') return 'Active';
-                            if (status === 'closed' || status === 'archived') return 'Archived';
-                            if (status === 'expired') return 'Expired';
-                            if (status === 'draft') return 'Draft';
+                            if (status === 'open') return t('labels.open');
+                            if (status === 'closed' || status === 'archived') return t('labels.archived');
+                            if (status === 'expired') return t('labels.expired');
+                            if (status === 'draft') return t('labels.draft');
                             
                             // Show the raw status if it doesn't match known values
                             return job.status ? job.status.charAt(0).toUpperCase() + job.status.slice(1) : 'Active';
@@ -362,7 +364,7 @@ export default function Jobs() {
                           <div className="flex items-center">
                             <Calendar className="w-3 h-3 mr-1" />
                             <span>
-                              Published: {formatDate(job.date_started)}
+                              {t('jobs.published')}: {formatDate(job.date_started)}
                             </span>
                           </div>
                         )}
@@ -370,7 +372,7 @@ export default function Jobs() {
                           <div className="flex items-center">
                             <Calendar className="w-3 h-3 mr-1" />
                             <span>
-                              Expires: {formatDate(job.date_ended)}
+                              {t('jobs.expires')}: {formatDate(job.date_ended)}
                             </span>
                           </div>
                         )}

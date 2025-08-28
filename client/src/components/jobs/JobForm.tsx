@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,6 +20,7 @@ interface JobFormProps {
 }
 
 export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const { selectedOrganization } = useAuth();
   const queryClient = useQueryClient();
@@ -74,15 +76,15 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       queryClient.invalidateQueries({ queryKey: ['/jobs/', selectedOrganization?.id] });
       queryClient.refetchQueries({ queryKey: ['/jobs/'] });
       toast({
-        title: "Success",
-        description: "Job posting created successfully",
+        title: t('common.success'),
+        description: t('messages.jobCreatedSuccess'),
       });
       onSuccess?.();
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to create job posting",
+        title: t('common.error'),
+        description: error.message || t('messages.failedToCreateJob'),
         variant: "destructive",
       });
     },
@@ -99,15 +101,15 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       queryClient.invalidateQueries({ queryKey: ['/jobs/', job!.id] });
       queryClient.refetchQueries({ queryKey: ['/jobs/'] });
       toast({
-        title: "Success",
-        description: "Job posting updated successfully",
+        title: t('common.success'),
+        description: t('messages.jobUpdatedSuccess'),
       });
       onSuccess?.();
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to update job posting",
+        title: t('common.error'),
+        description: error.message || t('messages.failedToUpdateJob'),
         variant: "destructive",
       });
     },
@@ -116,8 +118,8 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
   const onSubmit = (data: CreateJob) => {
     if (!selectedOrganization?.id) {
       toast({
-        title: "Error",
-        description: "No organization found. Please contact support.",
+        title: t('common.error'),
+        description: t('messages.noOrganization'),
         variant: "destructive",
       });
       return;

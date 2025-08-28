@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Briefcase, MapPin, Users, Calendar, DollarSign, GraduationCap, Building, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -23,6 +24,7 @@ import { createJobSchema, type CreateJob, type Job, type Category, type Location
 import { useEffect, useCallback, useState } from "react";
 
 export default function CreateJob() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const { selectedOrganization, organizations, refreshOrganizations } = useAuth();
   const queryClient = useQueryClient();
@@ -237,7 +239,7 @@ export default function CreateJob() {
       }
       
       console.error("Job creation error:", error);
-      let errorMessage = "Failed to create job posting";
+      let errorMessage = t('messages.failedToCreateJob');
       
       if (error.message) {
         errorMessage = error.message;
@@ -254,7 +256,7 @@ export default function CreateJob() {
       }
       
       toast({
-        title: "Validation Error",
+        title: t('messages.validationError'),
         description: errorMessage,
         variant: "destructive",
       });
@@ -279,8 +281,8 @@ export default function CreateJob() {
       // Clear draft on successful submission
       clearDraft();
       toast({
-        title: "Success",
-        description: "Job posting created successfully",
+        title: t('common.success'),
+        description: t('messages.jobCreatedSuccess'),
       });
     },
   });
@@ -355,8 +357,8 @@ export default function CreateJob() {
       }
       
       toast({
-        title: "Error",
-        description: error.message || "Failed to update job posting",
+        title: t('common.error'),
+        description: error.message || t('messages.failedToUpdateJob'),
         variant: "destructive",
       });
     },
@@ -378,7 +380,7 @@ export default function CreateJob() {
     
     if (!selectedOrganization?.id) {
       toast({
-        title: "Error",
+        title: t('common.error'),
         description: "No organization selected. Please select an organization first.",
         variant: "destructive",
       });
@@ -399,7 +401,7 @@ export default function CreateJob() {
     const orgExists = organizations.some(org => org.id === selectedOrganization.id);
     if (!orgExists) {
       toast({
-        title: "Error",
+        title: t('common.error'),
         description: "Selected organization is no longer available. Please refresh and select a valid organization.",
         variant: "destructive",
       });
