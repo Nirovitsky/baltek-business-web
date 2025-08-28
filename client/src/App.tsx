@@ -30,7 +30,6 @@ import Notifications from "@/pages/Notifications";
 import UserProfile from "@/pages/UserProfile";
 import Organization from "@/pages/Organization";
 import Profile from "@/pages/Profile";
-import Settings from "@/pages/Settings";
 import NotFound from "@/pages/not-found";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -216,14 +215,6 @@ function AppRoutes() {
         }
       />
 
-      <Route
-        path="/settings"
-        element={
-          <ProtectedRoute>
-            <Settings />
-          </ProtectedRoute>
-        }
-      />
 
       <Route path="*" element={<NotFound />} />
     </Routes>
