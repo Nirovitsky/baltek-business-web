@@ -284,8 +284,8 @@ export default function Applications() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <TopBar
-        title="Applications"
-        description="Review and manage job applications"
+        title={t('applications.title')}
+        description={t('applications.description')}
         showCreateButton={true}
       />
       <div className="flex flex-1 flex-col gap-4 p-4">
@@ -295,7 +295,7 @@ export default function Applications() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
-              placeholder="Search applications..."
+              placeholder={t('applications.searchApplications')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -306,12 +306,12 @@ export default function Applications() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="in_review">In Review</SelectItem>
-              <SelectItem value="ongoing">Ongoing</SelectItem>
-              <SelectItem value="rejected">Rejected</SelectItem>
-              <SelectItem value="hired">Hired</SelectItem>
-              <SelectItem value="expired">Expired</SelectItem>
+              <SelectItem value="all">{t('applications.allStatuses')}</SelectItem>
+              <SelectItem value="in_review">{t('applications.inReview')}</SelectItem>
+              <SelectItem value="ongoing">{t('applications.ongoing')}</SelectItem>
+              <SelectItem value="rejected">{t('applications.rejected')}</SelectItem>
+              <SelectItem value="hired">{t('applications.hired')}</SelectItem>
+              <SelectItem value="expired">{t('applications.expired')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -323,12 +323,12 @@ export default function Applications() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Candidate</TableHead>
-                    <TableHead>Job Position</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Applied Date</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead>{t('applications.candidate')}</TableHead>
+                    <TableHead>{t('applications.jobPosition')}</TableHead>
+                    <TableHead>{t('applications.location')}</TableHead>
+                    <TableHead>{t('applications.status')}</TableHead>
+                    <TableHead>{t('applications.appliedDate')}</TableHead>
+                    <TableHead>{t('common.actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

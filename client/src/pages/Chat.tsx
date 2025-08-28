@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import TopBar from "@/components/layout/TopBar";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useNotifications } from "@/hooks/useNotifications";
@@ -43,6 +44,7 @@ import {
 import type { ChatMessage, ChatRoom, MessageAttachment, User } from "@/types";
 
 export default function Chat() {
+  const { t } = useTranslation();
   const { user, selectedOrganization } = useAuth();
   
   // Add chat layout class to body to prevent scrolling
@@ -712,8 +714,8 @@ export default function Chat() {
     return (
       <div className="h-screen flex flex-col overflow-hidden">
         <TopBar 
-          title="Chat" 
-          description={`Chat with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
+          title={t('chat.title')} 
+          description={`${t('chat.description')}${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
           showCreateButton={true}
         />
         <div className="flex-1 flex">
@@ -741,8 +743,8 @@ export default function Chat() {
     return (
       <div className="h-screen flex flex-col overflow-hidden">
         <TopBar 
-          title="Chat" 
-          description={`Chat with job seekers${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
+          title={t('chat.title')} 
+          description={`${t('chat.description')}${selectedOrganization ? ` for ${selectedOrganization.display_name}` : ''}`}
           showCreateButton={true}
         />
         <div className="flex-1 flex items-center justify-center">
@@ -775,8 +777,8 @@ export default function Chat() {
                   <AlertTriangle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
                   <span className="text-sm text-yellow-700 dark:text-yellow-300">
                     {reconnectAttempts > 0 && reconnectAttempts < maxReconnectAttempts
-                      ? `Reconnecting... (attempt ${reconnectAttempts}/${maxReconnectAttempts})`
-                      : 'Connection lost - messages may not send properly'
+                      ? t('chat.reconnecting', { current: reconnectAttempts, max: maxReconnectAttempts })
+                      : t('chat.connectionLost')
                     }
                   </span>
                 </>
@@ -785,7 +787,7 @@ export default function Chat() {
                 <>
                   <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />
                   <span className="text-sm text-red-700 dark:text-red-300">
-                    {failedMessageCount} message{failedMessageCount > 1 ? 's' : ''} failed to send
+{t('chat.messagesFailed', { count: failedMessageCount, plural: failedMessageCount > 1 ? 's' : '' })}
                   </span>
                 </>
               )}
@@ -797,7 +799,7 @@ export default function Chat() {
                 onClick={reconnect}
                 className="h-6 text-xs border-yellow-300 text-yellow-700 hover:bg-yellow-100 dark:border-yellow-600 dark:text-yellow-300 dark:hover:bg-yellow-800"
               >
-                Retry Connection
+{t('chat.retryConnection')}
               </Button>
             )}
           </div>
@@ -814,7 +816,7 @@ export default function Chat() {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
-                  placeholder="Search conversations..."
+                  placeholder={t('chat.searchConversations')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"
@@ -828,9 +830,9 @@ export default function Chat() {
               {filteredRooms.length === 0 ? (
                 <div className="text-center py-8">
                   <MessageCircle className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                  <p className="text-gray-500 dark:text-gray-400">No conversations yet</p>
+                  <p className="text-gray-500 dark:text-gray-400">{t('chat.noConversationsYet')}</p>
                   <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
-                    Conversations will appear here when candidates message you
+                    {t('chat.conversationsWillAppear')}
                   </p>
                 </div>
               ) : (
@@ -915,7 +917,7 @@ export default function Chat() {
             <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-gray-900/50">
               <div className="text-center">
                 <MessageCircle className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                <p className="text-gray-500 dark:text-gray-400">Select a conversation to start messaging</p>
+                <p className="text-gray-500 dark:text-gray-400">{t('chat.selectConversationToStart')}</p>
               </div>
             </div>
           ) : (
