@@ -55,6 +55,10 @@
   },
   "createOrganization": {
     "title": "Create Organization",
+    "welcomeToBaltekBusiness": "Welcome to baltek business",
+    "createYour": "Create Your",
+    "organization": "Organization",
+    "subtitle": "Set up your company profile and start managing job postings, applications, and candidate communications.",
     "maxOrganizationsReached": "Maximum Organizations Reached",
     "maxOrganizationsMessage": "You can only create up to {{max}} organizations. Please delete an existing organization to create a new one.",
     "backToDashboard": "Back to Dashboard",

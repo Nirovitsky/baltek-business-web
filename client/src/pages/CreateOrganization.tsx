@@ -599,17 +599,16 @@ export default function CreateOrganization() {
           <div className="text-center space-y-6 mb-8">
             <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium">
               <Sparkles className="w-4 h-4 mr-2" />
-              Welcome to baltek business
+              {t('createOrganization.welcomeToBaltekBusiness')}
             </div>
             <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
-              Create Your
+              {t('createOrganization.createYour')}
               <span className="block bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent leading-tight">
-                Organization
+                {t('createOrganization.organization')}
               </span>
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl mx-auto">
-              Set up your company profile and start managing job postings,
-              applications, and candidate communications.
+              {t('createOrganization.subtitle')}
             </p>
           </div>
 

@@ -55,6 +55,10 @@
   },
   "createOrganization": {
     "title": "Gurama döret",
+    "welcomeToBaltekBusiness": "baltek business-e hoş geldiňiz",
+    "createYour": "Öz",
+    "organization": "Guramaňyzy dörediň",
+    "subtitle": "Kompaniýanyň profilini düzüň we iş ýerlerini, arzalary we dalaşgärler bilen aragatnaşygy dolandyryp başlaň.",
     "maxOrganizationsReached": "Iň köp gurama mukdary ýetdi",
     "maxOrganizationsMessage": "Diňe {{max}} gurama döredip bilersiňiz. Täze döretmek üçin bar bolan guramany pozsaňyz.",
     "backToDashboard": "Dolandyryş paneliňe gaýt",
