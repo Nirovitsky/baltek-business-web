@@ -181,6 +181,7 @@
   },
   "settings": {
     "title": "Sazlamalar",
+    "description": "Hasap sazlamalaryny we isleglerini dolandyr",
     "general": "Umumy",
     "language": "Dil",
     "theme": "Mowzuk",

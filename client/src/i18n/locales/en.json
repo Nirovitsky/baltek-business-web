@@ -181,6 +181,7 @@
   },
   "settings": {
     "title": "Settings",
+    "description": "Manage your account settings and preferences",
     "general": "General",
     "language": "Language",
     "theme": "Theme",

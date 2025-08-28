@@ -42,7 +42,7 @@ export default function Settings() {
     <div className="flex-1 flex flex-col overflow-hidden">
       <TopBar 
         title={t('settings.title')}
-        description="Manage your account settings and preferences"
+        description={t('settings.description')}
         showCreateButton={true}
       />
 
@@ -56,7 +56,7 @@ export default function Settings() {
                 <CardTitle>{t('settings.general')}</CardTitle>
               </div>
               <CardDescription>
-                Customize your application experience
+                {t('settings.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -103,44 +103,27 @@ export default function Settings() {
                     <RadioGroupItem value="light" id="light" />
                     <Label htmlFor="light" className="flex items-center gap-2 cursor-pointer">
                       <Sun className="w-4 h-4" />
-                      Light
+                      {t('settings.lightMode')}
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="dark" id="dark" />
                     <Label htmlFor="dark" className="flex items-center gap-2 cursor-pointer">
                       <Moon className="w-4 h-4" />
-                      Dark
+                      {t('settings.darkMode')}
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="system" id="system" />
                     <Label htmlFor="system" className="flex items-center gap-2 cursor-pointer">
                       <Monitor className="w-4 h-4" />
-                      System
+                      {t('settings.systemMode')}
                     </Label>
                   </div>
                 </RadioGroup>
               </div>
 
-              <Separator />
 
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center">
-                    <Globe className="w-5 h-5 text-muted-foreground" />
-                  </div>
-                  <div className="space-y-1">
-                    <Label>Language</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Currently set to English
-                    </p>
-                  </div>
-                </div>
-                <Button variant="outline" size="sm">
-                  Change
-                </Button>
-              </div>
             </CardContent>
           </Card>
 

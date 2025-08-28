@@ -36,6 +36,11 @@ i18n
     detection: {
       order: ['localStorage', 'sessionStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage'],
+      lookupLocalStorage: 'i18nextLng',
+    },
+    
+    react: {
+      useSuspense: false,
     },
     
     backend: {
