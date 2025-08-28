@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -18,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import type { Category, Location, PaginatedResponse } from "@/types";
 
 export default function CreateOrganization() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { organizations, createOrganization, uploadFile } = useOrganizations();
@@ -72,13 +74,13 @@ export default function CreateOrganization() {
                 <Building2 className="w-8 h-8 text-red-600 dark:text-red-400" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Maximum Organizations Reached</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('organizations.maxReached')}</h1>
                 <p className="text-gray-600 dark:text-gray-300 mt-2">
-                  You can only create up to {MAX_ORGANIZATIONS} organizations. Please delete an existing organization to create a new one.
+                  {t('organizations.maxReachedDescription', { count: MAX_ORGANIZATIONS })}
                 </p>
               </div>
               <Button onClick={() => navigate('/')} className="w-full">
-                Back to Dashboard
+                {t('navigation.backToDashboard')}
               </Button>
             </div>
           </CardContent>
@@ -122,8 +124,8 @@ export default function CreateOrganization() {
       // Validate file size (5MB limit)
       if (file.size > 5 * 1024 * 1024) {
         toast({
-          title: "File too large",
-          description: "Logo must be less than 5MB",
+          title: t('messages.fileTooLarge'),
+          description: t('messages.logoSizeLimit'),
           variant: "destructive",
         });
         return;
@@ -132,8 +134,8 @@ export default function CreateOrganization() {
       // Validate file type
       if (!file.type.startsWith('image/')) {
         toast({
-          title: "Invalid file type",
-          description: "Please upload an image file",
+          title: t('messages.invalidFileType'),
+          description: t('messages.validImageTypes'),
           variant: "destructive",
         });
         return;
@@ -159,8 +161,8 @@ export default function CreateOrganization() {
     // Validate required fields before moving to next step
     if (!formData.official_name.trim()) {
       toast({
-        title: "Organization name required",
-        description: "Please enter your organization name",
+        title: t('messages.orgNameRequired'),
+        description: t('messages.orgNameRequiredDesc'),
         variant: "destructive",
       });
       return;
@@ -168,8 +170,8 @@ export default function CreateOrganization() {
 
     if (formData.category_id === 0) {
       toast({
-        title: "Category required",
-        description: "Please select a category",
+        title: t('messages.categoryRequired'),
+        description: t('messages.categoryRequiredDesc'),
         variant: "destructive",
       });
       return;
@@ -177,8 +179,8 @@ export default function CreateOrganization() {
 
     if (formData.location_id === 0) {
       toast({
-        title: "Location required",
-        description: "Please select a location",
+        title: t('messages.locationRequired'),
+        description: t('messages.selectLocation'),
         variant: "destructive",
       });
       return;
@@ -223,8 +225,8 @@ export default function CreateOrganization() {
       const newOrganization = await createOrganization.mutateAsync(organizationData);
       
       toast({
-        title: "Organization created",
-        description: "Your organization has been created successfully",
+        title: t('common.success'),
+        description: t('messages.organizationCreatedSuccess'),
       });
       
       // Clear draft on successful creation
@@ -276,21 +278,21 @@ export default function CreateOrganization() {
   const renderStep1 = () => (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Basic Information</h2>
-        <p className="text-gray-600 dark:text-gray-300">Tell us about your organization</p>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('organizations.basicInfo')}</h2>
+        <p className="text-gray-600 dark:text-gray-300">{t('organizations.tellUsMore')}</p>
       </div>
 
       <div className="space-y-6">
         <div className="space-y-2">
           <Label htmlFor="official_name" className="text-sm font-semibold text-gray-700 dark:text-gray-200">
-            Organization Name *
+{t('organizations.officialName')} *
           </Label>
           <Input
             id="official_name"
             name="official_name"
             value={formData.official_name}
             onChange={handleInputChange}
-            placeholder="Enter your organization name"
+            placeholder={t('placeholders.enterOrganizationName')}
             required
             className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary transition-all duration-200"
           />
@@ -298,14 +300,14 @@ export default function CreateOrganization() {
 
         <div className="space-y-2">
           <Label htmlFor="display_name" className="text-sm font-semibold text-gray-700 dark:text-gray-200">
-            Display Name
+{t('organizations.displayName')}
           </Label>
           <Input
             id="display_name"
             name="display_name"
             value={formData.display_name}
             onChange={handleInputChange}
-            placeholder="How should we display your organization? (optional)"
+            placeholder={t('placeholders.displayName')}
             className="h-12 border-2 border-gray-200 dark:border-gray-600 focus:border-primary dark:focus:border-primary transition-all duration-200"
           />
         </div>
@@ -313,7 +315,7 @@ export default function CreateOrganization() {
         <div className="space-y-2">
           <Label className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center">
             <Tag className="w-4 h-4 mr-2" />
-            Category *
+{t('navigation.category')} *
           </Label>
           <SearchableCategory
             value={formData.category_id || undefined}
@@ -326,7 +328,7 @@ export default function CreateOrganization() {
         <div className="space-y-2">
           <Label className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center">
             <MapPin className="w-4 h-4 mr-2" />
-            Location *
+{t('navigation.location')} *
           </Label>
           <SearchableLocation
             value={formData.location_id || undefined}
@@ -523,7 +525,7 @@ export default function CreateOrganization() {
           <div className="text-center space-y-6 mb-8">
             <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium">
               <Sparkles className="w-4 h-4 mr-2" />
-              Welcome to baltek business
+              {t('organizations.welcomeMessage')}
             </div>
             <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
               Create Your
@@ -532,7 +534,7 @@ export default function CreateOrganization() {
               </span>
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl mx-auto">
-              Set up your company profile and start managing job postings, applications, and candidate communications.
+              {t('organizations.setupProfile')}
             </p>
           </div>
 
