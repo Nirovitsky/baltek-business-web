@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User, ChevronRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from 'react-i18next';
 import { apiService } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +16,7 @@ import { format, parseISO, isValid } from "date-fns";
 import ApplicationDetailsModal from "@/components/modals/ApplicationDetailsModal";
 
 export default function RecentApplications() {
+  const { t } = useTranslation();
   const { selectedOrganization } = useAuth();
   const navigate = useNavigate();
   const { prefetchRoute } = useHoverPrefetch();
@@ -37,8 +39,8 @@ export default function RecentApplications() {
       <Card className="shadow-sm">
         <CardHeader className="border-b">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Recent Applications</h3>
-            <Button variant="ghost" size="sm">View All</Button>
+            <h3 className="text-lg font-semibold">{t('dashboard.recentApplications')}</h3>
+            <Button variant="ghost" size="sm">{t('dashboard.viewAll')}</Button>
           </div>
         </CardHeader>
         <CardContent className="p-6">
@@ -89,17 +91,17 @@ export default function RecentApplications() {
   const formatStatusText = (status: string) => {
     switch (status) {
       case 'in_review':
-        return 'In Review';
+        return t('applications.inReview');
       case 'ongoing':
-        return 'Ongoing';
+        return t('applications.ongoing');
       case 'rejected':
-        return 'Rejected';
+        return t('applications.rejected');
       case 'hired':
-        return 'Hired';
+        return t('applications.hired');
       case 'expired':
-        return 'Expired';
+        return t('applications.expired');
       default:
-        return 'Unknown';
+        return t('applications.unknown');
     }
   };
 
@@ -131,22 +133,22 @@ export default function RecentApplications() {
     <Card className="shadow-sm">
       <CardHeader className="border-b">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold">Recent Applications</h3>
+          <h3 className="text-lg font-semibold">{t('dashboard.recentApplications')}</h3>
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={() => navigate('/applications')}
             onMouseEnter={() => prefetchRoute('/applications')}
           >
-            View All
+            {t('dashboard.viewAll')}
           </Button>
         </div>
       </CardHeader>
       <CardContent className="p-6">
         {filteredApplications.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-muted-foreground">No applications yet</p>
-            <p className="text-sm text-gray-400 mt-2">Applications will appear here when candidates apply</p>
+            <p className="text-muted-foreground">{t('dashboard.noRecentApplications')}</p>
+            <p className="text-sm text-gray-400 mt-2">{t('labels.tryAdjustingFilters')}</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -197,10 +199,10 @@ export default function RecentApplications() {
                       : `Candidate #${application.id}`}
                   </h4>
                   <p className="text-sm text-muted-foreground">
-                    Applied for {typeof application.job === 'object' ? application.job.title : `Job #${application.job}`}
+                    {t('applications.appliedDate')} {typeof application.job === 'object' ? application.job.title : `Job #${application.job}`}
                   </p>
                   <p className="text-xs text-gray-400">
-                    Applied on {formatApplicationDate((application as any).date_applied || (application as any).created_at || '')}
+                    {formatApplicationDate((application as any).date_applied || (application as any).created_at || '')}
                   </p>
                 </div>
                 <div className="flex items-center space-x-2">

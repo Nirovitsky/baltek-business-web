@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Code, TrendingUp, Palette } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from 'react-i18next';
 import { apiService } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -21,6 +22,7 @@ interface RecentJobsProps {
 }
 
 export default function RecentJobs({ onJobClick }: RecentJobsProps) {
+  const { t } = useTranslation();
   const { selectedOrganization } = useAuth();
   const navigate = useNavigate();
   const { prefetchRoute } = useHoverPrefetch();
@@ -70,8 +72,8 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
       <Card className="shadow-sm border border">
         <CardHeader className="border-b border">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-foreground">Recent Job Postings</h3>
-            <Button variant="ghost" size="sm">View All</Button>
+            <h3 className="text-lg font-semibold text-foreground">{t('dashboard.recentJobs')}</h3>
+            <Button variant="ghost" size="sm">{t('dashboard.viewAll')}</Button>
           </div>
         </CardHeader>
         <CardContent className="p-6">
@@ -104,23 +106,23 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
       <Card className="shadow-sm border border">
         <CardHeader className="border-b border">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-foreground">Recent Job Postings</h3>
+            <h3 className="text-lg font-semibold text-foreground">{t('dashboard.recentJobs')}</h3>
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={() => navigate('/jobs')}
               onMouseEnter={() => prefetchRoute('/jobs')}
             >
-              View All
+              {t('dashboard.viewAll')}
             </Button>
           </div>
         </CardHeader>
         <CardContent className="p-6">
           <div className="text-center py-8">
             <p className="text-muted-foreground">
-              {errorStatus === 503 ? 'Service temporarily unavailable' : 'Unable to load job postings'}
+              {errorStatus === 503 ? t('errors.serverError') : t('errors.generic')}
             </p>
-            <p className="text-sm text-gray-400 mt-2">Please try again in a moment</p>
+            <p className="text-sm text-gray-400 mt-2">{t('errors.networkError')}</p>
           </div>
         </CardContent>
       </Card>
@@ -133,22 +135,22 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
     <Card className="shadow-sm border border">
       <CardHeader className="border-b border">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-foreground">Recent Job Postings</h3>
+          <h3 className="text-lg font-semibold text-foreground">{t('dashboard.recentJobs')}</h3>
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={() => navigate('/jobs')}
             onMouseEnter={() => prefetchRoute('/jobs')}
           >
-            View All
+            {t('dashboard.viewAll')}
           </Button>
         </div>
       </CardHeader>
       <CardContent className="p-6">
         {jobs.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-muted-foreground">No job postings yet</p>
-            <p className="text-sm text-gray-400 mt-2">Create your first job posting to get started</p>
+            <p className="text-muted-foreground">{t('dashboard.noRecentJobs')}</p>
+            <p className="text-sm text-gray-400 mt-2">{t('labels.createFirstJob')}</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -166,14 +168,14 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
                   <div className="flex-1">
                     <h4 className="font-medium text-foreground">{job.title}</h4>
                     <p className="text-sm text-muted-foreground">
-                      {job.workplace_type === 'remote' ? 'Remote' : 
-                       job.workplace_type === 'on_site' ? 'On Site' : 'Hybrid'} • {' '}
-                      {job.job_type === 'full_time' ? 'Full Time' : 
-                       job.job_type === 'part_time' ? 'Part Time' : 'Contract'}
+                      {job.workplace_type === 'remote' ? t('jobs.remote') : 
+                       job.workplace_type === 'on_site' ? t('jobs.onSite') : t('jobs.hybrid')} • {' '}
+                      {job.job_type === 'full_time' ? t('jobs.fullTime') : 
+                       job.job_type === 'part_time' ? t('jobs.partTime') : t('jobs.contract')}
                     </p>
                     <div className="flex items-center mt-2">
                       <span className="text-xs text-muted-foreground">
-                        {job.applications_count || 0} applications
+                        {job.applications_count || 0} {t('applications.title').toLowerCase()}
                       </span>
                     </div>
                   </div>
