@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, Languages } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { RU, GB, TM } from 'country-flag-icons/string/3x2';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -17,10 +18,30 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 
+// Flag components for SVG rendering
+const FlagComponent: React.FC<{ code: string; className?: string }> = ({ code, className }) => {
+  const flagMap: Record<string, string> = {
+    en: GB,
+    ru: RU,
+    tk: TM,
+  };
+  
+  const svgContent = flagMap[code];
+  
+  if (!svgContent) return null;
+  
+  return (
+    <div 
+      className={cn("inline-block", className)}
+      dangerouslySetInnerHTML={{ __html: svgContent }}
+    />
+  );
+};
+
 const languages = [
-  { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸' },
-  { code: 'ru', name: 'Russian', nativeName: 'Русский', flag: '🇷🇺' },
-  { code: 'tk', name: 'Turkmen', nativeName: 'Türkmençe', flag: '🇹🇲' },
+  { code: 'en', name: 'English', nativeName: 'English' },
+  { code: 'ru', name: 'Russian', nativeName: 'Русский' },
+  { code: 'tk', name: 'Turkmen', nativeName: 'Türkmençe' },
 ];
 
 interface LanguageSelectorProps {
@@ -49,9 +70,10 @@ export function LanguageSelector({ variant = 'default', showIcon = true }: Langu
             className="w-auto px-2"
             aria-label={t('settings.selectLanguage')}
           >
-            <span className="text-lg">
-              {currentLanguage.flag}
-            </span>
+            <FlagComponent 
+              code={currentLanguage.code}
+              className="w-5 h-4 rounded-sm overflow-hidden"
+            />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-48 p-0" align="end">
@@ -65,7 +87,10 @@ export function LanguageSelector({ variant = 'default', showIcon = true }: Langu
                     onSelect={() => handleLanguageChange(language.code)}
                     className="cursor-pointer"
                   >
-                    <span className="mr-3 text-lg">{language.flag}</span>
+                    <FlagComponent 
+                      code={language.code}
+                      className="mr-3 w-5 h-4 rounded-sm overflow-hidden"
+                    />
                     <div className="flex flex-col flex-1">
                       <span className="font-medium">{language.nativeName}</span>
                       <span className="text-xs text-muted-foreground">{language.name}</span>
@@ -96,7 +121,10 @@ export function LanguageSelector({ variant = 'default', showIcon = true }: Langu
           className="w-[200px] justify-between"
         >
           <div className="flex items-center">
-            <span className="mr-2 text-lg">{currentLanguage.flag}</span>
+            <FlagComponent 
+              code={currentLanguage.code}
+              className="mr-2 w-5 h-4 rounded-sm overflow-hidden"
+            />
             <span>{currentLanguage.nativeName}</span>
           </div>
         </Button>
@@ -114,7 +142,10 @@ export function LanguageSelector({ variant = 'default', showIcon = true }: Langu
                   onSelect={() => handleLanguageChange(language.code)}
                   className="cursor-pointer"
                 >
-                  <span className="mr-3 text-lg">{language.flag}</span>
+                  <FlagComponent 
+                    code={language.code}
+                    className="mr-3 w-5 h-4 rounded-sm overflow-hidden"
+                  />
                   <div className="flex flex-col flex-1">
                     <span className="font-medium">{language.nativeName}</span>
                     <span className="text-xs text-muted-foreground">{language.name}</span>

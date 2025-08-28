@@ -1,30 +1,26 @@
 import { useNavigate } from "react-router-dom";
-import { Plus, Bell } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { useNotifications } from "@/hooks/useNotifications";
 import { useHoverPrefetch } from "@/hooks/usePrefetch";
 import { useTranslation } from 'react-i18next';
 import { LanguageSelector } from "@/components/ui/language-selector";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 interface TopBarProps {
   showCreateButton?: boolean;
-  hideNotifications?: boolean;
 }
 
 export default function TopBar({ 
-  showCreateButton = true,
-  hideNotifications = false
+  showCreateButton = true
 }: TopBarProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { selectedOrganization } = useAuth();
   const { toast } = useToast();
-  const { unreadCount } = useNotifications(false);
   const { prefetchRoute } = useHoverPrefetch();
 
   const handleCreateJob = () => {
@@ -39,9 +35,6 @@ export default function TopBar({
     navigate('/jobs/create');
   };
 
-  const handleNotifications = () => {
-    navigate('/notifications');
-  };
 
   return (
     <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 border-b px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 min-h-16">
@@ -50,25 +43,7 @@ export default function TopBar({
       <div className="flex flex-1 items-center justify-end">
         <div className="flex items-center space-x-4">
           <LanguageSelector variant="compact" />
-          {!hideNotifications && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleNotifications}
-              onMouseEnter={() => prefetchRoute('/notifications')}
-              className="relative"
-            >
-              <Bell className="w-4 h-4" />
-              {unreadCount > 0 && (
-                <Badge 
-                  variant="destructive" 
-                  className="absolute -top-1 -right-1 bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full px-1"
-                >
-                  {unreadCount > 99 ? "99+" : unreadCount}
-                </Badge>
-              )}
-            </Button>
-          )}
+          <ThemeToggle />
           {showCreateButton && (
             <Button 
               onClick={handleCreateJob} 

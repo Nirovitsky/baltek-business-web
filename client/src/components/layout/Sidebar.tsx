@@ -5,7 +5,8 @@ import {
   Briefcase,
   Users,
   MessageCircle,
-  Settings, 
+  Bell,
+  LogOut,
   UserCircle,
   ChevronUp,
   User2,
@@ -76,9 +77,9 @@ const getNavigationData = (t: any) => ({
       icon: UserCircle,
     },
     {
-      title: t('navigation.settings'), 
-      url: "/settings",
-      icon: Settings,
+      title: t('navigation.notifications'),
+      url: "/notifications",
+      icon: Bell,
     },
   ],
 });
@@ -88,6 +89,7 @@ export default function AppSidebar() {
   const location = useLocation();
   const { logout, selectedOrganization, user } = useAuth();
   const { prefetchRoute } = useHoverPrefetch();
+  const { unreadCount } = useNotifications(false);
   
   const data = getNavigationData(t);
 
@@ -135,14 +137,35 @@ export default function AppSidebar() {
                     <Link 
                       to={item.url}
                       onMouseEnter={() => prefetchRoute(item.url)}
+                      className="relative"
                     >
                       <item.icon />
                       <span>{item.title}</span>
+                      {item.url === "/notifications" && unreadCount > 0 && (
+                        <Badge 
+                          variant="destructive" 
+                          className="absolute -top-1 -right-1 bg-red-500 text-white text-xs min-w-[18px] h-4 flex items-center justify-center rounded-full px-1 ml-auto"
+                        >
+                          {unreadCount > 99 ? "99+" : unreadCount}
+                        </Badge>
+                      )}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               );
             })}
+            {/* Logout Button */}
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <button 
+                  onClick={logout}
+                  className="flex w-full items-center gap-2 cursor-pointer"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>{t('auth.logout')}</span>
+                </button>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
