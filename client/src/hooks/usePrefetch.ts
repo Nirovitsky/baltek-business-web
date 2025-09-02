@@ -71,11 +71,11 @@ export function usePrefetch() {
   // Start smart background prefetching when idle
   useIdlePrefetch(queryClient, selectedOrganization, location.pathname);
 
-  // Only prefetch reference data when actually needed
+  // Only prefetch reference data when actually needed for job creation
   const prefetchFormData = useCallback(() => {
     if (!selectedOrganization?.id) return;
 
-    // Only prefetch if not already cached
+    // Only prefetch if not already cached and only for job creation
     const categoriesKey = ['/categories/'];
     const locationsKey = ['/locations/'];
     
@@ -84,7 +84,7 @@ export function usePrefetch() {
         queryKey: categoriesKey,
         queryFn: () => apiService.request('/categories/'),
         staleTime: 15 * 60 * 1000,
-      });
+      }).catch(() => {});
     }
 
     if (!queryClient.getQueryData(locationsKey)) {
@@ -92,7 +92,7 @@ export function usePrefetch() {
         queryKey: locationsKey,
         queryFn: () => apiService.request('/locations/'),
         staleTime: 15 * 60 * 1000,
-      });
+      }).catch(() => {});
     }
   }, [queryClient, selectedOrganization?.id]);
 
@@ -150,11 +150,16 @@ export function usePrefetch() {
         break;
 
       case '/jobs':
-      case '/jobs/create':
-        // From Jobs, prefetch form data and applications
+        // From Jobs page, only prefetch applications (no form data needed for viewing)
         setTimeout(() => {
-          prefetchFormData(); // Only for job creation
           prefetchApplications();
+        }, 1500);
+        break;
+
+      case '/jobs/create':
+        // Only prefetch form data when actually on job creation page
+        setTimeout(() => {
+          prefetchFormData();
         }, 1500);
         break;
 
@@ -258,7 +263,7 @@ export function useHoverPrefetch() {
         }
       },
       '/jobs/create': () => {
-        // Prefetch form data for job creation only if not cached
+        // Only prefetch form data when actually going to job creation page
         const categoriesKey = ['/categories/'];
         const locationsKey = ['/locations/'];
         
@@ -267,7 +272,7 @@ export function useHoverPrefetch() {
             queryKey: categoriesKey,
             queryFn: () => apiService.request('/categories/'),
             staleTime: 15 * 60 * 1000,
-          });
+          }).catch(() => {});
         }
         
         if (!queryClient.getQueryData(locationsKey)) {
@@ -275,7 +280,7 @@ export function useHoverPrefetch() {
             queryKey: locationsKey,
             queryFn: () => apiService.request('/locations/'),
             staleTime: 15 * 60 * 1000,
-          });
+          }).catch(() => {});
         }
       },
       '/settings': () => {
@@ -301,15 +306,14 @@ export function useHoverPrefetch() {
         queryClient.prefetchQuery({
           queryKey: ['/jobs/', jobId, 'applications'],
           queryFn: () => apiService.request(`/jobs/${jobId}/applications/`),
-          staleTime: 2 * 60 * 1000, // 2 minutes
+          staleTime: 2 * 60 * 1000,
           retry: (failureCount, error: any) => {
-            // Don't retry on 404 errors - endpoint might not exist for this job
-            if (error?.status === 404) return false;
-            return failureCount < 2;
+            // Don't retry on 404, 503, or CORS errors
+            if (error?.status === 404 || error?.status === 503 || error?.message?.includes('CORS')) return false;
+            return failureCount < 1;
           },
         }).catch(() => {
-          // Silently handle prefetch errors - this is background loading
-          console.log(`[Prefetch] Applications endpoint not available for job ${jobId}`);
+          // Silently handle prefetch errors
         });
         return;
       }
@@ -319,13 +323,20 @@ export function useHoverPrefetch() {
     if (route.startsWith('/applications/') && route !== '/applications') {
       const applicationId = route.split('/')[2];
       if (applicationId && /^\d+$/.test(applicationId)) {
-        // Use same query key as ApplicationDetailsModal
+        // Use same query key as ApplicationDetailsModal but with error handling
         const appKey = ['/jobs/applications/', applicationId, 'details'];
         if (!queryClient.getQueryData(appKey)) {
           queryClient.prefetchQuery({
             queryKey: appKey,
             queryFn: () => apiService.request(`/jobs/applications/${applicationId}/`),
             staleTime: 5 * 60 * 1000,
+            retry: (failureCount, error: any) => {
+              // Don't retry on CORS or 503 errors
+              if (error?.status === 503 || error?.message?.includes('CORS')) return false;
+              return failureCount < 1;
+            },
+          }).catch(() => {
+            // Silently handle prefetch errors
           });
         }
         return;
@@ -343,6 +354,13 @@ export function useHoverPrefetch() {
             queryKey: userKey,
             queryFn: () => apiService.request(`users/${userId}/`),
             staleTime: 5 * 60 * 1000,
+            retry: (failureCount, error: any) => {
+              // Don't retry on CORS or 503 errors
+              if (error?.status === 503 || error?.message?.includes('CORS')) return false;
+              return failureCount < 1;
+            },
+          }).catch(() => {
+            // Silently handle prefetch errors
           });
         }
         return;

@@ -1,0 +1,32 @@
+applications:1 Access to fetch at 'https://api.baltek.net/api/jobs/applications/26/' from origin 'https://ab3740be-06e8-4348-b33d-df2907119cd4-00-2hqq99nh6tbx2.spock.replit.dev:5000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+oauth2.ts:384 
+ GET https://api.baltek.net/api/jobs/applications/26/ net::ERR_FAILED 503 (Service Temporarily Unavailable)
+request	@	oauth2.ts:384
+request	@	api.ts:46
+queryFn	@	usePrefetch.ts:327
+(anonymous)	@	usePrefetch.ts:325
+onMouseEnter	@	Applications.tsx:402
+applications:1 Access to fetch at 'https://api.baltek.net/api/jobs/applications/21/' from origin 'https://ab3740be-06e8-4348-b33d-df2907119cd4-00-2hqq99nh6tbx2.spock.replit.dev:5000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+oauth2.ts:384 
+ GET https://api.baltek.net/api/jobs/applications/21/ net::ERR_FAILED 503 (Service Temporarily Unavailable)
+request	@	oauth2.ts:384
+request	@	api.ts:46
+queryFn	@	usePrefetch.ts:327
+(anonymous)	@	usePrefetch.ts:325
+onMouseEnter	@	Applications.tsx:402
+applications:1 Access to fetch at 'https://api.baltek.net/api/jobs/applications/17/' from origin 'https://ab3740be-06e8-4348-b33d-df2907119cd4-00-2hqq99nh6tbx2.spock.replit.dev:5000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+oauth2.ts:384 
+ GET https://api.baltek.net/api/jobs/applications/17/ net::ERR_FAILED 503 (Service Temporarily Unavailable)
+request	@	oauth2.ts:384
+request	@	api.ts:46
+queryFn	@	usePrefetch.ts:327
+(anonymous)	@	usePrefetch.ts:325
+onMouseEnter	@	Applications.tsx:402
+applications:1 Access to fetch at 'https://api.baltek.net/api/users/2/' from origin 'https://ab3740be-06e8-4348-b33d-df2907119cd4-00-2hqq99nh6tbx2.spock.replit.dev:5000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+oauth2.ts:384 
+ GET https://api.baltek.net/api/users/2/ net::ERR_FAILED 503 (Service Temporarily Unavailable)
+request	@	oauth2.ts:384
+request	@	api.ts:46
+queryFn	@	usePrefetch.ts:344
+(anonymous)	@	usePrefetch.ts:342
+onMouseEnter	@	Applications.tsx:406
