@@ -13,7 +13,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
-import { Edit, Trash2, Search, Eye, Briefcase, MapPin, Users, DollarSign, Calendar, Building2, Bell } from "lucide-react";
+import { Edit, Trash2, Archive, MoreHorizontal, Search, Eye, Briefcase, MapPin, Users, DollarSign, Calendar, Building2, Bell } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useHoverPrefetch } from "@/hooks/usePrefetch";
 import type { Job, PaginatedResponse } from "@/types";
@@ -102,9 +103,63 @@ export default function Jobs() {
   };
 
   const handleDeleteJob = (jobId: number) => {
-    if (confirm(t('messages.confirmDeleteJob'))) {
+    if (window.confirm(t('messages.confirmDeleteJob'))) {
       deleteJobMutation.mutate(jobId);
     }
+  };
+
+  const archiveJobMutation = useMutation({
+    mutationFn: ({ jobId, currentStatus }: { jobId: number; currentStatus: string }) => 
+      apiService.request(`/jobs/${jobId}/`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status: currentStatus === 'archived' ? 'open' : 'archived' }),
+      }),
+    onMutate: async ({ jobId, currentStatus }) => {
+      const newStatus = currentStatus === 'archived' ? 'open' : 'archived';
+      
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['/jobs/'] });
+      
+      // Snapshot the previous values
+      const previousJobs = queryClient.getQueryData(['/jobs/', selectedOrganization?.id, searchTerm, statusFilter]);
+      
+      // Optimistically update the job in the list
+      queryClient.setQueryData(['/jobs/', selectedOrganization?.id, searchTerm, statusFilter], (old: any) => {
+        if (!old?.results) return old;
+        return {
+          ...old,
+          results: old.results.map((job: Job) => 
+            job.id === jobId 
+              ? { ...job, status: newStatus, updated_at: new Date().toISOString() }
+              : job
+          )
+        };
+      });
+      
+      return { previousJobs, jobId, newStatus };
+    },
+    onError: (error: any, variables, context) => {
+      // Rollback on error
+      if (context?.previousJobs) {
+        queryClient.setQueryData(['/jobs/', selectedOrganization?.id, searchTerm, statusFilter], context.previousJobs);
+      }
+      toast({
+        title: t('common.error'),
+        description: error.message || t('messages.failedToUpdateJobStatus'),
+        variant: "destructive",
+      });
+    },
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
+      toast({
+        title: t('common.success'),
+        description: context?.newStatus === 'archived' ? t('messages.jobArchivedSuccess') : t('messages.jobUnarchivedSuccess'),
+      });
+    },
+  });
+
+  const handleArchiveJob = (job: Job) => {
+    archiveJobMutation.mutate({ jobId: job.id, currentStatus: job.status || 'open' });
   };
 
   const formatDate = (timestamp?: number | string) => {
@@ -154,10 +209,12 @@ export default function Jobs() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <TopBar 
-        title={t('labels.jobPostings')} 
-        description={t('labels.manageJobListings')}
         showCreateButton={true}
       />
+      <div className="px-4 py-6 border-b">
+        <h1 className="text-2xl font-semibold text-foreground">{t('labels.jobPostings')}</h1>
+        <p className="text-sm text-muted-foreground mt-1">{t('labels.manageJobListings')}</p>
+      </div>
       <div className="flex flex-1 flex-col gap-4 p-4">
         <div className="space-y-6">
         {/* Filters */}
@@ -273,9 +330,40 @@ export default function Jobs() {
                           </div>
                         )}
                       </div>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Users className="w-4 h-4 mr-1 text-primary" />
-                        <span className="font-medium">{job.applications_count || 0} {t('navigation.applications')}</span>
+                      <div className="flex items-center space-x-2">
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <Users className="w-4 h-4 mr-1 text-primary" />
+                          <span className="font-medium">{job.applications_count || 0} {t('navigation.applications')}</span>
+                        </div>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-8 w-8 p-0 hover:bg-muted"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleEditJob(job); }}>
+                              <Edit className="h-4 w-4 mr-2" />
+                              {t('common.edit')}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleArchiveJob(job); }}>
+                              <Archive className="h-4 w-4 mr-2" />
+                              {job.status === 'archived' ? t('common.unarchive') : t('common.archive')}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={(e) => { e.stopPropagation(); handleDeleteJob(job.id); }}
+                              className="text-red-600 focus:text-red-600"
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              {t('common.delete')}
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
                     </div>
 
