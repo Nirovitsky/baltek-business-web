@@ -560,5 +560,55 @@
     "jobArchived": "Iş ýeri üstünlikli arhiwlendi",
     "jobUnarchived": "Iş ýeri üstünlikli arhiwden çykaryldy",
     "failedToUpdateJobStatus": "Iş ýeriniň ýagdaýyny täzeläp bolmady"
+  },
+  "statuses": {
+    "jobStatuses": {
+      "open": "Açyk",
+      "archived": "Arhiwlenen",
+      "expired": "Möhletli",
+      "closed": "Ýapyk"
+    },
+    "applicationStatuses": {
+      "in_review": "Gözden geçirilýär",
+      "ongoing": "Dowam edýär",
+      "rejected": "Ret edildi",
+      "hired": "Kabul edildi",
+      "expired": "Möhletli",
+      "pending": "Garaşylýar"
+    },
+    "jobTypes": {
+      "full_time": "Doly iş wagty",
+      "part_time": "Bölekleýin iş wagty",
+      "contract": "Şertnama",
+      "temporary": "Wagtlaýyn",
+      "internship": "Tejribe",
+      "freelance": "Erkin iş"
+    },
+    "workplaceTypes": {
+      "on_site": "Ofisde",
+      "remote": "Uzakdan",
+      "hybrid": "Garyşyk",
+      "flexible": "Çeýe"
+    },
+    "educationLevels": {
+      "no_education": "Bilim talap edilmeýär",
+      "primary": "Başlangyç bilim",
+      "secondary": "Orta bilim",
+      "high_school": "Ýokary orta",
+      "vocational": "Hünär",
+      "associate": "Doly däl ýokary",
+      "bachelor": "Bakalawr",
+      "master": "Magistr",
+      "doctorate": "Doktorant",
+      "phd": "Ylymlar kandidaty"
+    },
+    "salaryTypes": {
+      "hour": "sagatda",
+      "day": "günde",
+      "week": "hepdede",
+      "month": "aýda",
+      "year": "ýylda",
+      "project": "taslama üçin"
+    }
   }
 }

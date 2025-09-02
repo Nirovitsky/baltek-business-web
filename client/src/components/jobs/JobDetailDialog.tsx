@@ -59,7 +59,7 @@ export default function JobDetailDialog({
   const formatSalary = (from?: number, to?: number, type?: string, currency?: string) => {
     if (!from && !to) return null;
     const currencySymbol = currency === 'USD' ? '$' : currency === 'TMT' ? 'TMT' : (currency || 'TMT');
-    const typeLabel = type ? ` / ${type.replace('_', ' ')}` : '';
+    const typeLabel = type ? ` ${t(`statuses.salaryTypes.${type}`, type.replace('_', ' '))}` : '';
     if (from && to) {
       return `${currencySymbol} ${from.toLocaleString()} - ${currencySymbol} ${to.toLocaleString()}${typeLabel}`;
     }
@@ -68,23 +68,23 @@ export default function JobDetailDialog({
 
   const formatEducationLevel = (level?: string) => {
     if (!level) return null;
-    return level.split('_').map(word => 
+    return t(`statuses.educationLevels.${level}`, level.split('_').map(word => 
       word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
+    ).join(' '));
   };
 
   const formatJobType = (type?: string) => {
     if (!type) return t('modals.notSpecified');
-    return type.split('_').map(word => 
+    return t(`statuses.jobTypes.${type}`, type.split('_').map(word => 
       word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
+    ).join(' '));
   };
 
   const formatWorkplaceType = (type?: string) => {
     if (!type) return t('modals.notSpecified');
-    return type.split('_').map(word => 
+    return t(`statuses.workplaceTypes.${type}`, type.split('_').map(word => 
       word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
+    ).join(' '));
   };
 
   const formatDate = (timestamp?: string) => {
@@ -197,7 +197,7 @@ export default function JobDetailDialog({
               <h2 className="text-2xl font-bold mb-2">{job.title}</h2>
               <div className="flex flex-wrap gap-2 mb-4">
                 <Badge className={getStatusColor(job.status)}>
-                  {job.status?.charAt(0).toUpperCase() + job.status?.slice(1)}
+                  {job.status ? t(`statuses.jobStatuses.${job.status}`, job.status.charAt(0).toUpperCase() + job.status.slice(1)) : t('modals.unknown')}
                 </Badge>
                 <Badge variant="outline">
                   <Building className="w-3 h-3 mr-1" />

@@ -564,5 +564,55 @@
     "jobArchived": "Вакансия успешно архивирована",
     "jobUnarchived": "Вакансия успешно разархивирована",
     "failedToUpdateJobStatus": "Не удалось обновить статус вакансии"
+  },
+  "statuses": {
+    "jobStatuses": {
+      "open": "Открыта",
+      "archived": "Архивирована",
+      "expired": "Истекла",
+      "closed": "Закрыта"
+    },
+    "applicationStatuses": {
+      "in_review": "На рассмотрении",
+      "ongoing": "В процессе",
+      "rejected": "Отклонена",
+      "hired": "Принята",
+      "expired": "Истекла",
+      "pending": "Ожидает"
+    },
+    "jobTypes": {
+      "full_time": "Полная занятость",
+      "part_time": "Частичная занятость",
+      "contract": "Контракт",
+      "temporary": "Временная",
+      "internship": "Стажировка",
+      "freelance": "Фриланс"
+    },
+    "workplaceTypes": {
+      "on_site": "В офисе",
+      "remote": "Удаленно",
+      "hybrid": "Гибридный",
+      "flexible": "Гибкий"
+    },
+    "educationLevels": {
+      "no_education": "Образование не требуется",
+      "primary": "Начальное образование",
+      "secondary": "Среднее образование",
+      "high_school": "Полное среднее",
+      "vocational": "Профессиональное",
+      "associate": "Неполное высшее",
+      "bachelor": "Бакалавриат",
+      "master": "Магистратура",
+      "doctorate": "Докторантура",
+      "phd": "Кандидат наук"
+    },
+    "salaryTypes": {
+      "hour": "в час",
+      "day": "в день",
+      "week": "в неделю",
+      "month": "в месяц",
+      "year": "в год",
+      "project": "за проект"
+    }
   }
 }

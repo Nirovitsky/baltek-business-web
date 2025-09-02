@@ -565,5 +565,55 @@
     "jobArchived": "Job archived successfully",
     "jobUnarchived": "Job unarchived successfully",
     "failedToUpdateJobStatus": "Failed to update job status"
+  },
+  "statuses": {
+    "jobStatuses": {
+      "open": "Open",
+      "archived": "Archived",
+      "expired": "Expired",
+      "closed": "Closed"
+    },
+    "applicationStatuses": {
+      "in_review": "In Review",
+      "ongoing": "Ongoing",
+      "rejected": "Rejected",
+      "hired": "Hired",
+      "expired": "Expired",
+      "pending": "Pending"
+    },
+    "jobTypes": {
+      "full_time": "Full Time",
+      "part_time": "Part Time",
+      "contract": "Contract",
+      "temporary": "Temporary",
+      "internship": "Internship",
+      "freelance": "Freelance"
+    },
+    "workplaceTypes": {
+      "on_site": "On Site",
+      "remote": "Remote",
+      "hybrid": "Hybrid",
+      "flexible": "Flexible"
+    },
+    "educationLevels": {
+      "no_education": "No Education Required",
+      "primary": "Primary Education",
+      "secondary": "Secondary Education",
+      "high_school": "High School",
+      "vocational": "Vocational Training",
+      "associate": "Associate Degree",
+      "bachelor": "Bachelor's Degree",
+      "master": "Master's Degree",
+      "doctorate": "Doctorate",
+      "phd": "PhD"
+    },
+    "salaryTypes": {
+      "hour": "per hour",
+      "day": "per day",
+      "week": "per week",
+      "month": "per month",
+      "year": "per year",
+      "project": "per project"
+    }
   }
 }

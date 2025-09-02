@@ -144,7 +144,7 @@ export default function ApplicationDetailsModal({
                 <h3 className="text-lg font-semibold text-foreground">{t('modals.applicationStatus')}</h3>
                 <div className="space-y-2">
                   <Badge variant="secondary" className={`${getStatusColor(application.status)} text-sm`}>
-                    {application.status ? application.status.charAt(0).toUpperCase() + application.status.slice(1) : t('modals.unknown')}
+                    {application.status ? t(`statuses.applicationStatuses.${application.status}`, application.status.charAt(0).toUpperCase() + application.status.slice(1)) : t('modals.unknown')}
                   </Badge>
                 </div>
               </div>
