@@ -275,7 +275,7 @@ export default function Profile() {
                           <FormItem>
                             <FormLabel>First Name</FormLabel>
                             <FormControl>
-                              <Input placeholder="Enter your first name" {...field} />
+                              <Input placeholder={t("forms.placeholders.firstName")} {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -289,7 +289,7 @@ export default function Profile() {
                           <FormItem>
                             <FormLabel>Last Name</FormLabel>
                             <FormControl>
-                              <Input placeholder="Enter your last name" {...field} />
+                              <Input placeholder={t("forms.placeholders.lastName")} {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -303,7 +303,7 @@ export default function Profile() {
                           <FormItem>
                             <FormLabel>Email (Optional)</FormLabel>
                             <FormControl>
-                              <Input placeholder="Enter your email" type="email" {...field} />
+                              <Input placeholder={t("forms.placeholders.emailInput")} type="email" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>

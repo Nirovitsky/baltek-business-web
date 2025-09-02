@@ -617,7 +617,16 @@
   },
   "auth": {
     "loggingIn": "Вход в систему...",
-    "loginButton": "Войти"
+    "loginButton": "Войти",
+    "missingAuthCode": "Отсутствует код авторизации",
+    "authenticationFailed": "Ошибка аутентификации",
+    "authenticationFailedTitle": "Ошибка аутентификации",
+    "loginSuccessful": "Успешный вход",
+    "loginSuccessfulDescription": "Вы успешно вошли в систему",
+    "loginFailed": "Ошибка входа",
+    "completingSignIn": "Завершение входа...",
+    "redirecting": "Перенаправление...",
+    "tryAgain": "Попробовать снова"
   },
   "landing": {
     "appName": "baltek business",
@@ -649,6 +658,32 @@
     "enterpriseSecurityDescription": "Доверьтесь нашей безопасной платформе с корпоративной безопасностью и защитой конфиденциальности.",
     "dedicatedSupport": "Выделенная поддержка",
     "dedicatedSupportDescription": "Получайте экспертную помощь от нашей команды поддержки, когда вам это нужно."
+  },
+  "forms": {
+    "placeholders": {
+      "typeMessage": "Введите ваше сообщение...",
+      "jobTitle": "например, Старший разработчик ПО",
+      "selectCategory": "Выберите категорию",
+      "selectLocation": "Выберите местоположение",
+      "minSalary": "например, 1000",
+      "maxSalary": "например, 2000", 
+      "jobDescription": "Опишите роль и обязанности...",
+      "jobRequirements": "Перечислите конкретные требования, навыки или квалификацию...",
+      "searchCategories": "Поиск категорий...",
+      "searchLocations": "Поиск местоположений...",
+      "website": "https://example.com",
+      "email": "contact@example.com",
+      "phone": "+993 12 345678",
+      "firstName": "Введите ваше имя",
+      "lastName": "Введите вашу фамилию",
+      "emailInput": "Введите ваш email"
+    }
+  },
+  "ui": {
+    "backToDashboard": "Вернуться к панели управления",
+    "maxOrganizations": "Достигнуто максимальное количество организаций",
+    "maxOrganizationsDesc": "Вы достигли максимального количества разрешенных организаций ({max}). Пожалуйста, обратитесь в поддержку, если вам нужно создать больше организаций.",
+    "contactSupport": "Связаться с поддержкой"
   },
   "notFound": {
     "title": "404 Страница не найдена",

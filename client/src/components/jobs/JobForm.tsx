@@ -153,7 +153,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
               <FormItem>
                 <FormLabel>Job Title</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. Senior Software Engineer" {...field} />
+                  <Input placeholder={t("forms.placeholders.jobTitle")} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -169,7 +169,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
                 <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
+                      <SelectValue placeholder={t("forms.placeholders.selectCategory")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -194,7 +194,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
                 <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select location" />
+                      <SelectValue placeholder={t("forms.placeholders.selectLocation")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -289,7 +289,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
                 <FormControl>
                   <Input 
                     type="number" 
-                    placeholder="e.g. 1000"
+                    placeholder={t("forms.placeholders.minSalary")}
                     value={field.value ? field.value.toString() : ''}
                     onChange={(e) => {
                       const value = e.target.value;
@@ -315,7 +315,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
                 <FormControl>
                   <Input 
                     type="number" 
-                    placeholder="e.g. 2000"
+                    placeholder={t("forms.placeholders.maxSalary")}
                     value={field.value ? field.value.toString() : ''}
                     onChange={(e) => {
                       const value = e.target.value;
@@ -407,7 +407,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
               <FormControl>
                 <Textarea 
                   style={{height: '600px'}}
-                  placeholder="Describe the job role and responsibilities..."
+                  placeholder={t("forms.placeholders.jobDescription")}
                   {...field}
                 />
               </FormControl>
@@ -425,7 +425,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
               <FormControl>
                 <Textarea 
                   style={{height: '600px'}}
-                  placeholder="List specific requirements, skills, or qualifications..."
+                  placeholder={t("forms.placeholders.jobRequirements")}
                   {...field}
                 />
               </FormControl>

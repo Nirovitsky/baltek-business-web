@@ -613,7 +613,16 @@
   },
   "auth": {
     "loggingIn": "Giriş edilýär...",
-    "loginButton": "Gir"
+    "loginButton": "Gir",
+    "missingAuthCode": "Awtorlyk kody ýok",
+    "authenticationFailed": "Tassyklama näsazlygy",
+    "authenticationFailedTitle": "Tassyklama näsazlygy",
+    "loginSuccessful": "Üstünlikli giriş",
+    "loginSuccessfulDescription": "Sisteme üstünlikli girdiňiz",
+    "loginFailed": "Giriş näsazlygy",
+    "completingSignIn": "Giriş tamamlanýar...",
+    "redirecting": "Ugrukdyrylýar...",
+    "tryAgain": "Täzeden synanşyň"
   },
   "landing": {
     "appName": "baltek business",
@@ -645,6 +654,32 @@
     "enterpriseSecurityDescription": "Korporatiw derejeli howpsuzlyk we gizlinlik goragly howpsuz platformamyza ynanýň.",
     "dedicatedSupport": "Ýörite goldaw",
     "dedicatedSupportDescription": "Zerur bolanda goldaw toparymyzdan hünärmen kömegini alyň."
+  },
+  "forms": {
+    "placeholders": {
+      "typeMessage": "Habaryňyzy ýazyň...",
+      "jobTitle": "meselem, Uly programma işläp düzüjisi",
+      "selectCategory": "Kategoriýa saýlaň",
+      "selectLocation": "Ýerleşişi saýlaň",
+      "minSalary": "meselem, 1000",
+      "maxSalary": "meselem, 2000",
+      "jobDescription": "Iş rolyny we jogapkarlyklary düşündiriň...",
+      "jobRequirements": "Anyk talaplary, hünärleri ýa-da kwalifikasiýany sanap geçiň...",
+      "searchCategories": "Kategoriýalary gözle...",
+      "searchLocations": "Ýerleri gözle...",
+      "website": "https://example.com",
+      "email": "contact@example.com", 
+      "phone": "+993 12 345678",
+      "firstName": "Adyňyzy giriziň",
+      "lastName": "Familiýaňyzy giriziň",
+      "emailInput": "Email-yňyzy giriziň"
+    }
+  },
+  "ui": {
+    "backToDashboard": "Dolandyryş paneline gaýt",
+    "maxOrganizations": "Iň köp guramalar sanyna ýetdi",
+    "maxOrganizationsDesc": "Rugsat berilýän iň köp guramalar sanyna ýetdiňiz ({max}). Has köp gurama döretmek üçin goldawa ýüz tutuň.",
+    "contactSupport": "Goldaw bilen habarlaş"
   },
   "notFound": {
     "title": "404 Sahypa tapylmady",

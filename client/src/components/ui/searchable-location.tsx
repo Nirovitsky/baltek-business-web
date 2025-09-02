@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { Check, ChevronDown, MapPin, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,6 +33,7 @@ export function SearchableLocation({
   disabled = false,
   className,
 }: SearchableLocationProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const { locations, isLoadingLocations } = useReferenceData();
@@ -89,7 +91,7 @@ export function SearchableLocation({
           <div className="flex items-center border-b px-3">
             <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
             <CommandInput
-              placeholder="Search locations..."
+              placeholder={t("forms.placeholders.searchLocations")}
               value={search}
               onValueChange={setSearch}
               className="border-0 focus:ring-0"

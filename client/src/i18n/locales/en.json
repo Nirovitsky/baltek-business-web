@@ -658,7 +658,16 @@
   },
   "auth": {
     "loggingIn": "Signing in...",
-    "loginButton": "Sign In"
+    "loginButton": "Sign In",
+    "missingAuthCode": "Missing authorization code",
+    "authenticationFailed": "Authentication failed",
+    "authenticationFailedTitle": "Authentication Failed",
+    "loginSuccessful": "Login Successful",
+    "loginSuccessfulDescription": "You have been successfully signed in",
+    "loginFailed": "Login Failed",
+    "completingSignIn": "Completing sign in...",
+    "redirecting": "Redirecting...",
+    "tryAgain": "Try Again"
   },
   "landing": {
     "appName": "baltek business",
@@ -690,6 +699,32 @@
     "enterpriseSecurityDescription": "Trust in our secure platform with enterprise-grade security and privacy protection.",
     "dedicatedSupport": "Dedicated Support",
     "dedicatedSupportDescription": "Get expert assistance from our dedicated support team whenever you need it."
+  },
+  "forms": {
+    "placeholders": {
+      "typeMessage": "Type your message...",
+      "jobTitle": "e.g. Senior Software Engineer",
+      "selectCategory": "Select category",
+      "selectLocation": "Select location", 
+      "minSalary": "e.g. 1000",
+      "maxSalary": "e.g. 2000",
+      "jobDescription": "Describe the job role and responsibilities...",
+      "jobRequirements": "List specific requirements, skills, or qualifications...",
+      "searchCategories": "Search categories...",
+      "searchLocations": "Search locations...",
+      "website": "https://example.com",
+      "email": "contact@example.com",
+      "phone": "+993 12 345678",
+      "firstName": "Enter your first name",
+      "lastName": "Enter your last name",
+      "emailInput": "Enter your email"
+    }
+  },
+  "ui": {
+    "backToDashboard": "Back to Dashboard",
+    "maxOrganizations": "Maximum Organizations Reached",
+    "maxOrganizationsDesc": "You have reached the maximum number of organizations allowed ({max}). Please contact support if you need to create more organizations.",
+    "contactSupport": "Contact Support"
   },
   "notFound": {
     "title": "404 Page Not Found",

@@ -110,7 +110,7 @@ export default function CreateOrganization() {
                   className="mr-4 text-muted-foreground hover:text-foreground"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Dashboard
+                  {t("ui.backToDashboard")}
                 </Button>
               </div>
             </div>
@@ -449,7 +449,7 @@ export default function CreateOrganization() {
             name="website"
             value={formData.website}
             onChange={handleInputChange}
-            placeholder="https://example.com"
+            placeholder={t("forms.placeholders.website")}
             className="mt-1"
           />
         </div>
@@ -467,7 +467,7 @@ export default function CreateOrganization() {
             type="email"
             value={formData.email}
             onChange={handleInputChange}
-            placeholder="contact@example.com"
+            placeholder={t("forms.placeholders.email")}
             className="mt-1"
           />
         </div>
@@ -485,7 +485,7 @@ export default function CreateOrganization() {
           name="phone"
           value={formData.phone}
           onChange={handleInputChange}
-          placeholder="+993 12 345678"
+          placeholder={t("forms.placeholders.phone")}
           className="mt-1"
         />
       </div>
@@ -596,7 +596,7 @@ export default function CreateOrganization() {
                   className="mr-4 text-muted-foreground hover:text-foreground"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Dashboard
+                  {t("ui.backToDashboard")}
                 </Button>
               )}
             </div>

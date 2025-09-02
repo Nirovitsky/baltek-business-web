@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ interface ChatWindowProps {
 }
 
 export default function ChatWindow({ roomId }: ChatWindowProps) {
+  const { t } = useTranslation();
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
@@ -197,7 +199,7 @@ export default function ChatWindow({ roomId }: ChatWindowProps) {
             <Input
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Type your message..."
+              placeholder={t("forms.placeholders.typeMessage")}
               className="flex-1"
               disabled={sendMessageMutation.isPending}
             />
