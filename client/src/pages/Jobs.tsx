@@ -15,8 +15,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
 import { Edit, Trash2, Archive, MoreHorizontal, Search, Eye, Briefcase, MapPin, Users, DollarSign, Calendar, Building2, Bell } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useNotifications } from "@/hooks/useNotifications";
-import { useHoverPrefetch } from "@/hooks/usePrefetch";
 import type { Job, PaginatedResponse } from "@/types";
 import { format } from "date-fns";
 
@@ -24,12 +24,12 @@ export default function Jobs() {
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [jobToDelete, setJobToDelete] = useState<number | null>(null);
   
   const navigate = useNavigate();
   const { toast } = useToast();
   const { selectedOrganization } = useAuth();
   const { unreadCount } = useNotifications(false);
-  const { prefetchRoute } = useHoverPrefetch();
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
@@ -84,7 +84,7 @@ export default function Jobs() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
       toast({
-        title: t('common.success'),
+        title: t('success.generic'),
         description: t('messages.jobDeletedSuccess'),
       });
     },
@@ -103,8 +103,13 @@ export default function Jobs() {
   };
 
   const handleDeleteJob = (jobId: number) => {
-    if (window.confirm(t('messages.confirmDeleteJob'))) {
-      deleteJobMutation.mutate(jobId);
+    setJobToDelete(jobId);
+  };
+
+  const confirmDeleteJob = () => {
+    if (jobToDelete) {
+      deleteJobMutation.mutate(jobToDelete);
+      setJobToDelete(null);
     }
   };
 
@@ -152,7 +157,7 @@ export default function Jobs() {
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
       toast({
-        title: t('common.success'),
+        title: t('success.generic'),
         description: context?.newStatus === 'archived' ? t('messages.jobArchivedSuccess') : t('messages.jobUnarchivedSuccess'),
       });
     },
@@ -314,7 +319,6 @@ export default function Jobs() {
                   key={job.id} 
                   className="group hover:shadow-lg transition-all duration-200 cursor-pointer border hover:border-primary/20"
                   onClick={() => handleViewJob(job.id)}
-                  onMouseEnter={() => prefetchRoute(`/jobs/${job.id}`)}
                 >
                   <CardContent className="p-6">
                     {/* Header with title and applications count */}
@@ -475,6 +479,27 @@ export default function Jobs() {
         )}
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!jobToDelete} onOpenChange={() => setJobToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('common.confirm')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('messages.confirmDeleteJob')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDeleteJob}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {t('common.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
