@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useTranslation } from "react-i18next";
 
 import {
   Dialog,
@@ -23,30 +24,43 @@ import { SearchableLocation } from "@/components/ui/searchable-location";
 import { SearchableCategory } from "@/components/ui/searchable-category";
 import type { Organization, Project } from "@/types";
 
-const projectSchema = z.object({
-  id: z.number().optional(),
-  organization: z.number().optional(),
-  title: z.string().min(1, "Project title is required"),
-  description: z.string().optional(),
-  link: z.string().optional(),
-  date_started: z.string().optional(),
-  date_finished: z.string().optional(),
+// Note: We'll create these schemas inside the component to have access to translations
+const createSchemas = (t: any) => ({
+  projectSchema: z.object({
+    id: z.number().optional(),
+    organization: z.number().optional(),
+    title: z.string().min(1, t("editOrganization.projectTitleRequired")),
+    description: z.string().optional(),
+    link: z.string().optional(),
+    date_started: z.string().optional(),
+    date_finished: z.string().optional(),
+  }),
+  organizationUpdateSchema: z.object({
+    official_name: z.string().min(1, t("editOrganization.organizationNameRequired")),
+    display_name: z.string().optional(),
+    category: z.number().optional(),
+    logo: z.string().optional(),
+    phone: z.string().optional(),
+    email: z.string().email().optional().or(z.literal("")),
+    website: z.string().url().optional().or(z.literal("")),
+    about_us: z.string().optional(),
+    location: z.number().optional(),
+    projects: z.array(z.any()).optional(),
+  })
 });
 
-const organizationUpdateSchema = z.object({
-  official_name: z.string().min(1, "Organization name is required"),
-  display_name: z.string().optional(),
-  category: z.number().optional(),
-  logo: z.string().optional(),
-  phone: z.string().optional(),
-  email: z.string().email().optional().or(z.literal("")),
-  website: z.string().url().optional().or(z.literal("")),
-  about_us: z.string().optional(),
-  location: z.number().optional(),
-  projects: z.array(projectSchema).optional(),
-});
-
-type OrganizationUpdate = z.infer<typeof organizationUpdateSchema>;
+type OrganizationUpdate = {
+  official_name: string;
+  display_name?: string;
+  category?: number;
+  logo?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  about_us?: string;
+  location?: number;
+  projects?: any[];
+};
 
 interface EditOrganizationModalProps {
   open: boolean;
@@ -59,12 +73,16 @@ export default function EditOrganizationModal({
   onOpenChange, 
   organization 
 }: EditOrganizationModalProps) {
+  const { t } = useTranslation();
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string>("");
   const [isUploading, setIsUploading] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const { toast } = useToast();
   const { updateOrganization, uploadFile } = useOrganizationMutations();
+
+  // Create schemas with translations
+  const { organizationUpdateSchema } = createSchemas(t);
 
   const form = useForm<OrganizationUpdate>({
     resolver: zodResolver(organizationUpdateSchema),
@@ -123,15 +141,15 @@ export default function EditOrganizationModal({
       updateSelectedOrganization(updatedOrg);
       
       toast({
-        title: "Success",
-        description: "Organization updated successfully",
+        title: t("editOrganization.success"),
+        description: t("editOrganization.organizationUpdatedSuccess"),
       });
       
       onOpenChange(false);
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: error.message || "Failed to update organization",
+        title: t("editOrganization.error"),
+        description: error.message || t("editOrganization.failedToUpdateOrganization"),
         variant: "destructive",
       });
     }
@@ -144,8 +162,8 @@ export default function EditOrganizationModal({
     // Validate file type
     if (!file.type.match(/^image\/(jpeg|jpg|png)$/)) {
       toast({
-        title: "Invalid file type",
-        description: "Please select a JPG or PNG image",
+        title: t("editOrganization.invalidFileType"),
+        description: t("editOrganization.pleaseSelectImage"),
         variant: "destructive",
       });
       return;
@@ -154,8 +172,8 @@ export default function EditOrganizationModal({
     // Validate file size (2MB)
     if (file.size > 2 * 1024 * 1024) {
       toast({
-        title: "File too large",
-        description: "Please select an image smaller than 2MB",
+        title: t("editOrganization.fileTooLarge"),
+        description: t("editOrganization.pleaseSelectSmallerImage"),
         variant: "destructive",
       });
       return;
@@ -180,13 +198,13 @@ export default function EditOrganizationModal({
       setLogoPreview("");
       
       toast({
-        title: "Success",
-        description: "Logo uploaded successfully",
+        title: t("editOrganization.success"),
+        description: t("editOrganization.logoUploadedSuccess"),
       });
     } catch (error: any) {
       toast({
-        title: "Upload failed",
-        description: error.message || "Failed to upload logo",
+        title: t("editOrganization.uploadFailed"),
+        description: error.message || t("editOrganization.failedToUploadLogo"),
         variant: "destructive",
       });
     } finally {
@@ -206,13 +224,13 @@ export default function EditOrganizationModal({
       setLogoPreview("");
       
       toast({
-        title: "Success",
-        description: "Logo uploaded successfully",
+        title: t("editOrganization.success"),
+        description: t("editOrganization.logoUploadedSuccess"),
       });
     } catch (error: any) {
       toast({
-        title: "Upload failed",
-        description: error.message || "Failed to upload logo",
+        title: t("editOrganization.uploadFailed"),
+        description: error.message || t("editOrganization.failedToUploadLogo"),
         variant: "destructive",
       });
     } finally {
@@ -265,9 +283,9 @@ export default function EditOrganizationModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit Organization</DialogTitle>
+          <DialogTitle>{t("editOrganization.title")}</DialogTitle>
           <DialogDescription>
-            Update your organization's profile information
+            {t("editOrganization.description")}
           </DialogDescription>
         </DialogHeader>
 
@@ -320,11 +338,11 @@ export default function EditOrganizationModal({
                 name="official_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Organization Name*</FormLabel>
+                    <FormLabel>{t("editOrganization.organizationName")}*</FormLabel>
                     <FormControl>
                       <Input 
                         {...field} 
-                        placeholder="Enter organization name"
+                        placeholder={t("editOrganization.organizationNamePlaceholder")}
                       />
                     </FormControl>
                     <FormMessage />
@@ -337,11 +355,11 @@ export default function EditOrganizationModal({
                 name="display_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Display Name</FormLabel>
+                    <FormLabel>{t("editOrganization.displayName")}</FormLabel>
                     <FormControl>
                       <Input 
                         {...field} 
-                        placeholder="Display name (optional)"
+                        placeholder={t("editOrganization.displayNamePlaceholder")}
                       />
                     </FormControl>
                     <FormMessage />
@@ -357,12 +375,12 @@ export default function EditOrganizationModal({
                 name="category"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Category</FormLabel>
+                    <FormLabel>{t("editOrganization.category")}</FormLabel>
                     <FormControl>
                       <SearchableCategory
                         value={field.value}
                         onValueChange={field.onChange}
-                        placeholder="Select category..."
+                        placeholder={t("editOrganization.categoryPlaceholder")}
                       />
                     </FormControl>
                     <FormMessage />
@@ -375,12 +393,12 @@ export default function EditOrganizationModal({
                 name="location"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Location</FormLabel>
+                    <FormLabel>{t("editOrganization.location")}</FormLabel>
                     <FormControl>
                       <SearchableLocation
                         value={field.value}
                         onValueChange={field.onChange}
-                        placeholder="Select location..."
+                        placeholder={t("editOrganization.locationPlaceholder")}
                       />
                     </FormControl>
                     <FormMessage />
@@ -396,11 +414,11 @@ export default function EditOrganizationModal({
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Business Email</FormLabel>
+                    <FormLabel>{t("editOrganization.businessEmail")}</FormLabel>
                     <FormControl>
                       <Input 
                         {...field} 
-                        placeholder="contact@yourcompany.com"
+                        placeholder={t("editOrganization.businessEmailPlaceholder")}
                         type="email"
                       />
                     </FormControl>
@@ -415,11 +433,11 @@ export default function EditOrganizationModal({
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Business Phone</FormLabel>
+                      <FormLabel>{t("editOrganization.businessPhone")}</FormLabel>
                       <FormControl>
                         <Input 
                           {...field} 
-                          placeholder="+1 (555) 123-4567"
+                          placeholder={t("editOrganization.businessPhonePlaceholder")}
                         />
                       </FormControl>
                       <FormMessage />
@@ -432,13 +450,13 @@ export default function EditOrganizationModal({
                   name="website"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Website</FormLabel>
+                      <FormLabel>{t("editOrganization.website")}</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                           <Input 
                             {...field} 
-                            placeholder="https://www.example.com"
+                            placeholder={t("editOrganization.websitePlaceholder")}
                             className="pl-10"
                           />
                         </div>
@@ -456,11 +474,11 @@ export default function EditOrganizationModal({
               name="about_us"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>About Us</FormLabel>
+                  <FormLabel>{t("editOrganization.aboutUs")}</FormLabel>
                   <FormControl>
                     <Textarea 
                       {...field} 
-                      placeholder="Tell people about your organization..."
+                      placeholder={t("editOrganization.aboutUsPlaceholder")}
                       rows={4}
                     />
                   </FormControl>
@@ -472,7 +490,7 @@ export default function EditOrganizationModal({
             {/* Projects Section */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Projects</h3>
+                <h3 className="text-lg font-semibold">{t("editOrganization.projects")}</h3>
                 <Button 
                   type="button" 
                   variant="outline" 
@@ -480,14 +498,14 @@ export default function EditOrganizationModal({
                   onClick={addProject}
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  Add Project
+                  {t("editOrganization.addProject")}
                 </Button>
               </div>
 
               {projects.map((project, index) => (
                 <div key={project.id || index} className="border rounded-lg p-4 space-y-4">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-medium">Project {index + 1}</h4>
+                    <h4 className="font-medium">{t("editOrganization.project")} {index + 1}</h4>
                     <Button
                       type="button"
                       variant="ghost"
@@ -501,37 +519,37 @@ export default function EditOrganizationModal({
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium">Project Title*</label>
+                      <label className="text-sm font-medium">{t("editOrganization.projectTitle")}*</label>
                       <Input
                         value={project.title}
                         onChange={(e) => updateProject(index, 'title', e.target.value)}
-                        placeholder="Enter project title"
+                        placeholder={t("editOrganization.projectTitlePlaceholder")}
                       />
                     </div>
 
                     <div>
-                      <label className="text-sm font-medium">Project Link</label>
+                      <label className="text-sm font-medium">{t("editOrganization.projectLink")}</label>
                       <Input
                         value={project.link || ""}
                         onChange={(e) => updateProject(index, 'link', e.target.value)}
-                        placeholder="https://project-url.com"
+                        placeholder={t("editOrganization.projectLinkPlaceholder")}
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium">Description</label>
+                    <label className="text-sm font-medium">{t("editOrganization.projectDescription")}</label>
                     <Textarea
                       value={project.description || ""}
                       onChange={(e) => updateProject(index, 'description', e.target.value)}
-                      placeholder="Describe the project..."
+                      placeholder={t("editOrganization.projectDescriptionPlaceholder")}
                       rows={2}
                     />
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium">Start Date</label>
+                      <label className="text-sm font-medium">{t("editOrganization.startDate")}</label>
                       <Input
                         type="date"
                         value={project.date_started || ""}
@@ -540,12 +558,12 @@ export default function EditOrganizationModal({
                     </div>
 
                     <div>
-                      <label className="text-sm font-medium">End Date</label>
+                      <label className="text-sm font-medium">{t("editOrganization.endDate")}</label>
                       <Input
                         type="date"
                         value={project.date_finished || ""}
                         onChange={(e) => updateProject(index, 'date_finished', e.target.value)}
-                        placeholder="Leave empty if ongoing"
+                        placeholder={t("editOrganization.endDatePlaceholder")}
                       />
                     </div>
                   </div>
@@ -555,14 +573,14 @@ export default function EditOrganizationModal({
               {projects.length === 0 && (
                 <div className="text-center py-8 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg">
                   <Calendar className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                  <p className="text-gray-500 dark:text-gray-400 mb-4">No projects added yet</p>
+                  <p className="text-gray-500 dark:text-gray-400 mb-4">{t("editOrganization.noProjectsYet")}</p>
                   <Button 
                     type="button" 
                     variant="outline" 
                     onClick={addProject}
                   >
                     <Plus className="h-4 w-4 mr-2" />
-                    Add Your First Project
+                    {t("editOrganization.addYourFirstProject")}
                   </Button>
                 </div>
               )}
@@ -575,14 +593,14 @@ export default function EditOrganizationModal({
                 onClick={() => onOpenChange(false)}
                 disabled={updateOrganization.isPending}
               >
-                Cancel
+                {t("editOrganization.cancel")}
               </Button>
               <Button 
                 type="submit" 
                 disabled={updateOrganization.isPending}
               >
                 <Save className="h-4 w-4 mr-2" />
-                {updateOrganization.isPending ? 'Saving...' : 'Save Changes'}
+                {updateOrganization.isPending ? t("editOrganization.saving") : t("editOrganization.saveChanges")}
               </Button>
             </div>
           </form>
