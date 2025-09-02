@@ -7,6 +7,7 @@ import { Building2, ExternalLink } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { LanguageSelector } from "@/components/ui/language-selector";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function OAuth2Login() {
   const { t } = useTranslation();
@@ -34,7 +35,8 @@ export default function OAuth2Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-4 right-4 flex items-center gap-2">
+        <ThemeToggle />
         <LanguageSelector variant="compact" />
       </div>
       <Card className="w-full max-w-md">
