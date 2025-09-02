@@ -51,7 +51,9 @@
     "loginError": "Login failed. Please check your credentials.",
     "logoutSuccess": "Successfully logged out",
     "welcome": "Welcome back",
-    "unauthorized": "You are not authorized to access this resource"
+    "unauthorized": "You are not authorized to access this resource",
+    "confirmLogout": "Confirm Logout",
+    "logoutConfirmMessage": "Are you sure you want to logout? You will need to sign in again to access your account."
   },
   "createOrganization": {
     "title": "Create Organization",

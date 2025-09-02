@@ -180,9 +180,9 @@ export default function AppSidebar() {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+                    <AlertDialogTitle>{t('auth.confirmLogout')}</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Are you sure you want to logout? You will need to sign in again to access your account.
+                      {t('auth.logoutConfirmMessage')}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>

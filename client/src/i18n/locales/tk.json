@@ -51,7 +51,9 @@
     "loginError": "Giriş säwligi. Maglumatlary barlaň.",
     "logoutSuccess": "Üstünlikli çykdyňyz",
     "welcome": "Hoş geldiňiz",
-    "unauthorized": "Bu çeşme üçin rugsat ýok"
+    "unauthorized": "Bu çeşme üçin rugsat ýok",
+    "confirmLogout": "Çykmagy tassykla",
+    "logoutConfirmMessage": "Hakykatdan hem çykmak isleýärsiňizmi? Hasabyňyza elýeterli bolmak üçin täzeden girmeli bolarsyňyz."
   },
   "createOrganization": {
     "title": "Gurama döret",
