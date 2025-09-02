@@ -655,5 +655,10 @@
       "year": "per year",
       "project": "per project"
     }
+  },
+  "notFound": {
+    "title": "404 Page Not Found",
+    "description": "Sorry, the page you are looking for doesn't exist or has been moved.",
+    "backToHome": "Back to Home"
   }
 }

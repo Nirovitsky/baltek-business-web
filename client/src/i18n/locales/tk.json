@@ -610,5 +610,10 @@
       "year": "ýylda",
       "project": "taslama üçin"
     }
+  },
+  "notFound": {
+    "title": "404 Sahypa tapylmady",
+    "description": "Bagyşlaň, gözleýän sahypaňyz ýok ýa-da başga ýere göçürildi.",
+    "backToHome": "Baş sahypa gaýt"
   }
 }
