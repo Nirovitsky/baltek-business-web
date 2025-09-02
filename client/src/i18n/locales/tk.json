@@ -611,6 +611,41 @@
       "project": "taslama üçin"
     }
   },
+  "auth": {
+    "loggingIn": "Giriş edilýär...",
+    "loginButton": "Gir"
+  },
+  "landing": {
+    "appName": "baltek business",
+    "brandName": "Hünärmen işe alýş platformasy",
+    "heroTitle": "Iň gowy hünärmenleri tap",
+    "heroTitlePrefix": "siziň",
+    "heroTitleHighlight": "işiňiz üçin",
+    "heroSubtitle": "Hünärli kandidatlar bilen baglanşyň, işe alýş prosesiňizi gowulaşdyryň we kämil topary döredýän umumy işe alýş platformamyz.",
+    "candidatesWorldwide": "dünýädäki kandidatlar",
+    "resumesAvailable": "rezýume bar",
+    "peopleYouAreLookingFor": "Gözleýän adamlaryňyzy tapyň",
+    "findAndConnect": "Zehinli hünärmenler bilen baglanşyň we toparyňyzy ynams bilen guruň.",
+    "postYourJob": "Işiňizi goýuň",
+    "postYourJobDescription": "Guramyňyza laýyk kandidatlary özüne çekýän özüne çekiji iş yglanlaryny dörediň.",
+    "reviewApplications": "Arzalary gözden geçir",
+    "reviewApplicationsDescription": "Kandidatlaryň arzalaryny intuitiw gurallarmyz bilen netijeli dolandyryň we gözden geçiriň.",
+    "connectAndHire": "Baglan we işe al",
+    "connectAndHireDescription": "Kandidatlar bilen gönüden-göni aragatnaşyk saklaň we ynamsyz işe alýş kararlaryny kabul ediň.",
+    "whyChoose": "Näme üçin biziň platformany saýlamaly?",
+    "accessToQualityCandidates": "Hil kandidatlara giriş",
+    "accessToQualityCandidatesDescription": "Siziň üstünligiňize goşant goşmaga taýýar bolan öňünden saýlanan, hünärli hünärmenler bilen baglanşyň.",
+    "streamlinedHiringProcess": "Işe alýş prosesi",
+    "streamlinedHiringProcessDescription": "Netijeli arza dolandyryş we kandidatlary bahalandyrmak gurallary bilen wagt tygşytlaň.",
+    "realTimeCollaboration": "Hakyky wagtda hyzmatdaşlyk",
+    "realTimeCollaborationDescription": "Kandidatlary bahalandyrmak we işe alýş kararlaryny kabul etmek üçin toparyňyz bilen üstünlikli işläň.",
+    "dataDrivenInsights": "Maglumat esasly düşünje",
+    "dataDrivenInsightsDescription": "Giňişleýin analitika we kandidat düşünjeleri bilen esasly kararlar kabul ediň.",
+    "enterpriseSecurity": "Korporatiw howpsuzlyk",
+    "enterpriseSecurityDescription": "Korporatiw derejeli howpsuzlyk we gizlinlik goragly howpsuz platformamyza ynanýň.",
+    "dedicatedSupport": "Ýörite goldaw",
+    "dedicatedSupportDescription": "Zerur bolanda goldaw toparymyzdan hünärmen kömegini alyň."
+  },
   "notFound": {
     "title": "404 Sahypa tapylmady",
     "description": "Bagyşlaň, gözleýän sahypaňyz ýok ýa-da başga ýere göçürildi.",

@@ -656,6 +656,41 @@
       "project": "per project"
     }
   },
+  "auth": {
+    "loggingIn": "Signing in...",
+    "loginButton": "Sign In"
+  },
+  "landing": {
+    "appName": "baltek business",
+    "brandName": "Professional Recruitment Platform",
+    "heroTitle": "Find the best talent",
+    "heroTitlePrefix": "for your",
+    "heroTitleHighlight": "business",
+    "heroSubtitle": "Connect with qualified candidates, streamline your hiring process, and build your dream team with our comprehensive recruitment platform.",
+    "candidatesWorldwide": "candidates worldwide",
+    "resumesAvailable": "resumes available",
+    "peopleYouAreLookingFor": "Find the people you're looking for",
+    "findAndConnect": "Connect with talented professionals and build your team with confidence.",
+    "postYourJob": "Post Your Job",
+    "postYourJobDescription": "Create compelling job listings that attract the right candidates to your organization.",
+    "reviewApplications": "Review Applications",
+    "reviewApplicationsDescription": "Efficiently manage and review candidate applications with our intuitive tools.",
+    "connectAndHire": "Connect & Hire",
+    "connectAndHireDescription": "Communicate directly with candidates and make confident hiring decisions.",
+    "whyChoose": "Why choose our platform?",
+    "accessToQualityCandidates": "Access to Quality Candidates",
+    "accessToQualityCandidatesDescription": "Connect with pre-screened, qualified professionals ready to contribute to your success.",
+    "streamlinedHiringProcess": "Streamlined Hiring Process",
+    "streamlinedHiringProcessDescription": "Save time with our efficient application management and candidate evaluation tools.",
+    "realTimeCollaboration": "Real-time Collaboration",
+    "realTimeCollaborationDescription": "Work seamlessly with your team to evaluate candidates and make hiring decisions.",
+    "dataDrivenInsights": "Data-driven Insights",
+    "dataDrivenInsightsDescription": "Make informed decisions with comprehensive analytics and candidate insights.",
+    "enterpriseSecurity": "Enterprise Security",
+    "enterpriseSecurityDescription": "Trust in our secure platform with enterprise-grade security and privacy protection.",
+    "dedicatedSupport": "Dedicated Support",
+    "dedicatedSupportDescription": "Get expert assistance from our dedicated support team whenever you need it."
+  },
   "notFound": {
     "title": "404 Page Not Found",
     "description": "Sorry, the page you are looking for doesn't exist or has been moved.",
