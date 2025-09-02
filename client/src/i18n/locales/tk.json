@@ -264,7 +264,14 @@
     "online": "Aragatnaşykda",
     "offline": "Aragatnaşykdan daşarda",
     "typing": "{{name}} ýazýar...",
-    "lastSeen": "Soňky gezek görüldi {{time}}"
+    "lastSeen": "Soňky gezek görüldi {{time}}",
+    "disableChat": "Söhbetdeşligi öçür",
+    "disableChatTitle": "Söhbetdeşligi öçür",
+    "disableChatConfirmMessage": "Bu söhbetdeşlik üçin söhbetdeşligi öçürmek isleýärsiňizmi? Dalaşgär size indi habar iberip bilmez.",
+    "chatDisabled": "Söhbetdeşlik öçürildi",
+    "chatEnabled": "Söhbetdeşlik goşuldy",
+    "messagesBlocked": "Bu söhbetdeşlik üçin habarlar indi petiklendi",
+    "messagesEnabled": "Indi habar iberip bilersiňiz"
   },
   "profile": {
     "title": "Profil",

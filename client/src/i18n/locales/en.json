@@ -268,7 +268,14 @@
     "online": "Online",
     "offline": "Offline",
     "typing": "{{name}} is typing...",
-    "lastSeen": "Last seen {{time}}"
+    "lastSeen": "Last seen {{time}}",
+    "disableChat": "Disable Chat",
+    "disableChatTitle": "Disable Chat",
+    "disableChatConfirmMessage": "Are you sure you want to disable chat for this conversation? The candidate will no longer be able to send messages to you.",
+    "chatDisabled": "Chat disabled",
+    "chatEnabled": "Chat enabled",
+    "messagesBlocked": "Messages are now blocked for this conversation",
+    "messagesEnabled": "You can now send messages"
   },
   "profile": {
     "title": "Profile",

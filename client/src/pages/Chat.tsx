@@ -145,8 +145,8 @@ export default function Chat() {
     });
     
     toast({
-      title: disable ? "Chat disabled" : "Chat enabled",
-      description: disable ? "Messages are now blocked for this conversation" : "You can now send messages",
+      title: disable ? t('chat.chatDisabled') : t('chat.chatEnabled'),
+      description: disable ? t('chat.messagesBlocked') : t('chat.messagesEnabled'),
     });
   };
 
@@ -972,7 +972,7 @@ export default function Chat() {
                         className="text-xs bg-red-600 text-white border-red-600 hover:bg-red-700 hover:border-red-700 gap-1.5 px-3 font-medium"
                       >
                         <ShieldOff className="h-3 w-3" />
-                        Disable Chat
+                        {t('chat.disableChat')}
                       </Button>
                     )}
                   </div>
@@ -1229,16 +1229,16 @@ export default function Chat() {
       <AlertDialog open={showDisableConfirm} onOpenChange={setShowDisableConfirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Disable Chat</AlertDialogTitle>
+            <AlertDialogTitle>{t('chat.disableChatTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to disable chat for this conversation? The candidate will no longer be able to send messages to you.
+              {t('chat.disableChatConfirmMessage')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDisableChat} className="bg-red-600 hover:bg-red-700 gap-1.5 font-medium">
               <ShieldOff className="h-4 w-4" />
-              Disable Chat
+              {t('chat.disableChat')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
