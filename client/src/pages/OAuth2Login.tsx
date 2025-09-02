@@ -34,19 +34,23 @@ export default function OAuth2Login() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900">
+    <div className="min-h-screen bg-white dark:bg-gray-950 relative overflow-hidden">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-50/30 via-transparent to-blue-50/20 dark:from-gray-900/30 dark:to-blue-950/20"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(24,119,242,0.05),transparent_70%)]"></div>
+      
       {/* Header */}
-      <header className="absolute top-0 left-0 right-0 z-10">
-        <div className="flex items-center justify-between p-6">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#1877F2] rounded-xl flex items-center justify-center">
-              <Building2 className="w-6 h-6 text-white" />
+      <header className="relative z-10">
+        <div className="flex items-center justify-between p-8">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#1877F2] to-[#0056D3] rounded-2xl flex items-center justify-center shadow-lg">
+              <Building2 className="w-7 h-7 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900 dark:text-white">
+            <span className="text-2xl font-light text-gray-900 dark:text-white tracking-tight">
               {import.meta.env.VITE_APP_NAME || "baltek business"}
             </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <ThemeToggle />
             <LanguageSelector variant="compact" />
           </div>
@@ -54,111 +58,110 @@ export default function OAuth2Login() {
       </header>
 
       {/* Hero Section */}
-      <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+      <main className="relative z-10 pt-16 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left Column - Hero Content */}
-            <div className="space-y-8">
-              <div className="space-y-6">
-                <div className="flex items-center gap-2 text-[#1877F2] font-medium">
-                  <Star className="w-5 h-5 fill-current" />
-                  <span>Professional HR Management Platform</span>
+            <div className="space-y-10">
+              <div className="space-y-8">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#1877F2]/10 rounded-full text-[#1877F2] font-medium text-sm">
+                  <div className="w-2 h-2 bg-[#1877F2] rounded-full animate-pulse"></div>
+                  Professional HR Management Platform
                 </div>
                 
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
-                  Streamline Your
-                  <span className="text-[#1877F2] block">HR Operations</span>
+                <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extralight text-gray-900 dark:text-white leading-[1.1] tracking-tight">
+                  Elevate Your
+                  <span className="block font-medium bg-gradient-to-r from-[#1877F2] to-[#0056D3] bg-clip-text text-transparent">
+                    Talent Acquisition
+                  </span>
                 </h1>
                 
-                <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-                  Manage job postings, review applications, and communicate with candidates 
-                  all in one powerful platform. Built for modern HR teams who value efficiency and results.
+                <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed font-light max-w-2xl">
+                  A sophisticated platform designed for discerning HR professionals. 
+                  Streamline recruitment processes with enterprise-grade tools and intuitive workflows.
                 </p>
               </div>
 
               {/* Features Grid */}
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div className="flex items-center gap-3 p-4 bg-white/50 dark:bg-gray-800/50 rounded-lg backdrop-blur-sm">
-                  <div className="w-10 h-10 bg-[#1877F2]/10 rounded-lg flex items-center justify-center">
-                    <Briefcase className="w-5 h-5 text-[#1877F2]" />
+              <div className="grid sm:grid-cols-2 gap-6">
+                <div className="group p-6 bg-white/60 dark:bg-gray-900/40 rounded-2xl border border-gray-200/20 dark:border-gray-700/30 hover:border-[#1877F2]/20 transition-all duration-300 backdrop-blur-sm">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#1877F2]/10 to-[#1877F2]/5 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <Briefcase className="w-6 h-6 text-[#1877F2]" />
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white">Job Management</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Create & track positions</p>
-                  </div>
+                  <h3 className="font-medium text-gray-900 dark:text-white mb-2">Position Management</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Comprehensive job posting and tracking capabilities</p>
                 </div>
 
-                <div className="flex items-center gap-3 p-4 bg-white/50 dark:bg-gray-800/50 rounded-lg backdrop-blur-sm">
-                  <div className="w-10 h-10 bg-[#1877F2]/10 rounded-lg flex items-center justify-center">
-                    <Users className="w-5 h-5 text-[#1877F2]" />
+                <div className="group p-6 bg-white/60 dark:bg-gray-900/40 rounded-2xl border border-gray-200/20 dark:border-gray-700/30 hover:border-[#1877F2]/20 transition-all duration-300 backdrop-blur-sm">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#1877F2]/10 to-[#1877F2]/5 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <Users className="w-6 h-6 text-[#1877F2]" />
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white">Candidate Pipeline</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Review applications</p>
-                  </div>
+                  <h3 className="font-medium text-gray-900 dark:text-white mb-2">Candidate Assessment</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Advanced application review and evaluation tools</p>
                 </div>
 
-                <div className="flex items-center gap-3 p-4 bg-white/50 dark:bg-gray-800/50 rounded-lg backdrop-blur-sm">
-                  <div className="w-10 h-10 bg-[#1877F2]/10 rounded-lg flex items-center justify-center">
-                    <MessageCircle className="w-5 h-5 text-[#1877F2]" />
+                <div className="group p-6 bg-white/60 dark:bg-gray-900/40 rounded-2xl border border-gray-200/20 dark:border-gray-700/30 hover:border-[#1877F2]/20 transition-all duration-300 backdrop-blur-sm">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#1877F2]/10 to-[#1877F2]/5 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <MessageCircle className="w-6 h-6 text-[#1877F2]" />
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white">Real-time Chat</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Communicate instantly</p>
-                  </div>
+                  <h3 className="font-medium text-gray-900 dark:text-white mb-2">Strategic Communication</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Professional candidate engagement platform</p>
                 </div>
 
-                <div className="flex items-center gap-3 p-4 bg-white/50 dark:bg-gray-800/50 rounded-lg backdrop-blur-sm">
-                  <div className="w-10 h-10 bg-[#1877F2]/10 rounded-lg flex items-center justify-center">
-                    <BarChart3 className="w-5 h-5 text-[#1877F2]" />
+                <div className="group p-6 bg-white/60 dark:bg-gray-900/40 rounded-2xl border border-gray-200/20 dark:border-gray-700/30 hover:border-[#1877F2]/20 transition-all duration-300 backdrop-blur-sm">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#1877F2]/10 to-[#1877F2]/5 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <BarChart3 className="w-6 h-6 text-[#1877F2]" />
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white">Analytics</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Track performance</p>
-                  </div>
+                  <h3 className="font-medium text-gray-900 dark:text-white mb-2">Performance Insights</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Data-driven recruitment analytics and reporting</p>
                 </div>
               </div>
             </div>
 
             {/* Right Column - Login Card */}
             <div className="flex justify-center lg:justify-end">
-              <Card className="w-full max-w-md shadow-2xl border-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
-                <CardHeader className="text-center space-y-4 pb-6">
-                  <div className="mx-auto w-16 h-16 bg-gradient-to-br from-[#1877F2] to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
-                    <Building2 className="w-8 h-8 text-white" />
+              <Card className="w-full max-w-lg border border-gray-200/30 dark:border-gray-700/30 bg-white/70 dark:bg-gray-950/70 backdrop-blur-xl shadow-xl shadow-gray-200/20 dark:shadow-gray-900/40">
+                <CardHeader className="text-center space-y-6 pb-8 pt-12">
+                  <div className="mx-auto w-20 h-20 bg-gradient-to-br from-[#1877F2] to-[#0056D3] rounded-3xl flex items-center justify-center shadow-2xl shadow-[#1877F2]/20">
+                    <Building2 className="w-10 h-10 text-white" />
                   </div>
-                  <div className="space-y-2">
-                    <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
-                      Welcome Back
+                  <div className="space-y-3">
+                    <CardTitle className="text-3xl font-light text-gray-900 dark:text-white tracking-tight">
+                      Access Your Workspace
                     </CardTitle>
-                    <CardDescription className="text-gray-600 dark:text-gray-400">
-                      Sign in to access your HR dashboard
+                    <CardDescription className="text-gray-600 dark:text-gray-400 text-lg font-light">
+                      Continue to your professional dashboard
                     </CardDescription>
                   </div>
                 </CardHeader>
 
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-8 px-12 pb-12">
                   <Button 
                     onClick={handleLogin} 
-                    className="w-full h-12 bg-[#1877F2] hover:bg-blue-600 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl" 
+                    className="w-full h-14 bg-gradient-to-r from-[#1877F2] to-[#0056D3] hover:from-[#1565C0] hover:to-[#0040A1] text-white font-medium rounded-2xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-[#1877F2]/25 border-0" 
                     disabled={isSigningIn}
                   >
-                    <ExternalLink className="w-5 h-5 mr-3" />
                     {isSigningIn ? (
-                      <span className="flex items-center gap-2">
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <span className="flex items-center gap-3 text-lg">
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                         {t('auth.loggingIn')}
                       </span>
                     ) : (
-                      <span className="flex items-center gap-2">
+                      <span className="flex items-center gap-3 text-lg font-light">
+                        <ExternalLink className="w-5 h-5" />
                         {t('auth.loginButton')}
-                        <ChevronRight className="w-4 h-4" />
+                        <ChevronRight className="w-5 h-5 ml-2" />
                       </span>
                     )}
                   </Button>
 
-                  <div className="text-xs text-center text-gray-500 dark:text-gray-400 leading-relaxed">
-                    By signing in, you agree to our terms of service and privacy policy
+                  <div className="text-center space-y-2">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 font-light leading-relaxed">
+                      Secure enterprise authentication
+                    </div>
+                    <div className="text-xs text-gray-400 dark:text-gray-500 leading-relaxed">
+                      By continuing, you acknowledge our terms and privacy policy
+                    </div>
                   </div>
                 </CardContent>
               </Card>
