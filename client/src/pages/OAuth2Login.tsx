@@ -62,58 +62,92 @@ export default function OAuth2Login() {
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left Column - Hero Content */}
-            <div className="space-y-10">
+            <div className="space-y-12">
+              {/* What is this app */}
               <div className="space-y-8">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#1877F2]/10 rounded-full text-[#1877F2] font-medium text-sm">
                   <div className="w-2 h-2 bg-[#1877F2] rounded-full animate-pulse"></div>
-                  Professional HR Management Platform
+                  HR Management Dashboard for baltek Karyera Platform
                 </div>
                 
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extralight text-gray-900 dark:text-white leading-[1.1] tracking-tight">
-                  Elevate Your
                   <span className="block font-medium bg-gradient-to-r from-[#1877F2] to-[#0056D3] bg-clip-text text-transparent">
-                    Talent Acquisition
+                    baltek business
                   </span>
+                  Dashboard
                 </h1>
                 
                 <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed font-light max-w-2xl">
-                  A sophisticated platform designed for discerning HR professionals. 
-                  Streamline recruitment processes with enterprise-grade tools and intuitive workflows.
+                  A comprehensive HR management platform designed specifically for companies using the baltek Karyera recruitment ecosystem. 
+                  Streamline your hiring process from job posting to candidate communication.
                 </p>
               </div>
 
-              {/* Features Grid */}
-              <div className="grid sm:grid-cols-2 gap-6">
-                <div className="group p-6 bg-white/60 dark:bg-gray-900/40 rounded-2xl border border-gray-200/20 dark:border-gray-700/30 hover:border-[#1877F2]/20 transition-all duration-300 backdrop-blur-sm">
-                  <div className="w-12 h-12 bg-gradient-to-br from-[#1877F2]/10 to-[#1877F2]/5 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <Briefcase className="w-6 h-6 text-[#1877F2]" />
+              {/* Problems it solves */}
+              <div className="space-y-6">
+                <h2 className="text-2xl font-medium text-gray-900 dark:text-white">Challenges We Solve</h2>
+                <div className="grid gap-4">
+                  <div className="flex items-start gap-4 p-4 bg-red-50/50 dark:bg-red-950/20 rounded-xl border border-red-100/30 dark:border-red-900/30">
+                    <div className="w-2 h-2 bg-red-400 rounded-full mt-3 flex-shrink-0"></div>
+                    <div>
+                      <h3 className="font-medium text-gray-900 dark:text-white mb-1">Fragmented HR Workflows</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Managing job postings, applications, and communications across multiple platforms wastes time and creates confusion.</p>
+                    </div>
                   </div>
-                  <h3 className="font-medium text-gray-900 dark:text-white mb-2">Position Management</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Comprehensive job posting and tracking capabilities</p>
+                  
+                  <div className="flex items-start gap-4 p-4 bg-orange-50/50 dark:bg-orange-950/20 rounded-xl border border-orange-100/30 dark:border-orange-900/30">
+                    <div className="w-2 h-2 bg-orange-400 rounded-full mt-3 flex-shrink-0"></div>
+                    <div>
+                      <h3 className="font-medium text-gray-900 dark:text-white mb-1">Poor Candidate Experience</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Delayed responses and lack of real-time communication damage your company's reputation with potential hires.</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-4 p-4 bg-yellow-50/50 dark:bg-yellow-950/20 rounded-xl border border-yellow-100/30 dark:border-yellow-900/30">
+                    <div className="w-2 h-2 bg-yellow-400 rounded-full mt-3 flex-shrink-0"></div>
+                    <div>
+                      <h3 className="font-medium text-gray-900 dark:text-white mb-1">Limited Recruitment Insights</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Without proper analytics, you can't optimize your hiring process or track recruitment performance effectively.</p>
+                    </div>
+                  </div>
                 </div>
+              </div>
 
-                <div className="group p-6 bg-white/60 dark:bg-gray-900/40 rounded-2xl border border-gray-200/20 dark:border-gray-700/30 hover:border-[#1877F2]/20 transition-all duration-300 backdrop-blur-sm">
-                  <div className="w-12 h-12 bg-gradient-to-br from-[#1877F2]/10 to-[#1877F2]/5 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <Users className="w-6 h-6 text-[#1877F2]" />
+              {/* How it works */}
+              <div className="space-y-6">
+                <h2 className="text-2xl font-medium text-gray-900 dark:text-white">How baltek business Works</h2>
+                <div className="grid sm:grid-cols-2 gap-6">
+                  <div className="group p-6 bg-white/60 dark:bg-gray-900/40 rounded-2xl border border-gray-200/20 dark:border-gray-700/30 hover:border-[#1877F2]/20 transition-all duration-300 backdrop-blur-sm">
+                    <div className="w-12 h-12 bg-gradient-to-br from-[#1877F2]/10 to-[#1877F2]/5 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                      <Briefcase className="w-6 h-6 text-[#1877F2]" />
+                    </div>
+                    <h3 className="font-medium text-gray-900 dark:text-white mb-2">Centralized Job Management</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Create, edit, and track all your job postings from one dashboard. Automatically sync with the baltek Karyera platform.</p>
                   </div>
-                  <h3 className="font-medium text-gray-900 dark:text-white mb-2">Candidate Assessment</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Advanced application review and evaluation tools</p>
-                </div>
 
-                <div className="group p-6 bg-white/60 dark:bg-gray-900/40 rounded-2xl border border-gray-200/20 dark:border-gray-700/30 hover:border-[#1877F2]/20 transition-all duration-300 backdrop-blur-sm">
-                  <div className="w-12 h-12 bg-gradient-to-br from-[#1877F2]/10 to-[#1877F2]/5 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <MessageCircle className="w-6 h-6 text-[#1877F2]" />
+                  <div className="group p-6 bg-white/60 dark:bg-gray-900/40 rounded-2xl border border-gray-200/20 dark:border-gray-700/30 hover:border-[#1877F2]/20 transition-all duration-300 backdrop-blur-sm">
+                    <div className="w-12 h-12 bg-gradient-to-br from-[#1877F2]/10 to-[#1877F2]/5 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                      <Users className="w-6 h-6 text-[#1877F2]" />
+                    </div>
+                    <h3 className="font-medium text-gray-900 dark:text-white mb-2">Smart Application Review</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Review and manage candidate applications with advanced filtering, sorting, and status tracking tools.</p>
                   </div>
-                  <h3 className="font-medium text-gray-900 dark:text-white mb-2">Strategic Communication</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Professional candidate engagement platform</p>
-                </div>
 
-                <div className="group p-6 bg-white/60 dark:bg-gray-900/40 rounded-2xl border border-gray-200/20 dark:border-gray-700/30 hover:border-[#1877F2]/20 transition-all duration-300 backdrop-blur-sm">
-                  <div className="w-12 h-12 bg-gradient-to-br from-[#1877F2]/10 to-[#1877F2]/5 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <BarChart3 className="w-6 h-6 text-[#1877F2]" />
+                  <div className="group p-6 bg-white/60 dark:bg-gray-900/40 rounded-2xl border border-gray-200/20 dark:border-gray-700/30 hover:border-[#1877F2]/20 transition-all duration-300 backdrop-blur-sm">
+                    <div className="w-12 h-12 bg-gradient-to-br from-[#1877F2]/10 to-[#1877F2]/5 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                      <MessageCircle className="w-6 h-6 text-[#1877F2]" />
+                    </div>
+                    <h3 className="font-medium text-gray-900 dark:text-white mb-2">Real-time Communication</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Chat directly with candidates through integrated messaging. Share files and maintain conversation history.</p>
                   </div>
-                  <h3 className="font-medium text-gray-900 dark:text-white mb-2">Performance Insights</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Data-driven recruitment analytics and reporting</p>
+
+                  <div className="group p-6 bg-white/60 dark:bg-gray-900/40 rounded-2xl border border-gray-200/20 dark:border-gray-700/30 hover:border-[#1877F2]/20 transition-all duration-300 backdrop-blur-sm">
+                    <div className="w-12 h-12 bg-gradient-to-br from-[#1877F2]/10 to-[#1877F2]/5 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                      <BarChart3 className="w-6 h-6 text-[#1877F2]" />
+                    </div>
+                    <h3 className="font-medium text-gray-900 dark:text-white mb-2">Analytics & Insights</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Track recruitment metrics, analyze hiring patterns, and optimize your process with comprehensive reporting.</p>
+                  </div>
                 </div>
               </div>
             </div>
