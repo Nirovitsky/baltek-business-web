@@ -50,7 +50,25 @@ export default function OAuth2Login() {
               {import.meta.env.VITE_APP_NAME || "baltek business"}
             </span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
+            <Button 
+              onClick={handleLogin} 
+              className="h-12 px-8 bg-gradient-to-r from-[#1877F2] to-[#0056D3] hover:from-[#1565C0] hover:to-[#0040A1] text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-[#1877F2]/25 border-0" 
+              disabled={isSigningIn}
+            >
+              {isSigningIn ? (
+                <span className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  {t('auth.loggingIn')}
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  <ExternalLink className="w-4 h-4" />
+                  {t('auth.loginButton')}
+                  <ChevronRight className="w-4 h-4" />
+                </span>
+              )}
+            </Button>
             <ThemeToggle />
             <LanguageSelector variant="compact" />
           </div>
@@ -59,12 +77,10 @@ export default function OAuth2Login() {
 
       {/* Hero Section */}
       <main className="relative z-10 pt-16 pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Left Column - Hero Content */}
-            <div className="space-y-12">
-              {/* What is this app */}
-              <div className="space-y-8">
+        <div className="max-w-5xl mx-auto">
+          <div className="space-y-12">
+            {/* What is this app */}
+            <div className="space-y-8">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#1877F2]/10 rounded-full text-[#1877F2] font-medium text-sm">
                   <div className="w-2 h-2 bg-[#1877F2] rounded-full animate-pulse"></div>
                   HR Management Dashboard for baltek Karyera Platform
@@ -81,10 +97,10 @@ export default function OAuth2Login() {
                   A comprehensive HR management platform designed specifically for companies using the baltek Karyera recruitment ecosystem. 
                   Streamline your hiring process from job posting to candidate communication.
                 </p>
-              </div>
+            </div>
 
-              {/* Problems it solves */}
-              <div className="space-y-6">
+            {/* Problems it solves */}
+            <div className="space-y-6">
                 <h2 className="text-2xl font-medium text-gray-900 dark:text-white">Challenges We Solve</h2>
                 <div className="grid gap-4">
                   <div className="flex items-start gap-4 p-4 bg-red-50/50 dark:bg-red-950/20 rounded-xl border border-red-100/30 dark:border-red-900/30">
@@ -111,10 +127,10 @@ export default function OAuth2Login() {
                     </div>
                   </div>
                 </div>
-              </div>
+            </div>
 
-              {/* How it works */}
-              <div className="space-y-6">
+            {/* How it works */}
+            <div className="space-y-6">
                 <h2 className="text-2xl font-medium text-gray-900 dark:text-white">How baltek business Works</h2>
                 <div className="grid sm:grid-cols-2 gap-6">
                   <div className="group p-6 bg-white/60 dark:bg-gray-900/40 rounded-2xl border border-gray-200/20 dark:border-gray-700/30 hover:border-[#1877F2]/20 transition-all duration-300 backdrop-blur-sm">
@@ -149,56 +165,6 @@ export default function OAuth2Login() {
                     <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Track recruitment metrics, analyze hiring patterns, and optimize your process with comprehensive reporting.</p>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Right Column - Login Card */}
-            <div className="flex justify-center lg:justify-end">
-              <Card className="w-full max-w-lg border border-gray-200/30 dark:border-gray-700/30 bg-white/70 dark:bg-gray-950/70 backdrop-blur-xl shadow-xl shadow-gray-200/20 dark:shadow-gray-900/40">
-                <CardHeader className="text-center space-y-6 pb-8 pt-12">
-                  <div className="mx-auto w-20 h-20 bg-gradient-to-br from-[#1877F2] to-[#0056D3] rounded-3xl flex items-center justify-center shadow-2xl shadow-[#1877F2]/20">
-                    <Building2 className="w-10 h-10 text-white" />
-                  </div>
-                  <div className="space-y-3">
-                    <CardTitle className="text-3xl font-light text-gray-900 dark:text-white tracking-tight">
-                      Access Your Workspace
-                    </CardTitle>
-                    <CardDescription className="text-gray-600 dark:text-gray-400 text-lg font-light">
-                      Continue to your professional dashboard
-                    </CardDescription>
-                  </div>
-                </CardHeader>
-
-                <CardContent className="space-y-8 px-12 pb-12">
-                  <Button 
-                    onClick={handleLogin} 
-                    className="w-full h-14 bg-gradient-to-r from-[#1877F2] to-[#0056D3] hover:from-[#1565C0] hover:to-[#0040A1] text-white font-medium rounded-2xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-[#1877F2]/25 border-0" 
-                    disabled={isSigningIn}
-                  >
-                    {isSigningIn ? (
-                      <span className="flex items-center gap-3 text-lg">
-                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                        {t('auth.loggingIn')}
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-3 text-lg font-light">
-                        <ExternalLink className="w-5 h-5" />
-                        {t('auth.loginButton')}
-                        <ChevronRight className="w-5 h-5 ml-2" />
-                      </span>
-                    )}
-                  </Button>
-
-                  <div className="text-center space-y-2">
-                    <div className="text-sm text-gray-500 dark:text-gray-400 font-light leading-relaxed">
-                      Secure enterprise authentication
-                    </div>
-                    <div className="text-xs text-gray-400 dark:text-gray-500 leading-relaxed">
-                      By continuing, you acknowledge our terms and privacy policy
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           </div>
         </div>
