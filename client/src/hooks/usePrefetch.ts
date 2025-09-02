@@ -287,7 +287,8 @@ export function useHoverPrefetch() {
     if (route.startsWith('/jobs/') && route !== '/jobs' && route !== '/jobs/create') {
       const jobId = route.split('/')[2];
       if (jobId && /^\d+$/.test(jobId)) {
-        const jobKey = ['/jobs/', jobId, 'details'];
+        // Use same query key as JobDetailDialog and JobDetails components
+        const jobKey = ['/jobs/', parseInt(jobId)];
         if (!queryClient.getQueryData(jobKey)) {
           queryClient.prefetchQuery({
             queryKey: jobKey,
@@ -318,6 +319,7 @@ export function useHoverPrefetch() {
     if (route.startsWith('/applications/') && route !== '/applications') {
       const applicationId = route.split('/')[2];
       if (applicationId && /^\d+$/.test(applicationId)) {
+        // Use same query key as ApplicationDetailsModal
         const appKey = ['/jobs/applications/', applicationId, 'details'];
         if (!queryClient.getQueryData(appKey)) {
           queryClient.prefetchQuery({
@@ -334,11 +336,12 @@ export function useHoverPrefetch() {
     if (route.startsWith('/user/') && route !== '/user') {
       const userId = route.split('/')[2];
       if (userId && /^\d+$/.test(userId)) {
-        const userKey = ['/users/', userId];
+        // Use same query key as useUserProfile hook (without leading slash)
+        const userKey = ['users/', userId];
         if (!queryClient.getQueryData(userKey)) {
           queryClient.prefetchQuery({
             queryKey: userKey,
-            queryFn: () => apiService.request(`/users/${userId}/`),
+            queryFn: () => apiService.request(`users/${userId}/`),
             staleTime: 5 * 60 * 1000,
           });
         }
