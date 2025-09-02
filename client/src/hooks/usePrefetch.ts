@@ -317,11 +317,19 @@ export function useHoverPrefetch() {
           staleTime: 5 * 60 * 1000, // 5 minutes
         });
         
-        // Also prefetch applications for this job
+        // Also prefetch applications for this job (with error handling)
         queryClient.prefetchQuery({
           queryKey: ['/jobs/', jobId, 'applications'],
           queryFn: () => apiService.request(`/jobs/${jobId}/applications/`),
           staleTime: 2 * 60 * 1000, // 2 minutes
+          retry: (failureCount, error: any) => {
+            // Don't retry on 404 errors - endpoint might not exist for this job
+            if (error?.status === 404) return false;
+            return failureCount < 2;
+          },
+        }).catch(() => {
+          // Silently handle prefetch errors - this is background loading
+          console.log(`[Prefetch] Applications endpoint not available for job ${jobId}`);
         });
         return;
       }
