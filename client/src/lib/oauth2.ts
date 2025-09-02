@@ -395,7 +395,23 @@ export class OAuth2Service {
         throw error;
       }
 
-      return response.json();
+      // Handle empty responses (like DELETE operations)
+      if (response.status === 204 || response.headers.get('content-length') === '0') {
+        return {} as T;
+      }
+
+      // Check if response has content
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        return response.json();
+      }
+
+      // For non-JSON responses, try to parse as JSON but fallback to empty object
+      try {
+        return response.json();
+      } catch {
+        return {} as T;
+      }
     } catch (error: any) {
       // If it's a 401 error and we haven't already retried with refresh
       if (
