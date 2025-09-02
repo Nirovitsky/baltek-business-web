@@ -302,19 +302,9 @@ export function useHoverPrefetch() {
           });
         }
         
-        // Also prefetch applications for this job (with error handling)
-        queryClient.prefetchQuery({
-          queryKey: ['/jobs/', jobId, 'applications'],
-          queryFn: () => apiService.request(`/jobs/${jobId}/applications/`),
-          staleTime: 2 * 60 * 1000,
-          retry: (failureCount, error: any) => {
-            // Don't retry on 404, 503, or CORS errors
-            if (error?.status === 404 || error?.status === 503 || error?.message?.includes('CORS')) return false;
-            return failureCount < 1;
-          },
-        }).catch(() => {
-          // Silently handle prefetch errors
-        });
+        // Note: We don't prefetch individual job applications since the endpoint 
+        // /jobs/{id}/applications/ might not exist for all jobs or may return 404
+        // Applications are fetched when needed on the actual job details page
         return;
       }
     }
