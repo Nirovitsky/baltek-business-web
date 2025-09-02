@@ -55,7 +55,7 @@ import { useNotifications } from "@/hooks/useNotifications";
 const getNavigationData = (t: any) => ({
   navMain: [
     {
-      title: "Platform",
+      title: t('navigation.platform'),
       url: "#",
       items: [
         {

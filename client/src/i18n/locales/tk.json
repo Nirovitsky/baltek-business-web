@@ -32,6 +32,7 @@
     "login": "Gir"
   },
   "navigation": {
+    "platform": "Platforma",
     "dashboard": "Dolandyryş paneli",
     "jobs": "Iş ýerleri",
     "applications": "Arzalar",

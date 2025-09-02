@@ -32,6 +32,7 @@
     "login": "Войти"
   },
   "navigation": {
+    "platform": "Платформа",
     "dashboard": "Панель управления",
     "jobs": "Вакансии",
     "applications": "Заявки",

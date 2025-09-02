@@ -32,6 +32,7 @@
     "login": "Login"
   },
   "navigation": {
+    "platform": "Platform",
     "dashboard": "Dashboard",
     "jobs": "Jobs",
     "applications": "Applications",
