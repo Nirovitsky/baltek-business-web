@@ -47,7 +47,7 @@ export default function OAuth2Login() {
               <Building2 className="w-7 h-7 text-white" />
             </div>
             <span className="text-2xl font-light text-gray-900 dark:text-white tracking-tight">
-              {import.meta.env.VITE_APP_NAME || "baltek business"}
+              {import.meta.env.VITE_APP_NAME || t('landing.appName')}
             </span>
           </div>
           <div className="flex items-center gap-4">
@@ -83,13 +83,13 @@ export default function OAuth2Login() {
             <div className="space-y-12 text-center">
                 <div className="space-y-6">
                   <div className="inline-block px-4 py-2 bg-[#1877F2]/10 rounded-full text-[#1877F2] font-medium text-sm">
-                    baltek business
+                    {t('landing.brandName')}
                   </div>
                   
                   <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light text-gray-900 dark:text-white leading-[1.1] tracking-tight">
                     {t('landing.heroTitle')}
                     <br />
-                    Hire <span className="italic font-medium text-[#1877F2]">{t('landing.heroTitleHighlight')}</span>.
+                    {t('landing.heroTitlePrefix')} <span className="italic font-medium text-[#1877F2]">{t('landing.heroTitleHighlight')}</span>.
                   </h1>
                   
                   <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed font-light max-w-3xl mx-auto">

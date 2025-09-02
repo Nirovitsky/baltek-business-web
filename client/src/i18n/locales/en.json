@@ -54,10 +54,22 @@
     "welcome": "Welcome back",
     "unauthorized": "You are not authorized to access this resource",
     "confirmLogout": "Confirm Logout",
-    "logoutConfirmMessage": "Are you sure you want to logout? You will need to sign in again to access your account."
+    "logoutConfirmMessage": "Are you sure you want to logout? You will need to sign in again to access your account.",
+    "loginSuccessful": "Login successful",
+    "loginSuccessfulDescription": "Welcome to baltek business dashboard",
+    "loginFailed": "Login failed",
+    "authenticationFailed": "Authentication failed",
+    "authenticationFailedTitle": "Authentication Failed",
+    "completingSignIn": "Completing sign in...",
+    "redirecting": "Redirecting...",
+    "tryAgain": "Try Again",
+    "missingAuthCode": "Missing authorization code or state parameter"
   },
   "landing": {
+    "brandName": "baltek business",
+    "appName": "baltek business",
     "heroTitle": "Hire faster. Hire easier.",
+    "heroTitlePrefix": "Hire",
     "heroTitleHighlight": "smarter",
     "heroSubtitle": "Connect with top talent on the baltek Karyera platform. Streamline your entire hiring process from job posting to final interviews.",
     "candidatesWorldwide": "candidates worldwide",

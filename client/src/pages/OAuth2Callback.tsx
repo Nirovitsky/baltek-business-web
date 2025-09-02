@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import { oauth2Service } from "@/lib/oauth2";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -8,6 +9,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export default function OAuth2Callback() {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -29,7 +31,7 @@ export default function OAuth2Callback() {
         }
 
         if (!code || !state) {
-          throw new Error("Missing authorization code or state parameter");
+          throw new Error(t('auth.missingAuthCode'));
         }
 
         // Exchange code for tokens
@@ -42,18 +44,18 @@ export default function OAuth2Callback() {
         await fetchOrganizations();
 
         toast({
-          title: "Login successful",
-          description: "Welcome to baltek business dashboard",
+          title: t('auth.loginSuccessful'),
+          description: t('auth.loginSuccessfulDescription'),
         });
 
         // Redirect to dashboard
         navigate("/", { replace: true });
       } catch (error: any) {
         console.error("OAuth2 callback error:", error);
-        setError(error.message || "Authentication failed");
+        setError(error.message || t('auth.authenticationFailed'));
         toast({
-          title: "Login failed",
-          description: error.message || "Authentication failed",
+          title: t('auth.loginFailed'),
+          description: error.message || t('auth.authenticationFailed'),
           variant: "destructive",
         });
       } finally {
@@ -76,12 +78,12 @@ export default function OAuth2Callback() {
             <div className="mx-auto w-16 h-16 bg-red-500 rounded-xl flex items-center justify-center mb-4">
               <AlertCircle className="w-8 h-8 text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-foreground">Authentication Failed</h2>
+            <h2 className="text-2xl font-bold text-foreground">{t('auth.authenticationFailedTitle')}</h2>
             <p className="text-muted-foreground mt-2">{error}</p>
           </CardHeader>
           <CardContent>
             <Button onClick={handleRetry} className="w-full">
-              Try Again
+              {t('auth.tryAgain')}
             </Button>
           </CardContent>
         </Card>
@@ -96,9 +98,9 @@ export default function OAuth2Callback() {
           <div className="mx-auto w-16 h-16 bg-primary rounded-xl flex items-center justify-center mb-4">
             <Building2 className="w-8 h-8 text-white" />
           </div>
-          <h2 className="text-2xl font-bold text-foreground">{import.meta.env.VITE_APP_NAME || "baltek business"}</h2>
+          <h2 className="text-2xl font-bold text-foreground">{import.meta.env.VITE_APP_NAME || t('landing.appName')}</h2>
           <p className="text-muted-foreground mt-2">
-            {isProcessing ? "Completing sign in..." : "Redirecting..."}
+            {isProcessing ? t('auth.completingSignIn') : t('auth.redirecting')}
           </p>
         </CardHeader>
         <CardContent className="flex justify-center">
