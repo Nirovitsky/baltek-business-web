@@ -4,57 +4,40 @@ import { useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { apiService } from '@/lib/api';
 
-// Aggressive background prefetching when user is idle
-function useIdlePrefetch(queryClient: any, selectedOrganization: any) {
+// Smart background prefetching when user is idle - only fetch what's not already cached
+function useIdlePrefetch(queryClient: any, selectedOrganization: any, currentPath: string) {
   useEffect(() => {
     if (!selectedOrganization?.id) return;
     
     let idleTimer: NodeJS.Timeout;
     
     const startIdlePrefetch = () => {
-      // After 3 seconds of idle, start prefetching everything
+      // After 5 seconds of idle, start prefetching missing data only
       idleTimer = setTimeout(() => {
-        // Prefetch all possible data in background
-        const prefetchTasks = [
-          // Core app data
-          queryClient.prefetchQuery({
-            queryKey: ['/jobs/', selectedOrganization.id],
-            queryFn: () => apiService.request(`/jobs/?organization=${selectedOrganization.id}`),
-            staleTime: 2 * 60 * 1000,
-          }),
-          queryClient.prefetchQuery({
-            queryKey: ['/jobs/applications/', selectedOrganization.id],
-            queryFn: () => apiService.request(`/jobs/applications/?organization=${selectedOrganization.id}`),
-            staleTime: 2 * 60 * 1000,
-          }),
-          queryClient.prefetchQuery({
-            queryKey: ['/chat/rooms/'],
-            queryFn: () => apiService.request('/chat/rooms/'),
-            staleTime: 2 * 60 * 1000,
-          }),
-          queryClient.prefetchQuery({
-            queryKey: ['/notifications/', selectedOrganization.id],
-            queryFn: () => apiService.request(`/notifications/?organization=${selectedOrganization.id}`),
-            staleTime: 5 * 60 * 1000,
-          }),
-          // Form reference data
-          queryClient.prefetchQuery({
-            queryKey: ['/categories/'],
-            queryFn: () => apiService.request('/categories/'),
-            staleTime: 15 * 60 * 1000,
-          }),
-          queryClient.prefetchQuery({
-            queryKey: ['/locations/'],
-            queryFn: () => apiService.request('/locations/'),
-            staleTime: 15 * 60 * 1000,
-          }),
-        ];
+        const prefetchTasks: Promise<any>[] = [];
         
-        // Execute all prefetch tasks
-        Promise.allSettled(prefetchTasks).catch(() => {
-          // Silently handle any prefetch errors
-        });
-      }, 3000);
+        // Only prefetch core notifications if not on current route
+        if (currentPath !== '/notifications') {
+          const notificationKey = ['/notifications/', selectedOrganization.id];
+          const notificationCache = queryClient.getQueryData(notificationKey);
+          if (!notificationCache) {
+            prefetchTasks.push(
+              queryClient.prefetchQuery({
+                queryKey: notificationKey,
+                queryFn: () => apiService.request(`/notifications/?organization=${selectedOrganization.id}`),
+                staleTime: 5 * 60 * 1000,
+              })
+            );
+          }
+        }
+        
+        // Only execute if there are tasks to run
+        if (prefetchTasks.length > 0) {
+          Promise.allSettled(prefetchTasks).catch(() => {
+            // Silently handle any prefetch errors
+          });
+        }
+      }, 5000); // Increased delay to be less aggressive
     };
     
     const resetIdleTimer = () => {
@@ -85,32 +68,32 @@ export function usePrefetch() {
   const location = useLocation();
   const { selectedOrganization } = useAuth();
   
-  // Start aggressive background prefetching when idle
-  useIdlePrefetch(queryClient, selectedOrganization);
+  // Start smart background prefetching when idle
+  useIdlePrefetch(queryClient, selectedOrganization, location.pathname);
 
-  // Prefetch core data that's commonly needed across the app
-  const prefetchCoreData = useCallback(async () => {
+  // Only prefetch reference data when actually needed
+  const prefetchFormData = useCallback(() => {
     if (!selectedOrganization?.id) return;
 
-    // Prefetch reference data (categories, locations) - these rarely change
-    queryClient.prefetchQuery({
-      queryKey: ['/categories/'],
-      queryFn: () => apiService.request('/categories/'),
-      staleTime: 15 * 60 * 1000, // 15 minutes
-    });
+    // Only prefetch if not already cached
+    const categoriesKey = ['/categories/'];
+    const locationsKey = ['/locations/'];
+    
+    if (!queryClient.getQueryData(categoriesKey)) {
+      queryClient.prefetchQuery({
+        queryKey: categoriesKey,
+        queryFn: () => apiService.request('/categories/'),
+        staleTime: 15 * 60 * 1000,
+      });
+    }
 
-    queryClient.prefetchQuery({
-      queryKey: ['/locations/'],
-      queryFn: () => apiService.request('/locations/'),
-      staleTime: 15 * 60 * 1000, // 15 minutes
-    });
-
-    // Prefetch notifications in background
-    queryClient.prefetchQuery({
-      queryKey: ['/notifications/', selectedOrganization.id],
-      queryFn: () => apiService.request(`/notifications/?organization=${selectedOrganization.id}`),
-      staleTime: 5 * 60 * 1000, // 5 minutes
-    });
+    if (!queryClient.getQueryData(locationsKey)) {
+      queryClient.prefetchQuery({
+        queryKey: locationsKey,
+        queryFn: () => apiService.request('/locations/'),
+        staleTime: 15 * 60 * 1000,
+      });
+    }
   }, [queryClient, selectedOrganization?.id]);
 
   // Prefetch jobs data
@@ -124,99 +107,82 @@ export function usePrefetch() {
     });
   }, [queryClient, selectedOrganization?.id]);
 
-  // Prefetch applications data
-  const prefetchApplications = useCallback(async () => {
+  // Prefetch applications data with correct key to match Applications page
+  const prefetchApplications = useCallback(() => {
     if (!selectedOrganization?.id) return;
 
-    queryClient.prefetchQuery({
-      queryKey: ['/jobs/applications/', selectedOrganization.id],
-      queryFn: () => apiService.request(`/jobs/applications/?organization=${selectedOrganization.id}`),
-      staleTime: 2 * 60 * 1000, // 2 minutes
-    });
+    // Use same key structure as Applications page to avoid duplicates
+    const applicationsKey = ['/jobs/applications/', 'all', selectedOrganization.id];
+    if (!queryClient.getQueryData(applicationsKey)) {
+      queryClient.prefetchQuery({
+        queryKey: applicationsKey,
+        queryFn: () => apiService.request(`/jobs/applications/?organization=${selectedOrganization.id}`),
+        staleTime: 2 * 60 * 1000,
+      });
+    }
   }, [queryClient, selectedOrganization?.id]);
 
-  // Prefetch chat rooms
-  const prefetchChatRooms = useCallback(async () => {
-    queryClient.prefetchQuery({
-      queryKey: ['/chat/rooms/'],
-      queryFn: () => apiService.request('/chat/rooms/'),
-      staleTime: 2 * 60 * 1000, // 2 minutes
-    });
+  // Prefetch chat rooms only if not already cached
+  const prefetchChatRooms = useCallback(() => {
+    const roomsKey = ['/chat/rooms/'];
+    if (!queryClient.getQueryData(roomsKey)) {
+      queryClient.prefetchQuery({
+        queryKey: roomsKey,
+        queryFn: () => apiService.request('/chat/rooms/'),
+        staleTime: 2 * 60 * 1000,
+      });
+    }
   }, [queryClient]);
 
-  // Prefetch form reference data for job creation
-  const prefetchFormData = useCallback(async () => {
-    // Prefetch categories and locations for job creation forms
-    queryClient.prefetchQuery({
-      queryKey: ['/categories/'],
-      queryFn: () => apiService.request('/categories/'),
-      staleTime: 15 * 60 * 1000, // 15 minutes
-    });
-
-    queryClient.prefetchQuery({
-      queryKey: ['/locations/'],
-      queryFn: () => apiService.request('/locations/'),
-      staleTime: 15 * 60 * 1000, // 15 minutes
-    });
-  }, [queryClient]);
 
   // Smart prefetching based on current route
   useEffect(() => {
     const currentPath = location.pathname;
 
-    // Always prefetch core data
-    prefetchCoreData();
-
-    // Route-specific prefetching
+    // Smart route-specific prefetching - only what's needed
     switch (currentPath) {
       case '/':
         // From Dashboard, likely to go to Jobs or Applications
         setTimeout(() => {
           prefetchJobs();
           prefetchApplications();
-          prefetchFormData(); // Prefetch form data for quick job creation
-        }, 1000); // Delay to not interfere with current page load
+        }, 2000); // Delay to not interfere with current page load
         break;
 
       case '/jobs':
-        // From Jobs, likely to go to Applications or Chat
+      case '/jobs/create':
+        // From Jobs, prefetch form data and applications
         setTimeout(() => {
+          prefetchFormData(); // Only for job creation
           prefetchApplications();
-          prefetchChatRooms();
-        }, 1000);
+        }, 1500);
         break;
 
       case '/applications':
-        // From Applications, likely to go to Chat or Jobs
+        // From Applications, only prefetch chat rooms (no form data needed)
         setTimeout(() => {
           prefetchChatRooms();
-          prefetchJobs();
-        }, 1000);
+        }, 1500);
         break;
 
       case '/chat':
         // From Chat, likely to go back to Applications
         setTimeout(() => {
           prefetchApplications();
-        }, 1000);
+        }, 1500);
         break;
 
       default:
-        // For other routes, prefetch commonly accessed data
-        setTimeout(() => {
-          prefetchJobs();
-          prefetchApplications();
-        }, 2000); // Longer delay for less common routes
+        // For other routes, minimal prefetching
         break;
     }
-  }, [location.pathname, prefetchCoreData, prefetchJobs, prefetchApplications, prefetchChatRooms]);
+  }, [location.pathname, prefetchJobs, prefetchApplications, prefetchChatRooms, prefetchFormData]);
 
   // Return individual prefetch functions for manual triggering
   return {
     prefetchJobs,
     prefetchApplications,
     prefetchChatRooms,
-    prefetchCoreData,
     prefetchFormData,
   };
 }
@@ -229,77 +195,88 @@ export function useHoverPrefetch() {
   const prefetchRoute = useCallback((route: string) => {
     if (!selectedOrganization?.id) return;
     
-    console.log(`[Prefetch] Attempting to prefetch route: ${route}`);
 
     const prefetchMap: Record<string, () => void> = {
       '/jobs': () => {
-        console.log(`[Prefetch] Fetching jobs for organization: ${selectedOrganization.id}`);
-        queryClient.prefetchQuery({
-          queryKey: ['/jobs/', selectedOrganization.id],
-          queryFn: () => apiService.request(`/jobs/?organization=${selectedOrganization.id}`),
-          staleTime: 2 * 60 * 1000,
-        });
-        // Also prefetch form data for job creation
-        queryClient.prefetchQuery({
-          queryKey: ['/categories/'],
-          queryFn: () => apiService.request('/categories/'),
-          staleTime: 15 * 60 * 1000,
-        });
-        queryClient.prefetchQuery({
-          queryKey: ['/locations/'],
-          queryFn: () => apiService.request('/locations/'),
-          staleTime: 15 * 60 * 1000,
-        });
+        const jobsKey = ['/jobs/', selectedOrganization.id];
+        if (!queryClient.getQueryData(jobsKey)) {
+          queryClient.prefetchQuery({
+            queryKey: jobsKey,
+            queryFn: () => apiService.request(`/jobs/?organization=${selectedOrganization.id}`),
+            staleTime: 2 * 60 * 1000,
+          });
+        }
       },
       '/applications': () => {
-        console.log(`[Prefetch] Fetching applications for organization: ${selectedOrganization.id}`);
-        queryClient.prefetchQuery({
-          queryKey: ['/jobs/applications/', selectedOrganization.id],
-          queryFn: () => apiService.request(`/jobs/applications/?organization=${selectedOrganization.id}`),
-          staleTime: 2 * 60 * 1000,
-        });
+        const applicationsKey = ['/jobs/applications/', 'all', selectedOrganization.id];
+        if (!queryClient.getQueryData(applicationsKey)) {
+          queryClient.prefetchQuery({
+            queryKey: applicationsKey,
+            queryFn: () => apiService.request(`/jobs/applications/?organization=${selectedOrganization.id}`),
+            staleTime: 2 * 60 * 1000,
+          });
+        }
       },
       '/chat': () => {
-        queryClient.prefetchQuery({
-          queryKey: ['/chat/rooms/'],
-          queryFn: () => apiService.request('/chat/rooms/'),
-          staleTime: 2 * 60 * 1000,
-        });
+        const roomsKey = ['/chat/rooms/'];
+        if (!queryClient.getQueryData(roomsKey)) {
+          queryClient.prefetchQuery({
+            queryKey: roomsKey,
+            queryFn: () => apiService.request('/chat/rooms/'),
+            staleTime: 2 * 60 * 1000,
+          });
+        }
       },
       '/notifications': () => {
-        queryClient.prefetchQuery({
-          queryKey: ['/notifications/', selectedOrganization.id],
-          queryFn: () => apiService.request(`/notifications/?organization=${selectedOrganization.id}`),
-          staleTime: 5 * 60 * 1000,
-        });
+        const notificationsKey = ['/notifications/', selectedOrganization.id];
+        if (!queryClient.getQueryData(notificationsKey)) {
+          queryClient.prefetchQuery({
+            queryKey: notificationsKey,
+            queryFn: () => apiService.request(`/notifications/?organization=${selectedOrganization.id}`),
+            staleTime: 5 * 60 * 1000,
+          });
+        }
       },
       '/organization': () => {
-        console.log(`[Prefetch] Fetching organizations data`);
-        queryClient.prefetchQuery({
-          queryKey: ['/organizations/', 'owned'],
-          queryFn: () => apiService.request('/organizations/?owned=true'),
-          staleTime: 5 * 60 * 1000,
-        });
+        const orgsKey = ['/organizations/', 'owned'];
+        if (!queryClient.getQueryData(orgsKey)) {
+          queryClient.prefetchQuery({
+            queryKey: orgsKey,
+            queryFn: () => apiService.request('/organizations/?owned=true'),
+            staleTime: 5 * 60 * 1000,
+          });
+        }
       },
       '/profile': () => {
-        queryClient.prefetchQuery({
-          queryKey: ['/organizations/', 'owned'],
-          queryFn: () => apiService.request('/organizations/?owned=true'),
-          staleTime: 5 * 60 * 1000,
-        });
+        const orgsKey = ['/organizations/', 'owned'];
+        if (!queryClient.getQueryData(orgsKey)) {
+          queryClient.prefetchQuery({
+            queryKey: orgsKey,
+            queryFn: () => apiService.request('/organizations/?owned=true'),
+            staleTime: 5 * 60 * 1000,
+          });
+        }
       },
       '/jobs/create': () => {
-        // Prefetch form data for job creation
-        queryClient.prefetchQuery({
-          queryKey: ['/categories/'],
-          queryFn: () => apiService.request('/categories/'),
-          staleTime: 15 * 60 * 1000,
-        });
-        queryClient.prefetchQuery({
-          queryKey: ['/locations/'],
-          queryFn: () => apiService.request('/locations/'),
-          staleTime: 15 * 60 * 1000,
-        });
+        // Prefetch form data for job creation only if not cached
+        const categoriesKey = ['/categories/'];
+        const locationsKey = ['/locations/'];
+        
+        if (!queryClient.getQueryData(categoriesKey)) {
+          queryClient.prefetchQuery({
+            queryKey: categoriesKey,
+            queryFn: () => apiService.request('/categories/'),
+            staleTime: 15 * 60 * 1000,
+          });
+        }
+        
+        if (!queryClient.getQueryData(locationsKey)) {
+          queryClient.prefetchQuery({
+            queryKey: locationsKey,
+            queryFn: () => apiService.request('/locations/'),
+            staleTime: 15 * 60 * 1000,
+          });
+        }
       },
       '/settings': () => {
         // Settings page doesn't need much data, maybe user preferences in the future
@@ -310,12 +287,14 @@ export function useHoverPrefetch() {
     if (route.startsWith('/jobs/') && route !== '/jobs' && route !== '/jobs/create') {
       const jobId = route.split('/')[2];
       if (jobId && /^\d+$/.test(jobId)) {
-        console.log(`[Prefetch] Fetching individual job details: ${jobId}`);
-        queryClient.prefetchQuery({
-          queryKey: ['/jobs/', jobId, 'details'],
-          queryFn: () => apiService.request(`/jobs/${jobId}/`),
-          staleTime: 5 * 60 * 1000, // 5 minutes
-        });
+        const jobKey = ['/jobs/', jobId, 'details'];
+        if (!queryClient.getQueryData(jobKey)) {
+          queryClient.prefetchQuery({
+            queryKey: jobKey,
+            queryFn: () => apiService.request(`/jobs/${jobId}/`),
+            staleTime: 5 * 60 * 1000,
+          });
+        }
         
         // Also prefetch applications for this job (with error handling)
         queryClient.prefetchQuery({
@@ -339,12 +318,14 @@ export function useHoverPrefetch() {
     if (route.startsWith('/applications/') && route !== '/applications') {
       const applicationId = route.split('/')[2];
       if (applicationId && /^\d+$/.test(applicationId)) {
-        console.log(`[Prefetch] Fetching individual application details: ${applicationId}`);
-        queryClient.prefetchQuery({
-          queryKey: ['/jobs/applications/', applicationId, 'details'],
-          queryFn: () => apiService.request(`/jobs/applications/${applicationId}/`),
-          staleTime: 5 * 60 * 1000, // 5 minutes
-        });
+        const appKey = ['/jobs/applications/', applicationId, 'details'];
+        if (!queryClient.getQueryData(appKey)) {
+          queryClient.prefetchQuery({
+            queryKey: appKey,
+            queryFn: () => apiService.request(`/jobs/applications/${applicationId}/`),
+            staleTime: 5 * 60 * 1000,
+          });
+        }
         return;
       }
     }
@@ -353,22 +334,21 @@ export function useHoverPrefetch() {
     if (route.startsWith('/user/') && route !== '/user') {
       const userId = route.split('/')[2];
       if (userId && /^\d+$/.test(userId)) {
-        console.log(`[Prefetch] Fetching user profile: ${userId}`);
-        queryClient.prefetchQuery({
-          queryKey: ['/users/', userId],
-          queryFn: () => apiService.request(`/users/${userId}/`),
-          staleTime: 5 * 60 * 1000, // 5 minutes
-        });
+        const userKey = ['/users/', userId];
+        if (!queryClient.getQueryData(userKey)) {
+          queryClient.prefetchQuery({
+            queryKey: userKey,
+            queryFn: () => apiService.request(`/users/${userId}/`),
+            staleTime: 5 * 60 * 1000,
+          });
+        }
         return;
       }
     }
 
     const prefetchFn = prefetchMap[route];
     if (prefetchFn) {
-      console.log(`[Prefetch] Executing prefetch for: ${route}`);
       prefetchFn();
-    } else {
-      console.log(`[Prefetch] No prefetch function found for route: ${route}`);
     }
   }, [queryClient, selectedOrganization?.id]);
 
