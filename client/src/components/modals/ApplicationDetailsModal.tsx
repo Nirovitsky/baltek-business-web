@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { apiService } from "@/lib/api";
 import type { JobApplication } from "@/types";
 import { format } from "date-fns";
+import { useTranslation } from 'react-i18next';
 
 interface ApplicationDetailsModalProps {
   application: JobApplication | null;
@@ -22,6 +23,7 @@ export default function ApplicationDetailsModal({
   isOpen, 
   onClose 
 }: ApplicationDetailsModalProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -51,7 +53,7 @@ export default function ApplicationDetailsModal({
   };
 
   const formatDate = (dateString: string | number) => {
-    if (!dateString) return 'Not specified';
+    if (!dateString) return t('modals.notSpecified');
     try {
       let date: Date;
       
@@ -65,10 +67,10 @@ export default function ApplicationDetailsModal({
         date = new Date(dateString as string);
       }
       
-      if (isNaN(date.getTime())) return 'Not specified';
+      if (isNaN(date.getTime())) return t('modals.notSpecified');
       return format(date, 'MMMM d, yyyy');
     } catch {
-      return 'Not specified';
+      return t('modals.notSpecified');
     }
   };
 
@@ -106,7 +108,7 @@ export default function ApplicationDetailsModal({
                   : `Candidate #${application.id}`}
               </h2>
               <p className="text-sm text-muted-foreground">
-                Application for {typeof application.job === 'object' ? application.job.title : `Job #${application.job}`}
+                {t('modals.applicationFor')} {typeof application.job === 'object' ? application.job.title : `Job #${application.job}`}
               </p>
             </div>
           </DialogTitle>
@@ -123,7 +125,7 @@ export default function ApplicationDetailsModal({
             {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">Contact Information</h3>
+                <h3 className="text-lg font-semibold text-foreground">{t('modals.contactInformation')}</h3>
                 <div className="space-y-2">
                   {(detailedApplication?.owner as any)?.profession && (
                     <div className="flex items-center space-x-2">
@@ -133,16 +135,16 @@ export default function ApplicationDetailsModal({
                   )}
                   <div className="flex items-center space-x-2">
                     <MapPin className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm">{typeof application.job === 'object' && application.job?.location ? (typeof application.job.location === 'object' ? (application.job.location as any).name : application.job.location) : 'Location not specified'}</span>
+                    <span className="text-sm">{typeof application.job === 'object' && application.job?.location ? (typeof application.job.location === 'object' ? (application.job.location as any).name : application.job.location) : t('modals.locationNotSpecified')}</span>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">Application Status</h3>
+                <h3 className="text-lg font-semibold text-foreground">{t('modals.applicationStatus')}</h3>
                 <div className="space-y-2">
                   <Badge variant="secondary" className={`${getStatusColor(application.status)} text-sm`}>
-                    {application.status ? application.status.charAt(0).toUpperCase() + application.status.slice(1) : 'Unknown'}
+                    {application.status ? application.status.charAt(0).toUpperCase() + application.status.slice(1) : t('modals.unknown')}
                   </Badge>
                 </div>
               </div>
@@ -153,7 +155,7 @@ export default function ApplicationDetailsModal({
               <div className="space-y-3">
                 <h3 className="text-lg font-semibold text-foreground flex items-center space-x-2">
                   <FileText className="w-5 h-5" />
-                  <span>Cover Letter</span>
+                  <span>{t('modals.coverLetter')}</span>
                 </h3>
                 <div className="bg-muted/50 p-4 rounded-lg">
                   <p className="text-sm whitespace-pre-wrap">{detailedApplication.cover_letter}</p>
@@ -166,7 +168,7 @@ export default function ApplicationDetailsModal({
               <div className="space-y-3">
                 <h3 className="text-lg font-semibold text-foreground flex items-center space-x-2">
                   <FileText className="w-5 h-5" />
-                  <span>Resume</span>
+                  <span>{t('modals.resume')}</span>
                 </h3>
                 <div className="flex items-center space-x-3">
                   <Button
@@ -174,9 +176,9 @@ export default function ApplicationDetailsModal({
                     size="sm"
                     onClick={() => window.open(detailedApplication.resume, '_blank')}
                   >
-                    View Resume
+                    {t('modals.viewResume')}
                   </Button>
-                  <span className="text-sm text-muted-foreground">PDF Document</span>
+                  <span className="text-sm text-muted-foreground">{t('modals.pdfDocument')}</span>
                 </div>
               </div>
             )}
@@ -185,7 +187,7 @@ export default function ApplicationDetailsModal({
             <div className="flex items-center space-x-3 pt-4 border-t">
               <Button onClick={handleSendMessage} className="flex items-center space-x-2">
                 <MessageCircle className="w-4 h-4" />
-                <span>Send Message</span>
+                <span>{t('modals.sendMessage')}</span>
               </Button>
               <Button 
                 variant="outline"
@@ -194,7 +196,7 @@ export default function ApplicationDetailsModal({
                   onClose();
                 }}
               >
-                View Profile
+                {t('modals.viewProfile')}
               </Button>
             </div>
           </div>

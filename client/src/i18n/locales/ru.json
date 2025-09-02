@@ -533,5 +533,36 @@
   "currencies": {
     "TMT": "TMT (Туркменский манат)",
     "USD": "USD (Доллар США)"
+  },
+  "modals": {
+    "jobDetails": "Детали вакансии",
+    "archive": "Архивировать",
+    "unarchive": "Разархивировать",
+    "jobDescription": "Описание вакансии",
+    "compensation": "Компенсация",
+    "educationRequired": "Требуемое образование",
+    "requiredLanguages": "Требуемые языки",
+    "jobType": "Тип работы:",
+    "workplace": "Рабочее место:",
+    "startDate": "Дата начала:",
+    "endDate": "Дата окончания:",
+    "notSpecified": "Не указано",
+    "applications": "заявок",
+    "applicationFor": "Заявка на",
+    "contactInformation": "Контактная информация",
+    "applicationStatus": "Статус заявки",
+    "coverLetter": "Сопроводительное письмо",
+    "resume": "Резюме",
+    "viewResume": "Посмотреть резюме",
+    "pdfDocument": "PDF документ",
+    "sendMessage": "Отправить сообщение",
+    "viewProfile": "Посмотреть профиль",
+    "locationNotSpecified": "Местоположение не указано",
+    "unknown": "Неизвестно",
+    "success": "Успешно",
+    "error": "Ошибка",
+    "jobArchived": "Вакансия успешно архивирована",
+    "jobUnarchived": "Вакансия успешно разархивирована",
+    "failedToUpdateJobStatus": "Не удалось обновить статус вакансии"
   }
 }

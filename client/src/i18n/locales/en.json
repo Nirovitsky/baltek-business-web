@@ -534,5 +534,36 @@
   "currencies": {
     "TMT": "TMT (Turkmenistan Manat)",
     "USD": "USD (US Dollar)"
+  },
+  "modals": {
+    "jobDetails": "Job Details",
+    "archive": "Archive",
+    "unarchive": "Unarchive",
+    "jobDescription": "Job Description",
+    "compensation": "Compensation",
+    "educationRequired": "Education Required",
+    "requiredLanguages": "Required Languages",
+    "jobType": "Job Type:",
+    "workplace": "Workplace:",
+    "startDate": "Start Date:",
+    "endDate": "End Date:",
+    "notSpecified": "Not specified",
+    "applications": "applications",
+    "applicationFor": "Application for",
+    "contactInformation": "Contact Information",
+    "applicationStatus": "Application Status",
+    "coverLetter": "Cover Letter",
+    "resume": "Resume",
+    "viewResume": "View Resume",
+    "pdfDocument": "PDF Document",
+    "sendMessage": "Send Message",
+    "viewProfile": "View Profile",
+    "locationNotSpecified": "Location not specified",
+    "unknown": "Unknown",
+    "success": "Success",
+    "error": "Error",
+    "jobArchived": "Job archived successfully",
+    "jobUnarchived": "Job unarchived successfully",
+    "failedToUpdateJobStatus": "Failed to update job status"
   }
 }

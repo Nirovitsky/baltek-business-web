@@ -529,5 +529,36 @@
   "currencies": {
     "TMT": "TMT (Türkmen manady)",
     "USD": "USD (ABŞ dollary)"
+  },
+  "modals": {
+    "jobDetails": "Iş ýeriniň jikme-jiklikleri",
+    "archive": "Arhiwle",
+    "unarchive": "Arhiwden çykar",
+    "jobDescription": "Iş ýeriniň düşündirişi",
+    "compensation": "Kompensasiýa",
+    "educationRequired": "Talap edilýän bilim",
+    "requiredLanguages": "Talap edilýän diller",
+    "jobType": "Işiň görnüşi:",
+    "workplace": "Iş ýeri:",
+    "startDate": "Başlama senesi:",
+    "endDate": "Gutarýan senesi:",
+    "notSpecified": "Kesgitlenmedik",
+    "applications": "arzalar",
+    "applicationFor": "üçin arza",
+    "contactInformation": "Habarlaşmak üçin maglumat",
+    "applicationStatus": "Arzanyň ýagdaýy",
+    "coverLetter": "Arza haty",
+    "resume": "Rezýume",
+    "viewResume": "Rezýume gör",
+    "pdfDocument": "PDF faýly",
+    "sendMessage": "Habar iber",
+    "viewProfile": "Profili gör",
+    "locationNotSpecified": "Ýerleşiş kesgitlenmedik",
+    "unknown": "Näbelli",
+    "success": "Üstünlik",
+    "error": "Näsazlyk",
+    "jobArchived": "Iş ýeri üstünlikli arhiwlendi",
+    "jobUnarchived": "Iş ýeri üstünlikli arhiwden çykaryldy",
+    "failedToUpdateJobStatus": "Iş ýeriniň ýagdaýyny täzeläp bolmady"
   }
 }
