@@ -25,6 +25,7 @@ export default function Jobs() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [jobToDelete, setJobToDelete] = useState<number | null>(null);
+  const [jobToArchive, setJobToArchive] = useState<{ id: number; status: string } | null>(null);
   
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -164,7 +165,14 @@ export default function Jobs() {
   });
 
   const handleArchiveJob = (job: Job) => {
-    archiveJobMutation.mutate({ jobId: job.id, currentStatus: job.status || 'open' });
+    setJobToArchive({ id: job.id, status: job.status || 'open' });
+  };
+
+  const confirmArchiveJob = () => {
+    if (jobToArchive) {
+      archiveJobMutation.mutate({ jobId: jobToArchive.id, currentStatus: jobToArchive.status });
+      setJobToArchive(null);
+    }
   };
 
   const formatDate = (timestamp?: number | string) => {
@@ -496,6 +504,30 @@ export default function Jobs() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {t('common.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Archive Confirmation Dialog */}
+      <AlertDialog open={!!jobToArchive} onOpenChange={() => setJobToArchive(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('common.confirm')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {jobToArchive?.status === 'archived' 
+                ? 'Are you sure you want to unarchive this job posting? It will become active again.'
+                : 'Are you sure you want to archive this job posting? It will no longer be visible to candidates.'
+              }
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmArchiveJob}
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              {jobToArchive?.status === 'archived' ? t('common.unarchive') : t('common.archive')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
