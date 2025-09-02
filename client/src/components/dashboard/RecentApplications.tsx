@@ -9,7 +9,6 @@ import { useTranslation } from 'react-i18next';
 import { apiService } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { useHoverPrefetch } from "@/hooks/usePrefetch";
 import type { JobApplication, PaginatedResponse } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format, parseISO, isValid } from "date-fns";
@@ -19,7 +18,6 @@ export default function RecentApplications() {
   const { t } = useTranslation();
   const { selectedOrganization } = useAuth();
   const navigate = useNavigate();
-  const { prefetchRoute } = useHoverPrefetch();
   const [selectedApplication, setSelectedApplication] = useState<JobApplication | null>(null);
 
   const { data, isLoading, error } = useQuery({
@@ -138,7 +136,6 @@ export default function RecentApplications() {
             variant="ghost" 
             size="sm" 
             onClick={() => navigate('/applications')}
-            onMouseEnter={() => prefetchRoute('/applications')}
           >
             {t('dashboard.viewAll')}
           </Button>
@@ -157,16 +154,6 @@ export default function RecentApplications() {
                 key={application.id} 
                 className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-background transition-colors cursor-pointer"
                 onClick={() => setSelectedApplication(application)}
-                onMouseEnter={() => {
-                  // Prefetch detailed application data
-                  if (application.id) {
-                    prefetchRoute(`/applications/${application.id}`);
-                  }
-                  // Prefetch user profile data if available
-                  if (application.owner?.id) {
-                    prefetchRoute(`/user/${application.owner.id}`);
-                  }
-                }}
               >
                 <div 
                   className="flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"

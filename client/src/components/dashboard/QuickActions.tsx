@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, ClipboardList, MessageCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useHoverPrefetch } from "@/hooks/usePrefetch";
 
 interface QuickActionsProps {
   onReviewApplications?: () => void;
@@ -17,7 +16,6 @@ export default function QuickActions({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { selectedOrganization } = useAuth();
-  const { prefetchRoute } = useHoverPrefetch();
 
   const handleCreateJob = () => {
     if (selectedOrganization?.is_public === false) {
@@ -66,20 +64,6 @@ export default function QuickActions({
               <button
                 key={index}
                 onClick={action.onClick}
-                onMouseEnter={() => {
-                  if (!action.disabled) {
-                    if (action.title === t('navigation.createJob')) {
-                      prefetchRoute('/jobs');
-                      prefetchRoute('/jobs/create'); // Also prefetch create form data
-                    }
-                    if (action.title === t('applications.title')) {
-                      prefetchRoute('/applications');
-                    }
-                    if (action.title === t('chat.title')) {
-                      prefetchRoute('/chat');
-                    }
-                  }
-                }}
                 disabled={action.disabled}
                 className={`flex items-center p-4 border-2 border-dashed rounded-lg transition-colors text-left ${
                   action.disabled 

@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { apiService } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { useHoverPrefetch } from "@/hooks/usePrefetch";
 import type { Job, PaginatedResponse } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
@@ -25,7 +24,6 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
   const { t } = useTranslation();
   const { selectedOrganization } = useAuth();
   const navigate = useNavigate();
-  const { prefetchRoute } = useHoverPrefetch();
 
   const formatDate = (timestamp?: number | string) => {
     if (!timestamp) return 'No date';
@@ -140,7 +138,6 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
             variant="ghost" 
             size="sm" 
             onClick={() => navigate('/jobs')}
-            onMouseEnter={() => prefetchRoute('/jobs')}
           >
             {t('dashboard.viewAll')}
           </Button>
@@ -164,7 +161,6 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
                   key={job.id} 
                   className="flex items-start space-x-4 p-4 border rounded-lg hover:bg-background transition-colors cursor-pointer"
                   onClick={() => onJobClick?.(job.id)}
-                  onMouseEnter={() => prefetchRoute(`/jobs/${job.id}`)}
                 >
                   <div className="flex-1">
                     <h4 className="font-medium text-foreground">{job.title}</h4>
