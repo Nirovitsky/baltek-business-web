@@ -51,6 +51,8 @@ export default function OAuth2Login() {
             </span>
           </div>
           <div className="flex items-center gap-4">
+            <ThemeToggle />
+            <LanguageSelector variant="compact" />
             <Button 
               onClick={handleLogin} 
               className="h-12 px-8 bg-gradient-to-r from-[#1877F2] to-[#0056D3] hover:from-[#1565C0] hover:to-[#0040A1] text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-[#1877F2]/25 border-0" 
@@ -69,8 +71,6 @@ export default function OAuth2Login() {
                 </span>
               )}
             </Button>
-            <ThemeToggle />
-            <LanguageSelector variant="compact" />
           </div>
         </div>
       </header>
