@@ -103,7 +103,22 @@
     "fileFormatLimit": "PNG, JPG 5 MB çenli",
     "back": "Yza",
     "createOrganization": "Gurama döret",
-    "creating": "Döredilýär..."
+    "creating": "Döredilýär...",
+    "projects": "Taslamalar",
+    "projectsDescription": "Guramaňyzyň esasy taslamalaryny we üstünliklerini görkeziň.",
+    "projectsStepDescription": "Işiňizi görkezmek üçin guramaňyzyň taslamalaryny goşuň",
+    "addProject": "Taslama goş",
+    "noProjectsYet": "Heniz taslama goşulmady",
+    "addFirstProject": "Işiňizi görkezmek üçin ilkinji taslamaňyzy goşuň",
+    "project": "Taslama",
+    "projectTitle": "Taslama ady",
+    "projectTitlePlaceholder": "Taslama adyny giriziň",
+    "projectLink": "Taslama baglanyşygy",
+    "projectLinkPlaceholder": "https://example.com",
+    "projectDescription": "Düşündiriş",
+    "projectDescriptionPlaceholder": "Taslamany we siziň roluňyzy beýan ediň",
+    "startDate": "Başlangyç senesi",
+    "endDate": "Gutarýan senesi"
   },
   "dashboard": {
     "title": "Dolandyryş paneli",

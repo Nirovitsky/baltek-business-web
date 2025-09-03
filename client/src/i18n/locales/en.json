@@ -144,7 +144,22 @@
     "fileFormatLimit": "PNG, JPG up to 5MB",
     "back": "Back",
     "createOrganization": "Create Organization",
-    "creating": "Creating..."
+    "creating": "Creating...",
+    "projects": "Projects",
+    "projectsDescription": "Showcase your organization's key projects and achievements.",
+    "projectsStepDescription": "Add your organization's projects to showcase your work",
+    "addProject": "Add Project",
+    "noProjectsYet": "No projects added yet",
+    "addFirstProject": "Add your first project to showcase your work",
+    "project": "Project",
+    "projectTitle": "Project Title",
+    "projectTitlePlaceholder": "Enter project title",
+    "projectLink": "Project Link",
+    "projectLinkPlaceholder": "https://example.com",
+    "projectDescription": "Description",
+    "projectDescriptionPlaceholder": "Describe the project and your role",
+    "startDate": "Start Date",
+    "endDate": "End Date"
   },
   "dashboard": {
     "title": "Dashboard",

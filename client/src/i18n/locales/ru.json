@@ -103,7 +103,22 @@
     "fileFormatLimit": "PNG, JPG до 5 МБ",
     "back": "Назад",
     "createOrganization": "Создать организацию",
-    "creating": "Создание..."
+    "creating": "Создание...",
+    "projects": "Проекты",
+    "projectsDescription": "Покажите ключевые проекты и достижения вашей организации.",
+    "projectsStepDescription": "Добавьте проекты вашей организации, чтобы продемонстрировать вашу работу",
+    "addProject": "Добавить проект",
+    "noProjectsYet": "Проекты еще не добавлены",
+    "addFirstProject": "Добавьте свой первый проект, чтобы продемонстрировать свою работу",
+    "project": "Проект",
+    "projectTitle": "Название проекта",
+    "projectTitlePlaceholder": "Введите название проекта",
+    "projectLink": "Ссылка на проект",
+    "projectLinkPlaceholder": "https://example.com",
+    "projectDescription": "Описание",
+    "projectDescriptionPlaceholder": "Опишите проект и вашу роль",
+    "startDate": "Дата начала",
+    "endDate": "Дата окончания"
   },
   "dashboard": {
     "title": "Панель управления",
