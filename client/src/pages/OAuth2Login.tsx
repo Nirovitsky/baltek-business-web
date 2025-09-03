@@ -10,6 +10,7 @@ import {
   Briefcase,
   MessageCircle,
   ChevronRight,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LanguageSelector } from "@/components/ui/language-selector";
@@ -62,20 +63,21 @@ export default function OAuth2Login() {
             <LanguageSelector variant="compact" />
             <Button
               onClick={handleLogin}
-              className="h-12 px-8 bg-gradient-to-r from-[#1877F2] to-[#0056D3] hover:from-[#1565C0] hover:to-[#0040A1] text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-[#1877F2]/25 border-0"
+              variant="default"
+              size="lg"
               disabled={isSigningIn}
             >
               {isSigningIn ? (
-                <span className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
                   {t("auth.loggingIn")}
-                </span>
+                </>
               ) : (
-                <span className="flex items-center gap-2">
+                <>
                   <ExternalLink className="w-4 h-4" />
                   {t("auth.loginButton")}
                   <ChevronRight className="w-4 h-4" />
-                </span>
+                </>
               )}
             </Button>
           </div>
