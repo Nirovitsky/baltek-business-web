@@ -6,16 +6,14 @@ import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-export default defineConfig(async (config) => ({
+export default defineConfig({
   plugins: [
     react(),
     runtimeErrorOverlay(),
-    ...(process.env.NODE_ENV !== "production" &&
-    process.env.REPL_ID !== undefined
-      ? [
-          (await import("@replit/vite-plugin-cartographer")).cartographer(),
-        ]
-      : []),
+    // Replit plugins only in development
+    process.env.NODE_ENV !== "production" && process.env.REPL_ID
+      ? (await import("@replit/vite-plugin-cartographer")).cartographer()
+      : null
   ],
   resolve: {
     alias: {
@@ -38,4 +36,4 @@ export default defineConfig(async (config) => ({
     host: "0.0.0.0",
     port: 5000,
   },
-}));
+});
