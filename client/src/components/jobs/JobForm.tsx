@@ -293,7 +293,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
                     value={field.value ? field.value.toString() : ''}
                     onChange={(e) => {
                       const value = e.target.value;
-                      if (value === '' || value === '0') {
+                      if (value === '') {
                         field.onChange(undefined);
                       } else {
                         field.onChange(Number(value));
@@ -319,7 +319,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
                     value={field.value ? field.value.toString() : ''}
                     onChange={(e) => {
                       const value = e.target.value;
-                      if (value === '' || value === '0') {
+                      if (value === '') {
                         field.onChange(undefined);
                       } else {
                         field.onChange(Number(value));
