@@ -33,7 +33,9 @@
     "success": "Üstünlik",
     "error": "Näsazlyk",
     "archive": "Arhiw",
-    "unarchive": "Arhiwden çykar"
+    "unarchive": "Arhiwden çykar",
+    "toggleSidebar": "Gar panelini üýtget",
+    "present": "Häzirki wagt"
   },
   "errors": {
     "fileTooLarge": "Faýl gaty uly",
@@ -406,6 +408,15 @@
     "changeLogo": "Logo üýtgediň",
     "logoUpdated": "Logo üstünlikli täzelendi"
   },
+  "userProfile": {
+    "title": "Ulanyjynyň profili",
+    "myProfile": "Meniň profilim",
+    "userNotFound": "Ulanyjy tapylmady",
+    "loadingUserInfo": "Ulanyjy maglumaty ýüklenýär...",
+    "managePersonalInfo": "Şahsy maglumat dolandyrmak",
+    "noProfileInfo": "Profil maglumaty tapylmady",
+    "completeProfileMessage": "Tejribekni gowulaşdyrmak üçin profiliňizi dolduryň"
+  },
   "settings": {
     "title": "Sazlamalar",
     "description": "Hasap sazlamalaryny we islegleriňizi dolandyryň",
@@ -558,6 +569,9 @@
   },
   "forms": {
     "required": "Bu meýdan hökmanydyr",
+    "invalidType": "Nädogry giriş görnüşi",
+    "firstNameRequired": "At hökmandyr",
+    "lastNameRequired": "Familiýa hökmandyr",
     "invalidEmail": "Dogry email adresini giriziň",
     "invalidPhone": "Dogry telefon belgisini giriziň",
     "invalidUrl": "Dogry URL giriziň",

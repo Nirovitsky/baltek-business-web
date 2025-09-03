@@ -35,9 +35,9 @@ import { z } from "zod";
 import type { User as UserType, UserExperience, UserEducation, UserProject, UserResume } from "@/types";
 
 const profileUpdateSchema = z.object({
-  first_name: z.string().min(1, "First name is required"),
-  last_name: z.string().min(1, "Last name is required"),
-  email: z.string().email("Invalid email address").optional(),
+  first_name: z.string().min(1),
+  last_name: z.string().min(1),
+  email: z.string().email().optional(),
 });
 
 type ProfileUpdate = z.infer<typeof profileUpdateSchema>;
@@ -63,7 +63,10 @@ export default function Profile() {
   });
 
   const form = useForm<ProfileUpdate>({
-    resolver: zodResolver(profileUpdateSchema),
+    resolver: zodResolver(profileUpdateSchema, {}, {
+      required_error: t('forms.required'),
+      invalid_type_error: t('forms.invalidType'),
+    }),
     defaultValues: {
       first_name: "",
       last_name: "",
@@ -151,8 +154,8 @@ export default function Profile() {
     return (
       <div className="flex-1 flex flex-col overflow-hidden">
         <TopBar
-          title="My Profile"
-          description="Manage your personal information"
+          title={t('userProfile.myProfile')}
+          description={t('userProfile.managePersonalInfo')}
           showCreateButton={false}
         />
         <main className="flex-1 overflow-y-auto p-6">
@@ -183,17 +186,17 @@ export default function Profile() {
     return (
       <div className="flex-1 flex flex-col overflow-hidden">
         <TopBar
-          title="My Profile"
-          description="Manage your personal information"
+          title={t('userProfile.myProfile')}
+          description={t('userProfile.managePersonalInfo')}
           showCreateButton={false}
         />
         <main className="flex-1 overflow-y-auto p-6">
           <div className="max-w-4xl mx-auto">
             <Card>
               <CardContent className="text-center py-8">
-                <p className="text-muted-foreground">No profile information found</p>
+                <p className="text-muted-foreground">{t('userProfile.noProfileInfo')}</p>
                 <p className="text-sm text-gray-400 mt-2">
-                  Complete your profile to enhance your experience
+                  {t('userProfile.completeProfileMessage')}
                 </p>
               </CardContent>
             </Card>

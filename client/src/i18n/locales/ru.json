@@ -33,7 +33,9 @@
     "success": "Успешно",
     "error": "Ошибка",
     "archive": "Архивировать",
-    "unarchive": "Разархивировать"
+    "unarchive": "Разархивировать",
+    "toggleSidebar": "Переключить боковую панель",
+    "present": "Настоящее время"
   },
   "errors": {
     "fileTooLarge": "Файл слишком большой",
@@ -410,6 +412,15 @@
     "changeLogo": "Изменить логотип",
     "logoUpdated": "Логотип успешно обновлен"
   },
+  "userProfile": {
+    "title": "Профиль пользователя",
+    "myProfile": "Мой профиль",
+    "userNotFound": "Пользователь не найден",
+    "loadingUserInfo": "Загрузка информации о пользователе...",
+    "managePersonalInfo": "Управление личной информацией",
+    "noProfileInfo": "Информация профиля не найдена",
+    "completeProfileMessage": "Заполните свой профиль для улучшения опыта"
+  },
   "settings": {
     "title": "Настройки",
     "description": "Управление настройками аккаунта и предпочтениями",
@@ -562,6 +573,9 @@
   },
   "forms": {
     "required": "Это поле обязательно",
+    "invalidType": "Неверный тип ввода",
+    "firstNameRequired": "Имя обязательно",
+    "lastNameRequired": "Фамилия обязательна",
     "invalidEmail": "Введите корректный email адрес",
     "invalidPhone": "Введите корректный номер телефона",
     "invalidUrl": "Введите корректный URL",

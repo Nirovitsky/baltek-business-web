@@ -75,7 +75,7 @@ export default function UserProfile() {
   if (!userId) {
     return (
       <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar title="User Profile" description="User not found" />
+        <TopBar title={t('userProfile.title')} description={t('userProfile.userNotFound')} />
         <main className="flex-1 overflow-y-auto p-6">
           <div className="text-center">
             <p className="text-muted-foreground">User not found</p>
@@ -88,7 +88,7 @@ export default function UserProfile() {
   if (isLoading) {
     return (
       <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar title="User Profile" description="Loading user information..." />
+        <TopBar title={t('userProfile.title')} description={t('userProfile.loadingUserInfo')} />
         <main className="flex-1 overflow-y-auto p-6">
           <div className="max-w-4xl mx-auto space-y-6">
             <Card>
@@ -125,7 +125,7 @@ export default function UserProfile() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <TopBar 
-        title="User Profile" 
+        title={t('userProfile.title')} 
         description={`${user.first_name} ${user.last_name}`}
       />
       
@@ -264,7 +264,7 @@ export default function UserProfile() {
                         {experience.organization_name}
                       </p>
                       <p className="text-sm text-muted-foreground mt-1">
-                        {experience.date_started} - {experience.date_finished || "Present"}
+                        {experience.date_started} - {experience.date_finished || t('common.present')}
                       </p>
                       {experience.description && (
                         <p className="text-foreground mt-2">
@@ -324,7 +324,7 @@ export default function UserProfile() {
                         {education.university_name}
                       </p>
                       <p className="text-sm text-muted-foreground mt-1">
-                        {education.date_started} - {education.date_finished || "Present"}
+                        {education.date_started} - {education.date_finished || t('common.present')}
                       </p>
                       {education.description && (
                         <p className="text-foreground mt-2">
