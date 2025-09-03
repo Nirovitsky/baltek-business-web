@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,6 +31,7 @@ export default function JobDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -97,7 +99,7 @@ export default function JobDetails() {
       // Invalidate to refresh from server
       queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
       toast({
-        title: "Error",
+        title: t("errors.jobUpdateError"),
         description: error.message || "Failed to update job status",
         variant: "destructive",
       });
@@ -106,7 +108,7 @@ export default function JobDetails() {
       queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
       queryClient.invalidateQueries({ queryKey: ['/jobs/', id] });
       toast({
-        title: "Success",
+        title: t("success.generic"),
         description: `Job ${context?.newStatus === 'archived' ? 'archived' : 'unarchived'} successfully`,
       });
     },
@@ -152,7 +154,7 @@ export default function JobDetails() {
         navigate(`/jobs/${id}`);
       }
       toast({
-        title: "Error",
+        title: t("errors.jobDeleteError"),
         description: error.message || "Failed to delete job",
         variant: "destructive",
       });
@@ -160,8 +162,8 @@ export default function JobDetails() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
       toast({
-        title: "Success",
-        description: "Job deleted successfully",
+        title: t("success.generic"),
+        description: t("success.jobDeleted"),
       });
     },
   });

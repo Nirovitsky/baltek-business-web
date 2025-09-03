@@ -31,6 +31,47 @@
     "logout": "Logout",
     "login": "Login"
   },
+  "errors": {
+    "fileTooLarge": "File too large",
+    "fileTooLargeDescription": "Please select a file smaller than 10MB",
+    "fileTypeNotSupported": "File type not supported",
+    "fileTypeNotSupportedDescription": "Please select an image, document, video, or audio file",
+    "failedToSendMessage": "Failed to send message",
+    "failedToSendMessageDescription": "Please check your connection and try again",
+    "sendError": "An error occurred while sending your message",
+    "updateStatusError": "Error",
+    "updateStatusErrorDescription": "Failed to update status: {{error}}. The backend may still have references to old status values.",
+    "chatStartError": "Cannot start chat: Application information not available",
+    "downloadFailed": "Download Failed",
+    "downloadFailedDescription": "Could not download the file. Please try again.",
+    "uploadFailed": "Upload failed",
+    "uploadFailedDescription": "Could not upload your file. Please try again.",
+    "organizationNotApproved": "Organization Not Approved",
+    "profileUpdateError": "Failed to update profile. Please try again.",
+    "jobDeleteError": "Error",
+    "jobUpdateError": "Error",
+    "generic": "Error",
+    "genericDescription": "An error occurred. Please try again.",
+    "formValidation": "Please check the form for errors and try again."
+  },
+  "success": {
+    "statusUpdated": "Application status updated successfully",
+    "fileUploaded": "File uploaded",
+    "profileUpdated": "Profile updated",
+    "profileUpdatedDescription": "Your profile has been successfully updated.",
+    "jobUpdated": "Job posting updated successfully",
+    "jobDeleted": "Job deleted successfully",
+    "notificationPreferencesUpdated": "Notification preferences updated",
+    "browserNotificationsEnabled": "Browser notifications enabled",
+    "browserNotificationsEnabledDescription": "You'll now receive push notifications for important updates.",
+    "allNotificationsRead": "All notifications marked as read",
+    "chatRoomCreated": "Chat room created successfully",
+    "generic": "Success"
+  },
+  "notifications": {
+    "browserNotificationsBlocked": "Browser notifications blocked",
+    "browserNotificationsBlockedDescription": "You can enable them in your browser settings."
+  },
   "navigation": {
     "platform": "Platform",
     "dashboard": "Dashboard",

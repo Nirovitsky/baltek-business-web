@@ -451,8 +451,8 @@ export default function CreateJob() {
       // Clear draft on successful submission
       clearDraft();
       toast({
-        title: "Success",
-        description: "Job posting updated successfully",
+        title: t("success.generic"),
+        description: t("success.jobUpdated"),
       });
     },
   });
@@ -475,7 +475,7 @@ export default function CreateJob() {
     // Check if organization is public
     if (selectedOrganization.is_public === false) {
       toast({
-        title: "Organization Not Approved",
+        title: t("errors.organizationNotApproved"),
         description:
           "Your organization is currently under review. You cannot create job postings until it's approved by our moderators.",
         variant: "destructive",

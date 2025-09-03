@@ -31,6 +31,47 @@
     "logout": "Çyk",
     "login": "Gir"
   },
+  "errors": {
+    "fileTooLarge": "Faýl gaty uly",
+    "fileTooLargeDescription": "10 MB-dan kiçi faýl saýlaň",
+    "fileTypeNotSupported": "Faýl görnüşi goldanylmaýar",
+    "fileTypeNotSupportedDescription": "Surat, resminame, wideo ýa-da ses faýly saýlaň",
+    "failedToSendMessage": "Habar iberilmedi",
+    "failedToSendMessageDescription": "Baglanyşygyňyzy barlaň we täzeden synanyň",
+    "sendError": "Habary iberişde näsazlyk ýüze çykdy",
+    "updateStatusError": "Näsazlyk",
+    "updateStatusErrorDescription": "Statusy täzeläp bolmady: {{error}}. Serwerde köne status bahalary galmagy mümkin.",
+    "chatStartError": "Söhbetdeşligi başlatmak bolmady: Arza barada maglumat ýok",
+    "downloadFailed": "Ýüklemek şowsuzlyga uçrady",
+    "downloadFailedDescription": "Faýly ýükläp bolmady. Täzeden synanyň.",
+    "uploadFailed": "Ýüklemek şowsuzlyga uçrady",
+    "uploadFailedDescription": "Faýlyňyzy ýükläp bolmady. Täzeden synanyň.",
+    "organizationNotApproved": "Gurama tassyklanmady",
+    "profileUpdateError": "Profili täzeläp bolmady. Täzeden synanyň.",
+    "jobDeleteError": "Näsazlyk",
+    "jobUpdateError": "Näsazlyk",
+    "generic": "Näsazlyk",
+    "genericDescription": "Näsazlyk ýüze çykdy. Täzeden synanyň.",
+    "formValidation": "Formany näsazlyklar üçin barlaň we täzeden synanyň."
+  },
+  "success": {
+    "statusUpdated": "Arza statusy üstünlikli täzelendi",
+    "fileUploaded": "Faýl ýüklendi",
+    "profileUpdated": "Profil täzelendi",
+    "profileUpdatedDescription": "Siziň profiliňiz üstünlikli täzelendi.",
+    "jobUpdated": "Iş ýeri üstünlikli täzelendi",
+    "jobDeleted": "Iş ýeri üstünlikli öçürildi",
+    "notificationPreferencesUpdated": "Bildiriş sazlamalary täzelendi",
+    "browserNotificationsEnabled": "Brauzeriň bildirişleri goşuldy",
+    "browserNotificationsEnabledDescription": "Indi möhüm täzelenmeleriň push bildirişlerini alarsyňyz.",
+    "allNotificationsRead": "Ähli bildirişler okalan diýlip bellendi",
+    "chatRoomCreated": "Söhbetdeşlik üstünlikli döredildi",
+    "generic": "Üstünlik"
+  },
+  "notifications": {
+    "browserNotificationsBlocked": "Brauzeriň bildirişleri petiklendi",
+    "browserNotificationsBlockedDescription": "Olary brauzeriň sazlamalarynda goşup bilersiňiz."
+  },
   "navigation": {
     "platform": "Platforma",
     "dashboard": "Dolandyryş paneli",

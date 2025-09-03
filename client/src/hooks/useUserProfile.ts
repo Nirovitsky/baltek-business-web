@@ -1,11 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiService } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 import type { User, Room, PaginatedResponse } from '@/types';
 
 export function useUserProfile(userId?: string, options?: { fetchRooms?: boolean }) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const { fetchRooms = true } = options || {};
 
   // Fetch user profile data
@@ -42,14 +44,14 @@ export function useUserProfile(userId?: string, options?: { fetchRooms?: boolean
       // Invalidate rooms query to refresh data
       queryClient.invalidateQueries({ queryKey: ['/chat/rooms/'] });
       toast({
-        title: 'Success',
-        description: 'Chat room created successfully',
+        title: t('success.generic'),
+        description: t('success.chatRoomCreated'),
       });
       return roomData;
     },
     onError: (error: any) => {
       toast({
-        title: 'Error',
+        title: t('errors.generic'),
         description: error.message || 'Failed to create chat room',
         variant: 'destructive',
       });

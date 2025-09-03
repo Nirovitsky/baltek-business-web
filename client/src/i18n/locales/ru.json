@@ -31,6 +31,47 @@
     "logout": "Выйти",
     "login": "Войти"
   },
+  "errors": {
+    "fileTooLarge": "Файл слишком большой",
+    "fileTooLargeDescription": "Пожалуйста, выберите файл размером менее 10 МБ",
+    "fileTypeNotSupported": "Тип файла не поддерживается",
+    "fileTypeNotSupportedDescription": "Пожалуйста, выберите изображение, документ, видео или аудио файл",
+    "failedToSendMessage": "Не удалось отправить сообщение",
+    "failedToSendMessageDescription": "Проверьте подключение и попробуйте снова",
+    "sendError": "Произошла ошибка при отправке сообщения",
+    "updateStatusError": "Ошибка",
+    "updateStatusErrorDescription": "Не удалось обновить статус: {{error}}. На сервере могут остаться ссылки на старые значения статуса.",
+    "chatStartError": "Невозможно начать чат: информация о заявке недоступна",
+    "downloadFailed": "Загрузка не удалась",
+    "downloadFailedDescription": "Не удалось загрузить файл. Попробуйте снова.",
+    "uploadFailed": "Загрузка не удалась",
+    "uploadFailedDescription": "Не удалось загрузить файл. Попробуйте снова.",
+    "organizationNotApproved": "Организация не одобрена",
+    "profileUpdateError": "Не удалось обновить профиль. Попробуйте снова.",
+    "jobDeleteError": "Ошибка",
+    "jobUpdateError": "Ошибка",
+    "generic": "Ошибка",
+    "genericDescription": "Произошла ошибка. Попробуйте снова.",
+    "formValidation": "Проверьте форму на наличие ошибок и попробуйте снова."
+  },
+  "success": {
+    "statusUpdated": "Статус заявки успешно обновлен",
+    "fileUploaded": "Файл загружен",
+    "profileUpdated": "Профиль обновлен",
+    "profileUpdatedDescription": "Ваш профиль был успешно обновлен.",
+    "jobUpdated": "Вакансия успешно обновлена",
+    "jobDeleted": "Вакансия успешно удалена",
+    "notificationPreferencesUpdated": "Настройки уведомлений обновлены",
+    "browserNotificationsEnabled": "Уведомления браузера включены",
+    "browserNotificationsEnabledDescription": "Теперь вы будете получать push-уведомления о важных обновлениях.",
+    "allNotificationsRead": "Все уведомления отмечены как прочитанные",
+    "chatRoomCreated": "Чат успешно создан",
+    "generic": "Успешно"
+  },
+  "notifications": {
+    "browserNotificationsBlocked": "Уведомления браузера заблокированы",
+    "browserNotificationsBlockedDescription": "Вы можете включить их в настройках браузера."
+  },
   "navigation": {
     "platform": "Платформа",
     "dashboard": "Панель управления",

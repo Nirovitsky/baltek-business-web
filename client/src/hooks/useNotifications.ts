@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "react-i18next";
 import { apiService } from "@/lib/api";
 import type { Notification, NotificationPreferences, PaginatedResponse } from "@/types";
 
@@ -28,6 +29,7 @@ export function useNotifications(enabled: boolean = true, enablePolling: boolean
     isNotificationSupported() ? Notification.permission : "denied"
   );
   const { toast } = useToast();
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { selectedOrganization } = useAuth();
   
@@ -81,7 +83,7 @@ export function useNotifications(enabled: boolean = true, enablePolling: boolean
     },
     onSuccess: () => {
       toast({
-        title: "Notification preferences updated",
+        title: t("success.notificationPreferencesUpdated"),
       });
     },
   });
@@ -93,16 +95,16 @@ export function useNotifications(enabled: boolean = true, enablePolling: boolean
     
     if (newPermission === "granted") {
       toast({
-        title: "Browser notifications enabled",
-        description: "You'll now receive push notifications for important updates.",
+        title: t("success.browserNotificationsEnabled"),
+        description: t("success.browserNotificationsEnabledDescription"),
       });
       
       // Update preferences to enable push notifications
       updatePreferencesMutation.mutate({ push_notifications: true });
     } else if (newPermission === "denied") {
       toast({
-        title: "Browser notifications blocked",
-        description: "You can enable them in your browser settings.",
+        title: t("notifications.browserNotificationsBlocked"),
+        description: t("notifications.browserNotificationsBlockedDescription"),
         variant: "destructive",
       });
     }
@@ -291,7 +293,7 @@ export function useNotifications(enabled: boolean = true, enablePolling: boolean
     },
     onSuccess: () => {
       toast({
-        title: "All notifications marked as read",
+        title: t("success.allNotificationsRead"),
       });
     },
     onSettled: () => {

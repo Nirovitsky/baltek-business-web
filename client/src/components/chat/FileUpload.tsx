@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { Paperclip, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import AttachmentPreview from "./AttachmentPreview";
 
 interface FileUploadProps {
@@ -19,6 +20,7 @@ export default function FileUpload({
 }: FileUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [dragOver, setDragOver] = useState(false);
 
   const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -42,8 +44,8 @@ export default function FileUpload({
   const validateFile = (file: File): boolean => {
     if (file.size > MAX_FILE_SIZE) {
       toast({
-        title: "File too large",
-        description: "Please select a file smaller than 10MB",
+        title: t("errors.fileTooLarge"),
+        description: t("errors.fileTooLargeDescription"),
         variant: "destructive",
       });
       return false;
@@ -51,8 +53,8 @@ export default function FileUpload({
 
     if (!ALLOWED_TYPES.includes(file.type)) {
       toast({
-        title: "File type not supported",
-        description: "Please select an image, document, video, or audio file",
+        title: t("errors.fileTypeNotSupported"),
+        description: t("errors.fileTypeNotSupportedDescription"),
         variant: "destructive",
       });
       return false;

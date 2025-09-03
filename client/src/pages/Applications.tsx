@@ -175,15 +175,15 @@ export default function Applications() {
       
       console.error('Application status update error:', error);
       toast({
-        title: "Error",
-        description: `Failed to update status: ${error.message || 'Unknown error'}. The backend may still have references to old status values.`,
+        title: t("errors.updateStatusError"),
+        description: t("errors.updateStatusErrorDescription", { error: error.message || 'Unknown error' }),
         variant: "destructive",
       });
     },
     onSuccess: () => {
       toast({
-        title: "Success",
-        description: "Application status updated successfully",
+        title: t("success.generic"),
+        description: t("success.statusUpdated"),
       });
     },
     onSettled: () => {
@@ -213,8 +213,8 @@ export default function Applications() {
   const handleStartChat = async (application: JobApplication) => {
     if (!application.id || !application.owner?.id) {
       toast({
-        title: "Error",
-        description: "Cannot start chat: Application information not available",
+        title: t("errors.generic"),
+        description: t("errors.chatStartError"),
         variant: "destructive",
       });
       return;
@@ -255,7 +255,7 @@ export default function Applications() {
       }
     } catch (error: any) {
       toast({
-        title: "Error",
+        title: t("errors.generic"),
         description: error.message || "Failed to start chat",
         variant: "destructive",
       });
@@ -724,8 +724,8 @@ export default function Applications() {
                               } catch (error) {
                                 console.error('Download failed:', error);
                                 toast({
-                                  title: "Download Failed",
-                                  description: "Could not download the file. Please try again.",
+                                  title: t("errors.downloadFailed"),
+                                  description: t("errors.downloadFailedDescription"),
                                   variant: "destructive",
                                 });
                               }

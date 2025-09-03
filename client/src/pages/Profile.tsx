@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import TopBar from "@/components/layout/TopBar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -44,6 +45,7 @@ type ProfileUpdate = z.infer<typeof profileUpdateSchema>;
 export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const { user } = useAuth();
@@ -116,16 +118,16 @@ export default function Profile() {
       // Re-enter editing mode on error
       setIsEditing(true);
       toast({
-        title: "Error",
-        description: "Failed to update profile. Please try again.",
+        title: t("errors.generic"),
+        description: t("errors.profileUpdateError"),
         variant: "destructive",
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/users", user?.id] });
       toast({
-        title: "Profile updated",
-        description: "Your profile has been successfully updated.",
+        title: t("success.profileUpdated"),
+        description: t("success.profileUpdatedDescription"),
       });
     },
   });

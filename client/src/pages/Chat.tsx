@@ -329,8 +329,8 @@ export default function Chat() {
         });
         
         toast({
-          title: "Failed to send message",
-          description: "Please check your connection and try again",
+          title: t("errors.failedToSendMessage"),
+          description: t("errors.failedToSendMessageDescription"),
           variant: "destructive",
         });
       }
@@ -344,8 +344,8 @@ export default function Chat() {
       });
       
       toast({
-        title: "Failed to send message",
-        description: "An error occurred while sending your message",
+        title: t("errors.failedToSendMessage"),
+        description: t("errors.sendError"),
         variant: "destructive",
       });
     } finally {
@@ -410,14 +410,14 @@ export default function Chat() {
       setUploadProgress(100);
       
       toast({
-        title: "File uploaded",
+        title: t("success.fileUploaded"),
         description: `${file.name} is ready to send`,
       });
       
     } catch (uploadError) {
       toast({
-        title: "Upload failed",
-        description: "Could not upload your file. Please try again.",
+        title: t("errors.uploadFailed"),
+        description: t("errors.uploadFailedDescription"),
         variant: "destructive",
       });
       // Clear the selected file on upload failure

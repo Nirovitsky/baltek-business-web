@@ -96,7 +96,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
         
         toast({
           title: t('common.error'),
-          description: 'Please check the form for errors and try again.',
+          description: t('errors.formValidation'),
           variant: "destructive",
         });
       } else {
@@ -140,7 +140,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
         
         toast({
           title: t('common.error'),
-          description: 'Please check the form for errors and try again.',
+          description: t('errors.formValidation'),
           variant: "destructive",
         });
       } else {
