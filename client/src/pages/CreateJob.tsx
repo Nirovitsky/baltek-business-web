@@ -115,6 +115,9 @@ export default function CreateJob() {
 
   const job = jobData;
 
+  // Get reference data (locations and categories)
+  const { categories, locations } = useReferenceData();
+
   // Load draft data or use defaults
   const getDraftOrDefaults = useCallback(() => {
     const draft = loadDraft();
@@ -123,7 +126,7 @@ export default function CreateJob() {
       description: "",
       category: 1,
       organization: selectedOrganization?.id || 1,
-      location: undefined,
+      location: locations.length > 0 ? locations[0].id : undefined,
       job_type: "full_time",
       workplace_type: "on_site",
       min_education_level: "secondary",
@@ -138,12 +141,19 @@ export default function CreateJob() {
     };
 
     return draft ? { ...defaults, ...draft } : defaults;
-  }, [loadDraft, selectedOrganization?.id]);
+  }, [loadDraft, selectedOrganization?.id, locations]);
 
   const form = useForm<CreateJob>({
     resolver: zodResolver(createJobSchema),
     defaultValues: getDraftOrDefaults(),
   });
+
+  // Update the location field when locations data becomes available
+  useEffect(() => {
+    if (locations.length > 0 && !form.getValues("location") && !isEditing) {
+      form.setValue("location", locations[0].id);
+    }
+  }, [locations, form, isEditing]);
 
   // Auto-save form data as user types (debounced)
   useEffect(() => {
@@ -220,8 +230,6 @@ export default function CreateJob() {
     }
   }, [job, form, selectedOrganization, clearDraft]);
 
-  // Use shared reference data to avoid duplication with other components
-  const { categories, locations } = useReferenceData();
 
   const { data: languagesData } = useQuery({
     queryKey: ["/languages/"],
