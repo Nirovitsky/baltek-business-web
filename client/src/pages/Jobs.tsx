@@ -399,7 +399,7 @@ export default function Jobs() {
                     </div>
 
                     {/* Salary information */}
-                    {(job.salary_from || job.salary_to) && (
+                    {(job.payment_from || job.payment_to) && (
                       <div className="flex items-center text-sm mb-4">
                         {job.currency === 'USD' ? (
                           <DollarSign className="w-4 h-4 mr-2 text-green-600" />
@@ -411,18 +411,18 @@ export default function Jobs() {
                             const currency = job.currency || 'TMT';
                             const currencySymbol = currency === 'USD' ? '$' : currency === 'TMT' ? 'TMT' : currency;
                             
-                            if (job.salary_from && job.salary_to) {
-                              return `${currencySymbol} ${job.salary_from.toLocaleString()} - ${job.salary_to.toLocaleString()}`;
-                            } else if (job.salary_from) {
-                              return `${currencySymbol} ${job.salary_from.toLocaleString()}+`;
-                            } else if (job.salary_to) {
-                              return `${t('jobs.upTo')} ${currencySymbol} ${job.salary_to.toLocaleString()}`;
+                            if (job.payment_from && job.payment_to) {
+                              return `${currencySymbol} ${job.payment_from.toLocaleString()} - ${job.payment_to.toLocaleString()}`;
+                            } else if (job.payment_from) {
+                              return `${currencySymbol} ${job.payment_from.toLocaleString()}+`;
+                            } else if (job.payment_to) {
+                              return `${t('jobs.upTo')} ${currencySymbol} ${job.payment_to.toLocaleString()}`;
                             }
                             return t('jobs.salaryNotSpecified');
                           })()}
-                          {job.salary_payment_type && (
+                          {job.payment_frequency && (
                             <span className="text-muted-foreground ml-1">
-                              / {job.salary_payment_type.replace('_', ' ')}
+                              / {job.payment_frequency.replace('_', ' ')}
                             </span>
                           )}
                         </span>
