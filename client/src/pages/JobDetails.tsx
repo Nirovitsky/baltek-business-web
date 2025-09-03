@@ -32,6 +32,8 @@ export default function JobDetails() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false);
 
   const { data: job, isLoading, error } = useQuery({
     queryKey: ['/jobs/', id],
@@ -169,6 +171,16 @@ export default function JobDetails() {
     setShowDeleteDialog(false);
   };
 
+  const confirmEdit = () => {
+    navigate(`/jobs/edit/${job.id}`);
+    setShowEditDialog(false);
+  };
+
+  const confirmArchive = () => {
+    archiveMutation.mutate();
+    setShowArchiveDialog(false);
+  };
+
   const getStatusColor = (status?: string) => {
     switch (status) {
       case 'open':
@@ -299,7 +311,7 @@ export default function JobDetails() {
             <div className="flex items-center space-x-3">
               <Button
                 variant="outline"
-                onClick={() => navigate(`/jobs/edit/${job.id}`)}
+                onClick={() => setShowEditDialog(true)}
                 className="text-primary border-primary hover:bg-primary hover:text-white"
               >
                 <Edit className="h-4 w-4 mr-2" />
@@ -307,7 +319,7 @@ export default function JobDetails() {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => archiveMutation.mutate()}
+                onClick={() => setShowArchiveDialog(true)}
                 disabled={archiveMutation.isPending}
                 className="text-muted-foreground border hover:bg-background"
               >
@@ -500,6 +512,45 @@ export default function JobDetails() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Edit Confirmation Dialog */}
+      <AlertDialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Edit</AlertDialogTitle>
+            <AlertDialogDescription>
+              You are about to edit this job posting. Any unsaved changes will be lost. Continue?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmEdit}>
+              Continue to Edit
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Archive Confirmation Dialog */}
+      <AlertDialog open={showArchiveDialog} onOpenChange={setShowArchiveDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm {job?.status === 'archived' ? 'Unarchive' : 'Archive'}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {job?.status === 'archived' 
+                ? 'Are you sure you want to unarchive this job posting? It will be visible to candidates again.'
+                : 'Are you sure you want to archive this job posting? It will no longer be visible to candidates.'
+              }
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmArchive}>
+              {job?.status === 'archived' ? 'Unarchive' : 'Archive'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
