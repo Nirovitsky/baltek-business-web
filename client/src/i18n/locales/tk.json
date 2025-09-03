@@ -325,8 +325,7 @@
     "account": "Hasap",
     "privacy": "Gizlinlik",
     "security": "Howpsuzlyk",
-    "successRate": "Üstünlik derejesi",
-    "footerDescription": "HR dolandyryş panelimiz bilen işe alış prosesiňizi öwürüň. Hil talyplar bilen baglanyşyň we işe alış iş akymyňyzy kämilleşdiriň."
+    "successRate": "Üstünlik derejesi"
   },
   "editOrganization": {
     "title": "Guramany üýtget",
@@ -764,6 +763,7 @@
     "heroTitle": "Iň gowy hünärmenleri tap",
     "heroTitlePrefix": "siziň",
     "heroTitleHighlight": "işiňiz üçin",
+    "footerDescription": "HR dolandyryş panelimiz bilen işe alış prosesiňizi öwürüň. Hil talyplar bilen baglanyşyň we işe alış iş akymyňyzy kämilleşdiriň.",
     "heroSubtitle": "Hünärli kandidatlar bilen baglanşyň, işe alýş prosesiňizi gowulaşdyryň we kämil topary döredýän umumy işe alýş platformamyz.",
     "candidatesWorldwide": "dünýädäki kandidatlar",
     "resumesAvailable": "rezýume bar",
