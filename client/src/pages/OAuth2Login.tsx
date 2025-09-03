@@ -371,14 +371,20 @@ export default function OAuth2Login() {
               </h3>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <a href="#" className="text-gray-600 dark:text-gray-400 hover:text-[#1877F2] dark:hover:text-[#1877F2] transition-colors">
+                  <button 
+                    onClick={() => navigate("/contact")}
+                    className="text-gray-600 dark:text-gray-400 hover:text-[#1877F2] dark:hover:text-[#1877F2] transition-colors"
+                  >
                     {t("footer.contact", "Contact Us")}
-                  </a>
+                  </button>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-600 dark:text-gray-400 hover:text-[#1877F2] dark:hover:text-[#1877F2] transition-colors">
+                  <button 
+                    onClick={() => navigate("/faq")}
+                    className="text-gray-600 dark:text-gray-400 hover:text-[#1877F2] dark:hover:text-[#1877F2] transition-colors"
+                  >
                     {t("footer.faq", "FAQ")}
-                  </a>
+                  </button>
                 </li>
               </ul>
             </div>
@@ -388,12 +394,18 @@ export default function OAuth2Login() {
           <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-6 text-sm text-gray-600 dark:text-gray-400">
-                <a href="#" className="hover:text-[#1877F2] transition-colors">
+                <button 
+                  onClick={() => navigate("/privacy")}
+                  className="hover:text-[#1877F2] transition-colors"
+                >
                   {t("footer.privacy", "Privacy Policy")}
-                </a>
-                <a href="#" className="hover:text-[#1877F2] transition-colors">
+                </button>
+                <button 
+                  onClick={() => navigate("/terms")}
+                  className="hover:text-[#1877F2] transition-colors"
+                >
                   {t("footer.terms", "Terms of Service")}
-                </a>
+                </button>
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">
                 © {new Date().getFullYear()} {t("landing.brandName", "baltek")}. {t("footer.allRightsReserved", "All rights reserved")}.

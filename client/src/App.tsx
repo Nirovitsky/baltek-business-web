@@ -31,6 +31,10 @@ import UserProfile from "@/pages/UserProfile";
 import Organization from "@/pages/Organization";
 import Profile from "@/pages/Profile";
 import NotFound from "@/pages/not-found";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import TermsOfService from "@/pages/TermsOfService";
+import ContactUs from "@/pages/ContactUs";
+import FAQ from "@/pages/FAQ";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const {
@@ -104,6 +108,12 @@ function AppRoutes() {
     <Routes>
       <Route path="/login" element={<OAuth2Login />} />
       <Route path="/oauth2/callback" element={<OAuth2Callback />} />
+      
+      {/* Public pages */}
+      <Route path="/privacy" element={<PrivacyPolicy />} />
+      <Route path="/terms" element={<TermsOfService />} />
+      <Route path="/contact" element={<ContactUs />} />
+      <Route path="/faq" element={<FAQ />} />
 
       <Route
         path="/create-organization"
