@@ -15,6 +15,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { LanguageSelector } from "@/components/ui/language-selector";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { 
+  NavigationMenu, 
+  NavigationMenuList, 
+  NavigationMenuItem,
+  NavigationMenuLink
+} from "@/components/ui/navigation-menu";
 
 export default function OAuth2Login() {
   const { t } = useTranslation();
@@ -48,40 +54,51 @@ export default function OAuth2Login() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(24,119,242,0.05),transparent_70%)]"></div>
 
       {/* Header */}
-      <header className="relative z-10">
-        <div className="flex items-center justify-between p-8">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-[#1877F2] to-[#0056D3] rounded-2xl flex items-center justify-center shadow-lg">
-              <Building2 className="w-7 h-7 text-white" />
-            </div>
-            <span className="text-2xl font-light text-gray-900 dark:text-white tracking-tight">
-              {import.meta.env.VITE_APP_NAME || t("landing.appName")}
-            </span>
+      <header className="relative z-10 p-8">
+        <NavigationMenu className="w-full max-w-none">
+          <div className="flex items-center justify-between w-full">
+            <NavigationMenuList className="flex-none">
+              <NavigationMenuItem>
+                <NavigationMenuLink className="flex items-center gap-4 hover:bg-transparent">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#1877F2] to-[#0056D3] rounded-2xl flex items-center justify-center shadow-lg">
+                    <Building2 className="w-7 h-7 text-white" />
+                  </div>
+                  <span className="text-2xl font-light text-gray-900 dark:text-white tracking-tight">
+                    {import.meta.env.VITE_APP_NAME || t("landing.appName")}
+                  </span>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+            
+            <NavigationMenuList className="flex-none">
+              <NavigationMenuItem>
+                <div className="flex items-center gap-4">
+                  <ThemeToggle />
+                  <LanguageSelector variant="compact" />
+                  <Button
+                    onClick={handleLogin}
+                    variant="default"
+                    size="lg"
+                    disabled={isSigningIn}
+                  >
+                    {isSigningIn ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        {t("auth.loggingIn")}
+                      </>
+                    ) : (
+                      <>
+                        <ExternalLink className="w-4 h-4" />
+                        {t("auth.loginButton")}
+                        <ChevronRight className="w-4 h-4" />
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </NavigationMenuItem>
+            </NavigationMenuList>
           </div>
-          <div className="flex items-center gap-4">
-            <ThemeToggle />
-            <LanguageSelector variant="compact" />
-            <Button
-              onClick={handleLogin}
-              variant="default"
-              size="lg"
-              disabled={isSigningIn}
-            >
-              {isSigningIn ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  {t("auth.loggingIn")}
-                </>
-              ) : (
-                <>
-                  <ExternalLink className="w-4 h-4" />
-                  {t("auth.loginButton")}
-                  <ChevronRight className="w-4 h-4" />
-                </>
-              )}
-            </Button>
-          </div>
-        </div>
+        </NavigationMenu>
       </header>
 
       {/* Hero Section */}
