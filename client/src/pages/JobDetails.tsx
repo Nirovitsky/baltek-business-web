@@ -343,42 +343,42 @@ export default function JobDetails() {
               )}
               
               {/* Compensation */}
-              {(job.salary_from || job.salary_to) && (
+              {(job.payment_from || job.payment_to) && (
                 <div>
                   <h4 className="flex items-center text-base font-semibold text-foreground mb-4">
                     <DollarSign className="h-4 w-4 mr-2 text-primary" />
                     Compensation
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {job.salary_from && (
+                    {job.payment_from && (
                       <div>
                         <span className="text-sm font-medium text-foreground">Minimum Salary</span>
                         <p className="text-foreground mt-1 text-lg font-semibold">
                           {(() => {
                             const currency = job.currency || 'TMT';
                             const currencySymbol = currency === 'USD' ? '$' : currency === 'TMT' ? 'TMT' : currency;
-                            return `${currencySymbol} ${job.salary_from.toLocaleString()}`;
+                            return `${currencySymbol} ${job.payment_from.toLocaleString()}`;
                           })()}
                         </p>
                       </div>
                     )}
-                    {job.salary_to && (
+                    {job.payment_to && (
                       <div>
                         <span className="text-sm font-medium text-foreground">Maximum Salary</span>
                         <p className="text-foreground mt-1 text-lg font-semibold">
                           {(() => {
                             const currency = job.currency || 'TMT';
                             const currencySymbol = currency === 'USD' ? '$' : currency === 'TMT' ? 'TMT' : currency;
-                            return `${currencySymbol} ${job.salary_to.toLocaleString()}`;
+                            return `${currencySymbol} ${job.payment_to.toLocaleString()}`;
                           })()}
                         </p>
                       </div>
                     )}
-                    {job.salary_payment_type && (
+                    {job.payment_frequency && (
                       <div>
                         <span className="text-sm font-medium text-foreground">Payment Type</span>
                         <p className="text-foreground mt-1 capitalize">
-                          {job.salary_payment_type.replace('_', ' ')}
+                          {job.payment_frequency.replace('_', ' ')}
                         </p>
                       </div>
                     )}

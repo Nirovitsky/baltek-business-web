@@ -37,9 +37,9 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       job_type: job?.job_type || "full_time",
       workplace_type: job?.workplace_type || "remote",
       min_education_level: job?.min_education_level || "secondary",
-      salary_from: job?.salary_from ?? undefined,
-      salary_to: job?.salary_to ?? undefined,
-      salary_payment_type: job?.salary_payment_type || "monthly",
+      payment_from: job?.payment_from ?? undefined,
+      payment_to: job?.payment_to ?? undefined,
+      payment_frequency: job?.payment_frequency || "monthly",
       required_languages: job?.required_languages || [],
       date_started: job?.date_started || Math.floor(Date.now() / 1000),
       date_ended: job?.date_ended || Math.floor((Date.now() + 30 * 24 * 60 * 60 * 1000) / 1000),
@@ -282,7 +282,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
 
           <FormField
             control={form.control}
-            name="salary_from"
+            name="payment_from"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Salary From</FormLabel>
@@ -308,7 +308,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
 
           <FormField
             control={form.control}
-            name="salary_to"
+            name="payment_to"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Salary To</FormLabel>
@@ -334,7 +334,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
 
           <FormField
             control={form.control}
-            name="salary_payment_type"
+            name="payment_frequency"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Payment Type</FormLabel>

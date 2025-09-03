@@ -109,7 +109,6 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
               variant="ghost" 
               size="sm" 
               onClick={() => navigate('/jobs')}
-              onMouseEnter={() => prefetchRoute('/jobs')}
             >
               {t('dashboard.viewAll')}
             </Button>
@@ -177,9 +176,9 @@ export default function RecentJobs({ onJobClick }: RecentJobsProps) {
                     </div>
                   </div>
                   <div className="text-right">
-                    {job.salary_from && job.salary_to && (
+                    {job.payment_from && job.payment_to && (
                       <p className="text-sm font-medium text-foreground">
-                        TMT {job.salary_from.toLocaleString()} - {job.salary_to.toLocaleString()}
+                        TMT {job.payment_from.toLocaleString()} - {job.payment_to.toLocaleString()}
                       </p>
                     )}
                     <p className="text-xs text-muted-foreground">

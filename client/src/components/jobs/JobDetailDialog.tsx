@@ -244,7 +244,7 @@ export default function JobDetailDialog({
             {/* Job Details Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Compensation */}
-              {(job.salary_from || job.salary_to) && (
+              {(job.payment_from || job.payment_to) && (
                 <Card>
                   <CardHeader className="pb-3">
                     <CardTitle className="text-sm font-medium flex items-center">
@@ -254,7 +254,7 @@ export default function JobDetailDialog({
                   </CardHeader>
                   <CardContent>
                     <p className="text-lg font-semibold">
-                      {formatSalary(job.salary_from, job.salary_to, job.salary_payment_type, job.currency)}
+                      {formatSalary(job.payment_from, job.payment_to, job.payment_frequency, job.currency)}
                     </p>
                   </CardContent>
                 </Card>

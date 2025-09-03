@@ -106,8 +106,8 @@ export interface Job {
   requirements?: string;
   responsibilities?: string;
   benefits?: string;
-  salary_from?: number;
-  salary_to?: number;
+  payment_from?: number;
+  payment_to?: number;
   salary_min?: number;
   salary_max?: number;
   currency?: string;
@@ -124,7 +124,7 @@ export interface Job {
   job_type?: string;
   workplace_type?: string;
   min_education_level?: string;
-  salary_payment_type?: string;
+  payment_frequency?: string;
   required_languages?: number[];
   date_started?: number;
   date_ended?: number;
@@ -137,8 +137,8 @@ export interface CreateJob {
   requirements?: string;
   responsibilities?: string;
   benefits?: string;
-  salary_from?: number;
-  salary_to?: number;
+  payment_from?: number;
+  payment_to?: number;
   salary_min?: number;
   salary_max?: number;
   currency?: string;
@@ -152,7 +152,7 @@ export interface CreateJob {
   job_type?: string;
   workplace_type?: string;
   min_education_level?: string;
-  salary_payment_type?: string;
+  payment_frequency?: string;
   required_languages?: number[];
   date_started?: number;
   date_ended?: number;
@@ -290,8 +290,8 @@ export const createJobSchema = z.object({
   requirements: z.string().max(1024, "Requirements must be 1024 characters or less").optional(),
   responsibilities: z.string().optional(),
   benefits: z.string().optional(),
-  salary_from: z.number().optional(),
-  salary_to: z.number().optional(),
+  payment_from: z.number().optional(),
+  payment_to: z.number().optional(),
   salary_min: z.number().optional(),
   salary_max: z.number().optional(),
   currency: z.string().optional(),
@@ -305,7 +305,7 @@ export const createJobSchema = z.object({
   job_type: z.string().optional(),
   workplace_type: z.string().optional(),
   min_education_level: z.string().optional(),
-  salary_payment_type: z.string().optional(),
+  payment_frequency: z.string().optional(),
   required_languages: z.array(z.number()).optional().default([]),
   date_started: z.number().optional(),
   date_ended: z.number().optional(),
