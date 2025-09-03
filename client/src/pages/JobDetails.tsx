@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { apiService } from "@/lib/api";
 import { format } from "date-fns";
@@ -29,6 +31,7 @@ export default function JobDetails() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const { data: job, isLoading, error } = useQuery({
     queryKey: ['/jobs/', id],
@@ -160,6 +163,11 @@ export default function JobDetails() {
       });
     },
   });
+
+  const confirmDelete = () => {
+    deleteMutation.mutate();
+    setShowDeleteDialog(false);
+  };
 
   const getStatusColor = (status?: string) => {
     switch (status) {
@@ -308,7 +316,7 @@ export default function JobDetails() {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => deleteMutation.mutate()}
+                onClick={() => setShowDeleteDialog(true)}
                 disabled={deleteMutation.isPending}
                 className="text-red-600 border-red-300 hover:bg-red-50"
               >
@@ -475,6 +483,27 @@ export default function JobDetails() {
 
         </div>
       </div>
+      
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Delete</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this job posting? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
