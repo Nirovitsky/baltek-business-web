@@ -11,7 +11,11 @@ import {
   ChevronUp,
   User2,
   MoreHorizontal,
-  Building
+  Building,
+  HelpCircle,
+  Phone,
+  Shield,
+  FileText
 } from "lucide-react";
 import {
   AlertDialog,
@@ -93,6 +97,28 @@ const getNavigationData = (t: any) => ({
       icon: UserCircle,
     },
   ],
+  navSupport: [
+    {
+      title: t('footer.contact', 'Contact Us'),
+      url: "/contact",
+      icon: Phone,
+    },
+    {
+      title: t('footer.faq', 'FAQ'),
+      url: "/faq",
+      icon: HelpCircle,
+    },
+    {
+      title: t('footer.privacy', 'Privacy Policy'),
+      url: "/privacy",
+      icon: Shield,
+    },
+    {
+      title: t('footer.terms', 'Terms of Service'),
+      url: "/terms",
+      icon: FileText,
+    },
+  ],
 });
 
 export default function AppSidebar() {
@@ -149,8 +175,32 @@ export default function AppSidebar() {
           </SidebarGroup>
         ))}
 
-        {/* Secondary Navigation */}
+        {/* Support Navigation */}
         <SidebarGroup className="mt-auto">
+          <SidebarGroupLabel>{t('footer.support', 'Support')}</SidebarGroupLabel>
+          <SidebarMenu>
+            {data.navSupport.map((item) => {
+              const isActive = location.pathname === item.url;
+              
+              return (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild isActive={isActive}>
+                    <Link 
+                      to={item.url}
+                      onMouseEnter={() => prefetchRoute(item.url)}
+                    >
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+            })}
+          </SidebarMenu>
+        </SidebarGroup>
+
+        {/* Secondary Navigation */}
+        <SidebarGroup>
           <SidebarMenu>
             {data.navSecondary.map((item) => {
               const isActive = location.pathname === item.url || (item.url !== "/" && location.pathname.startsWith(item.url));
