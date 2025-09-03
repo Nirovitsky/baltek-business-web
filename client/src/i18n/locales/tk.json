@@ -29,7 +29,11 @@
     "settings": "Sazlamalar",
     "profile": "Profil",
     "logout": "Çyk",
-    "login": "Gir"
+    "login": "Gir",
+    "success": "Üstünlik",
+    "error": "Näsazlyk",
+    "archive": "Arhiw",
+    "unarchive": "Arhiwden çykar"
   },
   "errors": {
     "fileTooLarge": "Faýl gaty uly",

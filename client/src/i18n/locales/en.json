@@ -29,7 +29,11 @@
     "settings": "Settings",
     "profile": "Profile",
     "logout": "Logout",
-    "login": "Login"
+    "login": "Login",
+    "success": "Success",
+    "error": "Error",
+    "archive": "Archive",
+    "unarchive": "Unarchive"
   },
   "errors": {
     "fileTooLarge": "File too large",

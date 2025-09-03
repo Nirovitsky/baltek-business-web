@@ -29,7 +29,11 @@
     "settings": "Настройки",
     "profile": "Профиль",
     "logout": "Выйти",
-    "login": "Войти"
+    "login": "Войти",
+    "success": "Успешно",
+    "error": "Ошибка",
+    "archive": "Архивировать",
+    "unarchive": "Разархивировать"
   },
   "errors": {
     "fileTooLarge": "Файл слишком большой",
