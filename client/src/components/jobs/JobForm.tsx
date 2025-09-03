@@ -33,7 +33,7 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       requirements: job?.requirements || "",
       category: typeof job?.category === 'number' ? job.category : (typeof job?.category === 'object' ? job.category.id : 1),
       organization: typeof job?.organization === 'number' ? job.organization : (typeof job?.organization === 'object' ? job.organization.id : selectedOrganization?.id || 1),
-      location: typeof job?.location === 'number' ? job.location : (typeof job?.location === 'object' ? job.location.id : 1),
+      location: typeof job?.location === 'number' ? job.location : (typeof job?.location === 'object' ? job.location.id : undefined),
       job_type: job?.job_type || "full_time",
       workplace_type: job?.workplace_type || "remote",
       min_education_level: job?.min_education_level || "secondary",
@@ -82,11 +82,30 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       onSuccess?.();
     },
     onError: (error: any) => {
-      toast({
-        title: t('common.error'),
-        description: error.message || t('messages.failedToCreateJob'),
-        variant: "destructive",
-      });
+      // Handle field validation errors
+      if (error && typeof error === 'object') {
+        // Check if it's a field validation error object
+        Object.keys(error).forEach(field => {
+          if (Array.isArray(error[field])) {
+            form.setError(field as any, {
+              type: 'server',
+              message: error[field][0] || `Invalid ${field}`
+            });
+          }
+        });
+        
+        toast({
+          title: t('common.error'),
+          description: 'Please check the form for errors and try again.',
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: t('common.error'),
+          description: error.message || t('messages.failedToCreateJob'),
+          variant: "destructive",
+        });
+      }
     },
   });
 
@@ -107,11 +126,30 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
       onSuccess?.();
     },
     onError: (error: any) => {
-      toast({
-        title: t('common.error'),
-        description: error.message || t('messages.failedToUpdateJob'),
-        variant: "destructive",
-      });
+      // Handle field validation errors
+      if (error && typeof error === 'object') {
+        // Check if it's a field validation error object
+        Object.keys(error).forEach(field => {
+          if (Array.isArray(error[field])) {
+            form.setError(field as any, {
+              type: 'server',
+              message: error[field][0] || `Invalid ${field}`
+            });
+          }
+        });
+        
+        toast({
+          title: t('common.error'),
+          description: 'Please check the form for errors and try again.',
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: t('common.error'),
+          description: error.message || t('messages.failedToUpdateJob'),
+          variant: "destructive",
+        });
+      }
     },
   });
 
@@ -198,6 +236,9 @@ export default function JobForm({ job, onSuccess, onCancel }: JobFormProps) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
+                    <SelectItem value="" disabled>
+                      Select a location *
+                    </SelectItem>
                     {locations.map((location) => (
                       <SelectItem key={location.id} value={location.id.toString()}>
                         {location.name}

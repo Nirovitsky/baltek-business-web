@@ -123,7 +123,7 @@ export default function CreateJob() {
       description: "",
       category: 1,
       organization: selectedOrganization?.id || 1,
-      location: 1,
+      location: undefined,
       job_type: "full_time",
       workplace_type: "on_site",
       min_education_level: "secondary",

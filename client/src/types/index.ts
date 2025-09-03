@@ -297,7 +297,9 @@ export const createJobSchema = z.object({
   currency: z.string().optional(),
   employment_type: z.string().optional(),
   experience_level: z.string().optional(),
-  location: z.union([z.string(), z.number()]),
+  location: z.union([z.string(), z.number()]).refine((val) => val !== undefined && val !== null && val !== '', {
+    message: "Please select a location"
+  }),
   category: z.union([z.string(), z.number()]),
   language: z.string().optional(),
   is_active: z.boolean().optional().default(true),
