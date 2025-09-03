@@ -52,7 +52,18 @@
     "jobUpdateError": "Näsazlyk",
     "generic": "Näsazlyk",
     "genericDescription": "Näsazlyk ýüze çykdy. Täzeden synanyň.",
-    "formValidation": "Formany näsazlyklar üçin barlaň we täzeden synanyň."
+    "formValidation": "Formany näsazlyklar üçin barlaň we täzeden synanyň.",
+    "failedToUpdateJobStatus": "Iş ýeriniň ýagdaýyny täzeläp bolmady",
+    "failedToDeleteJob": "Iş ýerini öçürip bolmady",
+    "messageDeliveryTimeout": "Habar ýetirmegiň wagty gutardy",
+    "failedToSend": "Iberip bolmady",
+    "sendError": "Iberiş näsazlygy",
+    "retryFailed": "Gaýtadan synanyşyk şowsuzlyga uçrady",
+    "errorLoadingUser": "Ulanyjyny ýüklemekde näsazlyk",
+    "errorLoadingUserProfile": "Ulanyjy profilini ýüklemekde näsazlyk",
+    "failedToLoadConversations": "Söhbetdeşlikleri ýükläp bolmady",
+    "failedToStartChat": "Söhbetdeşligi başlatap bolmady",
+    "checkConnectionAndRetry": "Baglanşygyňyzy barlaň we täzeden synanyň"
   },
   "success": {
     "statusUpdated": "Arza statusy üstünlikli täzelendi",
@@ -66,7 +77,14 @@
     "browserNotificationsEnabledDescription": "Indi möhüm täzelenmeleriň push bildirişlerini alarsyňyz.",
     "allNotificationsRead": "Ähli bildirişler okalan diýlip bellendi",
     "chatRoomCreated": "Söhbetdeşlik üstünlikli döredildi",
-    "generic": "Üstünlik"
+    "generic": "Üstünlik",
+    "jobArchivedSuccessfully": "Iş ýeri üstünlikli arhiwlendi",
+    "jobUnarchivedSuccessfully": "Iş ýeri üstünlikli arhiwden çykaryldy",
+    "fileReadyToSend": "ibermäge taýyn"
+  },
+  "jobs": {
+    "confirmUnarchive": "Bu iş ýerini arhiwden çykarmak isleýäňizmi? Ol täzeden işjeň bolar.",
+    "confirmArchive": "Bu iş ýerini arhiwlämek isleýäňizmi? Ol dalaşgärlere indi görünmez."
   },
   "notifications": {
     "browserNotificationsBlocked": "Brauzeriň bildirişleri petiklendi",

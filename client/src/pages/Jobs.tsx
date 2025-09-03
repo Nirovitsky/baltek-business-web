@@ -516,8 +516,8 @@ export default function Jobs() {
             <AlertDialogTitle>{t('common.confirm')}</AlertDialogTitle>
             <AlertDialogDescription>
               {jobToArchive?.status === 'archived' 
-                ? 'Are you sure you want to unarchive this job posting? It will become active again.'
-                : 'Are you sure you want to archive this job posting? It will no longer be visible to candidates.'
+                ? t('jobs.confirmUnarchive')
+                : t('jobs.confirmArchive')
               }
             </AlertDialogDescription>
           </AlertDialogHeader>

@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -55,6 +56,7 @@ interface UserProfile {
 export default function UserProfile() {
   const { userId } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   // Debug logging
   console.log('UserProfile component loaded, userId:', userId);
@@ -110,10 +112,10 @@ export default function UserProfile() {
   if (error || !user) {
     return (
       <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar title="User Profile" description="Error loading user" />
+        <TopBar title="User Profile" description={t("errors.errorLoadingUser")} />
         <main className="flex-1 overflow-y-auto p-6">
           <div className="text-center">
-            <p className="text-red-500">Error loading user profile</p>
+            <p className="text-red-500">{t("errors.errorLoadingUserProfile")}</p>
           </div>
         </main>
       </div>

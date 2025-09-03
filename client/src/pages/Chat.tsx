@@ -316,7 +316,7 @@ export default function Chat() {
           if (wsMessages.some(m => m.id === optimisticId && m.isOptimistic)) {
             updateOptimisticMessage(optimisticId, { 
               status: 'failed',
-              error: 'Message delivery timeout'
+              error: t("errors.messageDeliveryTimeout")
             });
           }
         }, 10000); // 10 second timeout
@@ -325,7 +325,7 @@ export default function Chat() {
         // Mark optimistic message as failed
         updateOptimisticMessage(optimisticId, { 
           status: 'failed',
-          error: 'Failed to send'
+          error: t("errors.failedToSend")
         });
         
         toast({
@@ -340,7 +340,7 @@ export default function Chat() {
       // Mark optimistic message as failed
       updateOptimisticMessage(optimisticId, { 
         status: 'failed',
-        error: 'Send error'
+        error: t("errors.sendError")
       });
       
       toast({
@@ -381,7 +381,7 @@ export default function Chat() {
     if (!success) {
       updateOptimisticMessage(optimisticId, { 
         status: 'failed',
-        error: 'Retry failed'
+        error: t("errors.retryFailed")
       });
     }
   };
@@ -411,7 +411,7 @@ export default function Chat() {
       
       toast({
         title: t("success.fileUploaded"),
-        description: `${file.name} is ready to send`,
+        description: `${file.name} ${t("success.fileReadyToSend")}`,
       });
       
     } catch (uploadError) {
@@ -750,9 +750,9 @@ export default function Chat() {
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <MessageCircle className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-            <p className="text-gray-500 dark:text-gray-400">Failed to load conversations</p>
+            <p className="text-gray-500 dark:text-gray-400">{t("errors.failedToLoadConversations")}</p>
             <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
-              Please check your connection and try again
+{t("errors.checkConnectionAndRetry")}
             </p>
           </div>
         </div>

@@ -52,7 +52,18 @@
     "jobUpdateError": "Ошибка",
     "generic": "Ошибка",
     "genericDescription": "Произошла ошибка. Попробуйте снова.",
-    "formValidation": "Проверьте форму на наличие ошибок и попробуйте снова."
+    "formValidation": "Проверьте форму на наличие ошибок и попробуйте снова.",
+    "failedToUpdateJobStatus": "Не удалось обновить статус вакансии",
+    "failedToDeleteJob": "Не удалось удалить вакансию",
+    "messageDeliveryTimeout": "Тайм-аут доставки сообщения",
+    "failedToSend": "Не удалось отправить",
+    "sendError": "Ошибка отправки",
+    "retryFailed": "Повторная попытка не удалась",
+    "errorLoadingUser": "Ошибка загрузки пользователя",
+    "errorLoadingUserProfile": "Ошибка загрузки профиля пользователя",
+    "failedToLoadConversations": "Не удалось загрузить разговоры",
+    "failedToStartChat": "Не удалось начать чат",
+    "checkConnectionAndRetry": "Пожалуйста, проверьте подключение и попробуйте снова"
   },
   "success": {
     "statusUpdated": "Статус заявки успешно обновлен",
@@ -66,7 +77,14 @@
     "browserNotificationsEnabledDescription": "Теперь вы будете получать push-уведомления о важных обновлениях.",
     "allNotificationsRead": "Все уведомления отмечены как прочитанные",
     "chatRoomCreated": "Чат успешно создан",
-    "generic": "Успешно"
+    "generic": "Успешно",
+    "jobArchivedSuccessfully": "Вакансия успешно архивирована",
+    "jobUnarchivedSuccessfully": "Вакансия успешно разархивирована",
+    "fileReadyToSend": "готов к отправке"
+  },
+  "jobs": {
+    "confirmUnarchive": "Вы уверены, что хотите разархивировать эту вакансию? Она снова станет активной.",
+    "confirmArchive": "Вы уверены, что хотите архивировать эту вакансию? Она больше не будет видна кандидатам."
   },
   "notifications": {
     "browserNotificationsBlocked": "Уведомления браузера заблокированы",

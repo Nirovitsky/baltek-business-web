@@ -100,7 +100,7 @@ export default function JobDetails() {
       queryClient.invalidateQueries({ queryKey: ['/jobs/'] });
       toast({
         title: t("errors.jobUpdateError"),
-        description: error.message || "Failed to update job status",
+        description: error.message || t("errors.failedToUpdateJobStatus"),
         variant: "destructive",
       });
     },
@@ -109,7 +109,7 @@ export default function JobDetails() {
       queryClient.invalidateQueries({ queryKey: ['/jobs/', id] });
       toast({
         title: t("success.generic"),
-        description: `Job ${context?.newStatus === 'archived' ? 'archived' : 'unarchived'} successfully`,
+        description: context?.newStatus === 'archived' ? t('success.jobArchivedSuccessfully') : t('success.jobUnarchivedSuccessfully'),
       });
     },
   });
@@ -155,7 +155,7 @@ export default function JobDetails() {
       }
       toast({
         title: t("errors.jobDeleteError"),
-        description: error.message || "Failed to delete job",
+        description: error.message || t("errors.failedToDeleteJob"),
         variant: "destructive",
       });
     },

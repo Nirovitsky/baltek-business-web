@@ -52,7 +52,18 @@
     "jobUpdateError": "Error",
     "generic": "Error",
     "genericDescription": "An error occurred. Please try again.",
-    "formValidation": "Please check the form for errors and try again."
+    "formValidation": "Please check the form for errors and try again.",
+    "failedToUpdateJobStatus": "Failed to update job status",
+    "failedToDeleteJob": "Failed to delete job",
+    "messageDeliveryTimeout": "Message delivery timeout",
+    "failedToSend": "Failed to send",
+    "sendError": "Send error",
+    "retryFailed": "Retry failed",
+    "errorLoadingUser": "Error loading user",
+    "errorLoadingUserProfile": "Error loading user profile",
+    "failedToLoadConversations": "Failed to load conversations",
+    "failedToStartChat": "Failed to start chat",
+    "checkConnectionAndRetry": "Please check your connection and try again"
   },
   "success": {
     "statusUpdated": "Application status updated successfully",
@@ -66,7 +77,14 @@
     "browserNotificationsEnabledDescription": "You'll now receive push notifications for important updates.",
     "allNotificationsRead": "All notifications marked as read",
     "chatRoomCreated": "Chat room created successfully",
-    "generic": "Success"
+    "generic": "Success",
+    "jobArchivedSuccessfully": "Job archived successfully",
+    "jobUnarchivedSuccessfully": "Job unarchived successfully",
+    "fileReadyToSend": "is ready to send"
+  },
+  "jobs": {
+    "confirmUnarchive": "Are you sure you want to unarchive this job posting? It will become active again.",
+    "confirmArchive": "Are you sure you want to archive this job posting? It will no longer be visible to candidates."
   },
   "notifications": {
     "browserNotificationsBlocked": "Browser notifications blocked",

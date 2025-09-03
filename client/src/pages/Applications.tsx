@@ -256,7 +256,7 @@ export default function Applications() {
     } catch (error: any) {
       toast({
         title: t("errors.generic"),
-        description: error.message || "Failed to start chat",
+        description: error.message || t("errors.failedToStartChat"),
         variant: "destructive",
       });
     }
