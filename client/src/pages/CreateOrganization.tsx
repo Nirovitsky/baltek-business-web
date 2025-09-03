@@ -38,6 +38,10 @@ import {
   ArrowRight,
   ArrowLeft,
   CheckCircle,
+  Plus,
+  Calendar,
+  Link,
+  Trash2,
 } from "lucide-react";
 import { apiService } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
@@ -45,7 +49,7 @@ import { useOrganizations } from "@/hooks/useOrganizations";
 import { useReferenceData } from "@/hooks/useReferencedData";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
-import type { Category, Location, PaginatedResponse } from "@/types";
+import type { Category, Location, PaginatedResponse, Project } from "@/types";
 
 export default function CreateOrganization() {
   const navigate = useNavigate();
@@ -58,6 +62,7 @@ export default function CreateOrganization() {
   const [isLoading, setIsLoading] = useState(false);
   const DRAFT_KEY = "organization_draft_new";
   const [isDraftSaved, setIsDraftSaved] = useState(false);
+  const [projects, setProjects] = useState<Omit<Project, 'id' | 'organization'>[]>([]);
 
   // Load draft or use defaults
   const loadDraftOrDefaults = () => {
@@ -78,12 +83,21 @@ export default function CreateOrganization() {
       phone: "",
       category_id: 0,
       location_id: 0,
+      projects: [],
     };
   };
 
   const [formData, setFormData] = useState(loadDraftOrDefaults);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+
+  // Initialize projects from loaded data
+  useEffect(() => {
+    const savedData = loadDraftOrDefaults();
+    if (savedData.projects) {
+      setProjects(savedData.projects);
+    }
+  }, []);
 
   const MAX_ORGANIZATIONS = 10;
 
@@ -150,7 +164,8 @@ export default function CreateOrganization() {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       try {
-        localStorage.setItem(DRAFT_KEY, JSON.stringify(formData));
+        const draftData = { ...formData, projects };
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(draftData));
         setIsDraftSaved(true);
         setTimeout(() => setIsDraftSaved(false), 2000);
       } catch (error) {
@@ -159,7 +174,7 @@ export default function CreateOrganization() {
     }, 1000);
 
     return () => clearTimeout(timeoutId);
-  }, [formData]);
+  }, [formData, projects]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -216,36 +231,62 @@ export default function CreateOrganization() {
     setLogoPreview(null);
   };
 
+  // Project management functions
+  const addProject = () => {
+    setProjects([...projects, {
+      title: "",
+      description: "",
+      link: "",
+      date_started: "",
+      date_finished: "",
+    }]);
+  };
+
+  const updateProject = (index: number, field: string, value: string) => {
+    const updatedProjects = projects.map((project, i) => 
+      i === index ? { ...project, [field]: value } : project
+    );
+    setProjects(updatedProjects);
+  };
+
+  const removeProject = (index: number) => {
+    setProjects(projects.filter((_, i) => i !== index));
+  };
+
   const handleNext = () => {
-    // Validate required fields before moving to next step
-    if (!formData.official_name.trim()) {
-      toast({
-        title: t('createOrganization.organizationNameRequired'),
-        description: t('createOrganization.pleaseEnterName'),
-        variant: "destructive",
-      });
-      return;
-    }
+    if (currentStep === 1) {
+      // Validate required fields before moving to next step
+      if (!formData.official_name.trim()) {
+        toast({
+          title: t('createOrganization.organizationNameRequired'),
+          description: t('createOrganization.pleaseEnterName'),
+          variant: "destructive",
+        });
+        return;
+      }
 
-    if (formData.category_id === 0) {
-      toast({
-        title: t('createOrganization.categoryRequired'),
-        description: t('createOrganization.pleaseSelectCategory'),
-        variant: "destructive",
-      });
-      return;
-    }
+      if (formData.category_id === 0) {
+        toast({
+          title: t('createOrganization.categoryRequired'),
+          description: t('createOrganization.pleaseSelectCategory'),
+          variant: "destructive",
+        });
+        return;
+      }
 
-    if (formData.location_id === 0) {
-      toast({
-        title: t('createOrganization.locationRequired'),
-        description: t('createOrganization.pleaseSelectLocation'),
-        variant: "destructive",
-      });
-      return;
-    }
+      if (formData.location_id === 0) {
+        toast({
+          title: t('createOrganization.locationRequired'),
+          description: t('createOrganization.pleaseSelectLocation'),
+          variant: "destructive",
+        });
+        return;
+      }
 
-    setCurrentStep(2);
+      setCurrentStep(2);
+    } else if (currentStep === 2) {
+      setCurrentStep(3);
+    }
   };
 
   const handleSubmit = async (e?: React.FormEvent) => {
@@ -276,6 +317,7 @@ export default function CreateOrganization() {
         phone: formData.phone || "",
         category: formData.category_id,
         location: formData.location_id,
+        projects: projects.filter(project => project.title.trim() !== ""),
         ...(logoUrl && { logo: logoUrl }),
       };
 
@@ -336,7 +378,19 @@ export default function CreateOrganization() {
               : "bg-gray-200 dark:bg-gray-700 text-gray-400"
           }`}
         >
-          2
+          {currentStep > 2 ? <CheckCircle className="w-5 h-5" /> : "2"}
+        </div>
+        <div
+          className={`w-12 h-1 ${currentStep >= 3 ? "bg-primary" : "bg-gray-200 dark:bg-gray-700"}`}
+        ></div>
+        <div
+          className={`flex items-center justify-center w-8 h-8 rounded-full ${
+            currentStep >= 3
+              ? "bg-primary text-white"
+              : "bg-gray-200 dark:bg-gray-700 text-gray-400"
+          }`}
+        >
+          3
         </div>
       </div>
     </div>
@@ -564,6 +618,145 @@ export default function CreateOrganization() {
         </Button>
 
         <Button
+          onClick={handleNext}
+          className="flex-1"
+        >
+          {t('createOrganization.continue')}
+          <ArrowRight className="w-4 h-4 ml-2" />
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderStep3 = () => (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <Label className="text-sm font-medium">
+            {t('createOrganization.projects', 'Projects')}
+          </Label>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={addProject}
+            className="flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            {t('createOrganization.addProject', 'Add Project')}
+          </Button>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          {t('createOrganization.projectsDescription', 'Showcase your organization\'s key projects and achievements.')}
+        </p>
+      </div>
+
+      {projects.length === 0 ? (
+        <div className="text-center py-8 border-2 border-dashed border-muted-foreground/25 rounded-lg">
+          <Target className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
+          <p className="text-muted-foreground">
+            {t('createOrganization.noProjectsYet', 'No projects added yet')}
+          </p>
+          <p className="text-sm text-muted-foreground mt-1">
+            {t('createOrganization.addFirstProject', 'Add your first project to showcase your work')}
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {projects.map((project, index) => (
+            <Card key={index} className="p-4">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium text-sm">
+                    {t('createOrganization.project', 'Project')} {index + 1}
+                  </h4>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeProject(index)}
+                    className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm">
+                      {t('createOrganization.projectTitle', 'Project Title')} *
+                    </Label>
+                    <Input
+                      value={project.title}
+                      onChange={(e) => updateProject(index, 'title', e.target.value)}
+                      placeholder={t('createOrganization.projectTitlePlaceholder', 'Enter project title')}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-sm">
+                      {t('createOrganization.projectLink', 'Project Link')}
+                    </Label>
+                    <Input
+                      value={project.link || ""}
+                      onChange={(e) => updateProject(index, 'link', e.target.value)}
+                      placeholder={t('createOrganization.projectLinkPlaceholder', 'https://example.com')}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-sm">
+                    {t('createOrganization.projectDescription', 'Description')}
+                  </Label>
+                  <Textarea
+                    value={project.description || ""}
+                    onChange={(e) => updateProject(index, 'description', e.target.value)}
+                    placeholder={t('createOrganization.projectDescriptionPlaceholder', 'Describe the project and your role')}
+                    className="min-h-[80px]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm">
+                      {t('createOrganization.startDate', 'Start Date')}
+                    </Label>
+                    <Input
+                      type="date"
+                      value={project.date_started || ""}
+                      onChange={(e) => updateProject(index, 'date_started', e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-sm">
+                      {t('createOrganization.endDate', 'End Date')}
+                    </Label>
+                    <Input
+                      type="date"
+                      value={project.date_finished || ""}
+                      onChange={(e) => updateProject(index, 'date_finished', e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      <div className="flex gap-4 pt-4">
+        <Button
+          variant="outline"
+          onClick={() => setCurrentStep(2)}
+          className="flex-1"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          {t('createOrganization.back')}
+        </Button>
+
+        <Button
           onClick={handleSubmit}
           disabled={isLoading}
           className="flex-1"
@@ -621,13 +814,17 @@ export default function CreateOrganization() {
                   <CardTitle className="text-lg font-semibold">
                     {currentStep === 1 
                       ? t('createOrganization.basicInformation')
-                      : t('createOrganization.additionalDetails')
+                      : currentStep === 2 
+                        ? t('createOrganization.additionalDetails')
+                        : t('createOrganization.projects', 'Projects')
                     }
                   </CardTitle>
                   <CardDescription>
                     {currentStep === 1
                       ? t('createOrganization.tellUsAbout')
-                      : t('createOrganization.additionalDetailsDescription')
+                      : currentStep === 2
+                        ? t('createOrganization.additionalDetailsDescription')
+                        : t('createOrganization.projectsStepDescription', 'Add your organization\'s projects to showcase your work')
                     }
                   </CardDescription>
                 </div>
@@ -635,7 +832,7 @@ export default function CreateOrganization() {
             </CardHeader>
 
             <CardContent className="p-6 space-y-6 bg-card">
-              {currentStep === 1 ? renderStep1() : renderStep2()}
+              {currentStep === 1 ? renderStep1() : currentStep === 2 ? renderStep2() : renderStep3()}
             </CardContent>
           </Card>
         </div>
