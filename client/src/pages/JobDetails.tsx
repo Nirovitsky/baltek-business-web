@@ -174,7 +174,9 @@ export default function JobDetails() {
   };
 
   const confirmEdit = () => {
-    navigate(`/jobs/edit/${job.id}`);
+    if (job?.id) {
+      navigate(`/jobs/edit/${job.id}`);
+    }
     setShowEditDialog(false);
   };
 
@@ -214,7 +216,7 @@ export default function JobDetails() {
   };
 
   const formatDate = (timestamp?: number | string) => {
-    if (!timestamp) return 'Not specified';
+    if (!timestamp) return t('jobDetails.notSpecified');
     try {
       let date: Date;
       
@@ -228,10 +230,10 @@ export default function JobDetails() {
         date = new Date(timestamp as string);
       }
       
-      if (isNaN(date.getTime())) return 'Not specified';
+      if (isNaN(date.getTime())) return t('jobDetails.notSpecified');
       return format(date, 'MMMM d, yyyy');
     } catch {
-      return 'Not specified';
+      return t('jobDetails.notSpecified');
     }
   };
 
@@ -240,14 +242,14 @@ export default function JobDetails() {
   };
 
   const formatJobType = (type?: string) => {
-    if (!type) return 'Unknown';
+    if (!type) return t('jobDetails.unknown');
     return type.split('_').map(word => 
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
   };
 
   const formatWorkplaceType = (type?: string) => {
-    if (!type) return 'Unknown';
+    if (!type) return t('jobDetails.unknown');
     return type.split('_').map(word => 
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
@@ -278,16 +280,16 @@ export default function JobDetails() {
       <div className="flex-1 flex flex-col bg-background overflow-hidden">
         <div className="bg-card border-b border flex-shrink-0">
           <div className="max-w-4xl mx-auto px-6 py-6">
-            <h1 className="text-2xl font-semibold text-foreground">Job Not Found</h1>
-            <p className="text-sm text-muted-foreground mt-1">The job posting you're looking for doesn't exist</p>
+            <h1 className="text-2xl font-semibold text-foreground">{t('jobDetails.jobNotFound')}</h1>
+            <p className="text-sm text-muted-foreground mt-1">{t('jobDetails.jobNotFoundDescription')}</p>
           </div>
         </div>
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-muted-foreground mb-4">The job posting has been removed or doesn't exist.</p>
+            <p className="text-muted-foreground mb-4">{t('jobDetails.jobRemovedOrNotExists')}</p>
             <Button onClick={() => navigate('/jobs')} className="bg-primary hover:bg-blue-700">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Jobs
+              {t('jobDetails.backToJobs')}
             </Button>
           </div>
         </div>
@@ -308,7 +310,7 @@ export default function JobDetails() {
               className="text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Jobs
+              {t('jobDetails.backToJobs')}
             </Button>
             <div className="flex items-center space-x-3">
               <Button
@@ -317,7 +319,7 @@ export default function JobDetails() {
                 className="text-primary border-primary hover:bg-primary hover:text-white"
               >
                 <Edit className="h-4 w-4 mr-2" />
-                Edit
+                {t('jobDetails.edit')}
               </Button>
               <Button
                 variant="outline"
@@ -326,7 +328,7 @@ export default function JobDetails() {
                 className="text-muted-foreground border hover:bg-background"
               >
                 <Archive className="h-4 w-4 mr-2" />
-                {job.status === 'archived' ? 'Unarchive' : 'Archive'}
+                {job.status === 'archived' ? t('jobDetails.unarchive') : t('jobDetails.archive')}
               </Button>
               <Button
                 variant="outline"
@@ -335,7 +337,7 @@ export default function JobDetails() {
                 className="text-red-600 border-red-300 hover:bg-red-50"
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                Delete
+                {t('jobDetails.delete')}
               </Button>
             </div>
           </div>
@@ -351,7 +353,7 @@ export default function JobDetails() {
             <CardHeader className="border-b border bg-card">
               <CardTitle className="flex items-center text-lg font-semibold text-foreground">
                 <Users className="h-5 w-5 mr-3 text-primary" />
-                Job Information
+                {t('jobDetails.jobInformation')}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6 bg-card space-y-8">
@@ -359,7 +361,7 @@ export default function JobDetails() {
               {/* Organization */}
               {job.organization && typeof job.organization === 'object' && (
                 <div>
-                  <span className="text-sm font-medium text-foreground">Organization</span>
+                  <span className="text-sm font-medium text-foreground">{t('jobDetails.organization')}</span>
                   <p className="text-foreground mt-1 text-lg font-medium">{job.organization.official_name}</p>
                 </div>
               )}
@@ -369,12 +371,12 @@ export default function JobDetails() {
                 <div>
                   <h4 className="flex items-center text-base font-semibold text-foreground mb-4">
                     <DollarSign className="h-4 w-4 mr-2 text-primary" />
-                    Compensation
+                    {t('jobDetails.compensation')}
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {job.payment_from && (
                       <div>
-                        <span className="text-sm font-medium text-foreground">Minimum Salary</span>
+                        <span className="text-sm font-medium text-foreground">{t('jobDetails.minimumSalary')}</span>
                         <p className="text-foreground mt-1 text-lg font-semibold">
                           {(() => {
                             const currency = job.currency || 'TMT';
@@ -386,7 +388,7 @@ export default function JobDetails() {
                     )}
                     {job.payment_to && (
                       <div>
-                        <span className="text-sm font-medium text-foreground">Maximum Salary</span>
+                        <span className="text-sm font-medium text-foreground">{t('jobDetails.maximumSalary')}</span>
                         <p className="text-foreground mt-1 text-lg font-semibold">
                           {(() => {
                             const currency = job.currency || 'TMT';
@@ -398,7 +400,7 @@ export default function JobDetails() {
                     )}
                     {job.payment_frequency && (
                       <div>
-                        <span className="text-sm font-medium text-foreground">Payment Type</span>
+                        <span className="text-sm font-medium text-foreground">{t('jobDetails.paymentType')}</span>
                         <p className="text-foreground mt-1 capitalize">
                           {job.payment_frequency.replace('_', ' ')}
                         </p>
@@ -412,23 +414,23 @@ export default function JobDetails() {
               <div>
                 <h4 className="flex items-center text-base font-semibold text-foreground mb-4">
                   <Briefcase className="h-4 w-4 mr-2 text-primary" />
-                  Job Details
+                  {t('jobDetails.jobDetails')}
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <div>
-                      <span className="text-sm font-medium text-foreground">Employment Type</span>
+                      <span className="text-sm font-medium text-foreground">{t('jobDetails.employmentType')}</span>
                       <p className="text-foreground mt-1">{formatJobType(job.job_type)}</p>
                     </div>
                     <div>
-                      <span className="text-sm font-medium text-foreground">Work Type</span>
+                      <span className="text-sm font-medium text-foreground">{t('jobDetails.workType')}</span>
                       <p className="text-foreground mt-1">{formatWorkplaceType(job.workplace_type)}</p>
                     </div>
                     {job.min_education_level && (
                       <div>
                         <span className="text-sm font-medium text-foreground flex items-center">
                           <GraduationCap className="h-4 w-4 mr-1 text-primary" />
-                          Minimum Education
+                          {t('jobDetails.minimumEducation')}
                         </span>
                         <p className="text-foreground mt-1">{formatEducationLevel(job.min_education_level)}</p>
                       </div>
@@ -437,7 +439,7 @@ export default function JobDetails() {
                   <div className="space-y-4">
                     {category && (
                       <div>
-                        <span className="text-sm font-medium text-foreground">Category</span>
+                        <span className="text-sm font-medium text-foreground">{t('jobDetails.category')}</span>
                         <p className="text-foreground mt-1">{category.name}</p>
                       </div>
                     )}
@@ -445,7 +447,7 @@ export default function JobDetails() {
                       <div>
                         <span className="text-sm font-medium text-foreground flex items-center">
                           <MapPin className="h-4 w-4 mr-1 text-primary" />
-                          Location
+                          {t('jobDetails.location')}
                         </span>
                         <p className="text-foreground mt-1">{location.name}</p>
                       </div>
@@ -454,7 +456,7 @@ export default function JobDetails() {
                       <div>
                         <span className="text-sm font-medium text-foreground flex items-center">
                           <Languages className="h-4 w-4 mr-1 text-primary" />
-                          Required Languages
+                          {t('jobDetails.requiredLanguages')}
                         </span>
                         <div className="flex flex-wrap gap-2 mt-2">
                           {languages.map((lang: any, index: number) => (
@@ -477,7 +479,7 @@ export default function JobDetails() {
             <CardHeader className="border-b border bg-card">
               <CardTitle className="flex items-center text-lg font-semibold text-foreground">
                 <Briefcase className="h-5 w-5 mr-3 text-primary" />
-                Job Description
+                {t('jobDetails.jobDescription')}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6 bg-card">
@@ -486,7 +488,7 @@ export default function JobDetails() {
               </p>
               {job.requirements && (
                 <div className="mt-6">
-                  <h4 className="font-medium text-foreground mb-3">Requirements</h4>
+                  <h4 className="font-medium text-foreground mb-3">{t('jobDetails.requirements')}</h4>
                   <p className="text-foreground whitespace-pre-wrap leading-relaxed">
                     {job.requirements}
                   </p>
@@ -502,18 +504,18 @@ export default function JobDetails() {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Delete</AlertDialogTitle>
+            <AlertDialogTitle>{t('jobDetails.confirmDelete')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this job posting? This action cannot be undone.
+              {t('jobDetails.deleteConfirmMessage')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('jobDetails.cancel')}</AlertDialogCancel>
             <AlertDialogAction 
               onClick={confirmDelete}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete
+              {t('jobDetails.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -523,15 +525,15 @@ export default function JobDetails() {
       <AlertDialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Edit</AlertDialogTitle>
+            <AlertDialogTitle>{t('jobDetails.confirmEdit')}</AlertDialogTitle>
             <AlertDialogDescription>
-              You are about to edit this job posting. Any unsaved changes will be lost. Continue?
+              {t('jobDetails.editConfirmMessage')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('jobDetails.cancel')}</AlertDialogCancel>
             <AlertDialogAction onClick={confirmEdit}>
-              Continue to Edit
+              {t('jobDetails.continueToEdit')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -541,18 +543,18 @@ export default function JobDetails() {
       <AlertDialog open={showArchiveDialog} onOpenChange={setShowArchiveDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirm {job?.status === 'archived' ? 'Unarchive' : 'Archive'}</AlertDialogTitle>
+            <AlertDialogTitle>{job?.status === 'archived' ? t('jobDetails.confirmUnarchive') : t('jobDetails.confirmArchive')}</AlertDialogTitle>
             <AlertDialogDescription>
               {job?.status === 'archived' 
-                ? 'Are you sure you want to unarchive this job posting? It will be visible to candidates again.'
-                : 'Are you sure you want to archive this job posting? It will no longer be visible to candidates.'
+                ? t('jobDetails.unarchiveConfirmMessage')
+                : t('jobDetails.archiveConfirmMessage')
               }
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('jobDetails.cancel')}</AlertDialogCancel>
             <AlertDialogAction onClick={confirmArchive}>
-              {job?.status === 'archived' ? 'Unarchive' : 'Archive'}
+              {job?.status === 'archived' ? t('jobDetails.unarchive') : t('jobDetails.archive')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
