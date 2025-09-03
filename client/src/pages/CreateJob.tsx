@@ -127,9 +127,9 @@ export default function CreateJob() {
       job_type: "full_time",
       workplace_type: "on_site",
       min_education_level: "secondary",
-      salary_from: 0,
-      salary_to: 0,
-      salary_payment_type: "monthly",
+      payment_from: 0,
+      payment_to: 0,
+      payment_frequency: "monthly",
       currency: "TMT",
       required_languages: [],
       date_started: Math.floor(Date.now() / 1000),
@@ -203,9 +203,9 @@ export default function CreateJob() {
         job_type: job.job_type || "full_time",
         workplace_type: job.workplace_type || "on_site",
         min_education_level: job.min_education_level || undefined,
-        salary_from: job.salary_from || undefined,
-        salary_to: job.salary_to || undefined,
-        salary_payment_type: job.salary_payment_type || "monthly",
+        payment_from: job.payment_from || undefined,
+        payment_to: job.payment_to || undefined,
+        payment_frequency: job.payment_frequency || "monthly",
         currency: job.currency || "TMT",
         required_languages: job.required_languages || [],
         date_started: job.date_started || Math.floor(Date.now() / 1000),
@@ -261,9 +261,9 @@ export default function CreateJob() {
         job_type: data.job_type,
         experience_level: data.experience_level,
         min_education_level: data.min_education_level,
-        salary_from: data.salary_from,
-        salary_to: data.salary_to,
-        salary_payment_type: data.salary_payment_type,
+        payment_from: data.payment_from,
+        payment_to: data.payment_to,
+        payment_frequency: data.payment_frequency,
         currency: data.currency,
         required_languages: data.required_languages,
         date_started: data.date_started,
@@ -386,9 +386,9 @@ export default function CreateJob() {
         job_type: data.job_type,
         experience_level: data.experience_level,
         min_education_level: data.min_education_level,
-        salary_from: data.salary_from,
-        salary_to: data.salary_to,
-        salary_payment_type: data.salary_payment_type,
+        payment_from: data.payment_from,
+        payment_to: data.payment_to,
+        payment_frequency: data.payment_frequency,
         currency: data.currency,
         required_languages: data.required_languages,
         date_started: data.date_started,
@@ -861,7 +861,7 @@ export default function CreateJob() {
                       <div className="flex gap-3 items-center">
                         <FormField
                           control={form.control}
-                          name="salary_from"
+                          name="payment_from"
                           render={({ field }) => (
                             <FormItem className="flex-1">
                               <FormControl>
@@ -888,7 +888,7 @@ export default function CreateJob() {
                         <span className="text-muted-foreground text-sm">{t('jobs.to')}</span>
                         <FormField
                           control={form.control}
-                          name="salary_to"
+                          name="payment_to"
                           render={({ field }) => (
                             <FormItem className="flex-1">
                               <FormControl>
@@ -948,7 +948,7 @@ export default function CreateJob() {
 
                     <FormField
                       control={form.control}
-                      name="salary_payment_type"
+                      name="payment_frequency"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-medium text-foreground">
