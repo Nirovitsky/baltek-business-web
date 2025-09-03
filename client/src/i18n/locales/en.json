@@ -76,14 +76,14 @@
     "profileUpdatedDescription": "Your profile has been successfully updated.",
     "jobUpdated": "Job posting updated successfully",
     "jobDeleted": "Job deleted successfully",
+    "jobArchivedSuccessfully": "Job archived successfully",
+    "jobUnarchivedSuccessfully": "Job unarchived successfully",
     "notificationPreferencesUpdated": "Notification preferences updated",
     "browserNotificationsEnabled": "Browser notifications enabled",
     "browserNotificationsEnabledDescription": "You'll now receive push notifications for important updates.",
     "allNotificationsRead": "All notifications marked as read",
     "chatRoomCreated": "Chat room created successfully",
     "generic": "Success",
-    "jobArchivedSuccessfully": "Job archived successfully",
-    "jobUnarchivedSuccessfully": "Job unarchived successfully",
     "fileReadyToSend": "is ready to send"
   },
   "jobs": {
@@ -481,7 +481,25 @@
     "selectOption": "Please select an option",
     "uploadFile": "Please upload a file",
     "fileTooLarge": "File size is too large",
-    "invalidFileType": "Invalid file type"
+    "invalidFileType": "Invalid file type",
+    "placeholders": {
+      "firstName": "Enter your first name",
+      "lastName": "Enter your last name",
+      "emailInput": "Enter your email address",
+      "website": "https://www.example.com",
+      "email": "contact@company.com",
+      "phone": "+1 (555) 123-4567",
+      "searchLocations": "Search for locations...",
+      "jobTitle": "Enter job title",
+      "selectCategory": "Select a category",
+      "selectLocation": "Select a location",
+      "minSalary": "Minimum salary",
+      "maxSalary": "Maximum salary (optional)",
+      "jobDescription": "Describe the role, responsibilities, and requirements...",
+      "jobRequirements": "List the required skills, experience, and qualifications...",
+      "typeMessage": "Type your message...",
+      "searchCategories": "Search for categories..."
+    }
   },
   "errors": {
     "generic": "An error occurred. Please try again.",
@@ -501,6 +519,85 @@
     "deleted": "Deleted successfully",
     "uploaded": "Uploaded successfully",
     "sent": "Sent successfully"
+  },
+  "messages": {
+    "failedToDeleteJob": "Failed to delete job",
+    "jobDeletedSuccess": "Job deleted successfully",
+    "failedToUpdateJobStatus": "Failed to update job status",
+    "jobArchivedSuccess": "Job archived successfully",
+    "jobUnarchivedSuccess": "Job unarchived successfully",
+    "failedToCreateJob": "Failed to create job",
+    "validationError": "Validation Error",
+    "jobCreatedSuccess": "Job created successfully",
+    "failedToUpdateJob": "Failed to update job",
+    "jobUpdatedSuccess": "Job updated successfully",
+    "noOrganization": "No organization selected",
+    "confirmDeleteJob": "Are you sure you want to delete this job?",
+    "organizationNotApproved": "Organization not approved",
+    "organizationUnderReview": "Your organization is under review"
+  },
+  "modals": {
+    "notSpecified": "Not specified",
+    "applicationFor": "Application for",
+    "contactInformation": "Contact Information",
+    "locationNotSpecified": "Location not specified",
+    "applicationStatus": "Application Status",
+    "unknown": "Unknown",
+    "coverLetter": "Cover Letter",
+    "resume": "Resume",
+    "viewResume": "View Resume",
+    "pdfDocument": "PDF Document",
+    "sendMessage": "Send Message",
+    "viewProfile": "View Profile",
+    "success": "Success",
+    "error": "Error",
+    "jobUnarchived": "Job unarchived successfully",
+    "jobArchived": "Job archived successfully",
+    "failedToUpdateJobStatus": "Failed to update job status",
+    "jobDetails": "Job Details",
+    "unarchive": "Unarchive",
+    "archive": "Archive",
+    "applications": "applications",
+    "jobDescription": "Job Description",
+    "compensation": "Compensation",
+    "educationRequired": "Education Required",
+    "requiredLanguages": "Required Languages",
+    "jobType": "Job Type",
+    "workplace": "Workplace",
+    "startDate": "Start Date",
+    "endDate": "End Date"
+  },
+  "statuses": {
+    "applicationStatuses": {
+      "in_review": "In Review",
+      "ongoing": "Ongoing",
+      "rejected": "Rejected",
+      "hired": "Hired",
+      "expired": "Expired"
+    },
+    "jobStatuses": {
+      "active": "Active",
+      "archived": "Archived",
+      "draft": "Draft",
+      "expired": "Expired"
+    },
+    "educationLevels": {
+      "secondary": "Secondary",
+      "undergraduate": "Undergraduate",
+      "master": "Master",
+      "doctorate": "Doctorate"
+    },
+    "jobTypes": {
+      "full_time": "Full Time",
+      "part_time": "Part Time",
+      "contract": "Contract",
+      "internship": "Internship"
+    },
+    "workplaceTypes": {
+      "remote": "Remote",
+      "on_site": "On Site",
+      "hybrid": "Hybrid"
+    }
   },
   "footer": {
     "support": "Support",

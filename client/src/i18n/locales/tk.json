@@ -477,6 +477,85 @@
     "failedToUploadLogo": "Logo ýükläp bolmady",
     "project": "Taslama"
   },
+  "messages": {
+    "failedToDeleteJob": "Iş ýerini öçürip bolmady",
+    "jobDeletedSuccess": "Iş ýeri üstünlikli öçürildi",
+    "failedToUpdateJobStatus": "Iş ýeriniň ýagdaýyny täzeläp bolmady",
+    "jobArchivedSuccess": "Iş ýeri üstünlikli arhiwlendi",
+    "jobUnarchivedSuccess": "Iş ýeri üstünlikli arhiwden çykaryldy",
+    "failedToCreateJob": "Iş ýerini döredip bolmady",
+    "validationError": "Barlag näsazlygy",
+    "jobCreatedSuccess": "Iş ýeri üstünlikli döredildi",
+    "failedToUpdateJob": "Iş ýerini täzeläp bolmady",
+    "jobUpdatedSuccess": "Iş ýeri üstünlikli täzelendi",
+    "noOrganization": "Gurama saýlanmady",
+    "confirmDeleteJob": "Bu iş ýerini öçürmek isleýäňizmi?",
+    "organizationNotApproved": "Gurama tassyklanmady",
+    "organizationUnderReview": "Siziň guramaňyz gözden geçirilýär"
+  },
+  "modals": {
+    "notSpecified": "Kesgitlenmedik",
+    "applicationFor": "Üçin arza",
+    "contactInformation": "Habarlaşmak üçin maglumat",
+    "locationNotSpecified": "Ýerleşiş kesgitlenmedik",
+    "applicationStatus": "Arzanyň ýagdaýy",
+    "unknown": "Näbelli",
+    "coverLetter": "Arza haty",
+    "resume": "Rezýume",
+    "viewResume": "Rezýumäni gör",
+    "pdfDocument": "PDF resminame",
+    "sendMessage": "Habar iber",
+    "viewProfile": "Profili gör",
+    "success": "Üstünlik",
+    "error": "Näsazlyk",
+    "jobUnarchived": "Iş ýeri üstünlikli arhiwden çykaryldy",
+    "jobArchived": "Iş ýeri üstünlikli arhiwlendi",
+    "failedToUpdateJobStatus": "Iş ýeriniň ýagdaýyny täzeläp bolmady",
+    "jobDetails": "Iş ýeriniň jikme-jiklikleri",
+    "unarchive": "Arhiwden çykar",
+    "archive": "Arhiw",
+    "applications": "arza",
+    "jobDescription": "Iş ýeriniň düşündirişi",
+    "compensation": "Kompensasiýa",
+    "educationRequired": "Zerur bilim",
+    "requiredLanguages": "Zerur diller",
+    "jobType": "Işiň görnüşi",
+    "workplace": "Iş ýeri",
+    "startDate": "Başlangyç senesi",
+    "endDate": "Gutarýan senesi"
+  },
+  "statuses": {
+    "applicationStatuses": {
+      "in_review": "Gözden geçirilýär",
+      "ongoing": "Dowam edýär",
+      "rejected": "Ret edildi",
+      "hired": "Işe alyndy",
+      "expired": "Möhleti gutaran"
+    },
+    "jobStatuses": {
+      "active": "Işjeň",
+      "archived": "Arhiwlenen",
+      "draft": "Garalama",
+      "expired": "Möhleti gutaran"
+    },
+    "educationLevels": {
+      "secondary": "Orta",
+      "undergraduate": "Bakalawr",
+      "master": "Magistr",
+      "doctorate": "Doktorlyk"
+    },
+    "jobTypes": {
+      "full_time": "Doly iş wagty",
+      "part_time": "Bölekleýin iş wagty",
+      "contract": "Şertnama boýunça",
+      "internship": "Stajyroçlyk"
+    },
+    "workplaceTypes": {
+      "remote": "Uzakdan",
+      "on_site": "Ofisde",
+      "hybrid": "Garyşyk"
+    }
+  },
   "forms": {
     "required": "Bu meýdan hökmanydyr",
     "invalidEmail": "Dogry email adresini giriziň",
@@ -487,7 +566,25 @@
     "selectOption": "Saýlaw saýlaň",
     "uploadFile": "Faýl ýükläň",
     "fileTooLarge": "Faýl gaty uly",
-    "invalidFileType": "Faýl görnüşi nädogry"
+    "invalidFileType": "Faýl görnüşi nädogry",
+    "placeholders": {
+      "firstName": "Adyňyzy giriziň",
+      "lastName": "Familiýaňyzy giriziň",
+      "emailInput": "Email adresiňizi giriziň",
+      "website": "https://www.example.com",
+      "email": "contact@company.com",
+      "phone": "+993 12 345678",
+      "searchLocations": "Ýerleşişleri gözläň...",
+      "jobTitle": "Iş ýeriniň adyny giriziň",
+      "selectCategory": "Kategoriýany saýlaň",
+      "selectLocation": "Ýerleşişi saýlaň",
+      "minSalary": "Iň az aýlyk",
+      "maxSalary": "Iň köp aýlyk (hökmany däl)",
+      "jobDescription": "Rol, jogapkärçilikler we talaplary düşündiriň...",
+      "jobRequirements": "Zerur ukyplar, tejribe we dereje talaplary sanaň...",
+      "typeMessage": "Habaryňyzy ýazyň...",
+      "searchCategories": "Kategoriýalary gözläň..."
+    }
   },
   "errors": {
     "generic": "Näsazlyk ýüze çykdy. Gaýtadan synanyň.",

@@ -76,14 +76,14 @@
     "profileUpdatedDescription": "Ваш профиль был успешно обновлен.",
     "jobUpdated": "Вакансия успешно обновлена",
     "jobDeleted": "Вакансия успешно удалена",
+    "jobArchivedSuccessfully": "Вакансия успешно архивирована",
+    "jobUnarchivedSuccessfully": "Вакансия успешно разархивирована",
     "notificationPreferencesUpdated": "Настройки уведомлений обновлены",
     "browserNotificationsEnabled": "Уведомления браузера включены",
     "browserNotificationsEnabledDescription": "Теперь вы будете получать push-уведомления о важных обновлениях.",
     "allNotificationsRead": "Все уведомления отмечены как прочитанные",
     "chatRoomCreated": "Чат успешно создан",
     "generic": "Успешно",
-    "jobArchivedSuccessfully": "Вакансия успешно архивирована",
-    "jobUnarchivedSuccessfully": "Вакансия успешно разархивирована",
     "fileReadyToSend": "готов к отправке"
   },
   "jobs": {
@@ -481,6 +481,85 @@
     "failedToUploadLogo": "Не удалось загрузить логотип",
     "project": "Проект"
   },
+  "messages": {
+    "failedToDeleteJob": "Не удалось удалить вакансию",
+    "jobDeletedSuccess": "Вакансия успешно удалена",
+    "failedToUpdateJobStatus": "Не удалось обновить статус вакансии",
+    "jobArchivedSuccess": "Вакансия успешно архивирована",
+    "jobUnarchivedSuccess": "Вакансия успешно разархивирована",
+    "failedToCreateJob": "Не удалось создать вакансию",
+    "validationError": "Ошибка валидации",
+    "jobCreatedSuccess": "Вакансия успешно создана",
+    "failedToUpdateJob": "Не удалось обновить вакансию",
+    "jobUpdatedSuccess": "Вакансия успешно обновлена",
+    "noOrganization": "Организация не выбрана",
+    "confirmDeleteJob": "Вы уверены, что хотите удалить эту вакансию?",
+    "organizationNotApproved": "Организация не одобрена",
+    "organizationUnderReview": "Ваша организация проходит проверку"
+  },
+  "modals": {
+    "notSpecified": "Не указано",
+    "applicationFor": "Заявка на",
+    "contactInformation": "Контактная информация",
+    "locationNotSpecified": "Местоположение не указано",
+    "applicationStatus": "Статус заявки",
+    "unknown": "Неизвестно",
+    "coverLetter": "Сопроводительное письмо",
+    "resume": "Резюме",
+    "viewResume": "Посмотреть резюме",
+    "pdfDocument": "PDF документ",
+    "sendMessage": "Отправить сообщение",
+    "viewProfile": "Посмотреть профиль",
+    "success": "Успешно",
+    "error": "Ошибка",
+    "jobUnarchived": "Вакансия успешно разархивирована",
+    "jobArchived": "Вакансия успешно архивирована",
+    "failedToUpdateJobStatus": "Не удалось обновить статус вакансии",
+    "jobDetails": "Детали вакансии",
+    "unarchive": "Разархивировать",
+    "archive": "Архивировать",
+    "applications": "заявок",
+    "jobDescription": "Описание вакансии",
+    "compensation": "Компенсация",
+    "educationRequired": "Требуемое образование",
+    "requiredLanguages": "Требуемые языки",
+    "jobType": "Тип работы",
+    "workplace": "Место работы",
+    "startDate": "Дата начала",
+    "endDate": "Дата окончания"
+  },
+  "statuses": {
+    "applicationStatuses": {
+      "in_review": "На рассмотрении",
+      "ongoing": "В процессе",
+      "rejected": "Отклонено",
+      "hired": "Принят",
+      "expired": "Истёк срок"
+    },
+    "jobStatuses": {
+      "active": "Активная",
+      "archived": "Архивная",
+      "draft": "Черновик",
+      "expired": "Истёкшая"
+    },
+    "educationLevels": {
+      "secondary": "Среднее",
+      "undergraduate": "Бакалавриат",
+      "master": "Магистратура",
+      "doctorate": "Докторантура"
+    },
+    "jobTypes": {
+      "full_time": "Полная занятость",
+      "part_time": "Частичная занятость",
+      "contract": "По контракту",
+      "internship": "Стажировка"
+    },
+    "workplaceTypes": {
+      "remote": "Удалённо",
+      "on_site": "В офисе",
+      "hybrid": "Гибридно"
+    }
+  },
   "forms": {
     "required": "Это поле обязательно",
     "invalidEmail": "Введите корректный email адрес",
@@ -491,7 +570,25 @@
     "selectOption": "Выберите опцию",
     "uploadFile": "Загрузите файл",
     "fileTooLarge": "Размер файла слишком большой",
-    "invalidFileType": "Неверный тип файла"
+    "invalidFileType": "Неверный тип файла",
+    "placeholders": {
+      "firstName": "Введите ваше имя",
+      "lastName": "Введите вашу фамилию",
+      "emailInput": "Введите адрес электронной почты",
+      "website": "https://www.example.com",
+      "email": "contact@company.com",
+      "phone": "+7 (999) 123-45-67",
+      "searchLocations": "Поиск местоположений...",
+      "jobTitle": "Введите название вакансии",
+      "selectCategory": "Выберите категорию",
+      "selectLocation": "Выберите местоположение",
+      "minSalary": "Минимальная зарплата",
+      "maxSalary": "Максимальная зарплата (необязательно)",
+      "jobDescription": "Опишите роль, обязанности и требования...",
+      "jobRequirements": "Перечислите необходимые навыки, опыт и квалификацию...",
+      "typeMessage": "Введите ваше сообщение...",
+      "searchCategories": "Поиск категорий..."
+    }
   },
   "errors": {
     "generic": "Произошла ошибка. Попробуйте еще раз.",
