@@ -21,6 +21,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Building2,
   Upload,
@@ -49,6 +55,8 @@ import { useOrganizations } from "@/hooks/useOrganizations";
 import { useReferenceData } from "@/hooks/useReferencedData";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 import type { Category, Location, PaginatedResponse, Project } from "@/types";
 
 export default function CreateOrganization() {
@@ -245,6 +253,13 @@ export default function CreateOrganization() {
   const updateProject = (index: number, field: string, value: string) => {
     const updatedProjects = projects.map((project, i) => 
       i === index ? { ...project, [field]: value } : project
+    );
+    setProjects(updatedProjects);
+  };
+
+  const updateProjectDate = (index: number, field: string, date: Date | undefined) => {
+    const updatedProjects = projects.map((project, i) => 
+      i === index ? { ...project, [field]: date ? format(date, 'yyyy-MM-dd') : '' } : project
     );
     setProjects(updatedProjects);
   };
@@ -722,22 +737,64 @@ export default function CreateOrganization() {
                     <Label className="text-sm">
                       {t('createOrganization.startDate', 'Start Date')}
                     </Label>
-                    <Input
-                      type="date"
-                      value={project.date_started || ""}
-                      onChange={(e) => updateProject(index, 'date_started', e.target.value)}
-                    />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !project.date_started && "text-muted-foreground"
+                          )}
+                        >
+                          <Calendar className="mr-2 h-4 w-4" />
+                          {project.date_started ? (
+                            format(new Date(project.date_started), "PPP")
+                          ) : (
+                            <span>{t('createOrganization.pickStartDate', 'Pick start date')}</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <CalendarComponent
+                          mode="single"
+                          selected={project.date_started ? new Date(project.date_started) : undefined}
+                          onSelect={(date) => updateProjectDate(index, 'date_started', date)}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </div>
 
                   <div className="space-y-2">
                     <Label className="text-sm">
                       {t('createOrganization.endDate', 'End Date')}
                     </Label>
-                    <Input
-                      type="date"
-                      value={project.date_finished || ""}
-                      onChange={(e) => updateProject(index, 'date_finished', e.target.value)}
-                    />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !project.date_finished && "text-muted-foreground"
+                          )}
+                        >
+                          <Calendar className="mr-2 h-4 w-4" />
+                          {project.date_finished ? (
+                            format(new Date(project.date_finished), "PPP")
+                          ) : (
+                            <span>{t('createOrganization.pickEndDate', 'Pick end date')}</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <CalendarComponent
+                          mode="single"
+                          selected={project.date_finished ? new Date(project.date_finished) : undefined}
+                          onSelect={(date) => updateProjectDate(index, 'date_finished', date)}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 </div>
               </div>
