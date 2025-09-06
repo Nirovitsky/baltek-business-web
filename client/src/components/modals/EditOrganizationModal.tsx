@@ -78,6 +78,7 @@ export default function EditOrganizationModal({
   const [logoPreview, setLogoPreview] = useState<string>("");
   const [isUploading, setIsUploading] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [newLogoUrl, setNewLogoUrl] = useState<string | null>(null);
   const { toast } = useToast();
   const { updateOrganization, uploadFile } = useOrganizationMutations();
 
@@ -105,6 +106,7 @@ export default function EditOrganizationModal({
     if (organization) {
       const initialProjects = organization.projects || [];
       setProjects(initialProjects);
+      setNewLogoUrl(null); // Reset new logo URL when switching organizations
       
       form.reset({
         official_name: organization.official_name,
@@ -126,10 +128,18 @@ export default function EditOrganizationModal({
   const onSubmit = async (data: OrganizationUpdate) => {
     try {
       // Include projects in the update data
-      const updateData = {
+      const updateData: any = {
         ...data,
         projects: projects,
       };
+
+      // Only include logo if a new one was uploaded
+      if (newLogoUrl) {
+        updateData.logo = newLogoUrl;
+      } else {
+        // Don't include logo field at all if no new logo was uploaded
+        delete updateData.logo;
+      }
       
       const updatedOrg = await updateOrganization.mutateAsync({ 
         id: organization.id, 
@@ -193,6 +203,7 @@ export default function EditOrganizationModal({
     try {
       const uploadResult = await uploadFile.mutateAsync(file);
       
+      setNewLogoUrl(uploadResult.url);
       form.setValue('logo', uploadResult.url);
       setLogoFile(null);
       setLogoPreview("");
@@ -219,6 +230,7 @@ export default function EditOrganizationModal({
     try {
       const uploadResult = await uploadFile.mutateAsync(logoFile);
       
+      setNewLogoUrl(uploadResult.url);
       form.setValue('logo', uploadResult.url);
       setLogoFile(null);
       setLogoPreview("");
@@ -241,6 +253,7 @@ export default function EditOrganizationModal({
   const removeLogo = () => {
     setLogoFile(null);
     setLogoPreview("");
+    setNewLogoUrl(null);
   };
 
   // Project management functions
