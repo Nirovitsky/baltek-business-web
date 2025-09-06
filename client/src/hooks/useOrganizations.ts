@@ -50,7 +50,7 @@ export function useOrganizations() {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         is_owner: true,
-        projects: []
+        projects: organizationData.projects || []
       };
       
       queryClient.setQueryData(['/organizations/', 'owned'], (old: any) => {
@@ -73,9 +73,15 @@ export function useOrganizations() {
           if (!old || !Array.isArray(old)) return [data];
           return old.map((org: any) => org.id === context.tempId ? data : org);
         });
+        // Also cache the individual organization data
+        if (data && typeof data === 'object' && 'id' in data) {
+          queryClient.setQueryData(['/organizations/', (data as any).id], data);
+        }
       }
       // Invalidate and refetch organizations
       queryClient.invalidateQueries({ queryKey: ['/organizations/', 'owned'] });
+      // Also invalidate individual organization queries to ensure fresh data
+      queryClient.invalidateQueries({ queryKey: ['/organizations/'] });
     },
   });
 
