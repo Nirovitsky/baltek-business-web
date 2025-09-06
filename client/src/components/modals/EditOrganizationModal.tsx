@@ -19,7 +19,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useOrganizationMutations } from "@/hooks/useOrganizations";
-import { Building2, Globe, Upload, X, Save, Plus, Trash2, Calendar } from "lucide-react";
+import { Building2, Globe, Upload, X, Save, Plus, Trash2, Calendar, Loader2 } from "lucide-react";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 import { SearchableLocation } from "@/components/ui/searchable-location";
 import { SearchableCategory } from "@/components/ui/searchable-category";
 import type { Organization, Project } from "@/types";
@@ -127,10 +135,19 @@ export default function EditOrganizationModal({
 
   const onSubmit = async (data: OrganizationUpdate) => {
     try {
-      // Include projects in the update data
+      // Include projects in the update data with proper formatting
       const updateData: any = {
         ...data,
-        projects: projects,
+        projects: projects
+          .filter(project => project.title.trim() !== "")
+          .map(project => ({
+            ...(project.id && project.id > 0 && project.id < Date.now() - 1000000 ? { id: project.id } : {}), // Only include ID for existing projects
+            title: project.title.trim(),
+            description: project.description || "",
+            link: project.link || "",
+            date_started: project.date_started || null,
+            date_finished: project.date_finished || null,
+          })),
       };
 
       // Only include logo if a new one was uploaded
@@ -273,6 +290,12 @@ export default function EditOrganizationModal({
   const updateProject = (index: number, field: keyof Project, value: string | number) => {
     const updatedProjects = [...projects];
     updatedProjects[index] = { ...updatedProjects[index], [field]: value };
+    setProjects(updatedProjects);
+  };
+
+  const updateProjectDate = (index: number, field: string, date: Date | undefined) => {
+    const updatedProjects = [...projects];
+    updatedProjects[index] = { ...updatedProjects[index], [field]: date ? format(date, 'yyyy-MM-dd') : '' };
     setProjects(updatedProjects);
   };
 
@@ -561,23 +584,70 @@ export default function EditOrganizationModal({
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
+                    <div className="space-y-2">
                       <label className="text-sm font-medium">{t("editOrganization.startDate")}</label>
-                      <Input
-                        type="date"
-                        value={project.date_started || ""}
-                        onChange={(e) => updateProject(index, 'date_started', e.target.value)}
-                      />
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !project.date_started && "text-muted-foreground"
+                            )}
+                          >
+                            <Calendar className="mr-2 h-4 w-4" />
+                            {project.date_started ? (
+                              format(new Date(project.date_started), "PPP")
+                            ) : (
+                              <span>{t('editOrganization.pickStartDate', 'Pick start date')}</span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0">
+                          <CalendarComponent
+                            mode="single"
+                            selected={project.date_started ? new Date(project.date_started) : undefined}
+                            onSelect={(date) => updateProjectDate(index, 'date_started', date)}
+                            initialFocus
+                            captionLayout="dropdown-buttons"
+                            fromYear={1900}
+                            toYear={2030}
+                          />
+                        </PopoverContent>
+                      </Popover>
                     </div>
 
-                    <div>
+                    <div className="space-y-2">
                       <label className="text-sm font-medium">{t("editOrganization.endDate")}</label>
-                      <Input
-                        type="date"
-                        value={project.date_finished || ""}
-                        onChange={(e) => updateProject(index, 'date_finished', e.target.value)}
-                        placeholder={t("editOrganization.endDatePlaceholder")}
-                      />
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !project.date_finished && "text-muted-foreground"
+                            )}
+                          >
+                            <Calendar className="mr-2 h-4 w-4" />
+                            {project.date_finished ? (
+                              format(new Date(project.date_finished), "PPP")
+                            ) : (
+                              <span>{t('editOrganization.pickEndDate', 'Pick end date')}</span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0">
+                          <CalendarComponent
+                            mode="single"
+                            selected={project.date_finished ? new Date(project.date_finished) : undefined}
+                            onSelect={(date) => updateProjectDate(index, 'date_finished', date)}
+                            initialFocus
+                            captionLayout="dropdown-buttons"
+                            fromYear={1900}
+                            toYear={2030}
+                          />
+                        </PopoverContent>
+                      </Popover>
                     </div>
                   </div>
                 </div>

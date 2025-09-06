@@ -345,7 +345,15 @@ export default function CreateOrganization() {
         phone: formData.phone || "",
         category: formData.category_id,
         location: formData.location_id,
-        projects: projects.filter(project => project.title.trim() !== ""),
+        projects: projects
+          .filter(project => project.title.trim() !== "")
+          .map(project => ({
+            title: project.title.trim(),
+            description: project.description || "",
+            link: project.link || "",
+            date_started: project.date_started || null,
+            date_finished: project.date_finished || null,
+          })),
         ...(logoUrl && { logo: logoUrl }),
       };
 
