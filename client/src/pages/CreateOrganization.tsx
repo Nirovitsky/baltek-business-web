@@ -98,6 +98,8 @@ export default function CreateOrganization() {
   const [formData, setFormData] = useState(loadDraftOrDefaults);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
 
   // Initialize projects from loaded data
   useEffect(() => {
@@ -200,7 +202,7 @@ export default function CreateOrganization() {
     }));
   };
 
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       // Validate file size (5MB limit)
@@ -224,6 +226,7 @@ export default function CreateOrganization() {
       }
 
       setLogoFile(file);
+      setIsUploadingLogo(true);
 
       // Create preview
       const reader = new FileReader();
@@ -231,12 +234,35 @@ export default function CreateOrganization() {
         setLogoPreview(e.target?.result as string);
       };
       reader.readAsDataURL(file);
+
+      // Upload immediately
+      try {
+        const uploadResponse = await uploadFile.mutateAsync(file);
+        setLogoUrl(uploadResponse.url);
+        toast({
+          title: t('createOrganization.logoUploadedSuccessfully'),
+          description: t('createOrganization.logoReadyToUse'),
+        });
+      } catch (error) {
+        console.error("Logo upload failed:", error);
+        toast({
+          title: t('createOrganization.logoUploadFailed'),
+          description: t('createOrganization.pleaseRetry'),
+          variant: "destructive",
+        });
+        // Clear the failed upload
+        setLogoFile(null);
+        setLogoPreview(null);
+      } finally {
+        setIsUploadingLogo(false);
+      }
     }
   };
 
   const clearLogo = () => {
     setLogoFile(null);
     setLogoPreview(null);
+    setLogoUrl(null);
   };
 
   // Project management functions
@@ -309,19 +335,6 @@ export default function CreateOrganization() {
     setIsLoading(true);
 
     try {
-      let logoUrl = null;
-
-      // Upload logo if provided
-      if (logoFile) {
-        try {
-          const uploadResponse = await uploadFile.mutateAsync(logoFile);
-          logoUrl = uploadResponse.url;
-        } catch (error) {
-          console.error("Logo upload failed:", error);
-          // Continue without logo if upload fails
-        }
-      }
-
       // Create organization with proper field mapping
       const organizationData = {
         official_name: formData.official_name,
@@ -566,7 +579,11 @@ export default function CreateOrganization() {
         </Label>
         <label
           htmlFor="logo-upload"
-          className="block border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center cursor-pointer hover:border-primary hover:bg-muted/50 transition-colors"
+          className={`block border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+            isUploadingLogo 
+              ? 'border-muted-foreground/25 cursor-not-allowed bg-muted/30' 
+              : 'border-muted-foreground/25 cursor-pointer hover:border-primary hover:bg-muted/50'
+          }`}
         >
           {logoPreview ? (
             <div className="space-y-4">
@@ -576,24 +593,43 @@ export default function CreateOrganization() {
                   alt="Logo preview"
                   className="w-20 h-20 object-cover rounded-lg border"
                 />
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    clearLogo();
-                  }}
-                  className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-xs transition-colors"
-                >
-                  <X className="w-3 h-3" />
-                </button>
+                {isUploadingLogo && (
+                  <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
+                    <Loader2 className="w-6 h-6 text-white animate-spin" />
+                  </div>
+                )}
+                {!isUploadingLogo && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      clearLogo();
+                    }}
+                    className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-xs transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                )}
               </div>
-              <p className="text-sm text-muted-foreground">
-                {t('createOrganization.logoUploadedSuccessfully')}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {t('createOrganization.clickToChangeImage')}
-              </p>
+              <div className="text-center">
+                {isUploadingLogo ? (
+                  <p className="text-sm text-muted-foreground">
+                    {t('createOrganization.uploadingLogo', 'Uploading logo...')}
+                  </p>
+                ) : logoUrl ? (
+                  <p className="text-sm text-green-600 dark:text-green-400">
+                    {t('createOrganization.logoUploadedSuccessfully', 'Logo uploaded successfully!')}
+                  </p>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    {t('createOrganization.logoUploadedSuccessfully')}
+                  </p>
+                )}
+                <p className="text-xs text-muted-foreground mt-1">
+                  {t('createOrganization.clickToChangeImage')}
+                </p>
+              </div>
             </div>
           ) : (
             <div className="space-y-3">
@@ -617,6 +653,7 @@ export default function CreateOrganization() {
             type="file"
             accept="image/*"
             onChange={handleLogoUpload}
+            disabled={isUploadingLogo}
             className="hidden"
           />
         </label>
