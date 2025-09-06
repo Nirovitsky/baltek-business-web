@@ -760,6 +760,9 @@ export default function CreateOrganization() {
                           selected={project.date_started ? new Date(project.date_started) : undefined}
                           onSelect={(date) => updateProjectDate(index, 'date_started', date)}
                           initialFocus
+                          captionLayout="dropdown-buttons"
+                          fromYear={1900}
+                          toYear={2030}
                         />
                       </PopoverContent>
                     </Popover>
@@ -792,6 +795,9 @@ export default function CreateOrganization() {
                           selected={project.date_finished ? new Date(project.date_finished) : undefined}
                           onSelect={(date) => updateProjectDate(index, 'date_finished', date)}
                           initialFocus
+                          captionLayout="dropdown-buttons"
+                          fromYear={1900}
+                          toYear={2030}
                         />
                       </PopoverContent>
                     </Popover>
